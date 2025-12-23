@@ -4,11 +4,11 @@
  */
 
 import React from "react";
-import { AtomicText, View, ActivityIndicator, StyleSheet } from "react-native";
-import { AtomicText, useAppDesignTokens } AtomicText } from "@umituz/react-native-design-system";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { AtomicText, useAppDesignTokens } from "@umituz/react-native-design-system";
 import type { BackgroundJob } from "../../domain/entities/job.types";
-import { AtomicText, PendingJobProgressBar } from "./PendingJobProgressBar";
-import { AtomicText, PendingJobCardActions } from "./PendingJobCardActions";
+import { PendingJobProgressBar } from "./PendingJobProgressBar";
+import { PendingJobCardActions } from "./PendingJobCardActions";
 
 export interface StatusLabels {
   readonly queued?: string;

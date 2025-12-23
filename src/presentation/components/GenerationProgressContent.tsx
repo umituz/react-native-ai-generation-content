@@ -4,9 +4,9 @@
  */
 
 import React from "react";
-import { AtomicText, View, TouchableOpacity, StyleSheet } from "react-native";
-import { AtomicText, useAppDesignTokens } AtomicText } from "@umituz/react-native-design-system";
-import { AtomicText, GenerationProgressBar } from "./GenerationProgressBar";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { AtomicText, useAppDesignTokens } from "@umituz/react-native-design-system";
+import { GenerationProgressBar } from "./GenerationProgressBar";
 
 export interface GenerationProgressContentProps {
     progress: number;
