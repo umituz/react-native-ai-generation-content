@@ -15,7 +15,7 @@ export interface PhotoGenerationResult<TResult = any> {
 }
 
 export interface PhotoGenerationError {
-  type: "timeout" | "policy_violation" | "save_failed" | "credit_failed" | "unknown";
+  type: "network_error" | "policy_violation" | "save_failed" | "credit_failed" | "unknown";
   message: string;
   originalError?: Error;
 }
@@ -24,8 +24,8 @@ export interface PhotoGenerationConfig<TInput, TResult, TSaveInput> {
   generate: (input: TInput) => Promise<TResult>;
   save?: (result: TResult, input: TInput) => Promise<TSaveInput>;
   checkCredits?: () => Promise<boolean>;
+  checkNetwork?: () => Promise<boolean>;
   deductCredits?: () => Promise<void>;
-  timeout?: number;
   onSuccess?: (result: TResult) => void;
   onError?: (error: PhotoGenerationError) => void;
   onSaveComplete?: (saveResult: TSaveInput) => void;

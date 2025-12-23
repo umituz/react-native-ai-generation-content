@@ -11,8 +11,6 @@ import type {
   PhotoGenerationStatus,
 } from "./photo-generation.types";
 
-const DEFAULT_TIMEOUT = 60000;
-
 export interface UsePhotoGenerationReturn<TResult> extends PhotoGenerationState<TResult> {
   generate: <TInput>(input: TInput) => Promise<void>;
   reset: () => void;
@@ -26,8 +24,8 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
     generate: generateFn,
     save: saveFn,
     checkCredits,
+    checkNetwork,
     deductCredits,
-    timeout = DEFAULT_TIMEOUT,
     onSuccess,
     onError,
     onSaveComplete,
@@ -68,6 +66,15 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
       setStatus("validating");
 
       try {
+        // Check network connectivity
+        if (checkNetwork) {
+          const isOnline = await checkNetwork();
+          if (!isOnline) {
+            throw createError("network_error", "No internet connection");
+          }
+        }
+
+        // Check credits
         if (checkCredits) {
           const hasCredits = await checkCredits();
           if (!hasCredits) {
@@ -78,14 +85,12 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
         setStatus("generating");
         setState((prev) => ({ ...prev, progress: 20 }));
 
-        const timeoutPromise = new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("Generation timeout")), timeout),
-        );
-
-        const result = await Promise.race([generateFn(input), timeoutPromise]);
+        // Generate without timeout - let AI provider handle its own timeout
+        const result = await generateFn(input);
 
         setState((prev) => ({ ...prev, progress: 60 }));
 
+        // Save result
         if (saveFn) {
           setStatus("saving");
           try {
@@ -102,6 +107,7 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
 
         setState((prev) => ({ ...prev, progress: 80 }));
 
+        // Deduct credits after successful generation
         if (deductCredits) {
           try {
             await deductCredits();
@@ -123,11 +129,9 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
         const generationError =
           error.type
             ? error
-            : error.message === "Generation timeout"
-              ? createError("timeout", "Generation timed out", error)
-              : error.name === "ContentPolicyViolationError"
-                ? createError("policy_violation", "Content policy violation", error)
-                : createError("unknown", error.message || "Generation failed", error);
+            : error.name === "ContentPolicyViolationError"
+              ? createError("policy_violation", "Content policy violation", error)
+              : createError("unknown", error.message || "Generation failed", error);
 
         setState({
           isGenerating: false,
@@ -145,8 +149,8 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
       generateFn,
       saveFn,
       checkCredits,
+      checkNetwork,
       deductCredits,
-      timeout,
       onSuccess,
       onError,
       onSaveComplete,
