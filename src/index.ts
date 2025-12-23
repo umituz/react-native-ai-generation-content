@@ -120,6 +120,14 @@ export {
   validateResult,
   extractOutputUrl,
   extractOutputUrls,
+  // Photo generation utils
+  cleanBase64,
+  addBase64Prefix,
+  preparePhoto,
+  preparePhotos,
+  isValidBase64,
+  getBase64Size,
+  getBase64SizeMB,
 } from "./infrastructure/utils";
 
 export type {
@@ -128,6 +136,8 @@ export type {
   StatusCheckResult,
   ResultValidation,
   ValidateResultOptions,
+  PhotoInput,
+  PreparedImage,
 } from "./infrastructure/utils";
 
 // =============================================================================
