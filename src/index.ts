@@ -149,14 +149,14 @@ export {
   getSupportedLanguages,
   getLanguageName,
   ModerationWrapper,
-  generateWithSimpleWrapper,
+  generateSynchronously,
 } from "./infrastructure/wrappers";
 
 export type {
   ModerationResult,
   ModerationConfig,
-  SimpleGenerationInput,
-  SimpleGenerationConfig,
+  SynchronousGenerationInput,
+  SynchronousGenerationConfig,
 } from "./infrastructure/wrappers";
 
 // =============================================================================

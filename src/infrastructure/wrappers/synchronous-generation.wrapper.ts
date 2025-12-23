@@ -1,13 +1,14 @@
 /**
- * Simple Generation Wrapper
- * High-level API for simple text/image generation without background jobs
+ * Synchronous Generation Wrapper
+ * Direct API execution for text/image generation (wait for result)
+ * For background job execution, use async generation instead
  */
 
 import type { GenerationResult } from "../../domain/entities";
 import { enhancePromptWithLanguage } from "./language.wrapper";
 import { ModerationWrapper } from "./moderation.wrapper";
 
-export interface SimpleGenerationInput {
+export interface SynchronousGenerationInput {
   prompt: string;
   userId?: string;
   type?: string;
@@ -15,15 +16,15 @@ export interface SimpleGenerationInput {
   metadata?: Record<string, any>;
 }
 
-export interface SimpleGenerationConfig<T = any> {
+export interface SynchronousGenerationConfig<T = any> {
   checkCredits?: (userId: string, type: string) => Promise<boolean>;
   deductCredits?: (userId: string, type: string) => Promise<void>;
   execute: (prompt: string, metadata?: Record<string, any>) => Promise<T>;
 }
 
-export async function generateWithSimpleWrapper<T = string>(
-  input: SimpleGenerationInput,
-  config: SimpleGenerationConfig<T>,
+export async function generateSynchronously<T = string>(
+  input: SynchronousGenerationInput,
+  config: SynchronousGenerationConfig<T>,
 ): Promise<GenerationResult<T>> {
   // Check user ID if required
   if (config.checkCredits && !input.userId) {

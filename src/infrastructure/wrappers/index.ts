@@ -1,6 +1,6 @@
 /**
  * Generation Wrappers
- * High-level API wrappers for simple generation tasks
+ * High-level API wrappers for generation orchestration
  */
 
 export {
@@ -12,8 +12,8 @@ export {
 export { ModerationWrapper } from "./moderation.wrapper";
 export type { ModerationResult, ModerationConfig } from "./moderation.wrapper";
 
-export { generateWithSimpleWrapper } from "./simple-generation.wrapper";
+export { generateSynchronously } from "./synchronous-generation.wrapper";
 export type {
-  SimpleGenerationInput,
-  SimpleGenerationConfig,
-} from "./simple-generation.wrapper";
+  SynchronousGenerationInput,
+  SynchronousGenerationConfig,
+} from "./synchronous-generation.wrapper";
