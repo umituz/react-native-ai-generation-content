@@ -70,7 +70,7 @@ export async function pollJob<T = unknown>(
     // Wait for polling interval (skip first attempt)
     if (attempt > 0) {
       const interval = calculatePollingInterval({ attempt, config: pollingConfig });
-      await new Promise((resolve) => setTimeout(resolve, interval));
+      await new Promise<void>((resolve) => setTimeout(() => resolve(), interval));
     }
 
     try {
