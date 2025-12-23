@@ -180,6 +180,11 @@ export {
   PendingJobCard,
   PendingJobProgressBar,
   PendingJobCardActions,
+  GenerationResultContent,
+  ResultHeader,
+  ResultImageCard,
+  ResultStoryCard,
+  ResultActions,
 } from "./presentation/components";
 
 export type {
@@ -191,4 +196,10 @@ export type {
   StatusLabels,
   PendingJobProgressBarProps,
   PendingJobCardActionsProps,
+  GenerationResultData,
+  GenerationResultContentProps,
+  ResultHeaderProps,
+  ResultImageCardProps,
+  ResultStoryCardProps,
+  ResultActionsProps,
 } from "./presentation/components";
