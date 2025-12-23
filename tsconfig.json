@@ -28,7 +28,13 @@
       "@ai-generation/prompts": ["./src/domains/prompts"],
       "@ai-generation/prompts/*": ["./src/domains/prompts/*"],
       "@ai-generation/content-moderation": ["./src/domains/content-moderation"],
-      "@ai-generation/content-moderation/*": ["./src/domains/content-moderation/*"]
+      "@ai-generation/content-moderation/*": ["./src/domains/content-moderation/*"],
+      "@ai-generation/creations": ["./src/domains/creations"],
+      "@ai-generation/creations/*": ["./src/domains/creations/*"],
+      "@ai-generation/face-detection": ["./src/domains/face-detection"],
+      "@ai-generation/face-detection/*": ["./src/domains/face-detection/*"],
+      "@ai-generation/feature-background": ["./src/domains/feature-background"],
+      "@ai-generation/feature-background/*": ["./src/domains/feature-background/*"]
     }
   },
   "include": [

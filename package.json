@@ -1,13 +1,16 @@
 {
   "name": "@umituz/react-native-ai-generation-content",
-  "version": "1.12.4",
+  "version": "1.12.5",
   "description": "Provider-agnostic AI generation orchestration for React Native",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./prompts": "./src/domains/prompts/index.ts",
-    "./content-moderation": "./src/domains/content-moderation/index.ts"
+    "./content-moderation": "./src/domains/content-moderation/index.ts",
+    "./creations": "./src/domains/creations/index.ts",
+    "./face-detection": "./src/domains/face-detection/index.ts",
+    "./feature-background": "./src/domains/feature-background/index.ts"
   },
   "files": [
     "src"
@@ -35,28 +38,48 @@
     "url": "git+https://github.com/umituz/react-native-ai-generation-content.git"
   },
   "peerDependencies": {
+    "@react-navigation/native": ">=6.0.0",
     "@tanstack/react-query": ">=5.0.0",
+    "@umituz/react-native-ai-gemini-provider": "latest",
+    "@umituz/react-native-alert": "latest",
     "@umituz/react-native-animation": "latest",
+    "@umituz/react-native-bottom-sheet": "latest",
     "@umituz/react-native-design-system": "latest",
+    "@umituz/react-native-firebase": "latest",
+    "@umituz/react-native-image": "latest",
+    "@umituz/react-native-localization": "latest",
     "@umituz/react-native-offline": "latest",
+    "@umituz/react-native-uuid": "latest",
     "expo-linear-gradient": ">=15.0.0",
+    "firebase": ">=10.0.0",
     "react": ">=18.0.0",
-    "react-native": ">=0.74.0"
+    "react-native": ">=0.74.0",
+    "react-native-safe-area-context": ">=4.0.0"
   },
   "devDependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-navigation/native": "^6.1.18",
     "@tanstack/react-query": "^5.0.0",
-    "@umituz/react-native-animation": "latest",
-    "@umituz/react-native-design-system": "latest",
-    "@umituz/react-native-offline": "latest",
     "@types/react": "~19.1.10",
     "@types/react-native": "^0.73.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "@umituz/react-native-ai-gemini-provider": "latest",
+    "@umituz/react-native-alert": "latest",
+    "@umituz/react-native-animation": "latest",
+    "@umituz/react-native-bottom-sheet": "latest",
+    "@umituz/react-native-design-system": "latest",
+    "@umituz/react-native-firebase": "latest",
+    "@umituz/react-native-image": "latest",
+    "@umituz/react-native-localization": "latest",
+    "@umituz/react-native-offline": "latest",
+    "@umituz/react-native-uuid": "latest",
     "eslint": "^8.57.0",
     "expo-linear-gradient": "~15.0.7",
+    "firebase": "^11.1.0",
     "react": "19.1.0",
     "react-native": "0.81.5",
+    "react-native-safe-area-context": "^4.0.0",
     "typescript": "^5.3.0",
     "zustand": "^5.0.2"
   },
