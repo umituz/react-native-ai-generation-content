@@ -2,6 +2,7 @@
  * FaceValidationStatus Component
  *
  * Displays face validation status with appropriate styling.
+ * Translations provided by main app via props.
  */
 
 import React from "react";
@@ -11,19 +12,26 @@ import {
   AtomicIcon,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
-import { useLocalization } from "@umituz/react-native-localization";
 import type { FaceValidationState } from "../../domain/entities/FaceDetection";
 import { isValidFace } from "../../infrastructure/validators/faceValidator";
 
+export interface FaceValidationLabels {
+  analyzing: string;
+  error: string;
+  success: string;
+  noFace: string;
+}
+
 interface FaceValidationStatusProps {
   state: FaceValidationState;
+  labels: FaceValidationLabels;
 }
 
 export const FaceValidationStatus: React.FC<FaceValidationStatusProps> = ({
   state,
+  labels,
 }) => {
   const tokens = useAppDesignTokens();
-  const { t } = useLocalization();
 
   if (state.isValidating) {
     return (
@@ -34,7 +42,7 @@ export const FaceValidationStatus: React.FC<FaceValidationStatusProps> = ({
         <AtomicText
           style={[styles.text, { color: tokens.colors.textSecondary }]}
         >
-          {t("faceDetection.analyzing")}
+          {labels.analyzing}
         </AtomicText>
       </View>
     );
@@ -50,11 +58,11 @@ export const FaceValidationStatus: React.FC<FaceValidationStatusProps> = ({
       >
         <AtomicIcon
           name="alert-circle"
-          size={16}
+          size="sm"
           customColor={tokens.colors.error}
         />
         <AtomicText style={[styles.text, { color: tokens.colors.error }]}>
-          {t("faceDetection.error")}
+          {labels.error}
         </AtomicText>
       </View>
     );
@@ -79,7 +87,7 @@ export const FaceValidationStatus: React.FC<FaceValidationStatusProps> = ({
     >
       <AtomicIcon
         name={valid ? "checkmark-circle" : "close-circle"}
-        size={16}
+        size="sm"
         customColor={valid ? tokens.colors.success : tokens.colors.error}
       />
       <AtomicText
@@ -88,7 +96,7 @@ export const FaceValidationStatus: React.FC<FaceValidationStatusProps> = ({
           { color: valid ? tokens.colors.success : tokens.colors.error },
         ]}
       >
-        {valid ? t("faceDetection.success") : t("faceDetection.noFace")}
+        {valid ? labels.success : labels.noFace}
       </AtomicText>
     </View>
   );

@@ -1,10 +1,10 @@
 /**
  * Face Analyzer
  *
- * Analyzes images for face presence using Gemini AI.
+ * Provider-agnostic face detection analyzer.
+ * Main app injects the AI provider function.
  */
 
-import { geminiProviderService } from "@umituz/react-native-ai-gemini-provider";
 import type { FaceDetectionResult } from "../../domain/entities/FaceDetection";
 import { FACE_DETECTION_PROMPTS } from "../../domain/constants/faceDetectionConstants";
 import {
@@ -12,17 +12,21 @@ import {
   createFailedResult,
 } from "../validators/faceValidator";
 
+export type AIAnalyzerFunction = (
+  model: string,
+  params: { prompt: string; image_url: string }
+) => Promise<{ text: string }>;
+
 export const analyzeImageForFace = async (
   base64Image: string,
+  aiAnalyzer: AIAnalyzerFunction,
+  model: string
 ): Promise<FaceDetectionResult> => {
   try {
-    const result = await geminiProviderService.run<{ text: string }>(
-      "gemini-2.0-flash-exp",
-      {
-        prompt: FACE_DETECTION_PROMPTS.analyze,
-        image_url: base64Image,
-      },
-    );
+    const result = await aiAnalyzer(model, {
+      prompt: FACE_DETECTION_PROMPTS.analyze,
+      image_url: base64Image,
+    });
 
     if (!result.text) {
       return createFailedResult("No response from AI");
