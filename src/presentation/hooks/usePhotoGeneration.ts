@@ -4,6 +4,7 @@
  */
 
 import { useState, useCallback, useRef } from "react";
+import { useOfflineStore } from "@umituz/react-native-offline";
 import type {
   PhotoGenerationConfig,
   PhotoGenerationState,
@@ -24,7 +25,6 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
     generate: generateFn,
     save: saveFn,
     checkCredits,
-    checkNetwork,
     deductCredits,
     onSuccess,
     onError,
@@ -40,6 +40,7 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
 
   const [status, setStatus] = useState<PhotoGenerationStatus>("idle");
   const isGeneratingRef = useRef(false);
+  const offlineStore = useOfflineStore();
 
   const createError = useCallback(
     (
@@ -67,11 +68,9 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
 
       try {
         // Check network connectivity
-        if (checkNetwork) {
-          const isOnline = await checkNetwork();
-          if (!isOnline) {
-            throw createError("network_error", "No internet connection");
-          }
+        const isOnline = offlineStore.getState().isOnline;
+        if (!isOnline) {
+          throw createError("network_error", "No internet connection");
         }
 
         // Check credits
@@ -149,12 +148,12 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
       generateFn,
       saveFn,
       checkCredits,
-      checkNetwork,
       deductCredits,
       onSuccess,
       onError,
       onSaveComplete,
       createError,
+      offlineStore,
     ],
   );
 

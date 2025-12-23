@@ -24,7 +24,6 @@ export interface PhotoGenerationConfig<TInput, TResult, TSaveInput> {
   generate: (input: TInput) => Promise<TResult>;
   save?: (result: TResult, input: TInput) => Promise<TSaveInput>;
   checkCredits?: () => Promise<boolean>;
-  checkNetwork?: () => Promise<boolean>;
   deductCredits?: () => Promise<void>;
   onSuccess?: (result: TResult) => void;
   onError?: (error: PhotoGenerationError) => void;
