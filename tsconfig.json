@@ -22,7 +22,14 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "baseUrl": ".",
+    "paths": {
+      "@ai-generation/prompts": ["./src/domains/prompts"],
+      "@ai-generation/prompts/*": ["./src/domains/prompts/*"],
+      "@ai-generation/content-moderation": ["./src/domains/content-moderation"],
+      "@ai-generation/content-moderation/*": ["./src/domains/content-moderation/*"]
+    }
   },
   "include": [
     "src/**/*.ts",
