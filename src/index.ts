@@ -157,6 +157,7 @@ export {
   useGeneration,
   usePendingJobs,
   useBackgroundGeneration,
+  usePhotoGeneration,
 } from "./presentation/hooks";
 
 export type {
@@ -167,6 +168,13 @@ export type {
   UseBackgroundGenerationOptions,
   UseBackgroundGenerationReturn,
   DirectExecutionResult,
+  UsePhotoGenerationReturn,
+  PhotoGenerationInput,
+  PhotoGenerationResult,
+  PhotoGenerationError,
+  PhotoGenerationConfig,
+  PhotoGenerationState,
+  PhotoGenerationStatus,
 } from "./presentation/hooks";
 
 // =============================================================================

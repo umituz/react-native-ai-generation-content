@@ -20,3 +20,17 @@ export type {
   UseBackgroundGenerationReturn,
   DirectExecutionResult,
 } from "./use-background-generation";
+
+export { usePhotoGeneration } from "./usePhotoGeneration";
+export type {
+  UsePhotoGenerationReturn,
+} from "./usePhotoGeneration";
+
+export type {
+  PhotoGenerationInput,
+  PhotoGenerationResult,
+  PhotoGenerationError,
+  PhotoGenerationConfig,
+  PhotoGenerationState,
+  PhotoGenerationStatus,
+} from "./photo-generation.types";
