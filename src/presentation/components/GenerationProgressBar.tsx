@@ -4,8 +4,8 @@
  */
 
 import React from "react";
-import { AtomicText, View, StyleSheet } from "react-native";
-import { AtomicText, useAppDesignTokens } AtomicText } from "@umituz/react-native-design-system";
+import { View, StyleSheet } from "react-native";
+import { AtomicText, useAppDesignTokens } from "@umituz/react-native-design-system";
 
 export interface GenerationProgressBarProps {
     progress: number;
@@ -41,7 +41,7 @@ export const GenerationProgressBar: React.FC<GenerationProgressBarProps> = ({
                     ]}
                 />
             </View>
-            <Text
+            <AtomicText
                 style={[
                     styles.text,
                     { color: textColor || tokens.colors.textPrimary },
