@@ -68,8 +68,7 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
 
       try {
         // Check network connectivity
-        const isOnline = offlineStore.getState().isOnline;
-        if (!isOnline) {
+        if (!offlineStore.isOnline) {
           throw createError("network_error", "No internet connection");
         }
 
