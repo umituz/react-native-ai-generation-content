@@ -12,15 +12,15 @@ import type {
   PhotoGenerationStatus,
 } from "./photo-generation.types";
 
-export interface UsePhotoGenerationReturn<TResult> extends PhotoGenerationState<TResult> {
-  generate: <TInput>(input: TInput) => Promise<void>;
+export interface UsePhotoGenerationReturn<TInput, TResult> extends PhotoGenerationState<TResult> {
+  generate: (input: TInput) => Promise<void>;
   reset: () => void;
   status: PhotoGenerationStatus;
 }
 
 export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
   config: PhotoGenerationConfig<TInput, TResult, TSaveInput>,
-): UsePhotoGenerationReturn<TResult> => {
+): UsePhotoGenerationReturn<TInput, TResult> => {
   const {
     generate: generateFn,
     save: saveFn,
