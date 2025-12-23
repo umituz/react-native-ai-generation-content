@@ -4,9 +4,9 @@
  */
 
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
-import { GenerationProgressBar } from "./GenerationProgressBar";
+import { AtomicText, View, TouchableOpacity, StyleSheet } from "react-native";
+import { AtomicText, useAppDesignTokens } AtomicText } from "@umituz/react-native-design-system";
+import { AtomicText, GenerationProgressBar } from "./GenerationProgressBar";
 
 export interface GenerationProgressContentProps {
     progress: number;
@@ -45,13 +45,13 @@ export const GenerationProgressContent: React.FC<
         return (
             <View style={[styles.modal, { backgroundColor: activeBgColor }]}>
                 {title && (
-                    <Text style={[styles.title, { color: activeTextColor }]}>{title}</Text>
+                    <AtomicText type="bodyMedium" style={[styles.title, { color: activeTextColor }]}>{title}</AtomicText>
                 )}
 
                 {message && (
-                    <Text style={[styles.message, { color: activeTextColor }]}>
+                    <AtomicText type="bodyMedium" style={[styles.message, { color: activeTextColor }]}>
                         {message}
-                    </Text>
+                    </AtomicText>
                 )}
 
                 <GenerationProgressBar
@@ -62,7 +62,7 @@ export const GenerationProgressContent: React.FC<
                 />
 
                 {hint && (
-                    <Text style={[styles.hint, { color: activeTextColor }]}>{hint}</Text>
+                    <AtomicText type="bodyMedium" style={[styles.hint, { color: activeTextColor }]}>{hint}</AtomicText>
                 )}
 
                 {onDismiss && (
@@ -73,7 +73,7 @@ export const GenerationProgressContent: React.FC<
                         ]}
                         onPress={onDismiss}
                     >
-                        <Text style={styles.dismissText}>{dismissLabel || "OK"}</Text>
+                        <AtomicText type="bodyMedium" style={styles.dismissText}>{dismissLabel || "OK"}</AtomicText>
                     </TouchableOpacity>
                 )}
             </View>

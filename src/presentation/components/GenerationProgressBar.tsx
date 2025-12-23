@@ -4,8 +4,8 @@
  */
 
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { AtomicText, View, StyleSheet } from "react-native";
+import { AtomicText, useAppDesignTokens } AtomicText } from "@umituz/react-native-design-system";
 
 export interface GenerationProgressBarProps {
     progress: number;
@@ -48,7 +48,7 @@ export const GenerationProgressBar: React.FC<GenerationProgressBarProps> = ({
                 ]}
             >
                 {Math.round(clampedProgress)}%
-            </Text>
+            </AtomicText>
         </View>
     );
 };

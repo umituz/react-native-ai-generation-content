@@ -4,11 +4,11 @@
  */
 
 import React from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { AtomicText, View, ActivityIndicator, StyleSheet } from "react-native";
+import { AtomicText, useAppDesignTokens } AtomicText } from "@umituz/react-native-design-system";
 import type { BackgroundJob } from "../../domain/entities/job.types";
-import { PendingJobProgressBar } from "./PendingJobProgressBar";
-import { PendingJobCardActions } from "./PendingJobCardActions";
+import { AtomicText, PendingJobProgressBar } from "./PendingJobProgressBar";
+import { AtomicText, PendingJobCardActions } from "./PendingJobCardActions";
 
 export interface StatusLabels {
   readonly queued?: string;
@@ -106,10 +106,10 @@ export function PendingJobCard<TInput = unknown, TResult = unknown>({
       )}
       <View style={styles.content}>
         <View>
-          {typeLabel && <Text style={styles.typeText}>{typeLabel}</Text>}
-          <Text style={styles.statusText} numberOfLines={1}>
+          {typeLabel && <AtomicText type="bodyMedium" style={styles.typeText}>{typeLabel}</AtomicText>}
+          <AtomicText type="bodyMedium" style={styles.statusText} numberOfLines={1}>
             {statusText}
-          </Text>
+          </AtomicText>
           {!isFailed && <PendingJobProgressBar progress={job.progress} />}
         </View>
         {renderActions ? (

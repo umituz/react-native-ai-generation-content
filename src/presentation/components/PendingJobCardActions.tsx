@@ -4,8 +4,8 @@
  */
 
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { AtomicText, View, TouchableOpacity, StyleSheet } from "react-native";
+import { AtomicText, useAppDesignTokens } AtomicText } from "@umituz/react-native-design-system";
 
 export interface PendingJobCardActionsProps {
     id: string;
@@ -57,7 +57,7 @@ export const PendingJobCardActions: React.FC<PendingJobCardActionsProps> = ({
                     style={styles.actionButton}
                     onPress={() => onRetry(id)}
                 >
-                    <Text style={styles.text}>↻</Text>
+                    <AtomicText type="bodyMedium" style={styles.text}>↻</AtomicText>
                 </TouchableOpacity>
             )}
             {onCancel && (
@@ -65,7 +65,7 @@ export const PendingJobCardActions: React.FC<PendingJobCardActionsProps> = ({
                     style={styles.actionButton}
                     onPress={() => onCancel(id)}
                 >
-                    <Text style={styles.errorText}>✕</Text>
+                    <AtomicText type="bodyMedium" style={styles.errorText}>✕</AtomicText>
                 </TouchableOpacity>
             )}
         </View>
