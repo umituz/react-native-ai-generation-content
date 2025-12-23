@@ -221,3 +221,9 @@ export type {
   ResultStoryCardProps,
   ResultActionsProps,
 } from "./presentation/components";
+
+// =============================================================================
+// DOMAINS - AI Prompts
+// =============================================================================
+
+export * from "./domains/prompts";
