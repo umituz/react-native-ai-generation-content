@@ -48,7 +48,7 @@ export const CreationImageViewer: React.FC<CreationImageViewerProps> = ({
                 activeOpacity={0.7}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-                <AtomicIcon name="close" size="lg" color="white" />
+                <AtomicIcon name="close" size="lg" color="onPrimary" />
             </TouchableOpacity>
         </View>
     );
@@ -68,7 +68,7 @@ export const CreationImageViewer: React.FC<CreationImageViewerProps> = ({
             backgroundColor: 'rgba(0,0,0,0.5)',
             paddingHorizontal: tokens.spacing.md,
             paddingVertical: tokens.spacing.xs,
-            borderRadius: tokens.spacing.pill || 20,
+            borderRadius: 999,
             justifyContent: 'center',
         },
         counterText: {

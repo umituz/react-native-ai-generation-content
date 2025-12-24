@@ -154,7 +154,7 @@ export function CreationCard({
         <Image source={{ uri: creation.uri }} style={styles.thumbnail} />
         {isSelectionMode && (
           <View style={styles.selectionOverlay}>
-            {isSelected && <AtomicIcon name="checkmark-circle" size="xs" color="white" />}
+            {isSelected && <AtomicIcon name="checkmark-circle" size="xs" color="onPrimary" />}
           </View>
         )}
       </View>

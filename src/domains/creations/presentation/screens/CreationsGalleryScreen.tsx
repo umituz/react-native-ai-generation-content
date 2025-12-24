@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import {
   useAppDesignTokens,
   useSharing,
@@ -7,6 +7,7 @@ import {
   ScreenHeader,
   useAlert,
   AlertMode,
+  AtomicIcon,
   type BottomSheetModalRef
 } from "@umituz/react-native-design-system";
 import { useCreations } from "../hooks/useCreations";
@@ -176,10 +177,11 @@ export function CreationsGalleryScreen({
             <ScreenHeader
               title={isSelectionMode ? `${selectedItemIds.length} Selected` : screenTitle}
               onBackPress={isSelectionMode ? () => { setIsSelectionMode(false); setSelectedItemIds([]); } : onBackPress}
-              rightAction={isSelectionMode ? {
-                icon: 'trash',
-                onPress: handleDeleteSelected,
-              } : undefined}
+              rightAction={isSelectionMode ? (
+                <TouchableOpacity onPress={handleDeleteSelected}>
+                  <AtomicIcon name="trash" color="error" size="md" />
+                </TouchableOpacity>
+              ) : undefined}
             />
           )}
           {!isSelectionMode && enableSearch && (
