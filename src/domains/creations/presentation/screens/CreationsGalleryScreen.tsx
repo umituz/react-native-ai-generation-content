@@ -9,7 +9,6 @@ import {
   AlertMode,
   type BottomSheetModalRef
 } from "@umituz/react-native-design-system";
-import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useCreationsFilter } from "../hooks/useCreationsFilter";
@@ -91,15 +90,6 @@ export function CreationsGalleryScreen({
 
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-
-
-
-  // Refetch creations when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
 
   // Prepare data for UI using utils
   const translatedTypes = useMemo(() => getTranslatedTypes(config, t), [config, t]);
@@ -205,22 +195,20 @@ export function CreationsGalleryScreen({
       }
       contentContainerStyle={{ paddingHorizontal: 0 }}
     >
-      {(!creations || creations?.length === 0) && !isLoading ? null : (
-        showGalleryHeader ? (
-          <GalleryHeader
-            title={showScreenHeader || isSelectionMode ? '' : screenTitle}
-            count={filtered.length}
-            countLabel=''
-            subtitle={showCount ? t(config.translations.photoCount, { count: filtered.length }) : undefined}
-            isFiltered={isFiltered}
-            filterLabel={t(config.translations.filterLabel) || 'Filter'}
-            onFilterPress={() => filterSheetRef.current?.present()}
-            onFavoritesPress={() => setShowOnlyFavorites(!showOnlyFavorites)}
-            showOnlyFavorites={showOnlyFavorites}
-            isFilterEnabled={enableFilter}
-            showCount={showCount}
-          />
-        ) : null
+      {creations && creations.length > 0 && showGalleryHeader && (
+        <GalleryHeader
+          title={showScreenHeader || isSelectionMode ? '' : screenTitle}
+          count={filtered.length}
+          countLabel=''
+          subtitle={showCount ? t(config.translations.photoCount, { count: filtered.length }) : undefined}
+          isFiltered={isFiltered}
+          filterLabel={t(config.translations.filterLabel) || 'Filter'}
+          onFilterPress={() => filterSheetRef.current?.present()}
+          onFavoritesPress={() => setShowOnlyFavorites(!showOnlyFavorites)}
+          showOnlyFavorites={showOnlyFavorites}
+          isFilterEnabled={enableFilter}
+          showCount={showCount}
+        />
       )}
 
       {/* Main Content Grid - handles empty/loading via ListEmptyComponent */}
