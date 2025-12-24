@@ -40,7 +40,6 @@
   "peerDependencies": {
     "@react-navigation/native": ">=6.0.0",
     "@tanstack/react-query": ">=5.0.0",
-    "@umituz/react-native-alert": "latest",
     "@umituz/react-native-animation": "latest",
     "@umituz/react-native-bottom-sheet": "latest",
     "@umituz/react-native-design-system": "latest",
@@ -62,7 +61,6 @@
     "@types/react-native": "^0.73.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
-    "@umituz/react-native-alert": "latest",
     "@umituz/react-native-animation": "latest",
     "@umituz/react-native-bottom-sheet": "latest",
     "@umituz/react-native-design-system": "latest",

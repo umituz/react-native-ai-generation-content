@@ -7,7 +7,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useCreationsFilter } from "../hooks/useCreationsFilter";
-import { useAlert } from "@umituz/react-native-alert";
+import { useAlert, AlertMode } from "@umituz/react-native-design-system";
 import { BottomSheetModalRef } from "@umituz/react-native-bottom-sheet";
 import { GalleryHeader, EmptyState, CreationsGrid, FilterBottomSheet, CreationImageViewer, type FilterCategory } from "../components";
 import { getTranslatedTypes, getFilterCategoriesFromConfig } from "../utils/filterUtils";
@@ -68,20 +68,22 @@ export function CreationsGalleryScreen({
   }, [share, t]);
 
   const handleDelete = useCallback(async (creation: Creation) => {
-    alert.show({
-      title: t(config.translations.deleteTitle),
-      message: t(config.translations.deleteMessage),
-      type: 'warning' as any,
-      actions: [
-        { id: 'cancel', label: t("common.cancel"), onPress: () => { } },
-        {
-          id: 'delete', label: t("common.delete"), variant: 'danger' as any, onPress: async () => {
-            const success = await deleteMutation.mutateAsync(creation.id);
-            if (success) setSelectedCreation(null);
+    alert.showWarning(
+      t(config.translations.deleteTitle),
+      t(config.translations.deleteMessage),
+      {
+        mode: AlertMode.MODAL,
+        actions: [
+          { id: 'cancel', label: t("common.cancel"), onPress: () => { } },
+          {
+            id: 'delete', label: t("common.delete"), style: 'destructive', onPress: async () => {
+              const success = await deleteMutation.mutateAsync(creation.id);
+              if (success) setSelectedCreation(null);
+            }
           }
-        }
-      ]
-    });
+        ]
+      }
+    );
   }, [alert, config, deleteMutation, t]);
 
   // Handle viewing a creation - shows detail screen
