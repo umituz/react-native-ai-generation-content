@@ -40,7 +40,7 @@ export const ResultActions: React.FC<ResultActionsProps> = ({
     <View style={styles.container}>
       {onRetry && (
         <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-          <AtomicIcon name="refresh" size={18} customColor={tokens.colors.primary} />
+          <AtomicIcon name="refresh" size="sm" customColor={tokens.colors.primary} />
           <AtomicText style={styles.retryText}>{translations.retry}</AtomicText>
         </TouchableOpacity>
       )}
@@ -54,7 +54,7 @@ export const ResultActions: React.FC<ResultActionsProps> = ({
           >
             <AtomicIcon
               name={isSharing ? "hourglass" : "share-social"}
-              size={22}
+              size="md"
               customColor="#fff"
             />
             <AtomicText style={styles.shareText}>
@@ -71,7 +71,7 @@ export const ResultActions: React.FC<ResultActionsProps> = ({
           >
             <AtomicIcon
               name={isSaving ? "hourglass" : "download"}
-              size={22}
+              size="md"
               customColor={tokens.colors.primary}
             />
             <AtomicText style={styles.saveText}>{translations.save}</AtomicText>

@@ -29,7 +29,7 @@ export const ResultHeader: React.FC<ResultHeaderProps> = ({ title, date }) => {
         <View style={styles.badge}>
           <AtomicIcon
             name="calendar-outline"
-            size={14}
+            size="sm"
             customColor={tokens.colors.primary}
           />
           <AtomicText style={styles.dateText}>{date}</AtomicText>

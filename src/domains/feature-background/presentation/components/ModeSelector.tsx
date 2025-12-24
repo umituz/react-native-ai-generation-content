@@ -45,7 +45,7 @@ export const ModeSelector: React.FC<ModeSelectorProps> = memo(
                             >
                                 <AtomicIcon
                                     name={mode.icon}
-                                    size={20}
+                                    size="md"
                                     color={isActive ? "onPrimary" : "onSurface"}
                                 />
                             </TouchableOpacity>

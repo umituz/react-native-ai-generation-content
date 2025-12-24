@@ -47,7 +47,7 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = memo(
                     >
                         <AtomicIcon
                             name="refresh-cw"
-                            size={20}
+                            size="md"
                             color="onSurface"
                         />
                         <AtomicText
@@ -67,7 +67,7 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = memo(
                     >
                         <AtomicIcon
                             name="download"
-                            size={20}
+                            size="md"
                             color="onPrimary"
                         />
                         <AtomicText

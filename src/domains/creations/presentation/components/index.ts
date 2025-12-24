@@ -10,6 +10,7 @@ export { CreationCard } from "./CreationCard";
 export { CreationThumbnail } from "./CreationThumbnail";
 export { CreationImageViewer } from "./CreationImageViewer";
 export { CreationsGrid } from "./CreationsGrid";
+export { CreationsGalleryEmptyState } from "./CreationsGalleryEmptyState";
 export { FilterBottomSheet, type FilterCategory, type FilterOption } from "./FilterBottomSheet";
 
 // Detail Components

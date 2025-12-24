@@ -28,7 +28,7 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
       <View style={styles.frame}>
         <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
         <View style={styles.badge}>
-          <AtomicIcon name="sparkles" size={12} customColor="#fff" />
+          <AtomicIcon name="sparkles" size="xs" customColor="#fff" />
           <AtomicText style={styles.badgeText}>{badgeText}</AtomicText>
         </View>
       </View>

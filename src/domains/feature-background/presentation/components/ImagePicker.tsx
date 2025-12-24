@@ -44,7 +44,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = memo(
                                 >
                                     <AtomicIcon
                                         name="image-plus"
-                                        size={20}
+                                        size="md"
                                         color="onPrimary"
                                     />
                                 </View>
@@ -65,7 +65,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = memo(
                             >
                                 <AtomicIcon
                                     name="upload"
-                                    size={40}
+                                    size="lg"
                                     color="primary"
                                 />
                             </View>

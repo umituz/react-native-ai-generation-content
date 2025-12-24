@@ -9,7 +9,7 @@ import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useCreationsFilter } from "../hooks/useCreationsFilter";
 import { useAlert, AlertMode } from "@umituz/react-native-design-system";
 import { BottomSheetModalRef } from "@umituz/react-native-bottom-sheet";
-import { GalleryHeader, EmptyState, CreationsGrid, FilterBottomSheet, CreationImageViewer, type FilterCategory } from "../components";
+import { GalleryHeader, CreationsGrid, FilterBottomSheet, CreationImageViewer, type FilterCategory, CreationsGalleryEmptyState } from "../components";
 import { getTranslatedTypes, getFilterCategoriesFromConfig } from "../utils/filterUtils";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
@@ -91,59 +91,8 @@ export function CreationsGalleryScreen({
     setSelectedCreation(creation);
   }, []);
 
+
   const styles = useStyles(tokens);
-
-  // Define empty state content based on state
-  const renderEmptyComponent = useMemo(() => {
-    // 1. Loading State
-    if (isLoading && (!creations || creations?.length === 0)) {
-      return (
-        <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={tokens.colors.primary} />
-        </View>
-      );
-    }
-
-    // 2. System Empty State (User has NO creations at all)
-    // We check 'creations' (the full list)
-    if (!creations || creations?.length === 0) {
-      return (
-        <View style={styles.centerContainer}>
-          <EmptyState
-            title={t(config.translations.empty)}
-            description={t(config.translations.emptyDescription)}
-            actionLabel={emptyActionLabel}
-            onAction={onEmptyAction}
-          />
-        </View>
-      );
-    }
-
-    // 3. Filter Empty State (User has creations, but filter returns none)
-    // We check 'filtered' (the displayed list)
-    return (
-      <View style={styles.centerContainer}>
-        <EmptyState
-          title={t("common.no_results") || "No results"}
-          description={t("common.no_results_description") || "Try changing your filters"}
-          actionLabel={t("common.clear_all") || "Clear All"}
-          onAction={clearFilters}
-        />
-      </View>
-    );
-  }, [isLoading, creations, config, t, emptyActionLabel, onEmptyAction, clearFilters, styles.centerContainer, tokens.colors.primary]);
-
-  if (selectedCreation) {
-    return (
-      <CreationDetailScreen
-        creation={selectedCreation}
-        onClose={() => setSelectedCreation(null)}
-        onShare={handleShare}
-        onDelete={handleDelete}
-        t={t}
-      />
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -181,7 +130,17 @@ export function CreationsGalleryScreen({
         onShare={handleShare}
         onDelete={handleDelete}
         contentContainerStyle={{ paddingBottom: insets.bottom + tokens.spacing.xl }}
-        ListEmptyComponent={renderEmptyComponent}
+        ListEmptyComponent={
+          <CreationsGalleryEmptyState
+            isLoading={isLoading}
+            hasCreations={!!creations && creations.length > 0}
+            config={config}
+            t={t}
+            emptyActionLabel={emptyActionLabel}
+            onEmptyAction={onEmptyAction}
+            clearFilters={clearFilters}
+          />
+        }
       />
 
       <CreationImageViewer
@@ -209,11 +168,4 @@ export function CreationsGalleryScreen({
 
 const useStyles = (tokens: any) => StyleSheet.create({
   container: { flex: 1, backgroundColor: tokens.colors.background },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 400,
-    paddingHorizontal: tokens.spacing.xl
-  },
 });
