@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
-import { useSharing } from "@umituz/react-native-sharing";
+import { useSharing } from "@umituz/react-native-design-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";

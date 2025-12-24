@@ -5,7 +5,7 @@
 
 import React from "react";
 import { ScrollView, StyleSheet, Dimensions } from "react-native";
-import { Animated } from "@umituz/react-native-animation";
+import { Animated } from "@umituz/react-native-design-system";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { ResultHeader } from "./ResultHeader";
 import { ResultImageCard } from "./ResultImageCard";
