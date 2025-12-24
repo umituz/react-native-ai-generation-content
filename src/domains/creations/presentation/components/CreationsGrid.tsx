@@ -13,6 +13,10 @@ interface CreationsGridProps {
     readonly onView: (creation: Creation) => void;
     readonly onShare: (creation: Creation) => void;
     readonly onDelete: (creation: Creation) => void;
+    readonly onToggleFavorite?: (creation: Creation) => void;
+    readonly selectedIds?: string[];
+    readonly onSelect?: (creation: Creation) => void;
+    readonly isSelectionMode?: boolean;
     readonly contentContainerStyle?: any;
     readonly ListEmptyComponent?: React.ReactElement | null;
     readonly ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
@@ -26,6 +30,10 @@ export const CreationsGrid: React.FC<CreationsGridProps> = ({
     onView,
     onShare,
     onDelete,
+    onToggleFavorite,
+    selectedIds = [],
+    onSelect,
+    isSelectionMode = false,
     contentContainerStyle,
     ListEmptyComponent,
     ListHeaderComponent,
@@ -40,6 +48,10 @@ export const CreationsGrid: React.FC<CreationsGridProps> = ({
             onView={() => onView(item)}
             onShare={() => onShare(item)}
             onDelete={() => onDelete(item)}
+            onToggleFavorite={onToggleFavorite}
+            isSelected={selectedIds.includes(item.id)}
+            onSelect={onSelect}
+            isSelectionMode={isSelectionMode}
         />
     );
 

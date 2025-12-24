@@ -15,6 +15,8 @@ export interface ICreationsRepository {
     updates: Partial<Creation>,
   ): Promise<boolean>;
   delete(userId: string, creationId: string): Promise<boolean>;
+  deleteMultiple(userId: string, creationIds: string[]): Promise<boolean>;
+  toggleFavorite(userId: string, creationId: string): Promise<boolean>;
   updateShared(
     userId: string,
     creationId: string,

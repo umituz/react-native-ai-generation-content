@@ -52,6 +52,7 @@ export interface CreationsConfig {
   readonly gridColumns?: number;
   readonly pathBuilder?: PathBuilder;
   readonly documentMapper?: DocumentMapper;
+  readonly enableFiltering?: boolean;
 }
 
 export const DEFAULT_TRANSLATIONS: CreationsTranslations = {

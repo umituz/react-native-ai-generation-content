@@ -12,6 +12,7 @@ export interface Creation {
   readonly originalUri?: string;
   readonly createdAt: Date;
   readonly isShared: boolean;
+  readonly isFavorite: boolean;
 }
 
 export interface CreationDocument {
@@ -26,6 +27,7 @@ export interface CreationDocument {
   readonly type?: string;
   readonly status?: string;
   readonly isShared: boolean;
+  readonly isFavorite: boolean;
   readonly createdAt: FirebaseTimestamp | Date; // Allow Date for writing
   readonly completedAt?: FirebaseTimestamp | Date;
 }
@@ -47,5 +49,6 @@ export function mapDocumentToCreation(
     originalUri: data.originalImageUrl || data.originalImage,
     createdAt: (data.createdAt as any)?.toDate?.() || (data.createdAt instanceof Date ? data.createdAt : new Date()),
     isShared: data.isShared ?? false,
+    isFavorite: data.isFavorite ?? false,
   };
 }

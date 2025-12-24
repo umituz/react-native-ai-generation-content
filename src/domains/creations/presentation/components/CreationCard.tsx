@@ -19,6 +19,10 @@ interface CreationCardProps {
   readonly onView?: (creation: Creation) => void;
   readonly onShare: (creation: Creation) => void;
   readonly onDelete: (creation: Creation) => void;
+  readonly onToggleFavorite?: (creation: Creation) => void;
+  readonly isSelected?: boolean;
+  readonly onSelect?: (creation: Creation) => void;
+  readonly isSelectionMode?: boolean;
 }
 
 export function CreationCard({
@@ -27,6 +31,10 @@ export function CreationCard({
   onView,
   onShare,
   onDelete,
+  onToggleFavorite,
+  isSelected,
+  onSelect,
+  isSelectionMode,
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
 
@@ -39,6 +47,14 @@ export function CreationCard({
   const handleDelete = useCallback(
     () => onDelete(creation),
     [creation, onDelete],
+  );
+  const handleToggleFavorite = useCallback(
+    () => onToggleFavorite?.(creation),
+    [creation, onToggleFavorite],
+  );
+  const handleSelect = useCallback(
+    () => onSelect?.(creation),
+    [creation, onSelect],
   );
 
   const formattedDate = useMemo(() => {
@@ -63,10 +79,31 @@ export function CreationCard({
           borderRadius: tokens.spacing.md,
           overflow: "hidden",
           marginBottom: tokens.spacing.md,
+          borderWidth: 1,
+          borderColor: isSelected ? tokens.colors.primary : "transparent",
+        },
+        imageContainer: {
+          width: 100,
+          height: 100,
+          position: "relative",
         },
         thumbnail: {
           width: 100,
           height: 100,
+        },
+
+        selectionOverlay: {
+          position: "absolute",
+          top: 4,
+          left: 4,
+          width: 24,
+          height: 24,
+          borderRadius: 12,
+          backgroundColor: isSelected ? tokens.colors.primary : "rgba(255,255,255,0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+          borderWidth: 1,
+          borderColor: tokens.colors.primary,
         },
         content: {
           flex: 1,
@@ -103,12 +140,24 @@ export function CreationCard({
           alignItems: "center",
         },
       }),
-    [tokens],
+    [tokens, isSelected],
   );
 
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: creation.uri }} style={styles.thumbnail} />
+    <TouchableOpacity
+      activeOpacity={0.9}
+      style={styles.container}
+      onPress={isSelectionMode ? handleSelect : handleView}
+      onLongPress={handleSelect}
+    >
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: creation.uri }} style={styles.thumbnail} />
+        {isSelectionMode && (
+          <View style={styles.selectionOverlay}>
+            {isSelected && <AtomicIcon name="checkmark-circle" size="xs" color="white" />}
+          </View>
+        )}
+      </View>
       <View style={styles.content}>
         <View>
           <View style={styles.typeRow}>
@@ -117,20 +166,31 @@ export function CreationCard({
           </View>
           <AtomicText style={styles.dateText}>{formattedDate}</AtomicText>
         </View>
-        <View style={styles.actions}>
-          {onView && (
-            <TouchableOpacity style={styles.actionBtn} onPress={handleView}>
-              <AtomicIcon name="eye" size="sm" color="primary" />
+        {!isSelectionMode && (
+          <View style={styles.actions}>
+            {onView && (
+              <TouchableOpacity style={styles.actionBtn} onPress={handleView}>
+                <AtomicIcon name="eye" size="sm" color="primary" />
+              </TouchableOpacity>
+            )}
+            {onToggleFavorite && (
+              <TouchableOpacity style={styles.actionBtn} onPress={handleToggleFavorite}>
+                <AtomicIcon
+                  name={creation.isFavorite ? "heart" : "heart-outline"}
+                  size="sm"
+                  color={creation.isFavorite ? "error" : "primary"}
+                />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
+              <AtomicIcon name="share-social" size="sm" color="primary" />
             </TouchableOpacity>
-          )}
-          <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
-            <AtomicIcon name="share-social" size="sm" color="primary" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
-            <AtomicIcon name="trash" size="sm" color="error" />
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
+              <AtomicIcon name="trash" size="sm" color="error" />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

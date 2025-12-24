@@ -157,6 +157,7 @@ export class CreationsRepository
       createdAt: creation.createdAt,
       metadata: creation.metadata || {},
       isShared: creation.isShared || false,
+      isFavorite: creation.isFavorite || false,
     };
 
     await setDoc(docRef, data);
@@ -182,6 +183,9 @@ export class CreationsRepository
       }
       if (updates.isShared !== undefined) {
         updateData.isShared = updates.isShared;
+      }
+      if (updates.isFavorite !== undefined) {
+        updateData.isFavorite = updates.isFavorite;
       }
       if (updates.uri !== undefined) {
         updateData.uri = updates.uri;
@@ -209,6 +213,32 @@ export class CreationsRepository
 
     try {
       await deleteDoc(docRef);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async deleteMultiple(userId: string, creationIds: string[]): Promise<boolean> {
+    try {
+      const promises = creationIds.map((id) => this.delete(userId, id));
+      const results = await Promise.all(promises);
+      return results.every((r) => r);
+    } catch {
+      return false;
+    }
+  }
+
+  async toggleFavorite(userId: string, creationId: string): Promise<boolean> {
+    const docRef = this.getDocRef(userId, creationId);
+    if (!docRef) return false;
+
+    try {
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) return false;
+
+      const current = docSnap.data() as CreationDocument;
+      await updateDoc(docRef, { isFavorite: !current.isFavorite });
       return true;
     } catch {
       return false;

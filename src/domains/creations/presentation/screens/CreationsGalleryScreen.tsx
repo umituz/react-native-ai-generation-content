@@ -1,29 +1,48 @@
 import React, { useMemo, useCallback, useState } from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
-import { useSharing } from "@umituz/react-native-design-system";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View, StyleSheet } from "react-native";
+import {
+  useAppDesignTokens,
+  useSharing,
+  ScreenLayout,
+  ScreenHeader,
+  useAlert,
+  AlertMode,
+  type BottomSheetModalRef
+} from "@umituz/react-native-design-system";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useCreationsFilter } from "../hooks/useCreationsFilter";
-import { useAlert, AlertMode, type BottomSheetModalRef, type FilterCategory } from "@umituz/react-native-design-system";
-import { GalleryHeader, CreationsGrid, FilterBottomSheet, CreationImageViewer, CreationsGalleryEmptyState } from "../components";
+import { useToggleFavorite } from "../hooks/useToggleFavorite";
+import { useDeleteMultipleCreations } from "../hooks/useDeleteMultipleCreations";
+import {
+  GalleryHeader,
+  CreationsGrid,
+  FilterBottomSheet,
+  CreationImageViewer,
+  CreationsGalleryEmptyState
+} from "../components";
+import { SearchBar } from "@umituz/react-native-design-system";
 import { getTranslatedTypes, getFilterCategoriesFromConfig } from "../utils/filterUtils";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
-import { CreationDetailScreen } from "./CreationDetailScreen";
 
 interface CreationsGalleryScreenProps {
   readonly userId: string | null;
   readonly repository: ICreationsRepository;
   readonly config: CreationsConfig;
-  readonly t: (key: string) => string;
+  readonly t: (key: string, options?: any) => string;
   readonly enableEditing?: boolean;
   readonly onImageEdit?: (uri: string, creationId: string) => void | Promise<void>;
   readonly onEmptyAction?: () => void;
   readonly emptyActionLabel?: string;
+  readonly onBackPress?: () => void;
+  readonly headerTitle?: string;
+  readonly showCount?: boolean;
+  readonly enableSearch?: boolean;
+  readonly enableFilter?: boolean;
+  readonly showGalleryHeader?: boolean;
 }
 
 export function CreationsGalleryScreen({
@@ -35,9 +54,14 @@ export function CreationsGalleryScreen({
   onImageEdit,
   onEmptyAction,
   emptyActionLabel,
+  onBackPress,
+  headerTitle,
+  showCount = true,
+  enableSearch = true,
+  enableFilter = false,
+  showGalleryHeader = true,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
-  const insets = useSafeAreaInsets();
   const { share } = useSharing();
   const alert = useAlert();
 
@@ -48,8 +72,27 @@ export function CreationsGalleryScreen({
 
   const { data: creationsData, isLoading, refetch } = useCreations({ userId, repository });
   const creations = creationsData as Creation[] | undefined;
+
   const deleteMutation = useDeleteCreation({ userId, repository });
-  const { filtered, selectedIds, toggleFilter, clearFilters, isFiltered } = useCreationsFilter({ creations });
+  const toggleFavoriteMutation = useToggleFavorite({ userId, repository });
+  const deleteMultipleMutation = useDeleteMultipleCreations({ userId, repository });
+
+  const {
+    filtered,
+    selectedIds: selectedCategoryIds,
+    searchQuery,
+    setSearchQuery,
+    showOnlyFavorites,
+    setShowOnlyFavorites,
+    toggleFilter,
+    clearFilters,
+    isFiltered
+  } = useCreationsFilter({ creations });
+
+  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+
 
   // Refetch creations when screen comes into focus
   useFocusEffect(
@@ -85,38 +128,99 @@ export function CreationsGalleryScreen({
     );
   }, [alert, config, deleteMutation, t]);
 
+  const handleToggleFavorite = useCallback((creation: Creation) => {
+    toggleFavoriteMutation.mutate(creation.id);
+  }, [toggleFavoriteMutation]);
+
+  const toggleSelection = useCallback((creation: Creation) => {
+    setSelectedItemIds(prev => {
+      const isSelected = prev.includes(creation.id);
+      const next = isSelected ? prev.filter(id => id !== creation.id) : [...prev, creation.id];
+      if (next.length === 0) setIsSelectionMode(false);
+      else setIsSelectionMode(true);
+      return next;
+    });
+  }, []);
+
+  const handleDeleteSelected = useCallback(() => {
+    if (selectedItemIds.length === 0) return;
+
+    alert.showWarning(
+      t(config.translations.deleteTitle),
+      t("common.delete_selected_confirm") || `Are you sure you want to delete ${selectedItemIds.length} items?`,
+      {
+        mode: AlertMode.MODAL,
+        actions: [
+          { id: 'cancel', label: t("common.cancel"), onPress: () => { } },
+          {
+            id: 'delete', label: t("common.delete"), style: 'destructive', onPress: async () => {
+              const success = await deleteMultipleMutation.mutateAsync(selectedItemIds);
+              if (success) {
+                setSelectedItemIds([]);
+                setIsSelectionMode(false);
+              }
+            }
+          }
+        ]
+      }
+    );
+  }, [alert, config, deleteMultipleMutation, selectedItemIds, t]);
+
   // Handle viewing a creation - shows detail screen
   const handleView = useCallback((creation: Creation) => {
     setSelectedCreation(creation);
-  }, []);
+    setViewerIndex(filtered.findIndex(c => c.id === creation.id));
+    setViewerVisible(true);
+  }, [filtered]);
 
-
-  const styles = useStyles(tokens);
+  const screenTitle = headerTitle || t(config.translations.title) || 'My Creations';
+  const showScreenHeader = !!onBackPress;
 
   return (
-    <View style={styles.container}>
-      {/* Header is always shown unless we are in "System Empty" without data? 
-          User requested: "herhangi bir creations yoksa buradaki no creations gözükmeli" (if no creations, show no creations).
-          Currently we show header always, except logic below might hide it. 
-          Actually, let's keep header always visible IF we have creations. 
-          If !creations, we pass `renderEmptyComponent`, but Grid has header support. 
-          
-          However, to match previous request "filter gözükebilir" (filter can be visible), we'll keep header outside.
-          BUT, if NO creations, showing filter header is weird. 
-          
-          Let's conditonally render header: Only if we have creations OR loading. 
-          If loaded and 0 creations -> Hide header (Clean Empty State).
-      */}
+    <ScreenLayout
+      edges={['top']}
+      scrollable={false}
+      header={
+        <View>
+          {showScreenHeader && (
+            <ScreenHeader
+              title={isSelectionMode ? `${selectedItemIds.length} Selected` : screenTitle}
+              onBackPress={isSelectionMode ? () => { setIsSelectionMode(false); setSelectedItemIds([]); } : onBackPress}
+              rightAction={isSelectionMode ? {
+                icon: 'trash',
+                onPress: handleDeleteSelected,
+              } : undefined}
+            />
+          )}
+          {!isSelectionMode && enableSearch && (
+            <View style={{ paddingHorizontal: tokens.spacing.md, paddingBottom: tokens.spacing.xs }}>
+              <SearchBar
+                placeholder={t("common.search") || "Search Prompt..."}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+            </View>
+          )}
+        </View>
+      }
+      contentContainerStyle={{ paddingHorizontal: 0 }}
+    >
       {(!creations || creations?.length === 0) && !isLoading ? null : (
-        <GalleryHeader
-          title={t(config.translations.title) || 'My Creations'}
-          count={filtered.length}
-          countLabel={t(config.translations.photoCount) || 'photos'}
-          isFiltered={isFiltered}
-          filterLabel={t(config.translations.filterLabel) || 'Filter'}
-          onFilterPress={() => filterSheetRef.current?.present()}
-          style={{ paddingTop: insets.top + tokens.spacing.md }}
-        />
+        showGalleryHeader ? (
+          <GalleryHeader
+            title={showScreenHeader || isSelectionMode ? '' : screenTitle}
+            count={filtered.length}
+            countLabel=''
+            subtitle={showCount ? t(config.translations.photoCount, { count: filtered.length }) : undefined}
+            isFiltered={isFiltered}
+            filterLabel={t(config.translations.filterLabel) || 'Filter'}
+            onFilterPress={() => filterSheetRef.current?.present()}
+            onFavoritesPress={() => setShowOnlyFavorites(!showOnlyFavorites)}
+            showOnlyFavorites={showOnlyFavorites}
+            isFilterEnabled={enableFilter}
+            showCount={showCount}
+          />
+        ) : null
       )}
 
       {/* Main Content Grid - handles empty/loading via ListEmptyComponent */}
@@ -128,7 +232,11 @@ export function CreationsGalleryScreen({
         onView={handleView}
         onShare={handleShare}
         onDelete={handleDelete}
-        contentContainerStyle={{ paddingBottom: insets.bottom + tokens.spacing.xl }}
+        onToggleFavorite={handleToggleFavorite}
+        isSelectionMode={isSelectionMode}
+        selectedIds={selectedItemIds}
+        onSelect={toggleSelection}
+        contentContainerStyle={{ paddingBottom: tokens.spacing.xl }}
         ListEmptyComponent={
           <CreationsGalleryEmptyState
             isLoading={isLoading}
@@ -156,15 +264,11 @@ export function CreationsGalleryScreen({
       <FilterBottomSheet
         ref={filterSheetRef}
         categories={allCategories}
-        selectedIds={selectedIds}
+        selectedIds={selectedCategoryIds}
         onFilterPress={(id, catId) => toggleFilter(id, allCategories.find(c => c.id === catId)?.multiSelect)}
         onClearFilters={clearFilters}
         title={t(config.translations.filterTitle) || t("common.filter")}
       />
-    </View>
+    </ScreenLayout>
   );
 }
-
-const useStyles = (tokens: any) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: tokens.colors.background },
-});
