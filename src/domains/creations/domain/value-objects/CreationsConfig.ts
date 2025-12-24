@@ -41,7 +41,7 @@ export type PathBuilder = (userId: string) => string[];
  */
 export type DocumentMapper = (id: string, data: CreationDocument) => Creation;
 
-import type { FilterCategory } from "@umituz/react-native-bottom-sheet";
+import type { FilterCategory } from "@umituz/react-native-design-system";
 
 export interface CreationsConfig {
   readonly collectionName: string;

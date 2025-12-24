@@ -1,7 +1,6 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { BottomSheetModal, BottomSheetModalRef } from '@umituz/react-native-bottom-sheet';
-import { useAppDesignTokens, AtomicText, AtomicIcon } from '@umituz/react-native-design-system';
+import { BottomSheetModal, type BottomSheetModalRef, useAppDesignTokens, AtomicText, AtomicIcon } from '@umituz/react-native-design-system';
 
 export interface FilterOption {
     id: string;
