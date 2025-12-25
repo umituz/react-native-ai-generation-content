@@ -1,3 +1,5 @@
+declare const __DEV__: boolean;
+
 import React, { useMemo, useCallback, useState } from "react";
 import { View, StyleSheet, type LayoutChangeEvent } from "react-native";
 import {
@@ -159,7 +161,17 @@ export function CreationsGalleryScreen({
           countLabel={t(config.translations.photoCount) || 'photos'}
           isFiltered={isFiltered}
           filterLabel={t(config.translations.filterLabel) || 'Filter'}
-          onFilterPress={() => filterSheetRef.current?.present()}
+          onFilterPress={() => {
+            if (__DEV__) {
+              // eslint-disable-next-line no-console
+              console.log('[CreationsGallery] Filter button pressed');
+              // eslint-disable-next-line no-console
+              console.log('[CreationsGallery] filterSheetRef.current:', filterSheetRef.current);
+              // eslint-disable-next-line no-console
+              console.log('[CreationsGallery] allCategories:', allCategories);
+            }
+            filterSheetRef.current?.present();
+          }}
           style={{ paddingTop: insets.top + tokens.spacing.md }}
         />
       )}
