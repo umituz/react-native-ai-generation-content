@@ -202,7 +202,6 @@ export function CreationsGalleryScreen({
         onIndexChange={setViewerIndex}
         enableEditing={enableEditing}
         onImageEdit={onImageEdit}
-        selectedCreationId={selectedCreation?.id}
       />
 
       <FilterBottomSheet

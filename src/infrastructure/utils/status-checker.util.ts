@@ -31,9 +31,8 @@ export function checkStatusForErrors(
   const hasStatusError = !!statusError;
 
   // Check logs array for ERROR/FATAL level logs
-  const logs = Array.isArray((status as JobStatus)?.logs)
-    ? (status as JobStatus).logs
-    : [];
+  const rawLogs = (status as JobStatus)?.logs;
+  const logs = Array.isArray(rawLogs) ? rawLogs : [];
   const errorLogs = logs.filter((log) => {
     const level = String(log?.level || "").toUpperCase();
     return level === "ERROR" || level === "FATAL";
