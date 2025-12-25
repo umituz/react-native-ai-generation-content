@@ -10,6 +10,7 @@ interface GalleryHeaderProps {
     readonly countLabel: string;
     readonly isFiltered: boolean;
     readonly onFilterPress: () => void;
+    readonly showFilter?: boolean;
     readonly filterLabel?: string;
     readonly filterIcon?: string;
     readonly style?: ViewStyle;
@@ -21,6 +22,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
     countLabel,
     isFiltered,
     onFilterPress,
+    showFilter = true,
     filterLabel = 'Filter',
     filterIcon = 'filter-outline',
     style,
@@ -36,29 +38,31 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
                     {count} {countLabel}
                 </AtomicText>
             </View>
-            <TouchableOpacity
-                onPress={() => {
-                    if (__DEV__) {
-                        // eslint-disable-next-line no-console
-                        console.log('[GalleryHeader] Filter button pressed');
-                    }
-                    onFilterPress();
-                }}
-                style={[styles.filterButton, isFiltered && styles.filterButtonActive]}
-                activeOpacity={0.7}
-            >
-                <AtomicIcon
-                    name={filterIcon}
-                    size="sm"
-                    color={isFiltered ? "primary" : "secondary"}
-                />
-                <AtomicText style={[styles.filterText, { color: isFiltered ? tokens.colors.primary : tokens.colors.textSecondary }]}>
-                    {filterLabel}
-                </AtomicText>
-                {isFiltered && (
-                    <View style={styles.badge} />
-                )}
-            </TouchableOpacity>
+            {showFilter && (
+                <TouchableOpacity
+                    onPress={() => {
+                        if (__DEV__) {
+                            // eslint-disable-next-line no-console
+                            console.log('[GalleryHeader] Filter button pressed');
+                        }
+                        onFilterPress();
+                    }}
+                    style={[styles.filterButton, isFiltered && styles.filterButtonActive]}
+                    activeOpacity={0.7}
+                >
+                    <AtomicIcon
+                        name={filterIcon}
+                        size="sm"
+                        color={isFiltered ? "primary" : "secondary"}
+                    />
+                    <AtomicText style={[styles.filterText, { color: isFiltered ? tokens.colors.primary : tokens.colors.textSecondary }]}>
+                        {filterLabel}
+                    </AtomicText>
+                    {isFiltered && (
+                        <View style={styles.badge} />
+                    )}
+                </TouchableOpacity>
+            )}
         </View>
     );
 };

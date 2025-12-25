@@ -34,6 +34,7 @@ interface CreationsGalleryScreenProps {
   readonly onImageEdit?: (uri: string, creationId: string) => void | Promise<void>;
   readonly onEmptyAction?: () => void;
   readonly emptyActionLabel?: string;
+  readonly showFilter?: boolean;
 }
 
 export function CreationsGalleryScreen({
@@ -46,6 +47,7 @@ export function CreationsGalleryScreen({
   onImageEdit,
   onEmptyAction,
   emptyActionLabel,
+  showFilter = config.showFilter ?? true,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
   const insets = useSafeAreaInsets();
@@ -160,6 +162,7 @@ export function CreationsGalleryScreen({
           count={filtered.length}
           countLabel={t(config.translations.photoCount) || 'photos'}
           isFiltered={isFiltered}
+          showFilter={showFilter}
           filterLabel={t(config.translations.filterLabel) || 'Filter'}
           onFilterPress={() => {
             if (__DEV__) {

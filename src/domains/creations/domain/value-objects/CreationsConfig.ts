@@ -36,6 +36,7 @@ export interface CreationsConfig {
   readonly types: readonly CreationType[];
   readonly filterCategories?: readonly FilterCategory[];
   readonly translations: CreationsTranslations;
+  readonly showFilter?: boolean;
   readonly maxThumbnails?: number;
   readonly gridColumns?: number;
   readonly documentMapper?: DocumentMapper;
@@ -58,6 +59,7 @@ export const DEFAULT_CONFIG: CreationsConfig = {
   collectionName: "creations",
   types: [],
   translations: DEFAULT_TRANSLATIONS,
+  showFilter: true,
   maxThumbnails: 4,
   gridColumns: 2,
 };

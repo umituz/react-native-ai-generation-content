@@ -35,7 +35,6 @@ export type {
   CreationType,
   CreationsTranslations,
   CreationsConfig,
-  PathBuilder,
   DocumentMapper,
 } from "./domain/value-objects";
 export { DEFAULT_TRANSLATIONS, DEFAULT_CONFIG } from "./domain/value-objects";
