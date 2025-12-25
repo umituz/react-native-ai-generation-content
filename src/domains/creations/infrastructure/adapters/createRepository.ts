@@ -4,7 +4,7 @@
  *
  * Architecture:
  * - Factory pattern for repository creation
- * - Supports dynamic path structure per app
+ * - Standard path: users/{userId}/{collectionName}
  * - Supports custom document mapping per app
  * - App-agnostic: No Firestore instance needed (BaseRepository handles it)
  *
@@ -25,14 +25,8 @@ import type { ICreationsRepository } from "../../domain/repositories/ICreationsR
  * @returns ICreationsRepository instance
  *
  * @example
- * // Basic usage with default path (users/{userId}/photos)
+ * // Basic usage (path: users/{userId}/photos)
  * const repo = createCreationsRepository("photos");
- *
- * @example
- * // Custom path structure
- * const repo = createCreationsRepository("creations", {
- *   pathBuilder: (userId) => ["gallery", userId, "items"],
- * });
  *
  * @example
  * // Custom document mapper
@@ -43,6 +37,7 @@ import type { ICreationsRepository } from "../../domain/repositories/ICreationsR
  *     type: data.category,
  *     createdAt: data.timestamp?.toDate() || new Date(),
  *     isShared: data.public ?? false,
+ *     isFavorite: data.favorite ?? false,
  *   }),
  * });
  */

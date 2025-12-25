@@ -26,17 +26,6 @@ export interface CreationsTranslations {
 }
 
 /**
- * Path builder function type
- * Allows apps to define custom Firestore path structures
- * @example
- * // Default: users/{userId}/creations
- * pathBuilder: (userId) => ["users", userId, "creations"]
- * // Alternative: creations/{userId}/items
- * pathBuilder: (userId) => ["creations", userId, "items"]
- */
-export type PathBuilder = (userId: string) => string[];
-
-/**
  * Document mapper function type
  * Allows apps to map their specific document structure to Creation
  */
@@ -49,7 +38,6 @@ export interface CreationsConfig {
   readonly translations: CreationsTranslations;
   readonly maxThumbnails?: number;
   readonly gridColumns?: number;
-  readonly pathBuilder?: PathBuilder;
   readonly documentMapper?: DocumentMapper;
 }
 

@@ -1,7 +1,7 @@
 import { getDocs, getDoc, query, orderBy } from "firebase/firestore";
+import { type FirestorePathResolver } from "@umituz/react-native-firebase";
 import type { DocumentMapper } from "../../domain/value-objects/CreationsConfig";
 import type { Creation, CreationDocument } from "../../domain/entities/Creation";
-import type { FirestorePathResolver } from "./FirestorePathResolver";
 
 declare const __DEV__: boolean;
 

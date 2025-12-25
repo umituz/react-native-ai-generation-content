@@ -1,31 +1,18 @@
-import { BaseRepository } from "@umituz/react-native-firebase";
+import { BaseRepository, FirestorePathResolver } from "@umituz/react-native-firebase";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 import type { Creation } from "../../domain/entities/Creation";
 import { mapDocumentToCreation } from "../../domain/entities/Creation";
-import type {
-  PathBuilder,
-  DocumentMapper,
-} from "../../domain/value-objects/CreationsConfig";
-import { FirestorePathResolver } from "./FirestorePathResolver";
+import type { DocumentMapper } from "../../domain/value-objects/CreationsConfig";
 import { CreationsFetcher } from "./CreationsFetcher";
 import { CreationsWriter } from "./CreationsWriter";
 
 /**
  * Repository options for dynamic configuration
- * Apps can customize path structure and document mapping
+ * Apps can customize document mapping
  */
 export interface RepositoryOptions {
-  readonly pathBuilder?: PathBuilder;
   readonly documentMapper?: DocumentMapper;
 }
-
-/**
- * Default path builder: users/{userId}/{collectionName}
- */
-const createDefaultPathBuilder =
-  (collectionName: string): PathBuilder =>
-    (userId: string) =>
-      ["users", userId, collectionName];
 
 /**
  * Creations Repository Implementation
@@ -36,7 +23,7 @@ const createDefaultPathBuilder =
  * - Uses FirestorePathResolver for path resolution
  * - Uses CreationsFetcher for read operations
  * - Uses CreationsWriter for write operations
- * - Fully dynamic and configurable per app
+ * - Standard path: users/{userId}/{collectionName}
  */
 export class CreationsRepository
   extends BaseRepository
@@ -46,15 +33,14 @@ export class CreationsRepository
   private readonly writer: CreationsWriter;
 
   constructor(
-    private readonly _collectionName: string,
+    collectionName: string,
     options?: RepositoryOptions,
   ) {
     super();
 
-    const pathBuilder = options?.pathBuilder ?? createDefaultPathBuilder(_collectionName);
     const documentMapper = options?.documentMapper ?? mapDocumentToCreation;
 
-    this.pathResolver = new FirestorePathResolver(pathBuilder, this.getDb());
+    this.pathResolver = new FirestorePathResolver(collectionName, this.getDb());
     this.fetcher = new CreationsFetcher(this.pathResolver, documentMapper);
     this.writer = new CreationsWriter(this.pathResolver);
   }

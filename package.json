@@ -68,7 +68,7 @@
     "@typescript-eslint/parser": "^7.0.0",
     "@umituz/react-native-animation": "*",
     "@umituz/react-native-design-system": "^2.3.33",
-    "@umituz/react-native-firebase": "*",
+    "@umituz/react-native-firebase": "^1.13.20",
     "@umituz/react-native-haptics": "^1.0.2",
     "@umituz/react-native-image": "*",
     "@umituz/react-native-offline": "*",
