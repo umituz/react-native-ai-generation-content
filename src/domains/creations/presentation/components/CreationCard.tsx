@@ -117,7 +117,7 @@ export function CreationCard({
       <View style={styles.content}>
         <View>
           <View style={styles.typeRow}>
-            <AtomicIcon name={icon} size="sm" color="primary" />
+            {icon && <AtomicIcon name={icon} size="sm" color="primary" />}
             <AtomicText style={styles.typeText}>{label}</AtomicText>
           </View>
           <AtomicText style={styles.dateText}>{formattedDate}</AtomicText>

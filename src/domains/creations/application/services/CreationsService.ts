@@ -45,6 +45,7 @@ export class CreationsService extends BaseRepository {
                 metadata: dto.metadata || {},
                 createdAt: new Date(),
                 isShared: false,
+                isFavorite: false,
             });
 
             return creationId;

@@ -14,7 +14,7 @@ export const getFilterCategoriesFromConfig = (
 ): FilterCategory[] => {
     const categories: FilterCategory[] = [];
 
-    if (config.types.length > 0) {
+    if (config.types && config.types.length > 0) {
         categories.push({
             id: 'type',
             title: t(config.translations.filterTitle),
@@ -22,12 +22,12 @@ export const getFilterCategoriesFromConfig = (
             options: config.types.map(type => ({
                 id: type.id,
                 label: t(type.labelKey),
-                icon: type.icon || 'image'
+                icon: type.icon
             }))
         });
     }
 
-    if (config.filterCategories) {
+    if (config.filterCategories && config.filterCategories.length > 0) {
         categories.push(...config.filterCategories);
     }
 
