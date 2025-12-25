@@ -1,3 +1,5 @@
+declare const __DEV__: boolean;
+
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, type ViewStyle } from 'react-native';
 import { AtomicText, AtomicIcon, useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system";
@@ -35,7 +37,13 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
                 </AtomicText>
             </View>
             <TouchableOpacity
-                onPress={onFilterPress}
+                onPress={() => {
+                    if (__DEV__) {
+                        // eslint-disable-next-line no-console
+                        console.log('[GalleryHeader] Filter button pressed');
+                    }
+                    onFilterPress();
+                }}
                 style={[styles.filterButton, isFiltered && styles.filterButtonActive]}
                 activeOpacity={0.7}
             >
