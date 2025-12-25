@@ -95,6 +95,15 @@ export function CreationsGalleryScreen({
     setSelectedCreation(creation);
   }, []);
 
+  // Handle favorite toggle
+  const handleFavorite = useCallback(async (creation: Creation, isFavorite: boolean) => {
+    if (!userId) return;
+    const success = await repository.updateFavorite(userId, creation.id, isFavorite);
+    if (success) {
+      void refetch();
+    }
+  }, [userId, repository, refetch]);
+
   const styles = useStyles(tokens);
 
   const renderEmptyComponent = useMemo(() => (
@@ -152,6 +161,7 @@ export function CreationsGalleryScreen({
         onView={handleView}
         onShare={handleShare}
         onDelete={handleDelete}
+        onFavorite={handleFavorite}
         contentContainerStyle={{ paddingBottom: insets.bottom + tokens.spacing.xl }}
         ListEmptyComponent={renderEmptyComponent}
       />

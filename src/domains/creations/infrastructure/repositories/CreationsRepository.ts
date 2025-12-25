@@ -238,4 +238,20 @@ export class CreationsRepository
       return false;
     }
   }
+
+  async updateFavorite(
+    userId: string,
+    creationId: string,
+    isFavorite: boolean,
+  ): Promise<boolean> {
+    const docRef = this.getDocRef(userId, creationId);
+    if (!docRef) return false;
+
+    try {
+      await updateDoc(docRef, { isFavorite });
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

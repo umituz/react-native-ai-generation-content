@@ -19,6 +19,7 @@ interface CreationCardProps {
   readonly onView?: (creation: Creation) => void;
   readonly onShare: (creation: Creation) => void;
   readonly onDelete: (creation: Creation) => void;
+  readonly onFavorite?: (creation: Creation, isFavorite: boolean) => void;
 }
 
 export function CreationCard({
@@ -27,6 +28,7 @@ export function CreationCard({
   onView,
   onShare,
   onDelete,
+  onFavorite,
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
 
@@ -39,6 +41,10 @@ export function CreationCard({
   const handleDelete = useCallback(
     () => onDelete(creation),
     [creation, onDelete],
+  );
+  const handleFavorite = useCallback(
+    () => onFavorite?.(creation, !creation.isFavorite),
+    [creation, onFavorite],
   );
 
   const formattedDate = useMemo(() => {
@@ -112,7 +118,7 @@ export function CreationCard({
       <View style={styles.content}>
         <View>
           <View style={styles.typeRow}>
-            <AtomicText style={styles.icon}>{icon}</AtomicText>
+            <AtomicIcon name={icon} size="sm" color="primary" />
             <AtomicText style={styles.typeText}>{label}</AtomicText>
           </View>
           <AtomicText style={styles.dateText}>{formattedDate}</AtomicText>
@@ -121,6 +127,15 @@ export function CreationCard({
           {onView && (
             <TouchableOpacity style={styles.actionBtn} onPress={handleView}>
               <AtomicIcon name="eye" size="sm" color="primary" />
+            </TouchableOpacity>
+          )}
+          {onFavorite && (
+            <TouchableOpacity style={styles.actionBtn} onPress={handleFavorite}>
+              <AtomicIcon
+                name={creation.isFavorite ? "heart" : "heart-outline"}
+                size="sm"
+                color={creation.isFavorite ? "error" : "primary"}
+              />
             </TouchableOpacity>
           )}
           <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>

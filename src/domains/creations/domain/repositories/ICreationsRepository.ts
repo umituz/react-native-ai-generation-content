@@ -20,4 +20,9 @@ export interface ICreationsRepository {
     creationId: string,
     isShared: boolean,
   ): Promise<boolean>;
+  updateFavorite(
+    userId: string,
+    creationId: string,
+    isFavorite: boolean,
+  ): Promise<boolean>;
 }
