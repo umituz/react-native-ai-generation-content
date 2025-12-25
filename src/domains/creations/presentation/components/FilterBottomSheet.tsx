@@ -64,10 +64,21 @@ export const FilterBottomSheet = forwardRef<BottomSheetModal, FilterBottomSheetP
         );
     }, [onFilterPress, selectedIds, styles]);
 
+    const backgroundStyle = useMemo(() => ({
+        backgroundColor: tokens.colors.surface,
+    }), [tokens.colors.surface]);
+
+    const handleIndicatorStyle = useMemo(() => ({
+        backgroundColor: tokens.colors.outline,
+    }), [tokens.colors.outline]);
+
     return (
         <BottomSheetModal
             ref={ref}
             snapPoints={snapPoints}
+            backgroundStyle={backgroundStyle}
+            handleIndicatorStyle={handleIndicatorStyle}
+            enablePanDownToClose
         >
             <View style={styles.header}>
                 <AtomicText style={styles.headerTitle}>{title}</AtomicText>
