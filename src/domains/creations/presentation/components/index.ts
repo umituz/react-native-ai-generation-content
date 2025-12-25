@@ -4,6 +4,7 @@
 
 export { GalleryHeader } from "./GalleryHeader";
 export { EmptyState } from "./EmptyState";
+export { GalleryEmptyStates } from "./GalleryEmptyStates";
 export { FilterChips } from "./FilterChips";
 export { CreationsHomeCard } from "./CreationsHomeCard";
 export { CreationCard } from "./CreationCard";

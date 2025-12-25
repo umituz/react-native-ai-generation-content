@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useState } from "react";
-import { View, StyleSheet, ActivityIndicator, type LayoutChangeEvent } from "react-native";
+import { View, StyleSheet, type LayoutChangeEvent } from "react-native";
 import { useAppDesignTokens, useAlert, AlertType, AlertMode, useSharing, type DesignTokens } from "@umituz/react-native-design-system";
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -7,7 +7,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useCreationsFilter } from "../hooks/useCreationsFilter";
-import { GalleryHeader, EmptyState, CreationsGrid, FilterBottomSheet, CreationImageViewer } from "../components";
+import { GalleryHeader, CreationsGrid, FilterBottomSheet, CreationImageViewer, GalleryEmptyStates } from "../components";
 import { getTranslatedTypes, getFilterCategoriesFromConfig } from "../utils/filterUtils";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
@@ -97,43 +97,20 @@ export function CreationsGalleryScreen({
 
   const styles = useStyles(tokens);
 
-  // Define empty state content based on state
-  const renderEmptyComponent = useMemo(() => {
-    // 1. Loading State
-    if (isLoading && (!creations || creations?.length === 0)) {
-      return (
-        <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={tokens.colors.primary} />
-        </View>
-      );
-    }
-
-    // 2. System Empty State (User has NO creations at all)
-    if (!creations || creations?.length === 0) {
-      return (
-        <View style={styles.centerContainer}>
-          <EmptyState
-            title={t(config.translations.empty)}
-            description={t(config.translations.emptyDescription)}
-            actionLabel={emptyActionLabel}
-            onAction={onEmptyAction}
-          />
-        </View>
-      );
-    }
-
-    // 3. Filter Empty State (User has creations, but filter returns none)
-    return (
-      <View style={styles.centerContainer}>
-        <EmptyState
-          title={t("common.no_results") || "No results"}
-          description={t("common.no_results_description") || "Try changing your filters"}
-          actionLabel={t("common.clear_all") || "Clear All"}
-          onAction={clearFilters}
-        />
-      </View>
-    );
-  }, [isLoading, creations, config, t, emptyActionLabel, onEmptyAction, clearFilters, styles.centerContainer, tokens.colors.primary]);
+  const renderEmptyComponent = useMemo(() => (
+    <GalleryEmptyStates
+      isLoading={isLoading}
+      creations={creations}
+      isFiltered={isFiltered}
+      tokens={tokens}
+      t={t}
+      emptyTitle={t(config.translations.empty)}
+      emptyDescription={t(config.translations.emptyDescription)}
+      emptyActionLabel={emptyActionLabel}
+      onEmptyAction={onEmptyAction}
+      onClearFilters={clearFilters}
+    />
+  ), [isLoading, creations, isFiltered, tokens, t, config, emptyActionLabel, onEmptyAction, clearFilters]);
 
   if (selectedCreation) {
     return (
