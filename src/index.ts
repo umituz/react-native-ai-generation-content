@@ -61,6 +61,24 @@ export type {
 export { DEFAULT_POLLING_CONFIG, DEFAULT_PROGRESS_STAGES, DEFAULT_QUEUE_CONFIG } from "./domain/entities";
 
 // =============================================================================
+// DOMAIN LAYER - Processing Modes
+// =============================================================================
+
+export type {
+  ImageProcessingMode,
+  ModeConfig,
+  ModeCatalog,
+} from "./domain/entities/processing-modes.types";
+
+export {
+  DEFAULT_PROCESSING_MODES,
+  getModeConfig,
+  getFreeModes,
+  getPremiumModes,
+  getPromptRequiredModes,
+} from "./domain/constants/processing-modes.constants";
+
+// =============================================================================
 // INFRASTRUCTURE LAYER - Services
 // =============================================================================
 
