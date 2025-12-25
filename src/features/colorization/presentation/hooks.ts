@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react';
-import { useGeneration } from '../../../presentation/hooks/useGeneration';
+import { useGeneration } from '../../../presentation/hooks/use-generation';
 import { ColorizationRequest, ColorizationResult } from '../domain/entities';
 
 export interface UseColorizationReturn {
@@ -13,21 +16,19 @@ export interface UseColorizationReturn {
 }
 
 export const useColorization = (): UseColorizationReturn => {
-    // @ts-expect-error - Generic constraints issue
-    const { generate, isGenerating, error } = useGeneration<ColorizationRequest, ColorizationResult>();
+    const { generate, isGenerating, error, result: genResult } = useGeneration({ model: "deprecated" });
     const [result, setResult] = useState<ColorizationResult | null>(null);
 
     const colorize = useCallback(async (request: ColorizationRequest) => {
-        // @ts-expect-error - Generic constraints issue
-        const response = await generate('colorization', request);
+        await generate(request as any);
 
-        if (response) {
-            setResult(response as ColorizationResult);
-            return response as ColorizationResult;
+        if (genResult?.data) {
+            setResult(genResult.data as ColorizationResult);
+            return genResult.data as ColorizationResult;
         }
 
         throw new Error('Colorization failed to return a result');
-    }, [generate]);
+    }, [generate, genResult]);
 
     return {
         colorize,

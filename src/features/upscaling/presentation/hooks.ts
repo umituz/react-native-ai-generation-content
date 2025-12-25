@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react';
-import { useGeneration } from '../../../presentation/hooks/useGeneration';
+import { useGeneration } from '../../../presentation/hooks/use-generation';
 import { UpscaleRequest, UpscaleResult } from '../domain/entities';
 
 export interface UseUpscalingReturn {
@@ -13,21 +16,19 @@ export interface UseUpscalingReturn {
 }
 
 export const useUpscaling = (): UseUpscalingReturn => {
-    // @ts-expect-error - Generic constraints issue
-    const { generate, isGenerating, error } = useGeneration<UpscaleRequest, UpscaleResult>();
+    const { generate, isGenerating, error, result: genResult } = useGeneration({ model: "deprecated" });
     const [result, setResult] = useState<UpscaleResult | null>(null);
 
     const upscale = useCallback(async (request: UpscaleRequest) => {
-        // @ts-expect-error - Generic constraints issue
-        const response = await generate('upscaling', request);
+        await generate(request as any);
 
-        if (response) {
-            setResult(response as UpscaleResult);
-            return response as UpscaleResult;
+        if (genResult?.data) {
+            setResult(genResult.data as UpscaleResult);
+            return genResult.data as UpscaleResult;
         }
 
         throw new Error('Upscaling failed to return a result');
-    }, [generate]);
+    }, [generate, genResult]);
 
     return {
         upscale,

@@ -45,11 +45,11 @@ export const GenerationProgressContent: React.FC<
         return (
             <View style={[styles.modal, { backgroundColor: activeBgColor }]}>
                 {title && (
-                    <AtomicText type="bodyMedium" style={[styles.title, { color: activeTextColor }]}>{title}</AtomicText>
+                    <AtomicText style={[styles.title, { color: activeTextColor }]}>{title}</AtomicText>
                 )}
 
                 {message && (
-                    <AtomicText type="bodyMedium" style={[styles.message, { color: activeTextColor }]}>
+                    <AtomicText style={[styles.message, { color: activeTextColor }]}>
                         {message}
                     </AtomicText>
                 )}
@@ -62,7 +62,7 @@ export const GenerationProgressContent: React.FC<
                 />
 
                 {hint && (
-                    <AtomicText type="bodyMedium" style={[styles.hint, { color: activeTextColor }]}>{hint}</AtomicText>
+                    <AtomicText style={[styles.hint, { color: activeTextColor }]}>{hint}</AtomicText>
                 )}
 
                 {onDismiss && (
@@ -73,7 +73,7 @@ export const GenerationProgressContent: React.FC<
                         ]}
                         onPress={onDismiss}
                     >
-                        <AtomicText type="bodyMedium" style={styles.dismissText}>{dismissLabel || "OK"}</AtomicText>
+                        <AtomicText style={styles.dismissText}>{dismissLabel || "OK"}</AtomicText>
                     </TouchableOpacity>
                 )}
             </View>

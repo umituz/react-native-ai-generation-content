@@ -31,11 +31,11 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = memo(
                 <AtomicIcon
                     name="alert-circle"
                     size="sm"
-                    color="error"
+                   
                 />
                 <AtomicText
-                    type="bodyMedium"
-                    color="error"
+                    
+                   
                     style={styles.errorText}
                 >
                     {error}

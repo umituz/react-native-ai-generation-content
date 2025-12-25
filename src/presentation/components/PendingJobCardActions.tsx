@@ -57,7 +57,7 @@ export const PendingJobCardActions: React.FC<PendingJobCardActionsProps> = ({
                     style={styles.actionButton}
                     onPress={() => onRetry(id)}
                 >
-                    <AtomicText type="bodyMedium" style={styles.text}>↻</AtomicText>
+                    <AtomicText style={styles.text}>↻</AtomicText>
                 </TouchableOpacity>
             )}
             {onCancel && (
@@ -65,7 +65,7 @@ export const PendingJobCardActions: React.FC<PendingJobCardActionsProps> = ({
                     style={styles.actionButton}
                     onPress={() => onCancel(id)}
                 >
-                    <AtomicText type="bodyMedium" style={styles.errorText}>✕</AtomicText>
+                    <AtomicText style={styles.errorText}>✕</AtomicText>
                 </TouchableOpacity>
             )}
         </View>

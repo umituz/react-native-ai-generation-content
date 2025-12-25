@@ -128,8 +128,8 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
                     {beforeLabel && (
                         <View style={[styles.label, styles.labelLeft, themedStyles.labelLeft]}>
                             <AtomicText
-                                type="bodySmall"
-                                color="textPrimary"
+                                
+                               
                             >
                                 {beforeLabel}
                             </AtomicText>
@@ -139,8 +139,8 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
                     {afterLabel && (
                         <View style={[styles.label, styles.labelRight, themedStyles.labelRight]}>
                             <AtomicText
-                                type="bodySmall"
-                                color="backgroundPrimary"
+                                
+                               
                             >
                                 {afterLabel}
                             </AtomicText>

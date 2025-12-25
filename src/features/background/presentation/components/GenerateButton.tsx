@@ -45,10 +45,8 @@ export const GenerateButton: React.FC<GenerateButtonProps> = memo(
                             name="sparkles"
                             size="md"
                             color={disabled ? "surfaceVariant" : "onPrimary"}
-                            style={styles.icon}
                         />
                         <AtomicText
-                            type="headlineSmall"
                             style={[
                                 styles.text,
                                 {

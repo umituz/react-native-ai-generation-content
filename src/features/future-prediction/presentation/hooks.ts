@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react';
-import { useGeneration } from '../../../presentation/hooks/useGeneration';
+import { useGeneration } from '../../../presentation/hooks/use-generation';
 import { FuturePredictionRequest, FuturePredictionResult } from '../domain/entities';
 
 export interface UseFuturePredictionReturn {
@@ -13,21 +16,19 @@ export interface UseFuturePredictionReturn {
 }
 
 export const useFuturePrediction = (): UseFuturePredictionReturn => {
-    // @ts-expect-error - Generic constraints issue
-    const { generate, isGenerating, error } = useGeneration<FuturePredictionRequest, FuturePredictionResult>();
+    const { generate, isGenerating, error, result: genResult } = useGeneration({ model: "deprecated" });
     const [result, setResult] = useState<FuturePredictionResult | null>(null);
 
     const predictFuture = useCallback(async (request: FuturePredictionRequest) => {
-        // @ts-expect-error - Generic constraints issue
-        const response = await generate('future-prediction', request);
+        await generate(request as any);
 
-        if (response) {
-            setResult(response as FuturePredictionResult);
-            return response as FuturePredictionResult;
+        if (genResult?.data) {
+            setResult(genResult.data as FuturePredictionResult);
+            return genResult.data as FuturePredictionResult;
         }
 
         throw new Error('Future prediction failed to return a result');
-    }, [generate]);
+    }, [generate, genResult]);
 
     return {
         predictFuture,

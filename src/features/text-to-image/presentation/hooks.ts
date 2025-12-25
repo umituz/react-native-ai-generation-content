@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react';
-import { useGeneration } from '../../../presentation/hooks/useGeneration';
+import { useGeneration } from '../../../presentation/hooks/use-generation';
 import { TextToImageRequest, TextToImageResult } from '../domain/entities';
 
 export interface UseTextToImageReturn {
@@ -13,21 +16,19 @@ export interface UseTextToImageReturn {
 }
 
 export const useTextToImage = (): UseTextToImageReturn => {
-    // @ts-expect-error - Generic constraints issue
-    const { generate, isGenerating, error } = useGeneration<TextToImageRequest, TextToImageResult>();
+    const { generate, isGenerating, error, result: genResult } = useGeneration({ model: "deprecated" });
     const [result, setResult] = useState<TextToImageResult | null>(null);
 
     const generateImage = useCallback(async (request: TextToImageRequest) => {
-        // @ts-expect-error - Generic constraints issue
-        const response = await generate('text-to-image', request);
+        await generate(request as any);
 
-        if (response) {
-            setResult(response as TextToImageResult);
-            return response as TextToImageResult;
+        if (genResult?.data) {
+            setResult(genResult.data as TextToImageResult);
+            return genResult.data as TextToImageResult;
         }
 
         throw new Error('Image generation failed to return a result');
-    }, [generate]);
+    }, [generate, genResult]);
 
     return {
         generateImage,

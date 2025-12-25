@@ -45,7 +45,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = memo(
                                     <AtomicIcon
                                         name="image-plus"
                                         size="md"
-                                        color="onPrimary"
+                                       
                                     />
                                 </View>
                             </View>
@@ -66,11 +66,11 @@ export const ImagePicker: React.FC<ImagePickerProps> = memo(
                                 <AtomicIcon
                                     name="upload"
                                     size="lg"
-                                    color="primary"
+                                   
                                 />
                             </View>
                             <AtomicText
-                                type="bodyLarge"
+                                
                                 style={[
                                     styles.placeholderText,
                                     { color: tokens.colors.primary },

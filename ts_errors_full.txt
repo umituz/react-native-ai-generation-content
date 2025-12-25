@@ -1,0 +1,21 @@
+
+> @umituz/react-native-ai-generation-content@1.12.25 typecheck
+> tsc --noEmit
+
+node_modules/@umituz/react-native-firebase/src/auth/infrastructure/config/initializers/FirebaseAuthInitializer.ts(17,8): error TS2307: Cannot find module '@umituz/react-native-sentry' or its corresponding type declarations.
+node_modules/@umituz/react-native-firebase/src/auth/infrastructure/services/anonymous-auth.service.ts(12,8): error TS2307: Cannot find module '@umituz/react-native-sentry' or its corresponding type declarations.
+node_modules/@umituz/react-native-firebase/src/auth/infrastructure/services/apple-auth.service.ts(13,38): error TS2307: Cannot find module 'expo-apple-authentication' or its corresponding type declarations.
+node_modules/@umituz/react-native-firebase/src/auth/infrastructure/services/apple-auth.service.ts(19,8): error TS2307: Cannot find module '@umituz/react-native-sentry' or its corresponding type declarations.
+node_modules/@umituz/react-native-firebase/src/auth/infrastructure/services/google-auth.service.ts(16,8): error TS2307: Cannot find module '@umituz/react-native-sentry' or its corresponding type declarations.
+node_modules/@umituz/react-native-firebase/src/auth/infrastructure/services/reauthentication.service.ts(15,38): error TS2307: Cannot find module 'expo-apple-authentication' or its corresponding type declarations.
+node_modules/@umituz/react-native-image/src/infrastructure/services/ImageStorageService.ts(7,35): error TS2307: Cannot find module '@umituz/react-native-filesystem' or its corresponding type declarations.
+node_modules/@umituz/react-native-image/src/presentation/components/GalleryHeader.tsx(48,33): error TS2322: Type '{ children: string; type: string; style: { color: string; fontWeight: "600"; textAlign: "center"; }; }' is not assignable to type 'IntrinsicAttributes & AtomicTextProps'.
+  Property 'type' does not exist on type 'IntrinsicAttributes & AtomicTextProps'.
+src/domains/creations/presentation/components/EmptyState.tsx(56,32): error TS2339: Property 'borderRadius' does not exist on type 'DesignTokens'.
+src/domains/creations/presentation/components/FilterBottomSheet.tsx(5,15): error TS2724: '"@gorhom/bottom-sheet"' has no exported member named 'BottomSheetModalMethods'. Did you mean 'BottomSheetModal'?
+src/domains/creations/presentation/screens/CreationsGalleryScreen.tsx(3,30): error TS2305: Module '"@umituz/react-native-design-system"' has no exported member 'useAlert'.
+src/domains/creations/presentation/screens/CreationsGalleryScreen.tsx(3,40): error TS2305: Module '"@umituz/react-native-design-system"' has no exported member 'AlertType'.
+src/domains/creations/presentation/screens/CreationsGalleryScreen.tsx(3,51): error TS2305: Module '"@umituz/react-native-design-system"' has no exported member 'AlertMode'.
+src/domains/creations/presentation/screens/CreationsGalleryScreen.tsx(4,15): error TS2724: '"@gorhom/bottom-sheet"' has no exported member named 'BottomSheetModalMethods'. Did you mean 'BottomSheetModal'?
+src/presentation/components/result/GenerationResultContent.tsx(9,10): error TS2305: Module '"@umituz/react-native-design-system"' has no exported member 'Animated'.
+src/presentation/hooks/usePhotoGeneration.ts(8,10): error TS2305: Module '"@umituz/react-native-design-system"' has no exported member 'useAlert'.

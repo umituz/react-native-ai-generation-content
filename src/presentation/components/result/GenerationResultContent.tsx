@@ -6,8 +6,7 @@
 import * as React from "react";
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, Dimensions, type ViewStyle, type StyleProp } from "react-native";
-import { Animated } from "@umituz/react-native-design-system";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { Animated, useAppDesignTokens } from "@umituz/react-native-design-system";
 import { ResultHeader } from "./ResultHeader";
 import { ResultImageCard } from "./ResultImageCard";
 import { ResultStoryCard } from "./ResultStoryCard";
@@ -55,7 +54,7 @@ export const GenerationResultContent: React.FC<GenerationResultContentProps> = (
     container: {
       width: width - 40,
       maxHeight: "90%",
-      backgroundColor: tokens.colors.backgroundPrimary,
+      backgroundColor: tokens.colors.background,
       borderRadius: 28,
       overflow: "hidden",
     },

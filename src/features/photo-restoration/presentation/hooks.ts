@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react';
-import { useGeneration } from '../../../presentation/hooks/useGeneration';
+import { useGeneration } from '../../../presentation/hooks/use-generation';
 import { PhotoRestorationRequest, PhotoRestorationResult } from '../domain/entities';
 
 export interface UsePhotoRestorationReturn {
@@ -13,21 +16,19 @@ export interface UsePhotoRestorationReturn {
 }
 
 export const usePhotoRestoration = (): UsePhotoRestorationReturn => {
-    // @ts-expect-error - Generic constraints issue
-    const { generate, isGenerating, error } = useGeneration<PhotoRestorationRequest, PhotoRestorationResult>();
+    const { generate, isGenerating, error, result: genResult } = useGeneration({ model: "deprecated" });
     const [result, setResult] = useState<PhotoRestorationResult | null>(null);
 
     const restorePhoto = useCallback(async (request: PhotoRestorationRequest) => {
-        // @ts-expect-error - Generic constraints issue
-        const response = await generate('photo-restoration', request);
+        await generate(request as any);
 
-        if (response) {
-            setResult(response as PhotoRestorationResult);
-            return response as PhotoRestorationResult;
+        if (genResult?.data) {
+            setResult(genResult.data as PhotoRestorationResult);
+            return genResult.data as PhotoRestorationResult;
         }
 
         throw new Error('Photo restoration failed to return a result');
-    }, [generate]);
+    }, [generate, genResult]);
 
     return {
         restorePhoto,

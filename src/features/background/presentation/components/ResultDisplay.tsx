@@ -48,10 +48,10 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = memo(
                         <AtomicIcon
                             name="refresh-cw"
                             size="md"
-                            color="onSurface"
+                           
                         />
                         <AtomicText
-                            type="labelLarge"
+                            
                             style={[styles.actionText, { color: tokens.colors.textPrimary }]}
                         >
                             {resetButtonText}
@@ -68,10 +68,10 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = memo(
                         <AtomicIcon
                             name="download"
                             size="md"
-                            color="onPrimary"
+                           
                         />
                         <AtomicText
-                            type="labelLarge"
+                            
                             style={[
                                 styles.actionText,
                                 { color: tokens.colors.backgroundPrimary },

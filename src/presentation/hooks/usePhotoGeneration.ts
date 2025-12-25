@@ -5,6 +5,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useOfflineStore } from "@umituz/react-native-offline";
+import { useAlert } from "@umituz/react-native-design-system";
 import type {
   PhotoGenerationConfig,
   PhotoGenerationState,
@@ -29,6 +30,7 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = unknown>(
     onSuccess,
     onError,
     onSaveComplete,
+    alertMessages,
   } = config;
 
   const [state, setState] = useState<PhotoGenerationState<TResult>>({
@@ -41,6 +43,7 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = unknown>(
   const [status, setStatus] = useState<PhotoGenerationStatus>("idle");
   const isGeneratingRef = useRef(false);
   const offlineStore = useOfflineStore();
+  const { showError } = useAlert();
 
   const createError = useCallback(
     (
@@ -143,6 +146,15 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = unknown>(
           progress: 0,
         });
         setStatus("error");
+
+        const errorMessage =
+          generationError.type === "network_error" ? alertMessages.networkError :
+            generationError.type === "policy_violation" ? alertMessages.policyViolation :
+              generationError.type === "save_failed" ? alertMessages.saveFailed :
+                generationError.type === "credit_failed" ? alertMessages.creditFailed :
+                  alertMessages.unknown;
+
+        void showError("Error", errorMessage);
         onError?.(generationError);
       } finally {
         isGeneratingRef.current = false;
@@ -158,6 +170,8 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = unknown>(
       onSaveComplete,
       createError,
       offlineStore,
+      alertMessages,
+      showError
     ],
   );
 

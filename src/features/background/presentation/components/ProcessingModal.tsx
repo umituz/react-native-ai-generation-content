@@ -35,7 +35,7 @@ export const ProcessingModal: React.FC<ProcessingModalProps> = memo(
                         />
                         {title && (
                             <AtomicText
-                                type="bodyLarge"
+                                
                                 style={[
                                     styles.title,
                                     { color: tokens.colors.textPrimary },
@@ -63,7 +63,7 @@ export const ProcessingModal: React.FC<ProcessingModalProps> = memo(
                                     />
                                 </View>
                                 <AtomicText
-                                    type="bodySmall"
+                                    
                                     style={{ color: tokens.colors.textSecondary }}
                                 >
                                     {Math.round(progress)}%

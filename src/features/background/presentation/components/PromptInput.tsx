@@ -28,7 +28,7 @@ export const PromptInput: React.FC<PromptInputProps> = memo(
             <View style={styles.container}>
                 {label && (
                     <AtomicText
-                        type="labelLarge"
+                        
                         style={[
                             styles.label,
                             {
@@ -47,7 +47,7 @@ export const PromptInput: React.FC<PromptInputProps> = memo(
                     placeholder={placeholder}
                     placeholderTextColor={tokens.colors.textTertiary}
                     multiline
-                    numberOfLines={4}
+                    
                     editable={!isProcessing}
                     style={[
                         styles.input,
@@ -63,7 +63,7 @@ export const PromptInput: React.FC<PromptInputProps> = memo(
                     <>
                         {samplePromptsLabel && (
                             <AtomicText
-                                type="labelMedium"
+                                
                                 style={[
                                     styles.sampleLabel,
                                     {
@@ -92,9 +92,9 @@ export const PromptInput: React.FC<PromptInputProps> = memo(
                                     disabled={isProcessing}
                                 >
                                     <AtomicText
-                                        type="bodySmall"
+                                        
                                         style={{ color: tokens.colors.textSecondary }}
-                                        numberOfLines={1}
+                                        
                                     >
                                         {prompt.text}
                                     </AtomicText>

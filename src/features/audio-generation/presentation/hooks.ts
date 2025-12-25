@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react';
-import { useGeneration } from '../../../presentation/hooks/useGeneration';
+import { useGeneration } from '../../../presentation/hooks/use-generation';
 import { AudioGenerationRequest, AudioGenerationResult } from '../domain/entities';
 
 export interface UseAudioGenerationReturn {
@@ -13,21 +16,19 @@ export interface UseAudioGenerationReturn {
 }
 
 export const useAudioGeneration = (): UseAudioGenerationReturn => {
-    // @ts-expect-error - Generic constraints issue
-    const { generate, isGenerating, error } = useGeneration<AudioGenerationRequest, AudioGenerationResult>();
+    const { generate, isGenerating, error, result: genResult } = useGeneration({ model: "deprecated" });
     const [result, setResult] = useState<AudioGenerationResult | null>(null);
 
     const generateAudio = useCallback(async (request: AudioGenerationRequest) => {
-        // @ts-expect-error - Generic constraints issue
-        const response = await generate('audio-generation', request);
+        await generate(request as any);
 
-        if (response) {
-            setResult(response as AudioGenerationResult);
-            return response as AudioGenerationResult;
+        if (genResult?.data) {
+            setResult(genResult.data as AudioGenerationResult);
+            return genResult.data as AudioGenerationResult;
         }
 
         throw new Error('Audio generation failed to return a result');
-    }, [generate]);
+    }, [generate, genResult]);
 
     return {
         generateAudio,

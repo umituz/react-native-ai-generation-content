@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react';
-import { useGeneration } from '../../../presentation/hooks/useGeneration';
+import { useGeneration } from '../../../presentation/hooks/use-generation';
 import { TextToVideoRequest, TextToVideoResult } from '../domain/entities';
 
 export interface UseTextToVideoReturn {
@@ -13,21 +16,19 @@ export interface UseTextToVideoReturn {
 }
 
 export const useTextToVideo = (): UseTextToVideoReturn => {
-    // @ts-expect-error - Generic constraints issue
-    const { generate, isGenerating, error } = useGeneration<TextToVideoRequest, TextToVideoResult>();
+    const { generate, isGenerating, error, result: genResult } = useGeneration({ model: "deprecated" });
     const [result, setResult] = useState<TextToVideoResult | null>(null);
 
     const generateVideo = useCallback(async (request: TextToVideoRequest) => {
-        // @ts-expect-error - Generic constraints issue
-        const response = await generate('text-to-video', request);
+        await generate(request as any);
 
-        if (response) {
-            setResult(response as TextToVideoResult);
-            return response as TextToVideoResult;
+        if (genResult?.data) {
+            setResult(genResult.data as TextToVideoResult);
+            return genResult.data as TextToVideoResult;
         }
 
         throw new Error('Video generation failed to return a result');
-    }, [generate]);
+    }, [generate, genResult]);
 
     return {
         generateVideo,

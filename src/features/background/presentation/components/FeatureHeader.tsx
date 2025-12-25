@@ -44,7 +44,7 @@ export const FeatureHeader: React.FC<FeatureHeaderProps> = memo(
                 )}
                 {description && (
                     <AtomicText
-                        type="bodyMedium"
+                        
                         style={[
                             styles.description,
                             {

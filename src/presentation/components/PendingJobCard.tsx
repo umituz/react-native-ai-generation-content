@@ -106,8 +106,8 @@ export function PendingJobCard<TInput = unknown, TResult = unknown>({
       )}
       <View style={styles.content}>
         <View>
-          {typeLabel && <AtomicText type="bodyMedium" style={styles.typeText}>{typeLabel}</AtomicText>}
-          <AtomicText type="bodyMedium" style={styles.statusText} numberOfLines={1}>
+          {typeLabel && <AtomicText style={styles.typeText}>{typeLabel}</AtomicText>}
+          <AtomicText style={styles.statusText}>
             {statusText}
           </AtomicText>
           {!isFailed && <PendingJobProgressBar progress={job.progress} />}

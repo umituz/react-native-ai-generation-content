@@ -20,6 +20,14 @@ export interface PhotoGenerationError {
   originalError?: Error;
 }
 
+export interface AlertMessages {
+  networkError: string;
+  policyViolation: string;
+  saveFailed: string;
+  creditFailed: string;
+  unknown: string;
+}
+
 export interface PhotoGenerationConfig<TInput, TResult, TSaveInput> {
   generate: (input: TInput) => Promise<TResult>;
   save?: (result: TResult, input: TInput) => Promise<TSaveInput>;
@@ -29,6 +37,7 @@ export interface PhotoGenerationConfig<TInput, TResult, TSaveInput> {
   onSuccess?: (result: TResult) => void;
   onError?: (error: PhotoGenerationError) => void;
   onSaveComplete?: (saveResult: TSaveInput) => void;
+  alertMessages: AlertMessages;
 }
 
 export interface PhotoGenerationState<TResult = unknown> {
