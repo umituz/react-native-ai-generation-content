@@ -1,54 +1,21 @@
-/**
- * Creations Repository Implementation
- * Extends BaseRepository from @umituz/react-native-firestore
- *
- * Architecture:
- * - Extends BaseRepository for centralized database access
- * - Fully dynamic path structure (configurable per app)
- * - Fully dynamic document mapping (configurable per app)
- * - App-agnostic: Works with any app, no app-specific code
- *
- * This class is designed to be used across hundreds of apps.
- */
-
-declare const __DEV__: boolean;
-
-import {
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-  deleteDoc,
-  updateDoc,
-  query,
-  orderBy,
-  setDoc,
-} from "firebase/firestore";
 import { BaseRepository } from "@umituz/react-native-firebase";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
-import type { Creation, CreationDocument } from "../../domain/entities/Creation";
+import type { Creation } from "../../domain/entities/Creation";
 import { mapDocumentToCreation } from "../../domain/entities/Creation";
 import type {
   PathBuilder,
   DocumentMapper,
 } from "../../domain/value-objects/CreationsConfig";
+import { FirestorePathResolver } from "./FirestorePathResolver";
+import { CreationsFetcher } from "./CreationsFetcher";
+import { CreationsWriter } from "./CreationsWriter";
 
 /**
  * Repository options for dynamic configuration
  * Apps can customize path structure and document mapping
  */
 export interface RepositoryOptions {
-  /**
-   * Custom path builder function
-   * @example (userId) => ["users", userId, "photos"]
-   * @example (userId) => ["creations", userId, "items"]
-   */
   readonly pathBuilder?: PathBuilder;
-
-  /**
-   * Custom document mapper function
-   * Maps Firestore documents to Creation entity
-   */
   readonly documentMapper?: DocumentMapper;
 }
 
@@ -60,112 +27,48 @@ const createDefaultPathBuilder =
     (userId: string) =>
       ["users", userId, collectionName];
 
+/**
+ * Creations Repository Implementation
+ * Delegates to specialized classes for different responsibilities
+ * 
+ * Architecture:
+ * - Extends BaseRepository for centralized database access
+ * - Uses FirestorePathResolver for path resolution
+ * - Uses CreationsFetcher for read operations
+ * - Uses CreationsWriter for write operations
+ * - Fully dynamic and configurable per app
+ */
 export class CreationsRepository
   extends BaseRepository
   implements ICreationsRepository {
-  private readonly pathBuilder: PathBuilder;
-  private readonly documentMapper: DocumentMapper;
+  private readonly pathResolver: FirestorePathResolver;
+  private readonly fetcher: CreationsFetcher;
+  private readonly writer: CreationsWriter;
 
   constructor(
     private readonly _collectionName: string,
     options?: RepositoryOptions,
   ) {
     super();
-    this.pathBuilder =
-      options?.pathBuilder ?? createDefaultPathBuilder(_collectionName);
-    this.documentMapper = options?.documentMapper ?? mapDocumentToCreation;
-  }
 
-  private getUserCollection(userId: string) {
-    const db = this.getDb();
-    if (!db) return null;
-    const pathSegments = this.pathBuilder(userId);
-    return collection(db, pathSegments[0], ...pathSegments.slice(1));
-  }
+    const pathBuilder = options?.pathBuilder ?? createDefaultPathBuilder(_collectionName);
+    const documentMapper = options?.documentMapper ?? mapDocumentToCreation;
 
-  private getDocRef(userId: string, creationId: string) {
-    const db = this.getDb();
-    if (!db) return null;
-    const pathSegments = this.pathBuilder(userId);
-    return doc(db, pathSegments[0], ...pathSegments.slice(1), creationId);
+    this.pathResolver = new FirestorePathResolver(pathBuilder, this.getDb());
+    this.fetcher = new CreationsFetcher(this.pathResolver, documentMapper);
+    this.writer = new CreationsWriter(this.pathResolver);
   }
 
   async getAll(userId: string): Promise<Creation[]> {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[CreationsRepository] getAll()", { userId });
-    }
-
-    const userCollection = this.getUserCollection(userId);
-    if (!userCollection) return [];
-
-    try {
-      const q = query(userCollection, orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log("[CreationsRepository] Fetched:", snapshot.docs.length);
-      }
-
-      return snapshot.docs.map((docSnap) => {
-        const data = docSnap.data() as CreationDocument;
-        return this.documentMapper(docSnap.id, data);
-      });
-    } catch (error) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.error("[CreationsRepository] getAll() ERROR", error);
-      }
-      return [];
-    }
+    return this.fetcher.getAll(userId);
   }
 
   async getById(userId: string, id: string): Promise<Creation | null> {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[CreationsRepository] getById()", { userId, id });
-    }
-
-    const docRef = this.getDocRef(userId, id);
-    if (!docRef) return null;
-
-    try {
-      const docSnap = await getDoc(docRef);
-
-      if (!docSnap.exists()) {
-        if (__DEV__) {
-          // eslint-disable-next-line no-console
-          console.log("[CreationsRepository] Document not found");
-        }
-        return null;
-      }
-
-      const data = docSnap.data() as CreationDocument;
-      return this.documentMapper(docSnap.id, data);
-    } catch (error) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.error("[CreationsRepository] getById() ERROR", error);
-      }
-      return null;
-    }
+    return this.fetcher.getById(userId, id);
   }
 
   async create(userId: string, creation: Creation): Promise<void> {
-    const docRef = this.getDocRef(userId, creation.id);
-    if (!docRef) throw new Error("Firestore not initialized");
-
-    const data: CreationDocument = {
-      type: creation.type,
-      prompt: creation.prompt,
-      uri: creation.uri, // Use uri
-      createdAt: creation.createdAt,
-      metadata: creation.metadata || {},
-      isShared: creation.isShared || false,
-    };
-
-    await setDoc(docRef, data);
+    return this.writer.create(userId, creation);
   }
 
   async update(
@@ -173,54 +76,11 @@ export class CreationsRepository
     id: string,
     updates: Partial<Creation>,
   ): Promise<boolean> {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[CreationsRepository] update()", { userId, id, updates });
-    }
-
-    const docRef = this.getDocRef(userId, id);
-    if (!docRef) return false;
-
-    try {
-      const updateData: Record<string, unknown> = {};
-
-      if (updates.metadata !== undefined) {
-        updateData.metadata = updates.metadata;
-      }
-      if (updates.isShared !== undefined) {
-        updateData.isShared = updates.isShared;
-      }
-      if (updates.uri !== undefined) {
-        updateData.uri = updates.uri;
-      }
-      if (updates.type !== undefined) {
-        updateData.type = updates.type;
-      }
-      if (updates.prompt !== undefined) {
-        updateData.prompt = updates.prompt;
-      }
-
-      await updateDoc(docRef, updateData);
-      return true;
-    } catch (error) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.error("[CreationsRepository] update() ERROR", error);
-      }
-      return false;
-    }
+    return this.writer.update(userId, id, updates);
   }
 
   async delete(userId: string, creationId: string): Promise<boolean> {
-    const docRef = this.getDocRef(userId, creationId);
-    if (!docRef) return false;
-
-    try {
-      await deleteDoc(docRef);
-      return true;
-    } catch {
-      return false;
-    }
+    return this.writer.delete(userId, creationId);
   }
 
   async updateShared(
@@ -228,15 +88,7 @@ export class CreationsRepository
     creationId: string,
     isShared: boolean,
   ): Promise<boolean> {
-    const docRef = this.getDocRef(userId, creationId);
-    if (!docRef) return false;
-
-    try {
-      await updateDoc(docRef, { isShared });
-      return true;
-    } catch {
-      return false;
-    }
+    return this.writer.updateShared(userId, creationId, isShared);
   }
 
   async updateFavorite(
@@ -244,14 +96,6 @@ export class CreationsRepository
     creationId: string,
     isFavorite: boolean,
   ): Promise<boolean> {
-    const docRef = this.getDocRef(userId, creationId);
-    if (!docRef) return false;
-
-    try {
-      await updateDoc(docRef, { isFavorite });
-      return true;
-    } catch {
-      return false;
-    }
+    return this.writer.updateFavorite(userId, creationId, isFavorite);
   }
 }

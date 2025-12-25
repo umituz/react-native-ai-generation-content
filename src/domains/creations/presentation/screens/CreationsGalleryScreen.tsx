@@ -98,12 +98,14 @@ export function CreationsGalleryScreen({
   }, []);
 
   // Handle favorite toggle
-  const handleFavorite = useCallback(async (creation: Creation, isFavorite: boolean) => {
-    if (!userId) return;
-    const success = await repository.updateFavorite(userId, creation.id, isFavorite);
-    if (success) {
-      void refetch();
-    }
+  const handleFavorite = useCallback((creation: Creation, isFavorite: boolean) => {
+    void (async () => {
+      if (!userId) return;
+      const success = await repository.updateFavorite(userId, creation.id, isFavorite);
+      if (success) {
+        void refetch();
+      }
+    })();
   }, [userId, repository, refetch]);
 
   const styles = useStyles(tokens);
