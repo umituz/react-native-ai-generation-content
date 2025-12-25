@@ -4,7 +4,7 @@
  */
 
 import type { Creation, CreationDocument } from "../entities/Creation";
-import type { FilterCategory } from "../../presentation/components/FilterBottomSheet";
+import type { FilterCategory } from "@umituz/react-native-design-system";
 
 export interface CreationType {
   readonly id: string;

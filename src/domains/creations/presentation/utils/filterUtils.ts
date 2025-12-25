@@ -1,5 +1,5 @@
-import { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
-import { FilterCategory } from "../components/FilterBottomSheet";
+import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
+import type { FilterCategory } from "@umituz/react-native-design-system";
 
 /**
  * Transforms the creations configuration into filter categories for the UI.

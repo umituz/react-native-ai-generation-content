@@ -1,13 +1,21 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { View, StyleSheet, type LayoutChangeEvent } from "react-native";
-import { useAppDesignTokens, useAlert, AlertType, AlertMode, useSharing, type DesignTokens } from "@umituz/react-native-design-system";
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import {
+  useAppDesignTokens,
+  useAlert,
+  AlertType,
+  AlertMode,
+  useSharing,
+  FilterBottomSheet,
+  type DesignTokens,
+  type BottomSheetModalRef
+} from "@umituz/react-native-design-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useCreationsFilter } from "../hooks/useCreationsFilter";
-import { GalleryHeader, CreationsGrid, FilterBottomSheet, CreationImageViewer, GalleryEmptyStates } from "../components";
+import { GalleryHeader, CreationsGrid, CreationImageViewer, GalleryEmptyStates } from "../components";
 import { getTranslatedTypes, getFilterCategoriesFromConfig } from "../utils/filterUtils";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
@@ -45,7 +53,7 @@ export function CreationsGalleryScreen({
   const [viewerVisible, setViewerVisible] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
-  const filterSheetRef = React.useRef<BottomSheetModal>(null);
+  const filterSheetRef = React.useRef<BottomSheetModalRef>(null);
 
   const { data: creationsData, isLoading, refetch } = useCreations({ userId, repository });
   const creations = creationsData;
