@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
 import type { IPromptGenerationService } from '../../domain/repositories/IAIPromptServices';
 import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
 import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
@@ -43,7 +42,7 @@ export const usePromptGeneration = (
   const generatePrompt = useCallback(
     async (templateId: string, variables: Record<string, unknown>): Promise<void> => {
       clearError();
-      
+
       try {
         const templateResult = await templateRepository.findById(templateId);
         if (!templateResult.success || !templateResult.data) {
@@ -69,8 +68,8 @@ export const usePromptGeneration = (
 
         await historyRepository.save(newPrompt);
         setGeneratedPrompt(newPrompt);
-        
-        await loadHistory(50);
+
+        void loadHistory(50);
       } catch (error) {
         setError('An unexpected error occurred');
       }
@@ -110,7 +109,7 @@ export const usePromptGeneration = (
       clearError();
       try {
         await historyRepository.save(prompt);
-        await loadHistory(50);
+        void loadHistory(50);
       } catch (error) {
         setError('Failed to save to history');
       }

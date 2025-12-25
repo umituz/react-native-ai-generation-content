@@ -83,24 +83,24 @@ export class BackgroundRemovalService implements IBackgroundRemovalService {
     this.promptService = new PromptGenerationService();
   }
 
-  async generateTemplate(config: BackgroundRemovalConfig): Promise<AIPromptResult<AIPromptTemplate>> {
+  generateTemplate(config: BackgroundRemovalConfig): Promise<AIPromptResult<AIPromptTemplate>> {
     try {
       if (!this.validateConfig(config)) {
-        return {
+        return Promise.resolve({
           success: false,
           error: 'VALIDATION_ERROR',
           message: 'Invalid background removal configuration'
-        };
+        });
       }
 
       const template = this.createBackgroundRemovalTemplate(config);
-      return { success: true, data: template };
-    } catch (error) {
-      return {
+      return Promise.resolve({ success: true, data: template });
+    } catch {
+      return Promise.resolve({
         success: false,
         error: 'GENERATION_FAILED',
         message: 'Failed to generate background removal template'
-      };
+      });
     }
   }
 

@@ -1,7 +1,7 @@
 import type { Theme } from './types';
 import { useTheme } from './theme';
 
-export const createStyleSheet = <T extends Record<string, any>>(
+export const createStyleSheet = <T extends Record<string, unknown>>(
   styles: (theme: Theme) => T
 ): T => {
   const theme = useTheme();

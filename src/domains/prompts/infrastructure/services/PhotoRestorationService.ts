@@ -59,24 +59,24 @@ export class PhotoRestorationService implements IPhotoRestorationService {
     this.promptService = new PromptGenerationService();
   }
 
-  async generateTemplate(config: PhotoRestorationConfig): Promise<AIPromptResult<AIPromptTemplate>> {
+  generateTemplate(config: PhotoRestorationConfig): Promise<AIPromptResult<AIPromptTemplate>> {
     try {
       if (!this.validateConfig(config)) {
-        return {
+        return Promise.resolve({
           success: false,
           error: 'VALIDATION_ERROR',
           message: 'Invalid photo restoration configuration'
-        };
+        });
       }
 
       const template = this.createPhotoRestorationTemplate(config);
-      return { success: true, data: template };
-    } catch (error) {
-      return {
+      return Promise.resolve({ success: true, data: template });
+    } catch {
+      return Promise.resolve({
         success: false,
         error: 'GENERATION_FAILED',
         message: 'Failed to generate photo restoration template'
-      };
+      });
     }
   }
 

@@ -1,30 +1,24 @@
 import type { AIPromptTemplate } from '../entities/AIPromptTemplate';
 import type { AIPromptResult } from '../entities/types';
-import type { FaceSwapConfig, FaceSwapGenerationResult } from '../entities/FaceSwapConfig';
+import type { FaceSwapConfig } from '../entities/FaceSwapConfig';
 import type {
-  PhotoRestorationConfig,
-  PhotoRestorationResult
+  PhotoRestorationConfig
 } from '../entities/PhotoRestorationConfig';
 import type {
   ImageEnhancementConfig,
-  ImageEnhancementResult,
   EnhancementAdjustments
 } from '../entities/ImageEnhancementConfig';
 import type {
-  StyleTransferConfig,
-  StyleTransferResult
+  StyleTransferConfig
 } from '../entities/StyleTransferConfig';
 import type {
-  BackgroundRemovalConfig,
-  BackgroundRemovalResult
+  BackgroundRemovalConfig
 } from '../entities/BackgroundRemovalConfig';
 import type {
-  TextGenerationConfig,
-  TextGenerationResult
+  TextGenerationConfig
 } from '../entities/TextGenerationConfig';
 import type {
-  ColorizationConfig,
-  ColorizationResult
+  ColorizationConfig
 } from '../entities/ColorizationConfig';
 import type {
   FuturePredictionConfig,

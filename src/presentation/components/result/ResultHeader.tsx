@@ -3,7 +3,8 @@
  * Header with title and date badge
  */
 
-import React from "react";
+import * as React from "react";
+import { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   AtomicText,
@@ -18,29 +19,8 @@ export interface ResultHeaderProps {
 
 export const ResultHeader: React.FC<ResultHeaderProps> = ({ title, date }) => {
   const tokens = useAppDesignTokens();
-  const styles = createStyles(tokens);
 
-  if (!title && !date) return null;
-
-  return (
-    <View style={styles.container}>
-      {title && <AtomicText style={styles.title}>{title}</AtomicText>}
-      {date && (
-        <View style={styles.badge}>
-          <AtomicIcon
-            name="calendar-outline"
-            size="sm"
-            customColor={tokens.colors.primary}
-          />
-          <AtomicText style={styles.dateText}>{date}</AtomicText>
-        </View>
-      )}
-    </View>
-  );
-};
-
-const createStyles = (tokens: any) =>
-  StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       alignItems: "center",
       paddingHorizontal: 24,
@@ -60,7 +40,7 @@ const createStyles = (tokens: any) =>
       gap: 6,
       paddingHorizontal: 14,
       paddingVertical: 6,
-      backgroundColor: `${tokens.colors.primary}15`,
+      backgroundColor: tokens.colors.primaryContainer,
       borderRadius: 16,
     },
     dateText: {
@@ -68,4 +48,23 @@ const createStyles = (tokens: any) =>
       fontWeight: "600",
       color: tokens.colors.primary,
     },
-  });
+  }), [tokens]);
+
+  if (!title && !date) return null;
+
+  return (
+    <View style={styles.container}>
+      {title && <AtomicText style={styles.title}>{title}</AtomicText>}
+      {date && (
+        <View style={styles.badge}>
+          <AtomicIcon
+            name="calendar-outline"
+            size="sm"
+            color="primary"
+          />
+          <AtomicText style={styles.dateText}>{date}</AtomicText>
+        </View>
+      )}
+    </View>
+  );
+};

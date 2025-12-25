@@ -10,7 +10,8 @@ export interface FuturePredictionSettings {
     readonly outputType: FuturePredictionOutputType;
     readonly personCount: 1 | 2;
     readonly includeDate: boolean;
-    readonly language: string;
+    readonly language: string; // Language code (e.g. 'en', 'tr')
+    readonly languageName?: string; // Full language name provided by app (e.g. 'Turkish', 'English')
     readonly tone?: string; // e.g. 'romantic', 'professional', 'funny', 'dramatic'
     readonly subjectRole?: string; // e.g. 'couple', 'best friends', 'business partners', 'parents'
     readonly year?: number; // Optional specific year for prediction

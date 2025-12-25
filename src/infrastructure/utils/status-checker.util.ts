@@ -34,7 +34,7 @@ export function checkStatusForErrors(
   const logs = Array.isArray((status as JobStatus)?.logs)
     ? (status as JobStatus).logs
     : [];
-  const errorLogs = (logs as AILogEntry[]).filter((log) => {
+  const errorLogs = logs.filter((log) => {
     const level = String(log?.level || "").toUpperCase();
     return level === "ERROR" || level === "FATAL";
   });
@@ -44,9 +44,9 @@ export function checkStatusForErrors(
   const errorLogMessage =
     errorLogs.length > 0
       ? (errorLogs[0] as AILogEntry & { text?: string; content?: string })
-          ?.message ||
-        (errorLogs[0] as AILogEntry & { text?: string })?.text ||
-        (errorLogs[0] as AILogEntry & { content?: string })?.content
+        ?.message ||
+      (errorLogs[0] as AILogEntry & { text?: string })?.text ||
+      (errorLogs[0] as AILogEntry & { content?: string })?.content
       : undefined;
 
   // Combine error messages

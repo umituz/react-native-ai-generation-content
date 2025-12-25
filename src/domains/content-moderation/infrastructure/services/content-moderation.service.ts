@@ -18,7 +18,6 @@ import { videoModerator } from "./moderators/video.moderator";
 import { voiceModerator } from "./moderators/voice.moderator";
 import { rulesRegistry } from "../rules/rules-registry";
 
-declare const __DEV__: boolean;
 
 interface ServiceConfig {
   suggestionMessages?: SuggestionMessages;
@@ -28,15 +27,6 @@ interface ServiceConfig {
 
 class ContentModerationService {
   configure(config: ServiceConfig): void {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[ContentModeration] Configure:", {
-        hasSuggestionMessages: !!config.suggestionMessages,
-        hasValidationLimits: !!config.validationLimits,
-        customRulesCount: config.customRules?.length ?? 0,
-      });
-    }
-
     if (config.suggestionMessages) {
       textModerator.setSuggestionMessages(config.suggestionMessages);
       voiceModerator.setSuggestionMessages(config.suggestionMessages);
@@ -59,15 +49,7 @@ class ContentModerationService {
     }
   }
 
-  async moderate(context: ModerationContext): Promise<ModerationResult> {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[ContentModeration] Moderate started:", {
-        contentType: context.contentType,
-        contentLength: context.content?.length ?? 0,
-      });
-    }
-
+  moderate(context: ModerationContext): Promise<ModerationResult> {
     const result = this.moderateByType(context.contentType, context.content);
     const moderationResult: ModerationResult = {
       isAllowed: result.isAllowed,
@@ -76,25 +58,15 @@ class ContentModerationService {
       suggestedAction: this.determineAction(result.violations),
     };
 
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[ContentModeration] Moderate completed:", {
-        contentType: context.contentType,
-        isAllowed: moderationResult.isAllowed,
-        violationsCount: moderationResult.violations?.length ?? 0,
-        suggestedAction: moderationResult.suggestedAction,
-      });
-    }
-
-    return moderationResult;
+    return Promise.resolve(moderationResult);
   }
 
-  async isContentAllowed(
+  isContentAllowed(
     content: string,
     contentType: ContentType
   ): Promise<boolean> {
     const result = this.moderateByType(contentType, content);
-    return result.isAllowed;
+    return Promise.resolve(result.isAllowed);
   }
 
   moderateSync(

@@ -18,7 +18,7 @@ export interface UsePhotoGenerationReturn<TInput, TResult> extends PhotoGenerati
   status: PhotoGenerationStatus;
 }
 
-export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
+export const usePhotoGeneration = <TInput, TResult, TSaveInput = unknown>(
   config: PhotoGenerationConfig<TInput, TResult, TSaveInput>,
 ): UsePhotoGenerationReturn<TInput, TResult> => {
   const {
@@ -58,7 +58,6 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
   const generate = useCallback(
     async (input: TInput) => {
       if (isGeneratingRef.current) {
-        if (__DEV__) console.warn("[usePhotoGeneration] Generation already in progress");
         return;
       }
 
@@ -98,7 +97,7 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
             throw createError(
               "save_failed",
               "Failed to save result",
-              saveError as Error,
+              saveError instanceof Error ? saveError : new Error(String(saveError)),
             );
           }
         }
@@ -109,9 +108,8 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
         if (deductCredits) {
           try {
             await deductCredits();
-          } catch (deductError) {
-            if (__DEV__)
-              console.error("[usePhotoGeneration] Credit deduction failed", deductError);
+          } catch {
+            // Silently fail credit deduction as generation succeeded
           }
         }
 
@@ -123,13 +121,20 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = any>(
         });
         setStatus("success");
         onSuccess?.(result);
-      } catch (error: any) {
-        const generationError =
-          error.type
-            ? error
-            : error.name === "ContentPolicyViolationError"
-              ? createError("policy_violation", "Content policy violation", error)
-              : createError("unknown", error.message || "Generation failed", error);
+      } catch (err: unknown) {
+        let generationError: PhotoGenerationError;
+
+        if (err && typeof err === "object" && "type" in err && "message" in err) {
+          generationError = err as PhotoGenerationError;
+        } else if (err instanceof Error) {
+          if (err.name === "ContentPolicyViolationError") {
+            generationError = createError("policy_violation", "Content policy violation", err);
+          } else {
+            generationError = createError("unknown", err.message || "Generation failed", err);
+          }
+        } else {
+          generationError = createError("unknown", "Generation failed");
+        }
 
         setState({
           isGenerating: false,

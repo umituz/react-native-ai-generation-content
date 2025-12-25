@@ -3,7 +3,8 @@
  * @description Main feature component composing all sub-components
  */
 
-import React, { useCallback, useState } from "react";
+import * as React from "react";
+import { useCallback, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import type {
@@ -96,7 +97,7 @@ export const BackgroundFeature: React.FC<BackgroundFeatureProps> = ({
                 <ImagePicker
                     imageUri={feature.imageUri}
                     isProcessing={feature.isProcessing}
-                    onSelectImage={feature.selectImage}
+                    onSelectImage={() => { void feature.selectImage(); }}
                     placeholderText={placeholderText}
                 />
 
@@ -115,7 +116,7 @@ export const BackgroundFeature: React.FC<BackgroundFeatureProps> = ({
                 <ResultDisplay
                     imageUrl={feature.processedUrl}
                     isProcessing={feature.isProcessing}
-                    onSave={handleSave}
+                    onSave={() => { void handleSave(); }}
                     onReset={handleReset}
                     saveButtonText={saveButtonText}
                     resetButtonText={resetButtonText}
@@ -124,7 +125,7 @@ export const BackgroundFeature: React.FC<BackgroundFeatureProps> = ({
                 <GenerateButton
                     isDisabled={isDisabled}
                     isProcessing={feature.isProcessing}
-                    onPress={handleProcess}
+                    onPress={() => { void handleProcess(); }}
                     buttonText={generateButtonText}
                 />
             </ScrollView>

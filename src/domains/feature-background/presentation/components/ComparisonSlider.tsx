@@ -3,7 +3,8 @@
  * @description Before/After comparison slider for images
  */
 
-import React, { memo, useState, useRef } from "react";
+import * as React from "react";
+import { memo, useState, useRef, useMemo } from "react";
 import {
     View,
     StyleSheet,
@@ -42,9 +43,45 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
             })
         ).current;
 
+        const themedStyles = useMemo(() => StyleSheet.create({
+            container: {
+                width: "100%",
+                aspectRatio: 1,
+                borderRadius: 20,
+                overflow: "hidden",
+            },
+            originalContainer: {
+                position: "absolute",
+                top: 0,
+                left: 0,
+                bottom: 0,
+                overflow: "hidden",
+                borderRightWidth: 2,
+                borderRightColor: tokens.colors.surface,
+            },
+            sliderHandle: {
+                position: "absolute",
+                top: "50%",
+                left: -20,
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: -20,
+                backgroundColor: tokens.colors.backgroundPrimary,
+            },
+            labelLeft: {
+                backgroundColor: tokens.colors.surface,
+            },
+            labelRight: {
+                backgroundColor: tokens.colors.primary,
+            }
+        }), [tokens]);
+
         return (
             <View
-                style={styles.container}
+                style={themedStyles.container}
                 onLayout={(e) => {
                     containerWidth.current = e.nativeEvent.layout.width;
                 }}
@@ -57,7 +94,7 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
                     />
 
                     <View
-                        style={[styles.originalContainer, { width: `${sliderPosition}%` }]}
+                        style={[themedStyles.originalContainer, { width: `${sliderPosition}%` }]}
                     >
                         <Image
                             source={{ uri: originalUri }}
@@ -70,12 +107,7 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
                         style={[styles.sliderLine, { left: `${sliderPosition}%` }]}
                         {...panResponder.panHandlers}
                     >
-                        <View
-                            style={[
-                                styles.sliderHandle,
-                                { backgroundColor: tokens.colors.backgroundPrimary },
-                            ]}
-                        >
+                        <View style={themedStyles.sliderHandle}>
                             <View style={styles.handleBars}>
                                 <View
                                     style={[
@@ -94,16 +126,10 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
                     </View>
 
                     {beforeLabel && (
-                        <View
-                            style={[
-                                styles.label,
-                                styles.labelLeft,
-                                { backgroundColor: tokens.colors.surface },
-                            ]}
-                        >
+                        <View style={[styles.label, styles.labelLeft, themedStyles.labelLeft]}>
                             <AtomicText
                                 type="bodySmall"
-                                style={{ color: tokens.colors.textPrimary }}
+                                color="textPrimary"
                             >
                                 {beforeLabel}
                             </AtomicText>
@@ -111,16 +137,10 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
                     )}
 
                     {afterLabel && (
-                        <View
-                            style={[
-                                styles.label,
-                                styles.labelRight,
-                                { backgroundColor: tokens.colors.primary },
-                            ]}
-                        >
+                        <View style={[styles.label, styles.labelRight, themedStyles.labelRight]}>
                             <AtomicText
                                 type="bodySmall"
-                                style={{ color: tokens.colors.backgroundPrimary }}
+                                color="backgroundPrimary"
                             >
                                 {afterLabel}
                             </AtomicText>
@@ -133,12 +153,6 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
 );
 
 const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        aspectRatio: 1,
-        borderRadius: 20,
-        overflow: "hidden",
-    },
     imageContainer: {
         flex: 1,
         position: "relative",
@@ -147,32 +161,12 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
     },
-    originalContainer: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        bottom: 0,
-        overflow: "hidden",
-        borderRightWidth: 2,
-        borderRightColor: "#FFFFFF",
-    },
     sliderLine: {
         position: "absolute",
         top: 0,
         bottom: 0,
         width: 2,
         marginLeft: -1,
-    },
-    sliderHandle: {
-        position: "absolute",
-        top: "50%",
-        left: -20,
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: -20,
     },
     handleBars: {
         flexDirection: "row",

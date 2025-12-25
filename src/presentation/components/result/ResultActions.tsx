@@ -3,7 +3,8 @@
  * Action buttons for generation results
  */
 
-import React from "react";
+import * as React from "react";
+import { useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import {
   AtomicText,
@@ -34,56 +35,8 @@ export const ResultActions: React.FC<ResultActionsProps> = ({
   translations,
 }) => {
   const tokens = useAppDesignTokens();
-  const styles = createStyles(tokens);
 
-  return (
-    <View style={styles.container}>
-      {onRetry && (
-        <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-          <AtomicIcon name="refresh" size="sm" customColor={tokens.colors.primary} />
-          <AtomicText style={styles.retryText}>{translations.retry}</AtomicText>
-        </TouchableOpacity>
-      )}
-
-      <View style={styles.buttons}>
-        {onShare && (
-          <TouchableOpacity
-            style={[styles.button, styles.shareButton]}
-            onPress={onShare}
-            disabled={isSharing}
-          >
-            <AtomicIcon
-              name={isSharing ? "hourglass" : "share-social"}
-              size="md"
-              customColor="#fff"
-            />
-            <AtomicText style={styles.shareText}>
-              {isSharing ? translations.sharing : translations.share}
-            </AtomicText>
-          </TouchableOpacity>
-        )}
-
-        {onSave && (
-          <TouchableOpacity
-            style={[styles.button, styles.saveButton]}
-            onPress={onSave}
-            disabled={isSaving}
-          >
-            <AtomicIcon
-              name={isSaving ? "hourglass" : "download"}
-              size="md"
-              customColor={tokens.colors.primary}
-            />
-            <AtomicText style={styles.saveText}>{translations.save}</AtomicText>
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-  );
-};
-
-const createStyles = (tokens: any) =>
-  StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       paddingHorizontal: 20,
       paddingBottom: 20,
@@ -120,7 +73,7 @@ const createStyles = (tokens: any) =>
     shareText: {
       fontSize: 15,
       fontWeight: "700",
-      color: "#fff",
+      color: tokens.colors.onPrimary,
     },
     saveButton: {
       backgroundColor: tokens.colors.surface,
@@ -132,4 +85,50 @@ const createStyles = (tokens: any) =>
       fontWeight: "700",
       color: tokens.colors.primary,
     },
-  });
+  }), [tokens]);
+
+  return (
+    <View style={styles.container}>
+      {onRetry && (
+        <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
+          <AtomicIcon name="refresh" size="sm" color="primary" />
+          <AtomicText style={styles.retryText}>{translations.retry}</AtomicText>
+        </TouchableOpacity>
+      )}
+
+      <View style={styles.buttons}>
+        {onShare && (
+          <TouchableOpacity
+            style={[styles.button, styles.shareButton]}
+            onPress={onShare}
+            disabled={isSharing}
+          >
+            <AtomicIcon
+              name={isSharing ? "hourglass" : "share-social"}
+              size="md"
+              color="onPrimary"
+            />
+            <AtomicText style={styles.shareText}>
+              {isSharing ? translations.sharing : translations.share}
+            </AtomicText>
+          </TouchableOpacity>
+        )}
+
+        {onSave && (
+          <TouchableOpacity
+            style={[styles.button, styles.saveButton]}
+            onPress={onSave}
+            disabled={isSaving}
+          >
+            <AtomicIcon
+              name={isSaving ? "hourglass" : "download"}
+              size="md"
+              color="primary"
+            />
+            <AtomicText style={styles.saveText}>{translations.save}</AtomicText>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+};

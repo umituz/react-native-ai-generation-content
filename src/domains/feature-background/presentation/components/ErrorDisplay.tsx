@@ -3,7 +3,8 @@
  * @description Displays error messages
  */
 
-import React, { memo } from "react";
+import * as React from "react";
+import { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import {
     AtomicText,
@@ -29,12 +30,13 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = memo(
             >
                 <AtomicIcon
                     name="alert-circle"
-                    size={20}
+                    size="sm"
                     color="error"
                 />
                 <AtomicText
                     type="bodyMedium"
-                    style={[styles.errorText, { color: tokens.colors.error }]}
+                    color="error"
+                    style={styles.errorText}
                 >
                     {error}
                 </AtomicText>

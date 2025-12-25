@@ -67,24 +67,24 @@ export class ImageEnhancementService implements IImageEnhancementService {
     this.promptService = new PromptGenerationService();
   }
 
-  async generateTemplate(config: ImageEnhancementConfig): Promise<AIPromptResult<AIPromptTemplate>> {
+  generateTemplate(config: ImageEnhancementConfig): Promise<AIPromptResult<AIPromptTemplate>> {
     try {
       if (!this.validateConfig(config)) {
-        return {
+        return Promise.resolve({
           success: false,
           error: 'VALIDATION_ERROR',
           message: 'Invalid image enhancement configuration'
-        };
+        });
       }
 
       const template = this.createImageEnhancementTemplate(config);
-      return { success: true, data: template };
-    } catch (error) {
-      return {
+      return Promise.resolve({ success: true, data: template });
+    } catch {
+      return Promise.resolve({
         success: false,
         error: 'GENERATION_FAILED',
         message: 'Failed to generate image enhancement template'
-      };
+      });
     }
   }
 

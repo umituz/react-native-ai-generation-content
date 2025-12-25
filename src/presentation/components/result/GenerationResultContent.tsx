@@ -3,8 +3,9 @@
  * Composition of result components for CelebrationModal
  */
 
-import React from "react";
-import { ScrollView, StyleSheet, Dimensions } from "react-native";
+import * as React from "react";
+import { useMemo } from "react";
+import { ScrollView, StyleSheet, Dimensions, type ViewStyle, type StyleProp } from "react-native";
 import { Animated } from "@umituz/react-native-design-system";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { ResultHeader } from "./ResultHeader";
@@ -35,7 +36,7 @@ export interface GenerationResultContentProps {
     retry: string;
     aiGenerated: string;
   };
-  modalStyle?: any;
+  modalStyle?: StyleProp<ViewStyle>;
 }
 
 export const GenerationResultContent: React.FC<GenerationResultContentProps> = ({
@@ -49,7 +50,23 @@ export const GenerationResultContent: React.FC<GenerationResultContentProps> = (
   modalStyle,
 }) => {
   const tokens = useAppDesignTokens();
-  const styles = createStyles(tokens);
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      width: width - 40,
+      maxHeight: "90%",
+      backgroundColor: tokens.colors.backgroundPrimary,
+      borderRadius: 28,
+      overflow: "hidden",
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingTop: 24,
+      paddingBottom: 20,
+    },
+  }), [tokens]);
 
   return (
     <Animated.View style={[styles.container, modalStyle]}>
@@ -73,21 +90,3 @@ export const GenerationResultContent: React.FC<GenerationResultContentProps> = (
     </Animated.View>
   );
 };
-
-const createStyles = (tokens: any) =>
-  StyleSheet.create({
-    container: {
-      width: width - 40,
-      maxHeight: "90%",
-      backgroundColor: tokens.colors.backgroundPrimary,
-      borderRadius: 28,
-      overflow: "hidden",
-    },
-    scrollView: {
-      flex: 1,
-    },
-    scrollContent: {
-      paddingTop: 24,
-      paddingBottom: 20,
-    },
-  });

@@ -181,6 +181,11 @@ export {
   getFutureYear,
 } from './domain/entities/FuturePredictionConfig';
 
+export {
+  IDENTITY_INSTRUCTION,
+  createScenarioPrompt,
+} from './infrastructure/services/FuturePredictionService';
+
 // =============================================================================
 // DOMAIN LAYER - Repository Interfaces
 // =============================================================================

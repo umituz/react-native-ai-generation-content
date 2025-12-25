@@ -1,26 +1,26 @@
 import { useState, useCallback } from 'react';
-import type { 
+import type {
   FaceSwapConfig
 } from '../../domain/entities/FaceSwapConfig';
-import type { 
+import type {
   PhotoRestorationConfig
 } from '../../domain/entities/PhotoRestorationConfig';
-import type { 
+import type {
   ImageEnhancementConfig
 } from '../../domain/entities/ImageEnhancementConfig';
-import type { 
+import type {
   StyleTransferConfig
 } from '../../domain/entities/StyleTransferConfig';
-import type { 
+import type {
   BackgroundRemovalConfig
 } from '../../domain/entities/BackgroundRemovalConfig';
-import type { 
+import type {
   TextGenerationConfig
 } from '../../domain/entities/TextGenerationConfig';
-import type { 
+import type {
   ColorizationConfig
 } from '../../domain/entities/ColorizationConfig';
-import type { 
+import type {
   IFaceSwapService,
   IPhotoRestorationService,
   IImageEnhancementService,
@@ -34,8 +34,10 @@ import type { IPromptHistoryRepository } from '../../domain/repositories/IPrompt
 import type { GeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
 import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
 import { useAsyncState } from './useAsyncState';
+import type { AIPromptResult } from '../../domain/entities/types';
+import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
 
-export type AIConfig = 
+export type AIConfig =
   | { type: 'face-swap'; config: FaceSwapConfig }
   | { type: 'photo-restoration'; config: PhotoRestorationConfig }
   | { type: 'image-enhancement'; config: ImageEnhancementConfig }
@@ -86,11 +88,11 @@ export const useAIServices = (
   const processRequest = useCallback(async (aiConfig: AIConfig): Promise<void> => {
     clearError();
     setCurrentService(aiConfig.type);
-    
+
     try {
-      let templateResult;
-      let promptResult;
-      
+      let templateResult: AIPromptResult<AIPromptTemplate> | undefined;
+      let promptResult: AIPromptResult<string> | undefined;
+
       switch (aiConfig.type) {
         case 'face-swap':
           templateResult = await services.faceSwap.generateTemplate(aiConfig.config);
@@ -98,74 +100,74 @@ export const useAIServices = (
             promptResult = await services.faceSwap.generatePrompt(templateResult.data, aiConfig.config);
           }
           break;
-          
+
         case 'photo-restoration':
           templateResult = await services.photoRestoration.generateTemplate(aiConfig.config);
           if (templateResult.success && templateResult.data) {
             promptResult = await services.photoRestoration.generatePrompt(templateResult.data, aiConfig.config);
           }
           break;
-          
+
         case 'image-enhancement':
           templateResult = await services.imageEnhancement.generateTemplate(aiConfig.config);
           if (templateResult.success && templateResult.data) {
             promptResult = await services.imageEnhancement.generatePrompt(templateResult.data, aiConfig.config);
           }
           break;
-          
+
         case 'style-transfer':
           templateResult = await services.styleTransfer.generateTemplate(aiConfig.config);
           if (templateResult.success && templateResult.data) {
             promptResult = await services.styleTransfer.generatePrompt(templateResult.data, aiConfig.config);
           }
           break;
-          
+
         case 'background-removal':
           templateResult = await services.backgroundRemoval.generateTemplate(aiConfig.config);
           if (templateResult.success && templateResult.data) {
             promptResult = await services.backgroundRemoval.generatePrompt(templateResult.data, aiConfig.config);
           }
           break;
-          
+
         case 'text-generation':
           templateResult = await services.textGeneration.generateTemplate(aiConfig.config);
           if (templateResult.success && templateResult.data) {
             promptResult = await services.textGeneration.generatePrompt(templateResult.data, aiConfig.config);
           }
           break;
-          
+
         case 'colorization':
           templateResult = await services.colorization.generateTemplate(aiConfig.config);
           if (templateResult.success && templateResult.data) {
             promptResult = await services.colorization.generatePrompt(templateResult.data, aiConfig.config);
           }
           break;
-          
+
         default:
           setError('Unknown AI service type');
           return;
       }
-      
+
       if (!templateResult?.success || !templateResult.data) {
         setError('Failed to generate template');
         return;
       }
-      
-      if (!promptResult?.success) {
+
+      if (!promptResult?.success || !promptResult.data) {
         setError('Failed to generate prompt');
         return;
       }
-      
+
       const newPrompt = createGeneratedPrompt({
         templateId: templateResult.data.id,
         generatedText: promptResult.data,
         variables: aiConfig.config as unknown as Record<string, unknown>,
       });
-      
+
       await repositories.history.save(newPrompt);
       setGeneratedPrompt(newPrompt);
-      
-    } catch (error) {
+
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setCurrentService(null);
@@ -182,7 +184,7 @@ export const useAIServices = (
         default:
           return [];
       }
-    } catch (error) {
+    } catch {
       setError('Failed to load available styles');
       return [];
     }

@@ -5,7 +5,7 @@
  * Translations provided by main app via props.
  */
 
-import React from "react";
+import * as React from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import {
   AtomicText,
@@ -59,7 +59,7 @@ export const FaceValidationStatus: React.FC<FaceValidationStatusProps> = ({
         <AtomicIcon
           name="alert-circle"
           size="sm"
-          customColor={tokens.colors.error}
+          color="error"
         />
         <AtomicText style={[styles.text, { color: tokens.colors.error }]}>
           {labels.error}
@@ -88,7 +88,7 @@ export const FaceValidationStatus: React.FC<FaceValidationStatusProps> = ({
       <AtomicIcon
         name={valid ? "checkmark-circle" : "close-circle"}
         size="sm"
-        customColor={valid ? tokens.colors.success : tokens.colors.error}
+        color={valid ? "success" : "error"}
       />
       <AtomicText
         style={[

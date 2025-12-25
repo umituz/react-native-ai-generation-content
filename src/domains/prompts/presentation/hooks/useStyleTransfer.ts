@@ -109,7 +109,7 @@ export const useStyleTransfer = (
   }, [setResult, clearError]);
 
   useEffect(() => {
-    getAvailableStyles();
+    void getAvailableStyles();
   }, [getAvailableStyles]);
 
   return {

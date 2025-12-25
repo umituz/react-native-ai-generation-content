@@ -72,24 +72,24 @@ export class TextGenerationService implements ITextGenerationService {
     this.promptService = new PromptGenerationService();
   }
 
-  async generateTemplate(config: TextGenerationConfig): Promise<AIPromptResult<AIPromptTemplate>> {
+  generateTemplate(config: TextGenerationConfig): Promise<AIPromptResult<AIPromptTemplate>> {
     try {
       if (!this.validateConfig(config)) {
-        return {
+        return Promise.resolve({
           success: false,
           error: 'VALIDATION_ERROR',
           message: 'Invalid text generation configuration'
-        };
+        });
       }
 
       const template = this.createTextGenerationTemplate(config);
-      return { success: true, data: template };
-    } catch (error) {
-      return {
+      return Promise.resolve({ success: true, data: template });
+    } catch {
+      return Promise.resolve({
         success: false,
         error: 'GENERATION_FAILED',
         message: 'Failed to generate text template'
-      };
+      });
     }
   }
 

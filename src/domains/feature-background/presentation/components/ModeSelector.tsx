@@ -3,10 +3,10 @@
  * @description Horizontal scrollable mode selection toolbar
  */
 
-import React, { memo } from "react";
+import * as React from "react";
+import { memo } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import {
-    AtomicText,
     AtomicIcon,
     useAppDesignTokens,
 } from "@umituz/react-native-design-system";

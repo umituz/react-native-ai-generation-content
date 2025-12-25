@@ -25,7 +25,7 @@ export const parseDetectionResponse = (
       return createFailedResult("Invalid response format");
     }
 
-    const parsed = JSON.parse(jsonMatch[0]);
+    const parsed = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
 
     return {
       hasFace: Boolean(parsed.hasFace),

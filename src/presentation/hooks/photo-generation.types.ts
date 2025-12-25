@@ -3,12 +3,12 @@
  * Generic types for photo-based AI generation workflows
  */
 
-export interface PhotoGenerationInput<TMetadata = any> {
+export interface PhotoGenerationInput<TMetadata = unknown> {
   photos: Array<{ uri: string; base64: string }>;
   metadata?: TMetadata;
 }
 
-export interface PhotoGenerationResult<TResult = any> {
+export interface PhotoGenerationResult<TResult = unknown> {
   success: boolean;
   data?: TResult;
   error?: PhotoGenerationError;
@@ -23,6 +23,7 @@ export interface PhotoGenerationError {
 export interface PhotoGenerationConfig<TInput, TResult, TSaveInput> {
   generate: (input: TInput) => Promise<TResult>;
   save?: (result: TResult, input: TInput) => Promise<TSaveInput>;
+  buildMetadata?: (input: TInput) => Record<string, unknown>;
   checkCredits?: () => Promise<boolean>;
   deductCredits?: () => Promise<void>;
   onSuccess?: (result: TResult) => void;
@@ -30,7 +31,7 @@ export interface PhotoGenerationConfig<TInput, TResult, TSaveInput> {
   onSaveComplete?: (saveResult: TSaveInput) => void;
 }
 
-export interface PhotoGenerationState<TResult = any> {
+export interface PhotoGenerationState<TResult = unknown> {
   isGenerating: boolean;
   result: TResult | null;
   error: PhotoGenerationError | null;

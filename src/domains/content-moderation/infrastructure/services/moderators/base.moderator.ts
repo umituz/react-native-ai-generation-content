@@ -36,7 +36,7 @@ export abstract class BaseModerator {
 
   protected getSuggestion(type: ViolationType): string {
     if (this.customSuggestions?.[type]) {
-      return this.customSuggestions[type] as string;
+      return this.customSuggestions[type];
     }
     return DEFAULT_SUGGESTIONS[type] || DEFAULT_SUGGESTIONS.default;
   }

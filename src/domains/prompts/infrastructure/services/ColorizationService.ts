@@ -87,24 +87,24 @@ export class ColorizationService implements IColorizationService {
     this.promptService = new PromptGenerationService();
   }
 
-  async generateTemplate(config: ColorizationConfig): Promise<AIPromptResult<AIPromptTemplate>> {
+  generateTemplate(config: ColorizationConfig): Promise<AIPromptResult<AIPromptTemplate>> {
     try {
       if (!this.validateConfig(config)) {
-        return {
+        return Promise.resolve({
           success: false,
           error: 'VALIDATION_ERROR',
           message: 'Invalid colorization configuration'
-        };
+        });
       }
 
       const template = this.createColorizationTemplate(config);
-      return { success: true, data: template };
-    } catch (error) {
-      return {
+      return Promise.resolve({ success: true, data: template });
+    } catch {
+      return Promise.resolve({
         success: false,
         error: 'GENERATION_FAILED',
         message: 'Failed to generate colorization template'
-      };
+      });
     }
   }
 

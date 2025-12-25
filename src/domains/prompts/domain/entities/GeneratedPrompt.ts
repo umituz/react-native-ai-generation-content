@@ -1,4 +1,3 @@
-import type { AIPromptTemplate } from './AIPromptTemplate';
 
 export interface GeneratedPrompt {
   readonly id: string;

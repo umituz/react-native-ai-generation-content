@@ -3,7 +3,6 @@ import type { FaceSwapConfig, FaceSwapGenerationResult } from '../../domain/enti
 import type { IFaceSwapService } from '../../domain/repositories/IAIPromptServices';
 import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
 import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
-import type { GeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
 import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
 import { useAsyncState } from './useAsyncState';
 
@@ -35,7 +34,7 @@ export const useFaceSwap = (
 
   const generateFaceSwapPrompt = useCallback(async (config: FaceSwapConfig): Promise<void> => {
     clearError();
-    
+
     try {
       const templateResult = await faceSwapService.generateTemplate(config);
       if (!templateResult.success || !templateResult.data) {

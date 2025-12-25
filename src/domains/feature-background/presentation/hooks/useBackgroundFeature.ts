@@ -85,10 +85,11 @@ export function useBackgroundFeature(
         [imageUri, prompt, mode, config]
     );
 
-    const save = useCallback(async (): Promise<void> => {
+    const save = useCallback((): Promise<void> => {
         if (!processedUrl) {
-            return;
+            return Promise.resolve();
         }
+        return Promise.resolve();
     }, [processedUrl]);
 
     const reset = useCallback((): void => {

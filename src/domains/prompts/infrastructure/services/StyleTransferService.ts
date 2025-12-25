@@ -72,24 +72,24 @@ export class StyleTransferService implements IStyleTransferService {
     this.initializeDefaultStyles();
   }
 
-  async generateTemplate(config: StyleTransferConfig): Promise<AIPromptResult<AIPromptTemplate>> {
+  generateTemplate(config: StyleTransferConfig): Promise<AIPromptResult<AIPromptTemplate>> {
     try {
       if (!this.validateConfig(config)) {
-        return {
+        return Promise.resolve({
           success: false,
           error: 'VALIDATION_ERROR',
           message: 'Invalid style transfer configuration'
-        };
+        });
       }
 
       const template = this.createStyleTransferTemplate(config);
-      return { success: true, data: template };
-    } catch (error) {
-      return {
+      return Promise.resolve({ success: true, data: template });
+    } catch {
+      return Promise.resolve({
         success: false,
         error: 'GENERATION_FAILED',
         message: 'Failed to generate style transfer template'
-      };
+      });
     }
   }
 
@@ -114,7 +114,7 @@ export class StyleTransferService implements IStyleTransferService {
     return validateStyleTransferConfig(config);
   }
 
-  async getAvailableStyles(): Promise<string[]> {
+  getAvailableStyles(): Promise<string[]> {
     return Promise.resolve([...this.availableStyles]);
   }
 

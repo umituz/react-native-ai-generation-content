@@ -13,13 +13,13 @@ export interface SynchronousGenerationInput {
   userId?: string;
   type?: string;
   languageCode?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
-export interface SynchronousGenerationConfig<T = any> {
+export interface SynchronousGenerationConfig<T = unknown> {
   checkCredits?: (userId: string, type: string) => Promise<boolean>;
   deductCredits?: (userId: string, type: string) => Promise<void>;
-  execute: (prompt: string, metadata?: Record<string, any>) => Promise<T>;
+  execute: (prompt: string, metadata?: Record<string, unknown>) => Promise<T>;
 }
 
 export async function generateSynchronously<T = string>(

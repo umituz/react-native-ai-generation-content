@@ -3,7 +3,8 @@
  * Displays generated image with AI badge
  */
 
-import React from "react";
+import * as React from "react";
+import { useMemo } from "react";
 import { View, Image, StyleSheet } from "react-native";
 import {
   AtomicText,
@@ -21,23 +22,8 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
   badgeText,
 }) => {
   const tokens = useAppDesignTokens();
-  const styles = createStyles(tokens);
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.frame}>
-        <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
-        <View style={styles.badge}>
-          <AtomicIcon name="sparkles" size="xs" customColor="#fff" />
-          <AtomicText style={styles.badgeText}>{badgeText}</AtomicText>
-        </View>
-      </View>
-    </View>
-  );
-};
-
-const createStyles = (tokens: any) =>
-  StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       paddingHorizontal: 20,
       marginBottom: 20,
@@ -60,13 +46,26 @@ const createStyles = (tokens: any) =>
       gap: 4,
       paddingHorizontal: 10,
       paddingVertical: 5,
-      backgroundColor: "rgba(0,0,0,0.6)",
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
       borderRadius: 12,
     },
     badgeText: {
       fontSize: 10,
       fontWeight: "700",
-      color: "#fff",
+      color: "#FFFFFF",
       letterSpacing: 0.5,
     },
-  });
+  }), [tokens]);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.frame}>
+        <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+        <View style={styles.badge}>
+          <AtomicIcon name="sparkles" size="xs" color="onPrimary" />
+          <AtomicText style={styles.badgeText}>{badgeText}</AtomicText>
+        </View>
+      </View>
+    </View>
+  );
+};

@@ -12,6 +12,54 @@ import {
 } from '../../domain/entities/FuturePredictionConfig';
 import { PromptGenerationService } from './PromptGenerationService';
 
+/**
+ * Core preservation instruction for photorealistic couple/family transformations
+ */
+export const IDENTITY_INSTRUCTION = `CRITICAL PRESERVATION LOCK:
+{
+  "policy": "PRESERVE BOTH SUBJECTS' IDENTITIES & ENFORCE STRICT PHOTOREALISM",
+  "rule_1": "The output MUST depict the EXACT SAME TWO PEOPLE from the input photos.",
+  "rule_2": "STYLE: Always render as a HIGH-END PHOTOREALISTIC photograph. 8k resolution, cinematic lighting, ultra-detailed textures.",
+  "rule_3": "STRICTLY PROHIBITED: Anime, cartoons, illustrations, sketches, or 3D character renders. NO non-human stylization.",
+  "rule_4": "Preserve both persons' facial layouts, eye colors, skin tones, and unique features while placing them in the new scenario.",
+  "rule_5": "Both subjects must appear naturally together in the same frame with realistic proportions."
+}`;
+
+/**
+ * Creates a scenario transformation prompt with structured JSON-like format
+ */
+export const createScenarioPrompt = (
+    scenarioName: string,
+    subjectA: string,
+    subjectB: string,
+    costume: string,
+    environment: string,
+    additionalDetails?: string,
+) => `
+${IDENTITY_INSTRUCTION}
+
+TRANSFORMATION_REQUEST:
+{
+  "target_scenario": "${scenarioName}",
+  "subjects": {
+    "person_A": "${subjectA}",
+    "person_B": "${subjectB}"
+  },
+  "modifications": {
+    "appearance_update": "${costume.replace(/\n/g, " ").trim()}",
+    "environment_update": "${environment.replace(/\n/g, " ").trim()}"
+    ${additionalDetails ? `,"additional_details": "${additionalDetails.replace(/\n/g, " ").trim()}"` : ""}
+  },
+  "visual_constraints": {
+    "style_matching": "Render as a premium DSLR photograph",
+    "face_preservation": "Maintain 100% identity of BOTH persons from input photos",
+    "lighting": "Realistic professional studio or outdoor cinematic lighting",
+    "composition": "Both subjects prominently visible, natural poses"
+  }
+}
+
+FINAL COMMAND: Create a strictly photorealistic image of these two specific people in a ${scenarioName} scenario. No matter what the input style is, the result MUST be real-life looking people in a premium quality photograph.`;
+
 const IMAGE_PROMPT_TEMPLATE = `
 Generate a single high-quality, photorealistic image of {{subjectA}}{{#if subjectB}} and {{subjectB}}{{/if}}.
 Role/Relationship: {{subjectRole}}
@@ -48,36 +96,36 @@ export class FuturePredictionService implements IFuturePredictionService {
         this.promptService = new PromptGenerationService();
     }
 
-    async generateTemplate(
+    generateTemplate(
         config: FuturePredictionConfig
     ): Promise<AIPromptResult<AIPromptTemplate>> {
         if (!this.validateConfig(config)) {
-            return {
+            return Promise.resolve({
                 success: false,
                 error: 'VALIDATION_ERROR',
                 message: 'Invalid future prediction configuration',
-            };
+            });
         }
 
         const template = this.createTemplate(config);
-        return { success: true, data: template };
+        return Promise.resolve({ success: true, data: template });
     }
 
-    async generatePrompts(
+    generatePrompts(
         config: FuturePredictionConfig
     ): Promise<AIPromptResult<FuturePredictionResult>> {
         if (!this.validateConfig(config)) {
-            return {
+            return Promise.resolve({
                 success: false,
                 error: 'VALIDATION_ERROR',
                 message: 'Invalid configuration',
-            };
+            });
         }
 
         const imagePrompt = this.buildImagePrompt(config);
         const storyPrompt = this.buildStoryPrompt(config);
 
-        return {
+        return Promise.resolve({
             success: true,
             data: {
                 imagePrompt,
@@ -89,7 +137,7 @@ export class FuturePredictionService implements IFuturePredictionService {
                     generatedAt: Date.now(),
                 },
             },
-        };
+        });
     }
 
     validateConfig(config: FuturePredictionConfig): boolean {
@@ -123,10 +171,10 @@ export class FuturePredictionService implements IFuturePredictionService {
             .replace(/{{promptModifier}}/g, config.promptModifier)
             .replace(/{{futureYear}}/g, String(futureYear));
 
-        if (config.settings.language && config.settings.language !== 'en') {
+        if (config.settings.languageName) {
             prompt = prompt.replace(
                 /{{#if language}}(.*?){{\/if}}/g,
-                `$1`.replace(/{{language}}/g, this.getLanguageName(config.settings.language))
+                `$1`.replace(/{{language}}/g, config.settings.languageName)
             );
         } else {
             prompt = prompt.replace(/{{#if language}}.*?{{\/if}}/g, '');
@@ -152,25 +200,5 @@ export class FuturePredictionService implements IFuturePredictionService {
             },
             version: '1.0.0',
         });
-    }
-
-    private getLanguageName(code: string): string {
-        const languages: Record<string, string> = {
-            tr: 'Turkish',
-            es: 'Spanish',
-            fr: 'French',
-            de: 'German',
-            it: 'Italian',
-            pt: 'Portuguese',
-            ru: 'Russian',
-            ja: 'Japanese',
-            ko: 'Korean',
-            zh: 'Chinese',
-            ar: 'Arabic',
-            hi: 'Hindi',
-            th: 'Thai',
-            vi: 'Vietnamese',
-        };
-        return languages[code] || 'English';
     }
 }

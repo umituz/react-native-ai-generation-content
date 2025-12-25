@@ -1,10 +1,9 @@
 import type { IFaceSwapService } from '../../domain/repositories/IAIPromptServices';
-import type { 
+import type {
   AIPromptTemplate
 } from '../../domain/entities/AIPromptTemplate';
-import type { 
-  FaceSwapConfig, 
-  FaceSwapGenerationResult,
+import type {
+  FaceSwapConfig,
   FaceSwapSafety
 } from '../../domain/entities/FaceSwapConfig';
 import type { AIPromptCategory } from '../../domain/entities/types';
@@ -82,29 +81,29 @@ export class FaceSwapService implements IFaceSwapService {
     this.initializeDefaultStyles();
   }
 
-  async generateTemplate(config: FaceSwapConfig): Promise<AIPromptResult<AIPromptTemplate>> {
+  generateTemplate(config: FaceSwapConfig): Promise<AIPromptResult<AIPromptTemplate>> {
     try {
       if (!this.validateConfig(config)) {
-        return { 
-          success: false, 
-          error: 'INVALID_VARIABLES', 
-          message: 'Invalid face swap configuration' 
-        };
+        return Promise.resolve({
+          success: false,
+          error: 'INVALID_VARIABLES',
+          message: 'Invalid face swap configuration'
+        });
       }
 
       const template = this.createFaceSwapTemplate(config);
-      return { success: true, data: template };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'GENERATION_FAILED', 
-        message: 'Failed to generate face swap template' 
-      };
+      return Promise.resolve({ success: true, data: template });
+    } catch {
+      return Promise.resolve({
+        success: false,
+        error: 'GENERATION_FAILED',
+        message: 'Failed to generate face swap template'
+      });
     }
   }
 
   async generatePrompt(
-    template: AIPromptTemplate, 
+    template: AIPromptTemplate,
     config: FaceSwapConfig
   ): Promise<AIPromptResult<string>> {
     const variables = {
@@ -123,7 +122,7 @@ export class FaceSwapService implements IFaceSwapService {
     return validateFaceSwapConfig(config);
   }
 
-  async getAvailableStyles(): Promise<string[]> {
+  getAvailableStyles(): Promise<string[]> {
     return Promise.resolve([...this.availableStyles]);
   }
 
@@ -147,7 +146,7 @@ export class FaceSwapService implements IFaceSwapService {
 
   private createFaceSwapTemplate(config: FaceSwapConfig): AIPromptTemplate {
     const templateId = `face-swap-${config.styleName.toLowerCase().replace(/\s+/g, '-')}`;
-    
+
     return createAIPromptTemplate({
       id: templateId,
       name: `Face Swap: ${config.styleName}`,

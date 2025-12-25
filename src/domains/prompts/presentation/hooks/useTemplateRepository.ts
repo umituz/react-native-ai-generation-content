@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
-import type { AIPromptCategory, AIPromptResult } from '../../domain/entities/types';
+import type { AIPromptCategory } from '../../domain/entities/types';
 import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
 import { useAsyncState } from './useAsyncState';
 
@@ -77,7 +77,7 @@ export const useTemplateRepository = (
     const result = await repository.save(template);
 
     if (result.success) {
-      loadAllTemplates();
+      void loadAllTemplates();
     } else {
       setError(('message' in result && result.message) || 'Failed to save template');
     }
@@ -91,7 +91,7 @@ export const useTemplateRepository = (
       if (currentTemplate?.id === id) {
         setCurrentTemplate(null);
       }
-      loadAllTemplates();
+      void loadAllTemplates();
     } else {
       setError(('message' in result && result.message) || 'Failed to delete template');
     }
