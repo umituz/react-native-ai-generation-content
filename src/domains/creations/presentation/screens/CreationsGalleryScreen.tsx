@@ -19,6 +19,7 @@ interface CreationsGalleryScreenProps {
   readonly repository: ICreationsRepository;
   readonly config: CreationsConfig;
   readonly t: (key: string) => string;
+  readonly locale?: string;
   readonly enableEditing?: boolean;
   readonly onImageEdit?: (uri: string, creationId: string) => void | Promise<void>;
   readonly onEmptyAction?: () => void;
@@ -30,6 +31,7 @@ export function CreationsGalleryScreen({
   repository,
   config,
   t,
+  locale = "en-US",
   enableEditing = false,
   onImageEdit,
   onEmptyAction,
@@ -162,6 +164,7 @@ export function CreationsGalleryScreen({
         onShare={handleShare}
         onDelete={handleDelete}
         onFavorite={handleFavorite}
+        locale={locale}
         contentContainerStyle={{ paddingBottom: insets.bottom + tokens.spacing.xl }}
         ListEmptyComponent={renderEmptyComponent}
       />

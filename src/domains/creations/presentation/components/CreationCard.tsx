@@ -1,8 +1,3 @@
-/**
- * CreationCard Component
- * Displays a creation item with actions
- */
-
 import React, { useMemo, useCallback } from "react";
 import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import {
@@ -10,6 +5,7 @@ import {
   AtomicIcon,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
+import { timezoneService } from "@umituz/react-native-timezone";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationType } from "../../domain/value-objects/CreationsConfig";
 
@@ -20,6 +16,7 @@ interface CreationCardProps {
   readonly onShare: (creation: Creation) => void;
   readonly onDelete: (creation: Creation) => void;
   readonly onFavorite?: (creation: Creation, isFavorite: boolean) => void;
+  readonly locale?: string;
 }
 
 export function CreationCard({
@@ -29,11 +26,12 @@ export function CreationCard({
   onShare,
   onDelete,
   onFavorite,
+  locale = "en-US",
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
 
   const typeConfig = types.find((t) => t.id === creation.type);
-  const icon = typeConfig?.icon || "🎨";
+  const icon = typeConfig?.icon;
   const label = typeConfig?.labelKey || creation.type;
 
   const handleView = useCallback(() => onView?.(creation), [creation, onView]);
@@ -52,13 +50,14 @@ export function CreationCard({
       creation.createdAt instanceof Date
         ? creation.createdAt
         : new Date(creation.createdAt);
-    return date.toLocaleDateString(undefined, {
-      day: "numeric",
+
+    return timezoneService.formatDateTime(date, locale, {
       month: "short",
+      day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  }, [creation.createdAt]);
+  }, [creation.createdAt, locale]);
 
   const styles = useMemo(
     () =>

@@ -14,6 +14,7 @@ interface CreationsGridProps {
     readonly onShare: (creation: Creation) => void;
     readonly onDelete: (creation: Creation) => void;
     readonly onFavorite?: (creation: Creation, isFavorite: boolean) => void;
+    readonly locale?: string;
     readonly contentContainerStyle?: ViewStyle;
     readonly ListEmptyComponent?: React.ReactElement | null;
     readonly ListHeaderComponent?: React.ComponentType<unknown> | React.ReactElement | null;
@@ -28,6 +29,7 @@ export const CreationsGrid: React.FC<CreationsGridProps> = ({
     onShare,
     onDelete,
     onFavorite,
+    locale,
     contentContainerStyle,
     ListEmptyComponent,
     ListHeaderComponent,
@@ -43,6 +45,7 @@ export const CreationsGrid: React.FC<CreationsGridProps> = ({
             onShare={() => onShare(item)}
             onDelete={() => onDelete(item)}
             onFavorite={onFavorite ? (creation, isFavorite) => onFavorite(creation, isFavorite) : undefined}
+            locale={locale}
         />
     );
 
