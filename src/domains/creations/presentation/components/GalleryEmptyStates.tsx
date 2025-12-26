@@ -4,8 +4,8 @@
  */
 
 import React from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
-import type { DesignTokens } from "@umituz/react-native-design-system";
+import { View, StyleSheet } from "react-native";
+import { AtomicSkeleton, type DesignTokens } from "@umituz/react-native-design-system";
 import { EmptyState } from "./EmptyState";
 import type { Creation } from "../../domain/entities/Creation";
 
@@ -22,6 +22,42 @@ interface GalleryEmptyStatesProps {
     onClearFilters: () => void;
 }
 
+/** Skeleton card matching CreationCard layout */
+function CreationCardSkeleton({ tokens }: { tokens: DesignTokens }) {
+    const styles = createSkeletonStyles(tokens);
+    return (
+        <View style={styles.card}>
+            {/* Thumbnail skeleton */}
+            <AtomicSkeleton
+                pattern="custom"
+                custom={[{ width: 100, height: 100, borderRadius: 0 }]}
+            />
+            {/* Content skeleton */}
+            <View style={styles.content}>
+                <View style={styles.textArea}>
+                    <AtomicSkeleton
+                        pattern="custom"
+                        custom={[
+                            { width: 120, height: 18, borderRadius: 4, marginBottom: 8 },
+                            { width: 100, height: 14, borderRadius: 4 },
+                        ]}
+                    />
+                </View>
+                {/* Action buttons skeleton */}
+                <View style={styles.actions}>
+                    {[1, 2, 3, 4].map((i) => (
+                        <AtomicSkeleton
+                            key={i}
+                            pattern="custom"
+                            custom={[{ width: 36, height: 36, borderRadius: 18 }]}
+                        />
+                    ))}
+                </View>
+            </View>
+        </View>
+    );
+}
+
 export function GalleryEmptyStates({
     isLoading,
     creations,
@@ -36,11 +72,13 @@ export function GalleryEmptyStates({
 }: GalleryEmptyStatesProps) {
     const styles = createStyles(tokens);
 
-    // 1. Loading State
+    // 1. Loading State - Show skeleton cards
     if (isLoading && (!creations || creations?.length === 0)) {
         return (
-            <View style={styles.centerContainer}>
-                <ActivityIndicator size="large" color={tokens.colors.primary} />
+            <View style={styles.skeletonContainer}>
+                {[1, 2, 3].map((i) => (
+                    <CreationCardSkeleton key={i} tokens={tokens} />
+                ))}
             </View>
         );
     }
@@ -83,5 +121,32 @@ const createStyles = (tokens: DesignTokens) => StyleSheet.create({
         alignItems: 'center',
         minHeight: 400,
         paddingHorizontal: tokens.spacing.xl,
+    },
+    skeletonContainer: {
+        flex: 1,
+        paddingHorizontal: tokens.spacing.md,
+        paddingTop: tokens.spacing.md,
+    },
+});
+
+const createSkeletonStyles = (tokens: DesignTokens) => StyleSheet.create({
+    card: {
+        flexDirection: 'row',
+        backgroundColor: tokens.colors.surface,
+        borderRadius: tokens.spacing.md,
+        overflow: 'hidden',
+        marginBottom: tokens.spacing.md,
+    },
+    content: {
+        flex: 1,
+        padding: tokens.spacing.md,
+        justifyContent: 'space-between',
+    },
+    textArea: {
+        gap: tokens.spacing.xs,
+    },
+    actions: {
+        flexDirection: 'row',
+        gap: tokens.spacing.sm,
     },
 });

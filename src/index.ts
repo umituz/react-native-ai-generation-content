@@ -221,6 +221,7 @@ export {
   ResultImageCard,
   ResultStoryCard,
   ResultActions,
+  DEFAULT_RESULT_CONFIG,
 } from "./presentation/components";
 
 export type {
@@ -238,6 +239,13 @@ export type {
   ResultImageCardProps,
   ResultStoryCardProps,
   ResultActionsProps,
+  ResultConfig,
+  ResultHeaderConfig,
+  ResultImageConfig,
+  ResultStoryConfig,
+  ResultActionsConfig,
+  ResultLayoutConfig,
+  ResultActionButton,
 } from "./presentation/components";
 
 // =============================================================================

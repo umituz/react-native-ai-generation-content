@@ -2,7 +2,6 @@ import React from 'react';
 import { FlatList, RefreshControl, StyleSheet, type ViewStyle } from 'react-native';
 import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system";
 import type { Creation } from "../../domain/entities/Creation";
-import type { CreationType } from "../../domain/value-objects/CreationsConfig";
 import { CreationCard } from "./CreationCard";
 
 interface CreationsGridProps {

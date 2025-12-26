@@ -7,7 +7,6 @@ import {
 } from "@umituz/react-native-design-system";
 import { timezoneService } from "@umituz/react-native-timezone";
 import type { Creation } from "../../domain/entities/Creation";
-import type { CreationType } from "../../domain/value-objects/CreationsConfig";
 
 import { useCreationsProvider } from "./CreationsProvider";
 
@@ -29,9 +28,9 @@ export function CreationCard({
   locale = "en-US",
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
-  const { translatedTypes, t } = useCreationsProvider();
+  const { translatedTypes } = useCreationsProvider();
 
-  const typeConfig = translatedTypes.find((t) => t.id === creation.type);
+  const typeConfig = translatedTypes.find((type) => type.id === creation.type);
   const icon = typeConfig?.icon;
   // Use manual name if available, otherwise use translated label from config
   const label = (creation.metadata?.names as string) || typeConfig?.labelKey || creation.type;

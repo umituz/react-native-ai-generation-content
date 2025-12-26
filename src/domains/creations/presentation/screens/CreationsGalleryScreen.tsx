@@ -1,7 +1,6 @@
 declare const __DEV__: boolean;
 
 import React, { useMemo, useCallback, useState } from "react";
-import { View, StyleSheet, type LayoutChangeEvent } from "react-native";
 import {
   useAppDesignTokens,
   useAlert,
@@ -9,17 +8,20 @@ import {
   AlertMode,
   useSharing,
   FilterBottomSheet,
-  type DesignTokens,
   type BottomSheetModalRef,
-  ScreenLayout
+  ScreenLayout,
 } from "@umituz/react-native-design-system";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useCreationsFilter } from "../hooks/useCreationsFilter";
-import { GalleryHeader, CreationsGrid, CreationImageViewer, GalleryEmptyStates } from "../components";
-import { getTranslatedTypes, getFilterCategoriesFromConfig } from "../utils/filterUtils";
+import {
+  GalleryHeader,
+  CreationsGrid,
+  CreationImageViewer,
+  GalleryEmptyStates,
+} from "../components";
+import { getFilterCategoriesFromConfig } from "../utils/filterUtils";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
@@ -61,7 +63,6 @@ function CreationsGalleryScreenContent({
   showFilter = config.showFilter ?? true,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
-  const insets = useSafeAreaInsets();
   const { share } = useSharing();
   const alert = useAlert();
 
@@ -83,8 +84,10 @@ function CreationsGalleryScreenContent({
   );
 
   // Prepare data for UI using utils
-  const translatedTypes = useMemo(() => getTranslatedTypes(config, t), [config, t]);
-  const allCategories = useMemo(() => getFilterCategoriesFromConfig(config, t), [config, t]);
+  const allCategories = useMemo(
+    () => getFilterCategoriesFromConfig(config, t),
+    [config, t],
+  );
 
   const handleShare = useCallback((creation: Creation) => {
     void share(creation.uri, { dialogTitle: t("common.share") });
@@ -124,14 +127,16 @@ function CreationsGalleryScreenContent({
   const handleFavorite = useCallback((creation: Creation, isFavorite: boolean) => {
     void (async () => {
       if (!userId) return;
-      const success = await repository.updateFavorite(userId, creation.id, isFavorite);
+      const success = await repository.updateFavorite(
+        userId,
+        creation.id,
+        isFavorite,
+      );
       if (success) {
         void refetch();
       }
     })();
   }, [userId, repository, refetch]);
-
-  const styles = useStyles(tokens);
 
   const renderEmptyComponent = useMemo(() => (
     <GalleryEmptyStates
@@ -228,13 +233,3 @@ function CreationsGalleryScreenContent({
   );
 }
 
-const useStyles = (tokens: DesignTokens) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: tokens.colors.background },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 400,
-    paddingHorizontal: tokens.spacing.xl
-  },
-});

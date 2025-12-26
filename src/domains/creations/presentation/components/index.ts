@@ -11,6 +11,7 @@ export { CreationCard } from "./CreationCard";
 export { CreationThumbnail } from "./CreationThumbnail";
 export { CreationImageViewer } from "./CreationImageViewer";
 export { CreationsGrid } from "./CreationsGrid";
+export { CreationsProvider, useCreationsProvider } from "./CreationsProvider";
 
 // Detail Components
 export { DetailHeader } from "./CreationDetail/DetailHeader";
