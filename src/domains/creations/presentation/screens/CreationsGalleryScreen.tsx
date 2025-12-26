@@ -10,7 +10,8 @@ import {
   useSharing,
   FilterBottomSheet,
   type DesignTokens,
-  type BottomSheetModalRef
+  type BottomSheetModalRef,
+  ScreenLayout
 } from "@umituz/react-native-design-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
@@ -37,7 +38,17 @@ interface CreationsGalleryScreenProps {
   readonly showFilter?: boolean;
 }
 
-export function CreationsGalleryScreen({
+import { CreationsProvider } from "../components/CreationsProvider";
+
+export function CreationsGalleryScreen(props: CreationsGalleryScreenProps) {
+  return (
+    <CreationsProvider config={props.config} t={props.t}>
+      <CreationsGalleryScreenContent {...props} />
+    </CreationsProvider>
+  );
+}
+
+function CreationsGalleryScreenContent({
   userId,
   repository,
   config,
@@ -149,40 +160,38 @@ export function CreationsGalleryScreen({
     );
   }
 
-  const handleLayout = (event: LayoutChangeEvent) => {
-    // Keep internal logic if needed, currently empty but handles the event correctly
-    void event;
-  };
-
   return (
-    <View style={styles.container} onLayout={handleLayout}>
-      {(!creations || creations?.length === 0) && !isLoading ? null : (
-        <GalleryHeader
-          title={t(config.translations.title) || 'My Creations'}
-          count={filtered.length}
-          countLabel={t(config.translations.photoCount) || 'photos'}
-          isFiltered={isFiltered}
-          showFilter={showFilter}
-          filterLabel={t(config.translations.filterLabel) || 'Filter'}
-          onFilterPress={() => {
-            if (__DEV__) {
-              // eslint-disable-next-line no-console
-              console.log('[CreationsGallery] Filter button pressed');
-              // eslint-disable-next-line no-console
-              console.log('[CreationsGallery] filterSheetRef.current:', filterSheetRef.current);
-              // eslint-disable-next-line no-console
-              console.log('[CreationsGallery] allCategories:', allCategories);
-            }
-            filterSheetRef.current?.present();
-          }}
-          style={{ paddingTop: insets.top + tokens.spacing.md }}
-        />
-      )}
-
+    <ScreenLayout
+      scrollable={false}
+      edges={["top"]}
+      backgroundColor={tokens.colors.background}
+      header={
+        (!creations || creations?.length === 0) && !isLoading ? null : (
+          <GalleryHeader
+            title={t(config.translations.title) || 'My Creations'}
+            count={filtered.length}
+            countLabel={t(config.translations.photoCount) || 'photos'}
+            isFiltered={isFiltered}
+            showFilter={showFilter}
+            filterLabel={t(config.translations.filterLabel) || 'Filter'}
+            onFilterPress={() => {
+              if (__DEV__) {
+                // eslint-disable-next-line no-console
+                console.log('[CreationsGallery] Filter button pressed');
+                // eslint-disable-next-line no-console
+                console.log('[CreationsGallery] filterSheetRef.current:', filterSheetRef.current);
+                // eslint-disable-next-line no-console
+                console.log('[CreationsGallery] allCategories:', allCategories);
+              }
+              filterSheetRef.current?.present();
+            }}
+          />
+        )
+      }
+    >
       {/* Main Content Grid - handles empty/loading via ListEmptyComponent */}
       <CreationsGrid
         creations={filtered}
-        types={translatedTypes}
         isLoading={isLoading}
         onRefresh={() => void refetch()}
         onView={handleView}
@@ -190,7 +199,7 @@ export function CreationsGalleryScreen({
         onDelete={handleDelete}
         onFavorite={handleFavorite}
         locale={locale}
-        contentContainerStyle={{ paddingBottom: insets.bottom + tokens.spacing.xl }}
+        contentContainerStyle={{ paddingBottom: tokens.spacing.xl }}
         ListEmptyComponent={renderEmptyComponent}
       />
 
@@ -215,7 +224,7 @@ export function CreationsGalleryScreen({
         onClearFilters={clearFilters}
         title={t(config.translations.filterTitle) || t("common.filter")}
       />
-    </View>
+    </ScreenLayout>
   );
 }
 

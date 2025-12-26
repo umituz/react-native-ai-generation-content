@@ -2,7 +2,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { AtomicText, AtomicIcon, useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system";
-import { type EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface DetailHeaderProps {
     readonly title: string;
@@ -12,8 +11,7 @@ interface DetailHeaderProps {
 
 export const DetailHeader: React.FC<DetailHeaderProps> = ({ title, date, onClose }) => {
     const tokens = useAppDesignTokens();
-    const insets = useSafeAreaInsets();
-    const styles = useStyles(tokens, insets);
+    const styles = useStyles(tokens);
 
     return (
         <View style={styles.headerContainer}>
@@ -34,11 +32,11 @@ export const DetailHeader: React.FC<DetailHeaderProps> = ({ title, date, onClose
     );
 };
 
-const useStyles = (tokens: DesignTokens, insets: EdgeInsets) => StyleSheet.create({
+const useStyles = (tokens: DesignTokens) => StyleSheet.create({
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingTop: insets.top + tokens.spacing.sm,
+        paddingTop: tokens.spacing.sm,
         paddingBottom: tokens.spacing.md,
         paddingHorizontal: tokens.spacing.md,
         backgroundColor: tokens.colors.background,

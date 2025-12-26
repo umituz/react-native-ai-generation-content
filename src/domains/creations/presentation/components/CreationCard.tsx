@@ -9,9 +9,10 @@ import { timezoneService } from "@umituz/react-native-timezone";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationType } from "../../domain/value-objects/CreationsConfig";
 
+import { useCreationsProvider } from "./CreationsProvider";
+
 interface CreationCardProps {
   readonly creation: Creation;
-  readonly types: readonly CreationType[];
   readonly onView?: (creation: Creation) => void;
   readonly onShare: (creation: Creation) => void;
   readonly onDelete: (creation: Creation) => void;
@@ -21,7 +22,6 @@ interface CreationCardProps {
 
 export function CreationCard({
   creation,
-  types,
   onView,
   onShare,
   onDelete,
@@ -29,10 +29,12 @@ export function CreationCard({
   locale = "en-US",
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
+  const { translatedTypes, t } = useCreationsProvider();
 
-  const typeConfig = types.find((t) => t.id === creation.type);
+  const typeConfig = translatedTypes.find((t) => t.id === creation.type);
   const icon = typeConfig?.icon;
-  const label = typeConfig?.labelKey || creation.type;
+  // Use manual name if available, otherwise use translated label from config
+  const label = (creation.metadata?.names as string) || typeConfig?.labelKey || creation.type;
 
   const handleView = useCallback(() => onView?.(creation), [creation, onView]);
   const handleShare = useCallback(() => onShare(creation), [creation, onShare]);

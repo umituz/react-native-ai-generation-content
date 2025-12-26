@@ -75,6 +75,10 @@ export { CreationCard } from "./presentation/components/CreationCard";
 export { CreationsHomeCard } from "./presentation/components/CreationsHomeCard";
 export { FilterChips } from "./presentation/components/FilterChips";
 export { EmptyState } from "./presentation/components/EmptyState";
+export {
+  CreationsProvider,
+  useCreationsProvider,
+} from "./presentation/components/CreationsProvider";
 
 // =============================================================================
 // PRESENTATION LAYER - Screens

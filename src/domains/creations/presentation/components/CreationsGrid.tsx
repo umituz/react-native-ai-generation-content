@@ -7,7 +7,6 @@ import { CreationCard } from "./CreationCard";
 
 interface CreationsGridProps {
     readonly creations: Creation[];
-    readonly types: readonly CreationType[];
     readonly isLoading: boolean;
     readonly onRefresh: () => void;
     readonly onView: (creation: Creation) => void;
@@ -22,7 +21,6 @@ interface CreationsGridProps {
 
 export const CreationsGrid: React.FC<CreationsGridProps> = ({
     creations,
-    types,
     isLoading,
     onRefresh,
     onView,
@@ -40,7 +38,6 @@ export const CreationsGrid: React.FC<CreationsGridProps> = ({
     const renderItem = ({ item }: { item: Creation }) => (
         <CreationCard
             creation={item}
-            types={types as CreationType[]}
             onView={() => onView(item)}
             onShare={() => onShare(item)}
             onDelete={() => onDelete(item)}
