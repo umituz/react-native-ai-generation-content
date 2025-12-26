@@ -22,3 +22,4 @@ export type { PendingJobProgressBarProps } from "./PendingJobProgressBar";
 export type { PendingJobCardActionsProps } from "./PendingJobCardActions";
 
 export * from "./result";
+export * from "./photo-step";

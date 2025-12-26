@@ -186,6 +186,7 @@ export {
   usePendingJobs,
   useBackgroundGeneration,
   usePhotoGeneration,
+  useGenerationFlow,
 } from "./presentation/hooks";
 
 export type {
@@ -203,6 +204,8 @@ export type {
   PhotoGenerationConfig,
   PhotoGenerationState,
   PhotoGenerationStatus,
+  UseGenerationFlowOptions,
+  UseGenerationFlowReturn,
 } from "./presentation/hooks";
 
 // =============================================================================
@@ -222,6 +225,7 @@ export {
   ResultStoryCard,
   ResultActions,
   DEFAULT_RESULT_CONFIG,
+  PhotoStep,
 } from "./presentation/components";
 
 export type {
@@ -246,7 +250,27 @@ export type {
   ResultActionsConfig,
   ResultLayoutConfig,
   ResultActionButton,
+  PhotoStepProps,
 } from "./presentation/components";
+
+// =============================================================================
+// PRESENTATION LAYER - Flow Configuration
+// =============================================================================
+
+export {
+  DEFAULT_SINGLE_PHOTO_FLOW,
+  DEFAULT_DUAL_PHOTO_FLOW,
+} from "./presentation/types/flow-config.types";
+
+export type {
+  PhotoStepConfig,
+  TextInputStepConfig,
+  PreviewStepConfig,
+  GenerationFlowConfig,
+  PhotoStepData,
+  TextInputStepData,
+  GenerationFlowState,
+} from "./presentation/types/flow-config.types";
 
 // =============================================================================
 // DOMAINS - AI Prompts

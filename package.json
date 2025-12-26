@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-ai-generation-content",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "Provider-agnostic AI generation orchestration for React Native",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -67,7 +67,7 @@
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "@umituz/react-native-animation": "*",
-    "@umituz/react-native-design-system": "^2.3.33",
+    "@umituz/react-native-design-system": "^2.4.1",
     "@umituz/react-native-firebase": "^1.13.20",
     "@umituz/react-native-haptics": "^1.0.2",
     "@umituz/react-native-image": "*",
