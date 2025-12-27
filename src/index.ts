@@ -137,10 +137,14 @@ export {
   isJobComplete,
   isJobProcessing,
   isJobFailed,
-  // Result validation
+  // Result validation & URL extraction
   validateResult,
   extractOutputUrl,
   extractOutputUrls,
+  extractVideoUrl,
+  extractThumbnailUrl,
+  extractAudioUrl,
+  extractImageUrls,
   // Photo generation utils
   cleanBase64,
   addBase64Prefix,

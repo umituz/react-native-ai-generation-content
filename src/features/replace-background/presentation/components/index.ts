@@ -5,6 +5,9 @@
 export { BackgroundFeature } from "./BackgroundFeature";
 export type { BackgroundFeatureProps } from "./BackgroundFeature";
 
+export { ReplaceBackgroundFeature } from "./ReplaceBackgroundFeature";
+export type { ReplaceBackgroundFeatureProps } from "./ReplaceBackgroundFeature";
+
 export { ImagePicker } from "./ImagePicker";
 export { PromptInput } from "./PromptInput";
 export { GenerateButton } from "./GenerateButton";

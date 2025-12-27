@@ -54,7 +54,7 @@ export async function executeHDTouchUp(
 
     onProgress?.(30);
 
-    const result = await provider.generate(model, input, request.userId);
+    const result = await provider.run(model, input);
 
     onProgress?.(80);
 

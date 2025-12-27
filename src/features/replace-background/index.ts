@@ -74,6 +74,7 @@ export type { ExecuteReplaceBackgroundOptions } from "./infrastructure";
 
 export {
     BackgroundFeature,
+    ReplaceBackgroundFeature,
     ImagePicker,
     PromptInput,
     GenerateButton,
@@ -85,7 +86,7 @@ export {
     ModeSelector,
 } from "./presentation/components";
 
-export type { BackgroundFeatureProps } from "./presentation/components";
+export type { BackgroundFeatureProps, ReplaceBackgroundFeatureProps } from "./presentation/components";
 
 // =============================================================================
 // PRESENTATION LAYER - Hooks
