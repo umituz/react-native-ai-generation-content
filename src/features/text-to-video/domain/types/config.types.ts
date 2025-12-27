@@ -8,7 +8,7 @@ export interface TabConfig {
   labelKey: string;
 }
 
-export interface StyleOption {
+export interface VideoStyleOption {
   id: string;
   nameKey: string;
   descriptionKey?: string;
@@ -22,7 +22,7 @@ export interface AspectRatioOption {
   icon?: string;
 }
 
-export interface DurationOption {
+export interface VideoDurationOption {
   value: number;
   labelKey: string;
 }
@@ -43,9 +43,9 @@ export interface TextToVideoConfig {
   enableSound?: boolean;
   enableProfessionalMode?: boolean;
   tabs?: TabConfig[];
-  styles?: StyleOption[];
+  styles?: VideoStyleOption[];
   aspectRatios?: AspectRatioOption[];
-  durations?: DurationOption[];
+  durations?: VideoDurationOption[];
   options?: OptionToggleConfig[];
 }
 

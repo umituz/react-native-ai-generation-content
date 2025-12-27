@@ -1,5 +1,3 @@
-declare const __DEV__: boolean;
-
 import React, { useMemo, useCallback, useState } from "react";
 import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,7 +8,6 @@ import {
   AlertMode,
   useSharing,
   FilterSheet,
-  type DesignTokens,
 } from "@umituz/react-native-design-system";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";

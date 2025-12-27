@@ -22,9 +22,9 @@ export { INITIAL_FORM_STATE, INITIAL_GENERATION_STATE } from "./state.types";
 
 export type {
   TabConfig,
-  StyleOption,
+  VideoStyleOption,
   AspectRatioOption,
-  DurationOption,
+  VideoDurationOption,
   OptionToggleConfig,
   TextToVideoConfig,
   HeroConfig,
@@ -32,7 +32,7 @@ export type {
 } from "./config.types";
 
 export type {
-  ModerationResult,
+  VideoModerationResult,
   ProjectData,
   TextToVideoCallbacks,
   TextToVideoTranslations,

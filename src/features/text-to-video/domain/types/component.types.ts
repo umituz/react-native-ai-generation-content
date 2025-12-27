@@ -5,7 +5,7 @@
 
 import type { ViewStyle } from "react-native";
 import type { FrameData } from "./state.types";
-import type { TabConfig, StyleOption, AspectRatioOption, DurationOption } from "./config.types";
+import type { TabConfig, VideoStyleOption, AspectRatioOption, VideoDurationOption } from "./config.types";
 
 export interface GenerationTabsProps {
   tabs: TabConfig[];
@@ -59,7 +59,7 @@ export interface HintItem {
 }
 
 export interface StyleSelectorProps {
-  styles: StyleOption[];
+  styles: VideoStyleOption[];
   selectedStyle: string;
   onStyleSelect: (styleId: string) => void;
   getLabel: (key: string) => string;
@@ -76,7 +76,7 @@ export interface AspectRatioSelectorProps {
 }
 
 export interface DurationSelectorProps {
-  durations: DurationOption[];
+  durations: VideoDurationOption[];
   selectedDuration: number;
   onDurationSelect: (duration: number) => void;
   getLabel: (key: string) => string;

@@ -4,7 +4,7 @@
  * SOLID: Coordinates filter hooks without business logic
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import type { Creation } from "../../domain/entities/Creation";
 import type { FilterOption } from "../../domain/types/creation-filter";
 import { useStatusFilter } from "./useStatusFilter";

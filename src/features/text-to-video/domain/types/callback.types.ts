@@ -5,8 +5,8 @@
 
 import type { TextToVideoResult } from "./request.types";
 
-export interface ModerationResult {
-  isAllowed: boolean;
+export interface VideoModerationResult {
+  allowed: boolean;
   warnings: string[];
 }
 
@@ -22,7 +22,7 @@ export interface ProjectData {
 export interface TextToVideoCallbacks {
   onCreditCheck?: (cost: number) => boolean;
   onAuthCheck?: () => boolean;
-  onModeration?: (prompt: string) => Promise<ModerationResult>;
+  onModeration?: (prompt: string) => Promise<VideoModerationResult>;
   onProjectCreate?: (data: ProjectData) => Promise<void>;
   onGenerate?: (result: TextToVideoResult) => void;
   onError?: (error: string) => void;

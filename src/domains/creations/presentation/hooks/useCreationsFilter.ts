@@ -4,7 +4,7 @@
  * SOLID: Combines filters, delegates individual filter logic to separate hooks
  */
 
-import { useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import type { Creation } from "../../domain/entities/Creation";
 import { getCategoryForType } from "../../domain/types/creation-categories";
 
@@ -37,7 +37,7 @@ export function useCreationsFilter({
 
       // Media filter
       if (mediaFilter !== "all") {
-        const category = getCategoryForType(creation.type);
+        const category = getCategoryForType(creation.type as Parameters<typeof getCategoryForType>[0]);
         if (category !== mediaFilter) {
           return false;
         }

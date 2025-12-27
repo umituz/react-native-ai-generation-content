@@ -46,9 +46,9 @@ export const DEFAULT_CREATION_FILTER: CreationFilter = {
  */
 export interface FilterOption {
   id: string;
-  /** Display label (use labelKey for i18n) */
-  label?: string;
-  /** i18n key for label */
+  /** Display label */
+  label: string;
+  /** i18n key for label (use when generating options) */
   labelKey?: string;
   icon?: string;
   count?: number;
@@ -58,21 +58,21 @@ export interface FilterOption {
  * Media filter options
  */
 export const MEDIA_FILTER_OPTIONS: FilterOption[] = [
-  { id: "all", labelKey: "creations.filter.all", icon: "Grid" },
-  { id: "image", labelKey: "creations.filter.images", icon: "Image" },
-  { id: "video", labelKey: "creations.filter.videos", icon: "Video" },
-  { id: "voice", labelKey: "creations.filter.voice", icon: "Mic" },
+  { id: "all", label: "All", labelKey: "creations.filter.all", icon: "grid-outline" },
+  { id: "image", label: "Images", labelKey: "creations.filter.images", icon: "image-outline" },
+  { id: "video", label: "Videos", labelKey: "creations.filter.videos", icon: "videocam-outline" },
+  { id: "voice", label: "Voice", labelKey: "creations.filter.voice", icon: "mic-outline" },
 ];
 
 /**
  * Status filter options
  */
 export const STATUS_FILTER_OPTIONS: FilterOption[] = [
-  { id: "all", labelKey: "creations.filter.allStatus", icon: "List" },
-  { id: "completed", labelKey: "creations.filter.completed", icon: "CheckCircle" },
-  { id: "processing", labelKey: "creations.filter.processing", icon: "Loader" },
-  { id: "failed", labelKey: "creations.filter.failed", icon: "XCircle" },
-  { id: "pending", labelKey: "creations.filter.pending", icon: "Clock" },
+  { id: "all", label: "All", labelKey: "creations.filter.allStatus", icon: "list-outline" },
+  { id: "completed", label: "Completed", labelKey: "creations.filter.completed", icon: "checkmark-circle-outline" },
+  { id: "processing", label: "Processing", labelKey: "creations.filter.processing", icon: "reload-outline" },
+  { id: "failed", label: "Failed", labelKey: "creations.filter.failed", icon: "close-circle-outline" },
+  { id: "pending", label: "Pending", labelKey: "creations.filter.pending", icon: "time-outline" },
 ];
 
 /**
@@ -116,11 +116,11 @@ export function calculateCreationStats(
 
   // Calculate category counts from type counts
   for (const [typeId, count] of Object.entries(stats.byType)) {
-    if (IMAGE_CREATION_TYPES.includes(typeId)) {
+    if ((IMAGE_CREATION_TYPES as string[]).includes(typeId)) {
       stats.byCategory.image += count as number;
-    } else if (VIDEO_CREATION_TYPES.includes(typeId)) {
+    } else if ((VIDEO_CREATION_TYPES as string[]).includes(typeId)) {
       stats.byCategory.video += count as number;
-    } else if (VOICE_CREATION_TYPES.includes(typeId)) {
+    } else if ((VOICE_CREATION_TYPES as string[]).includes(typeId)) {
       stats.byCategory.voice += count as number;
     }
   }
