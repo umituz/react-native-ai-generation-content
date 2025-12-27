@@ -25,3 +25,7 @@ export type {
   UseRemoveObjectFeatureProps,
   UseRemoveObjectFeatureReturn,
 } from "./presentation";
+
+// Presentation Components
+export { RemoveObjectFeature } from "./presentation";
+export type { RemoveObjectFeatureProps } from "./presentation";
