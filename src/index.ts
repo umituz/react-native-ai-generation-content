@@ -329,7 +329,7 @@ export * from "./domains/face-detection";
 // FEATURES - Background
 // =============================================================================
 
-export * from "./features/background";
+export * from "./features/replace-background";
 
 // =============================================================================
 // FEATURES - Upscaling
@@ -402,4 +402,10 @@ export * from "./features/image-to-video";
 // =============================================================================
 
 export * from "./features/text-to-voice";
+
+// =============================================================================
+// FEATURES - HD Touch Up
+// =============================================================================
+
+export * from "./features/hd-touch-up";
 

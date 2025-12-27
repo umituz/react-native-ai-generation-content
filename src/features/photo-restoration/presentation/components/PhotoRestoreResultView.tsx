@@ -10,7 +10,7 @@ import {
   AtomicButton,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
-import { ComparisonSlider } from "../../../background/presentation/components/ComparisonSlider";
+import { ComparisonSlider } from "../../../replace-background/presentation/components/ComparisonSlider";
 import type { PhotoRestoreTranslations } from "../../domain/types";
 
 export interface PhotoRestoreResultViewProps {
