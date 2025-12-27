@@ -77,7 +77,7 @@ export function useTextToVideoFeature(
 
       if (callbacks.onModeration) {
         const moderationResult = await callbacks.onModeration(state.prompt);
-        if (!moderationResult.isAllowed && moderationResult.warnings.length > 0) {
+        if (!moderationResult.allowed && moderationResult.warnings.length > 0) {
           return new Promise((resolve) => {
             callbacks.onShowModerationWarning?.(
               moderationResult.warnings,

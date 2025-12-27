@@ -24,7 +24,7 @@ export type {
   HeroConfig,
   ProgressConfig,
   FrameData,
-  ModerationResult,
+  VideoModerationResult,
   ProjectData,
   GenerationTabsProps,
   FrameSelectorProps,
