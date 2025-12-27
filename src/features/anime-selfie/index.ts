@@ -26,3 +26,7 @@ export type {
   UseAnimeSelfieFeatureProps,
   UseAnimeSelfieFeatureReturn,
 } from "./presentation";
+
+// Presentation Components
+export { AnimeSelfieFeature } from "./presentation";
+export type { AnimeSelfieFeatureProps } from "./presentation";

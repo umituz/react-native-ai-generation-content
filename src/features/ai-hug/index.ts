@@ -25,3 +25,7 @@ export type {
   UseAIHugFeatureProps,
   UseAIHugFeatureReturn,
 } from "./presentation";
+
+// Presentation Components
+export { AIHugFeature } from "./presentation";
+export type { AIHugFeatureProps } from "./presentation";

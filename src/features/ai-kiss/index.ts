@@ -25,3 +25,7 @@ export type {
   UseAIKissFeatureProps,
   UseAIKissFeatureReturn,
 } from "./presentation";
+
+// Presentation Components
+export { AIKissFeature } from "./presentation";
+export type { AIKissFeatureProps } from "./presentation";

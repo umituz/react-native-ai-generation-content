@@ -1,30 +1,36 @@
 /**
  * GenerationProgressModal
- * Generic AI generation progress modal with customizable rendering
+ * Generic AI generation progress modal using BaseModal
+ * Props-driven for 100+ apps compatibility
  */
 
 import React from "react";
-import { Modal, View, StyleSheet } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { StyleSheet } from "react-native";
+import {
+  BaseModal,
+  useAppDesignTokens,
+} from "@umituz/react-native-design-system";
 import {
   GenerationProgressContent,
-  GenerationProgressContentProps,
+  type GenerationProgressContentProps,
 } from "./GenerationProgressContent";
 
 export interface GenerationProgressRenderProps {
-  progress: number;
-  title?: string;
-  message?: string;
-  hint?: string;
-  onDismiss?: () => void;
+  readonly progress: number;
+  readonly icon?: string;
+  readonly title?: string;
+  readonly message?: string;
+  readonly hint?: string;
+  readonly onDismiss?: () => void;
 }
 
 export interface GenerationProgressModalProps
   extends Omit<GenerationProgressContentProps, "backgroundColor"> {
-  visible: boolean;
-  overlayColor?: string;
-  modalBackgroundColor?: string;
-  renderContent?: (props: GenerationProgressRenderProps) => React.ReactNode;
+  readonly visible: boolean;
+  readonly modalBackgroundColor?: string;
+  readonly renderContent?: (
+    props: GenerationProgressRenderProps
+  ) => React.ReactNode;
 }
 
 export const GenerationProgressModal: React.FC<
@@ -32,67 +38,76 @@ export const GenerationProgressModal: React.FC<
 > = ({
   visible,
   progress,
+  icon,
   title,
   message,
   hint,
   dismissLabel,
   onDismiss,
-  overlayColor = "rgba(0, 0, 0, 0.7)",
   modalBackgroundColor,
   textColor,
+  hintColor,
   progressColor,
   progressBackgroundColor,
   dismissButtonColor,
   renderContent,
 }) => {
-    const tokens = useAppDesignTokens();
-    const clampedProgress = Math.max(0, Math.min(100, progress));
+  const tokens = useAppDesignTokens();
+  const clampedProgress = Math.max(0, Math.min(100, progress));
 
-    const content = renderContent ? (
-      renderContent({
-        progress: clampedProgress,
-        title,
-        message,
-        hint,
-        onDismiss,
-      })
-    ) : (
-      <GenerationProgressContent
-        progress={clampedProgress}
-        title={title}
-        message={message}
-        hint={hint}
-        dismissLabel={dismissLabel}
-        onDismiss={onDismiss}
-        backgroundColor={modalBackgroundColor || tokens.colors.surface}
-        textColor={textColor || tokens.colors.textPrimary}
-        progressColor={progressColor || tokens.colors.primary}
-        progressBackgroundColor={
-          progressBackgroundColor || tokens.colors.borderLight
-        }
-        dismissButtonColor={dismissButtonColor || tokens.colors.primary}
-      />
-    );
+  const handleClose = React.useCallback(() => {
+    onDismiss?.();
+  }, [onDismiss]);
 
-    return (
-      <Modal
-        visible={visible}
-        transparent
-        animationType="fade"
-        statusBarTranslucent
-      >
-        <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
-          {content}
-        </View>
-      </Modal>
-    );
-  };
+  const content = renderContent ? (
+    renderContent({
+      progress: clampedProgress,
+      icon,
+      title,
+      message,
+      hint,
+      onDismiss,
+    })
+  ) : (
+    <GenerationProgressContent
+      progress={clampedProgress}
+      icon={icon}
+      title={title}
+      message={message}
+      hint={hint}
+      dismissLabel={dismissLabel}
+      onDismiss={onDismiss}
+      backgroundColor={modalBackgroundColor || tokens.colors.surface}
+      textColor={textColor || tokens.colors.textPrimary}
+      hintColor={hintColor || tokens.colors.textTertiary}
+      progressColor={progressColor || tokens.colors.primary}
+      progressBackgroundColor={
+        progressBackgroundColor || tokens.colors.surfaceVariant
+      }
+      dismissButtonColor={dismissButtonColor || tokens.colors.primary}
+    />
+  );
+
+  return (
+    <BaseModal
+      visible={visible}
+      onClose={handleClose}
+      dismissOnBackdrop={false}
+      contentStyle={styles.modalContent}
+    >
+      {content}
+    </BaseModal>
+  );
+};
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
+  modalContent: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    padding: 24,
+    width: "100%",
+    height: "auto",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
 });

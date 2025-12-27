@@ -1,43 +1,37 @@
 /**
- * PhotoRestoreFeature Component
- * Self-contained photo restore feature UI component
+ * AnimeSelfieFeature Component
+ * Self-contained anime selfie feature UI component
  * Uses hook internally, only requires config and translations
  */
 
 import React, { useCallback, useMemo } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
 import {
   useAppDesignTokens,
   AtomicText,
   AtomicButton,
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
-import { PhotoRestoreResultView } from "./PhotoRestoreResultView";
-import { usePhotoRestoreFeature } from "../hooks";
+import { ErrorDisplay } from "../../../../presentation/components/display/ErrorDisplay";
+import { useAnimeSelfieFeature } from "../hooks";
 import type {
-  PhotoRestoreTranslations,
-  PhotoRestoreFeatureConfig,
+  AnimeSelfieTranslations,
+  AnimeSelfieFeatureConfig,
 } from "../../domain/types";
 
-export interface PhotoRestoreFeatureProps {
-  /** Feature configuration with provider-specific settings */
-  config: PhotoRestoreFeatureConfig;
-  /** User ID for the generation request */
+export interface AnimeSelfieFeatureProps {
+  config: AnimeSelfieFeatureConfig;
   userId: string;
-  /** Translations for all UI text */
-  translations: PhotoRestoreTranslations;
-  /** Image picker callback */
+  translations: AnimeSelfieTranslations;
   onSelectImage: () => Promise<string | null>;
-  /** Save image callback */
   onSaveImage: (imageUrl: string) => Promise<void>;
-  /** Optional custom processing modal renderer */
   renderProcessingModal?: (props: {
     visible: boolean;
     progress: number;
   }) => React.ReactNode;
 }
 
-export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
+export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
   config,
   userId,
   translations,
@@ -47,7 +41,7 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
 }) => {
   const tokens = useAppDesignTokens();
 
-  const feature = usePhotoRestoreFeature({
+  const feature = useAnimeSelfieFeature({
     config,
     userId,
     onSelectImage,
@@ -76,26 +70,45 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
     void feature.selectImage();
   }, [feature]);
 
-  if (feature.processedUrl && feature.imageUri) {
+  if (feature.processedUrl) {
+    const screenWidth = Dimensions.get("window").width;
+    const imageSize = screenWidth - 48;
+
     return (
       <ScrollView
         style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <PhotoRestoreResultView
-          originalUri={feature.imageUri}
-          processedUri={feature.processedUrl}
-          translations={{
-            successText: translations.successText,
-            saveButtonText: translations.saveButtonText,
-            tryAnotherText: translations.tryAnotherText,
-            beforeLabel: translations.beforeLabel,
-            afterLabel: translations.afterLabel,
-          }}
-          onSave={handleSave}
-          onReset={feature.reset}
-        />
+        <AtomicText
+          type="headlineMedium"
+          style={[styles.successText, { color: tokens.colors.success }]}
+        >
+          {translations.successText}
+        </AtomicText>
+
+        <View style={styles.resultImageContainer}>
+          <Image
+            source={{ uri: feature.processedUrl }}
+            style={[styles.resultImage, { width: imageSize, height: imageSize }]}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={styles.resultActions}>
+          <AtomicButton
+            title={translations.saveButtonText}
+            onPress={handleSave}
+            variant="primary"
+            size="lg"
+          />
+          <AtomicButton
+            title={translations.tryAnotherText}
+            onPress={feature.reset}
+            variant="secondary"
+            size="lg"
+          />
+        </View>
       </ScrollView>
     );
   }
@@ -128,18 +141,7 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
           }}
         />
 
-        {feature.error && (
-          <View
-            style={[
-              styles.errorContainer,
-              { backgroundColor: `${tokens.colors.error}15` },
-            ]}
-          >
-            <AtomicText type="bodyMedium" style={{ color: tokens.colors.error }}>
-              {feature.error}
-            </AtomicText>
-          </View>
-        )}
+        <ErrorDisplay error={feature.error} />
 
         <View style={styles.buttonContainer}>
           <AtomicButton
@@ -174,11 +176,21 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     lineHeight: 24,
   },
-  errorContainer: {
+  successText: {
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  resultImageContainer: {
+    alignItems: "center",
     marginHorizontal: 24,
-    marginBottom: 16,
-    padding: 16,
-    borderRadius: 12,
+    marginBottom: 24,
+  },
+  resultImage: {
+    borderRadius: 16,
+  },
+  resultActions: {
+    marginHorizontal: 24,
+    gap: 12,
   },
   buttonContainer: {
     marginHorizontal: 24,

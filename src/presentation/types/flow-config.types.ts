@@ -6,7 +6,7 @@
  */
 
 import type { StepHeaderConfig } from "@umituz/react-native-design-system";
-import type { PhotoUploadCardConfig } from "@umituz/react-native-design-system";
+import type { PhotoUploadCardConfig } from "../components/PhotoUploadCard";
 
 /**
  * Photo upload step configuration

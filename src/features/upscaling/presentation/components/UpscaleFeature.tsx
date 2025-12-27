@@ -1,34 +1,36 @@
 /**
  * UpscaleFeature Component
- * Main upscale feature UI component
+ * Self-contained upscale feature UI component
+ * Uses hook internally, only requires config and translations
  */
 
 import React, { useCallback, useMemo } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
-  PhotoUploadCard,
   AtomicText,
   AtomicButton,
 } from "@umituz/react-native-design-system";
+import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { UpscaleResultView } from "./UpscaleResultView";
+import { useUpscaleFeature } from "../hooks";
 import type {
   UpscaleTranslations,
   UpscaleFeatureConfig,
 } from "../../domain/types";
 
 export interface UpscaleFeatureProps {
-  imageUri: string | null;
-  processedUrl: string | null;
-  isProcessing: boolean;
-  progress: number;
-  error: string | null;
+  /** Feature configuration with provider-specific settings */
+  config: UpscaleFeatureConfig;
+  /** User ID for the generation request */
+  userId: string;
+  /** Translations for all UI text */
   translations: UpscaleTranslations;
-  config?: UpscaleFeatureConfig;
-  onSelectImage: () => void;
-  onProcess: () => void;
-  onSave: () => void;
-  onReset: () => void;
+  /** Image picker callback */
+  onSelectImage: () => Promise<string | null>;
+  /** Save image callback */
+  onSaveImage: (imageUrl: string) => Promise<void>;
+  /** Optional custom processing modal renderer */
   renderProcessingModal?: (props: {
     visible: boolean;
     progress: number;
@@ -36,19 +38,21 @@ export interface UpscaleFeatureProps {
 }
 
 export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
-  imageUri,
-  processedUrl,
-  isProcessing,
-  progress,
-  error,
+  config,
+  userId,
   translations,
   onSelectImage,
-  onProcess,
-  onSave,
-  onReset,
+  onSaveImage,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
+
+  const feature = useUpscaleFeature({
+    config,
+    userId,
+    onSelectImage,
+    onSaveImage,
+  });
 
   const photoTranslations = useMemo(
     () => ({
@@ -61,10 +65,18 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
   );
 
   const handleProcess = useCallback(() => {
-    onProcess();
-  }, [onProcess]);
+    void feature.process();
+  }, [feature]);
 
-  if (processedUrl && imageUri) {
+  const handleSave = useCallback(() => {
+    void feature.save();
+  }, [feature]);
+
+  const handleSelectImage = useCallback(() => {
+    void feature.selectImage();
+  }, [feature]);
+
+  if (feature.processedUrl && feature.imageUri) {
     return (
       <ScrollView
         style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
@@ -72,8 +84,8 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
         showsVerticalScrollIndicator={false}
       >
         <UpscaleResultView
-          originalUri={imageUri}
-          processedUri={processedUrl}
+          originalUri={feature.imageUri}
+          processedUri={feature.processedUrl}
           translations={{
             successText: translations.successText,
             saveButtonText: translations.saveButtonText,
@@ -81,8 +93,8 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
             beforeLabel: translations.beforeLabel,
             afterLabel: translations.afterLabel,
           }}
-          onSave={onSave}
-          onReset={onReset}
+          onSave={handleSave}
+          onReset={feature.reset}
         />
       </ScrollView>
     );
@@ -103,10 +115,10 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
         </AtomicText>
 
         <PhotoUploadCard
-          imageUri={imageUri}
-          onPress={onSelectImage}
-          isValidating={isProcessing}
-          disabled={isProcessing}
+          imageUri={feature.imageUri}
+          onPress={handleSelectImage}
+          isValidating={feature.isProcessing}
+          disabled={feature.isProcessing}
           translations={photoTranslations}
           config={{
             aspectRatio: 1,
@@ -116,7 +128,7 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
           }}
         />
 
-        {error && (
+        {feature.error && (
           <View
             style={[
               styles.errorContainer,
@@ -124,7 +136,7 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
             ]}
           >
             <AtomicText type="bodyMedium" style={{ color: tokens.colors.error }}>
-              {error}
+              {feature.error}
             </AtomicText>
           </View>
         )}
@@ -132,19 +144,19 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
         <View style={styles.buttonContainer}>
           <AtomicButton
             title={
-              isProcessing
+              feature.isProcessing
                 ? translations.processingText
                 : translations.processButtonText
             }
             onPress={handleProcess}
-            disabled={!imageUri || isProcessing}
+            disabled={!feature.imageUri || feature.isProcessing}
             variant="primary"
             size="lg"
           />
         </View>
       </ScrollView>
 
-      {renderProcessingModal?.({ visible: isProcessing, progress })}
+      {renderProcessingModal?.({ visible: feature.isProcessing, progress: feature.progress })}
     </>
   );
 };

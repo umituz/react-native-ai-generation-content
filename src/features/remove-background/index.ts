@@ -25,3 +25,7 @@ export type {
   UseRemoveBackgroundFeatureProps,
   UseRemoveBackgroundFeatureReturn,
 } from "./presentation";
+
+// Presentation Components
+export { RemoveBackgroundFeature } from "./presentation";
+export type { RemoveBackgroundFeatureProps } from "./presentation";

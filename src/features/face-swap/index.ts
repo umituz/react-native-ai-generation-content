@@ -25,3 +25,7 @@ export type {
   UseFaceSwapFeatureProps,
   UseFaceSwapFeatureReturn,
 } from "./presentation";
+
+// Presentation Components
+export { FaceSwapFeature } from "./presentation";
+export type { FaceSwapFeatureProps } from "./presentation";

@@ -229,6 +229,18 @@ export {
   ResultActions,
   DEFAULT_RESULT_CONFIG,
   PhotoStep,
+  // Image Picker
+  ImagePickerBox,
+  DualImagePicker,
+  // Buttons
+  GenerateButton,
+  // Display
+  ResultDisplay,
+  ErrorDisplay,
+  // Headers
+  FeatureHeader,
+  // Photo Upload
+  PhotoUploadCard,
 } from "./presentation/components";
 
 export type {
@@ -254,6 +266,20 @@ export type {
   ResultLayoutConfig,
   ResultActionButton,
   PhotoStepProps,
+  // Image Picker
+  ImagePickerBoxProps,
+  DualImagePickerProps,
+  // Buttons
+  GenerateButtonProps,
+  // Display
+  ResultDisplayProps,
+  ResultDisplayAction,
+  ErrorDisplayProps,
+  // Headers
+  FeatureHeaderProps,
+  // Photo Upload
+  PhotoUploadCardProps,
+  PhotoUploadCardConfig,
 } from "./presentation/components";
 
 // =============================================================================

@@ -27,3 +27,4 @@ export * from "./image-picker";
 export * from "./buttons";
 export * from "./display";
 export * from "./headers";
+export * from "./PhotoUploadCard";
