@@ -70,7 +70,7 @@ export const usePromptGeneration = (
         setGeneratedPrompt(newPrompt);
 
         void loadHistory(50);
-      } catch (error) {
+      } catch {
         setError('An unexpected error occurred');
       }
     },
@@ -87,7 +87,7 @@ export const usePromptGeneration = (
         } else {
           setError(('message' in result && result.message) || 'Failed to load history');
         }
-      } catch (error) {
+      } catch {
         setError('Failed to load history');
       }
     },
@@ -99,7 +99,7 @@ export const usePromptGeneration = (
     try {
       await historyRepository.clear();
       setHistory([]);
-    } catch (error) {
+    } catch {
       setError('Failed to clear history');
     }
   }, [historyRepository, setHistory, setError, clearError]);
@@ -110,7 +110,7 @@ export const usePromptGeneration = (
       try {
         await historyRepository.save(prompt);
         void loadHistory(50);
-      } catch (error) {
+      } catch {
         setError('Failed to save to history');
       }
     },

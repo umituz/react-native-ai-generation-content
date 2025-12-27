@@ -55,7 +55,7 @@ function CreationsGalleryScreenContent({
   repository,
   config,
   t,
-  locale = "en-US",
+  locale: _locale = "en-US",
   enableEditing = false,
   onImageEdit,
   onEmptyAction,
@@ -199,11 +199,13 @@ function CreationsGalleryScreenContent({
         creations={filtered}
         isLoading={isLoading}
         onRefresh={() => void refetch()}
-        onView={handleView}
-        onShare={handleShare}
-        onDelete={handleDelete}
-        onFavorite={handleFavorite}
-        locale={locale}
+        onPress={(creation) => handleView(creation as Creation)}
+        onShare={async (creation) => handleShare(creation as Creation)}
+        onDelete={(creation) => handleDelete(creation as Creation)}
+        onFavorite={(creation) => {
+          const c = creation as Creation;
+          handleFavorite(c, !c.isFavorite);
+        }}
         contentContainerStyle={{ paddingBottom: tokens.spacing.xl }}
         ListEmptyComponent={renderEmptyComponent}
       />

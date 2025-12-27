@@ -1,151 +1,250 @@
+/**
+ * CreationCard Component
+ * Full-featured card for displaying a creation with preview, badges, and actions
+ */
+
 import React, { useMemo, useCallback } from "react";
-import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import {
   AtomicText,
-  AtomicIcon,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
-import { timezoneService } from "@umituz/react-native-timezone";
-import type { Creation } from "../../domain/entities/Creation";
+import { CreationPreview } from "./CreationPreview";
+import { CreationBadges } from "./CreationBadges";
+import { CreationActions, type CreationAction } from "./CreationActions";
+import type { CreationStatus, CreationTypeId } from "../../domain/types";
+import type { CreationOutput } from "../../domain/utils";
+import { getPreviewUrl, getCreationTitle } from "../../domain/utils";
 
-import { useCreationsProvider } from "./CreationsProvider";
+/**
+ * Creation data interface for the card
+ * Flexible to support both package and app Creation types
+ */
+export interface CreationCardData {
+  id: string;
+  type: CreationTypeId | string;
+  status?: CreationStatus;
+  prompt?: string;
+  /** Output object for app-style creations */
+  output?: CreationOutput;
+  /** URI for package-style creations */
+  uri?: string;
+  provider?: string;
+  createdAt: Date | number;
+}
+
+/**
+ * Action callbacks interface
+ */
+export interface CreationCardCallbacks {
+  onPress?: (creation: CreationCardData) => void;
+  onDownload?: (creation: CreationCardData) => Promise<void>;
+  onShare?: (creation: CreationCardData) => Promise<void>;
+  onDelete?: (creation: CreationCardData) => void;
+  onFavorite?: (creation: CreationCardData) => void;
+  onPostToFeed?: (creation: CreationCardData) => void;
+}
 
 interface CreationCardProps {
-  readonly creation: Creation;
-  readonly onView?: (creation: Creation) => void;
-  readonly onShare: (creation: Creation) => void;
-  readonly onDelete: (creation: Creation) => void;
-  readonly onFavorite?: (creation: Creation, isFavorite: boolean) => void;
-  readonly locale?: string;
+  /** Creation data */
+  readonly creation: CreationCardData;
+  /** Action callbacks */
+  readonly callbacks?: CreationCardCallbacks;
+  /** Show badges overlay */
+  readonly showBadges?: boolean;
+  /** Show action buttons */
+  readonly showActions?: boolean;
+  /** Custom status text (for i18n) */
+  readonly statusText?: string;
+  /** Custom type text (for i18n) */
+  readonly typeText?: string;
+  /** Date formatter function */
+  readonly formatDate?: (date: Date) => string;
+  /** Is sharing in progress */
+  readonly isSharing?: boolean;
+  /** Is download available */
+  readonly isDownloadAvailable?: boolean;
+  /** Can post to feed */
+  readonly canPostToFeed?: boolean;
 }
 
 export function CreationCard({
   creation,
-  onView,
-  onShare,
-  onDelete,
-  onFavorite,
-  locale = "en-US",
+  callbacks = {},
+  showBadges = true,
+  showActions = true,
+  statusText,
+  typeText,
+  formatDate,
+  isSharing = false,
+  isDownloadAvailable = true,
+  canPostToFeed = false,
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
-  const { translatedTypes } = useCreationsProvider();
+  // Support both output object and direct uri
+  const previewUrl = creation.uri || getPreviewUrl(creation.output);
+  const title = getCreationTitle(creation.prompt, creation.type as CreationTypeId);
 
-  const typeConfig = translatedTypes.find((type) => type.id === creation.type);
-  const icon = typeConfig?.icon;
-  // Use manual name if available, otherwise use translated label from config
-  const label = (creation.metadata?.names as string) || typeConfig?.labelKey || creation.type;
-
-  const handleView = useCallback(() => onView?.(creation), [creation, onView]);
-  const handleShare = useCallback(() => onShare(creation), [creation, onShare]);
-  const handleDelete = useCallback(
-    () => onDelete(creation),
-    [creation, onDelete],
-  );
-  const handleFavorite = useCallback(
-    () => onFavorite?.(creation, !creation.isFavorite),
-    [creation, onFavorite],
-  );
-
+  // Format date
   const formattedDate = useMemo(() => {
-    const date =
-      creation.createdAt instanceof Date
-        ? creation.createdAt
-        : new Date(creation.createdAt);
+    const date = creation.createdAt instanceof Date
+      ? creation.createdAt
+      : new Date(creation.createdAt);
 
-    return timezoneService.formatDateTime(date, locale, {
+    if (formatDate) {
+      return formatDate(date);
+    }
+
+    return date.toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+      year: "numeric",
     });
-  }, [creation.createdAt, locale]);
+  }, [creation.createdAt, formatDate]);
+
+  // Build actions array
+  const actions = useMemo<CreationAction[]>(() => {
+    const result: CreationAction[] = [];
+
+    if (callbacks.onDownload && isDownloadAvailable && creation.output) {
+      result.push({
+        id: "download",
+        icon: "Download",
+        onPress: () => callbacks.onDownload?.(creation),
+      });
+    }
+
+    if (callbacks.onShare) {
+      result.push({
+        id: "share",
+        icon: "share-social",
+        loading: isSharing,
+        onPress: () => callbacks.onShare?.(creation),
+      });
+    }
+
+    if (callbacks.onFavorite) {
+      result.push({
+        id: "favorite",
+        icon: "heart-outline",
+        onPress: () => callbacks.onFavorite?.(creation),
+      });
+    }
+
+    if (callbacks.onDelete) {
+      result.push({
+        id: "delete",
+        icon: "trash",
+        color: "error",
+        onPress: () => callbacks.onDelete?.(creation),
+      });
+    }
+
+    if (callbacks.onPostToFeed && canPostToFeed) {
+      result.push({
+        id: "post",
+        icon: "Send",
+        filled: true,
+        onPress: () => callbacks.onPostToFeed?.(creation),
+      });
+    }
+
+    return result;
+  }, [callbacks, creation, isSharing, isDownloadAvailable, canPostToFeed]);
+
+  const handlePress = useCallback(() => {
+    callbacks.onPress?.(creation);
+  }, [callbacks, creation]);
 
   const styles = useMemo(
     () =>
       StyleSheet.create({
-        container: {
-          flexDirection: "row",
-          backgroundColor: tokens.colors.surface,
-          borderRadius: tokens.spacing.md,
+        card: {
+          borderRadius: 12,
           overflow: "hidden",
-          marginBottom: tokens.spacing.md,
+          marginBottom: 16,
+          backgroundColor: tokens.colors.surface,
         },
-        thumbnail: {
-          width: 100,
-          height: 100,
+        previewContainer: {
+          position: "relative",
         },
         content: {
-          flex: 1,
-          padding: tokens.spacing.md,
-          justifyContent: "space-between",
+          padding: 12,
         },
-        typeRow: {
+        header: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          marginBottom: 8,
+          gap: 8,
+        },
+        titleContainer: {
+          flex: 1,
+        },
+        title: {
+          fontWeight: "600",
+        },
+        meta: {
           flexDirection: "row",
           alignItems: "center",
-          gap: tokens.spacing.sm,
         },
-        icon: {
-          fontSize: 20,
-        },
-        typeText: {
-          ...tokens.typography.bodyMedium,
-          fontWeight: "600",
-          color: tokens.colors.textPrimary,
-        },
-        dateText: {
-          ...tokens.typography.bodySmall,
+        metaText: {
+          fontSize: 12,
           color: tokens.colors.textSecondary,
         },
-        actions: {
-          flexDirection: "row",
-          gap: tokens.spacing.sm,
-        },
-        actionBtn: {
-          width: 36,
-          height: 36,
-          borderRadius: 18,
-          backgroundColor: tokens.colors.backgroundSecondary,
-          justifyContent: "center",
-          alignItems: "center",
+        metaDot: {
+          marginHorizontal: 4,
         },
       }),
-    [tokens],
+    [tokens]
   );
 
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: creation.uri }} style={styles.thumbnail} />
+    <TouchableOpacity
+      style={styles.card}
+      onPress={handlePress}
+      activeOpacity={callbacks.onPress ? 0.7 : 1}
+      disabled={!callbacks.onPress}
+    >
+      <View style={styles.previewContainer}>
+        <CreationPreview
+          uri={previewUrl}
+          status={creation.status || "completed"}
+          type={creation.type as CreationTypeId}
+        />
+        {showBadges && creation.status && (
+          <CreationBadges
+            status={creation.status}
+            type={creation.type as CreationTypeId}
+            statusText={statusText}
+            typeText={typeText}
+          />
+        )}
+      </View>
+
       <View style={styles.content}>
-        <View>
-          <View style={styles.typeRow}>
-            {icon && <AtomicIcon name={icon} size="sm" color="primary" />}
-            <AtomicText style={styles.typeText}>{label}</AtomicText>
+        <View style={styles.header}>
+          <View style={styles.titleContainer}>
+            <AtomicText type="bodyMedium" style={styles.title} numberOfLines={2}>
+              {title}
+            </AtomicText>
           </View>
-          <AtomicText style={styles.dateText}>{formattedDate}</AtomicText>
+
+          {showActions && actions.length > 0 && (
+            <CreationActions actions={actions} size="md" />
+          )}
         </View>
-        <View style={styles.actions}>
-          {onView && (
-            <TouchableOpacity style={styles.actionBtn} onPress={handleView}>
-              <AtomicIcon name="eye" size="sm" color="primary" />
-            </TouchableOpacity>
+
+        <View style={styles.meta}>
+          <Text style={styles.metaText}>{formattedDate}</Text>
+          {creation.provider && (
+            <>
+              <Text style={[styles.metaText, styles.metaDot]}>•</Text>
+              <Text style={styles.metaText}>{creation.provider}</Text>
+            </>
           )}
-          {onFavorite && (
-            <TouchableOpacity style={styles.actionBtn} onPress={handleFavorite}>
-              <AtomicIcon
-                name={creation.isFavorite ? "heart" : "heart-outline"}
-                size="sm"
-                color={creation.isFavorite ? "error" : "primary"}
-              />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
-            <AtomicIcon name="share-social" size="sm" color="primary" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
-            <AtomicIcon name="trash" size="sm" color="error" />
-          </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

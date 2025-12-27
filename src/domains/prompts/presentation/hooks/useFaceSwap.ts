@@ -62,7 +62,7 @@ export const useFaceSwap = (
       };
 
       setResult(generationResult);
-    } catch (error) {
+    } catch {
       setError('An unexpected error occurred');
     }
   }, [faceSwapService, historyRepository, setError, setResult, clearError]);
@@ -70,7 +70,7 @@ export const useFaceSwap = (
   const getAvailableStyles = useCallback(async (): Promise<string[]> => {
     try {
       return await faceSwapService.getAvailableStyles();
-    } catch (error) {
+    } catch {
       setError('Failed to load available styles');
       return [];
     }

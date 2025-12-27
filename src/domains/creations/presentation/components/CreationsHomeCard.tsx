@@ -34,7 +34,7 @@ export function CreationsHomeCard({
 }: CreationsHomeCardProps) {
   const tokens = useAppDesignTokens();
 
-  // eslint-disable-next-line no-console
+   
   if (__DEV__) {
     // eslint-disable-next-line no-console
     console.log("[CreationsHomeCard] Render:", {

@@ -1,24 +1,76 @@
 /**
- * @umituz/react-native-ai-creations
- *
+ * Creations Domain
  * AI-generated creations gallery with filtering, sharing, and management
- *
- * Architecture:
- * - Extends BaseRepository from @umituz/react-native-firestore
- * - Fully dynamic path structure (configurable per app)
- * - Fully dynamic document mapping (configurable per app)
- * - App-agnostic: Works with any app, no app-specific code
- *
- * This package is designed to be used across hundreds of apps.
- *
- * Usage:
- *   import {
- *     CreationsGalleryScreen,
- *     CreationsHomeCard,
- *     useCreations,
- *     createCreationsRepository,
- *   } from '@umituz/react-native-ai-creations';
  */
+
+// eslint-disable-next-line no-console
+if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] creations/index.ts - Module loading");
+
+// =============================================================================
+// DOMAIN LAYER - Types
+// =============================================================================
+
+export type {
+  CreationTypeId,
+  CreationStatus,
+  CreationCategory,
+  CreationFilter,
+  FilterOption,
+  CreationStats,
+} from "./domain/types";
+
+export {
+  ALL_CREATION_STATUSES,
+  ALL_CREATION_CATEGORIES,
+  ALL_CREATION_TYPES,
+  IMAGE_CREATION_TYPES,
+  VIDEO_CREATION_TYPES,
+  VOICE_CREATION_TYPES,
+  DEFAULT_CREATION_FILTER,
+  MEDIA_FILTER_OPTIONS,
+  STATUS_FILTER_OPTIONS,
+  getTypesForCategory,
+  getCategoryForType,
+  isTypeInCategory,
+  isVideoCreationType,
+  isImageCreationType,
+  isVoiceCreationType,
+  getMediaTypeForCreation,
+  calculateCreationStats,
+} from "./domain/types";
+
+// =============================================================================
+// DOMAIN LAYER - Utils
+// =============================================================================
+
+export {
+  // Status helpers
+  getStatusColorKey,
+  getStatusColor,
+  getStatusTextKey,
+  getStatusText,
+  isInProgress,
+  isCompleted,
+  isFailed,
+  type StatusColorKey,
+  // Preview helpers
+  getPreviewUrl,
+  getAllMediaUrls,
+  hasDownloadableContent,
+  hasVideoContent,
+  hasAudioContent,
+  getPrimaryMediaUrl,
+  type CreationOutput,
+  // Creation helpers
+  getTypeIcon,
+  getTypeTextKey,
+  getTypeText,
+  getCreationTitle,
+  filterBySearch,
+  sortCreations,
+  truncateText,
+  type IconName,
+} from "./domain/utils";
 
 // =============================================================================
 // DOMAIN LAYER - Entities
@@ -28,7 +80,7 @@ export type { Creation, CreationDocument } from "./domain/entities";
 export { mapDocumentToCreation } from "./domain/entities";
 
 // =============================================================================
-// DOMAIN LAYER - Value Objects
+// DOMAIN LAYER - Config
 // =============================================================================
 
 export type {
@@ -65,15 +117,37 @@ export type { ICreationsStorageService } from "./domain/services/ICreationsStora
 export { useCreations } from "./presentation/hooks/useCreations";
 export { useDeleteCreation } from "./presentation/hooks/useDeleteCreation";
 export { useCreationsFilter } from "./presentation/hooks/useCreationsFilter";
+export { useAdvancedFilter } from "./presentation/hooks/useAdvancedFilter";
 
 // =============================================================================
 // PRESENTATION LAYER - Components
 // =============================================================================
 
+// Core Components
+export { CreationPreview } from "./presentation/components/CreationPreview";
+export { CreationBadges } from "./presentation/components/CreationBadges";
+export {
+  CreationActions,
+  type CreationAction,
+} from "./presentation/components/CreationActions";
+export {
+  CreationCard,
+  type CreationCardData,
+  type CreationCardCallbacks,
+} from "./presentation/components/CreationCard";
 export { CreationThumbnail } from "./presentation/components/CreationThumbnail";
-export { CreationCard } from "./presentation/components/CreationCard";
-export { CreationsHomeCard } from "./presentation/components/CreationsHomeCard";
+
+// Filter Components
 export { FilterChips } from "./presentation/components/FilterChips";
+export {
+  CreationsFilterBar,
+  createMediaFilterButtons,
+  createStatusFilterButtons,
+  type FilterButton,
+} from "./presentation/components/CreationsFilterBar";
+
+// Gallery Components
+export { CreationsHomeCard } from "./presentation/components/CreationsHomeCard";
 export { EmptyState } from "./presentation/components/EmptyState";
 export {
   CreationsProvider,

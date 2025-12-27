@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
-    "lib": [
-      "ES2020"
-    ],
+    "moduleResolution": "bundler",
+    "lib": ["ESNext"],
     "jsx": "react-native",
     "strict": false,
     "esModuleInterop": true,
@@ -24,47 +22,18 @@
     "noFallthroughCasesInSwitch": false,
     "baseUrl": ".",
     "paths": {
-      "@ai-generation/prompts": [
-        "./src/domains/prompts"
-      ],
-      "@ai-generation/prompts/*": [
-        "./src/domains/prompts/*"
-      ],
-      "@ai-generation/content-moderation": [
-        "./src/domains/content-moderation"
-      ],
-      "@ai-generation/content-moderation/*": [
-        "./src/domains/content-moderation/*"
-      ],
-      "@ai-generation/creations": [
-        "./src/domains/creations"
-      ],
-      "@ai-generation/creations/*": [
-        "./src/domains/creations/*"
-      ],
-      "@ai-generation/face-detection": [
-        "./src/domains/face-detection"
-      ],
-      "@ai-generation/face-detection/*": [
-        "./src/domains/face-detection/*"
-      ],
-      "@ai-generation/feature-background": [
-        "./src/domains/feature-background"
-      ],
-      "@ai-generation/feature-background/*": [
-        "./src/domains/feature-background/*"
-      ]
+      "@ai-generation/prompts": ["./src/domains/prompts"],
+      "@ai-generation/prompts/*": ["./src/domains/prompts/*"],
+      "@ai-generation/content-moderation": ["./src/domains/content-moderation"],
+      "@ai-generation/content-moderation/*": ["./src/domains/content-moderation/*"],
+      "@ai-generation/creations": ["./src/domains/creations"],
+      "@ai-generation/creations/*": ["./src/domains/creations/*"],
+      "@ai-generation/face-detection": ["./src/domains/face-detection"],
+      "@ai-generation/face-detection/*": ["./src/domains/face-detection/*"],
+      "@ai-generation/feature-background": ["./src/domains/feature-background"],
+      "@ai-generation/feature-background/*": ["./src/domains/feature-background/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/node_modules/**",
-    "dist",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "**/node_modules/**", "dist", "**/*.test.ts", "**/*.test.tsx"]
 }

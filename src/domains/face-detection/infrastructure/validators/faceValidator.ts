@@ -32,7 +32,7 @@ export const parseDetectionResponse = (
       confidence: Number(parsed.confidence) || 0,
       message: String(parsed.reason || ""),
     };
-  } catch (error) {
+  } catch {
     return createFailedResult("Failed to parse response");
   }
 };

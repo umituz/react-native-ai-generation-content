@@ -17,7 +17,7 @@ export class PromptGenerationService implements IPromptGenerationService {
 
         const generatedText = this.replaceTemplateVariables(template.template, variables);
         resolve({ success: true, data: generatedText });
-      } catch (error) {
+      } catch {
         resolve({
           success: false,
           error: 'GENERATION_FAILED',

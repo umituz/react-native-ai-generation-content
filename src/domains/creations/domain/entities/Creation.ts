@@ -3,6 +3,23 @@
  * Represents an AI-generated creation
  */
 
+import type { CreationStatus } from "../types/creation-types";
+
+/**
+ * Creation output containing media URLs
+ */
+export interface CreationOutput {
+  readonly imageUrl?: string;
+  readonly imageUrls?: string[];
+  readonly videoUrl?: string;
+  readonly audioUrl?: string;
+  readonly thumbnailUrl?: string;
+}
+
+/**
+ * Main Creation entity
+ * Supports both simple (uri-based) and complex (output-based) creations
+ */
 export interface Creation {
   readonly id: string;
   readonly uri: string;
@@ -13,6 +30,9 @@ export interface Creation {
   readonly createdAt: Date;
   readonly isShared: boolean;
   readonly isFavorite: boolean;
+  // Extended fields for job-based creations
+  readonly status?: CreationStatus;
+  readonly output?: CreationOutput;
 }
 
 export interface CreationDocument {
@@ -26,9 +46,10 @@ export interface CreationDocument {
   readonly transformationType?: string;
   readonly type?: string;
   readonly status?: string;
+  readonly output?: CreationOutput;
   readonly isShared: boolean;
   readonly isFavorite?: boolean;
-  readonly createdAt: FirebaseTimestamp | Date; // Allow Date for writing
+  readonly createdAt: FirebaseTimestamp | Date;
   readonly completedAt?: FirebaseTimestamp | Date;
 }
 
@@ -49,9 +70,17 @@ export function mapDocumentToCreation(
     creationDate = new Date();
   }
 
+  // Get URI from output or direct fields
+  const uri = data.output?.imageUrl ||
+              data.output?.videoUrl ||
+              data.transformedImageUrl ||
+              data.transformedImage ||
+              data.uri ||
+              "";
+
   return {
     id,
-    uri: data.transformedImageUrl || data.transformedImage || data.uri || "",
+    uri,
     type: data.transformationType || data.type || "unknown",
     prompt: data.prompt,
     metadata: data.metadata,
@@ -59,5 +88,7 @@ export function mapDocumentToCreation(
     createdAt: creationDate,
     isShared: data.isShared ?? false,
     isFavorite: data.isFavorite ?? false,
+    status: data.status as CreationStatus | undefined,
+    output: data.output,
   };
 }
