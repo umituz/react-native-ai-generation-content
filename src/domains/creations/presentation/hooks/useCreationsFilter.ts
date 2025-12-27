@@ -1,77 +1,64 @@
 /**
  * useCreationsFilter Hook
- * Handles filtering of creations by type
+ * Combines status and media filters to filter creations
+ * SOLID: Combines filters, delegates individual filter logic to separate hooks
  */
 
-import { useState, useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import type { Creation } from "../../domain/entities/Creation";
+import { getCategoryForType } from "../../domain/types/creation-categories";
 
 interface UseCreationsFilterProps {
   readonly creations: Creation[] | undefined;
-  readonly defaultFilterId?: string;
+  readonly statusFilter?: string;
+  readonly mediaFilter?: string;
 }
 
-interface CreationWithTags extends Creation {
-  readonly metadata?: {
-    readonly tags?: string[];
-    readonly [key: string]: unknown;
-  };
+interface UseCreationsFilterReturn {
+  readonly filtered: Creation[];
+  readonly isFiltered: boolean;
+  readonly activeFiltersCount: number;
 }
 
 export function useCreationsFilter({
   creations,
-  defaultFilterId = "all"
-}: UseCreationsFilterProps) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([defaultFilterId]);
+  statusFilter = "all",
+  mediaFilter = "all"
+}: UseCreationsFilterProps): UseCreationsFilterReturn {
 
   const filtered = useMemo(() => {
     if (!creations) return [];
-    if (selectedIds.includes(defaultFilterId)) return creations;
 
-    return creations.filter((c) => {
-      const creation = c as CreationWithTags;
-      return (
-        selectedIds.includes(creation.type) ||
-        selectedIds.some(id => creation.metadata?.tags?.includes(id))
-      );
-    });
-  }, [creations, selectedIds, defaultFilterId]);
+    return creations.filter((creation) => {
+      // Status filter
+      if (statusFilter !== "all" && creation.status !== statusFilter) {
+        return false;
+      }
 
-  const toggleFilter = useCallback((filterId: string, multiSelect = false) => {
-    setSelectedIds(prev => {
-      // If selecting 'all', clear everything else
-      if (filterId === defaultFilterId) return [defaultFilterId];
-
-      let newIds: string[];
-      if (!multiSelect) {
-        // Single select
-        if (prev.includes(filterId) && prev.length === 1) return prev;
-        newIds = [filterId];
-      } else {
-        // Multi select
-        if (prev.includes(filterId)) {
-          newIds = prev.filter(id => id !== filterId);
-        } else {
-          // Remove 'all' if present
-          newIds = [...prev.filter(id => id !== defaultFilterId), filterId];
+      // Media filter
+      if (mediaFilter !== "all") {
+        const category = getCategoryForType(creation.type);
+        if (category !== mediaFilter) {
+          return false;
         }
       }
 
-      // If nothing selected, revert to 'all'
-      if (newIds.length === 0) return [defaultFilterId];
-      return newIds;
+      return true;
     });
-  }, [defaultFilterId]);
+  }, [creations, statusFilter, mediaFilter]);
 
-  const clearFilters = useCallback(() => {
-    setSelectedIds([defaultFilterId]);
-  }, [defaultFilterId]);
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (statusFilter !== "all") count++;
+    if (mediaFilter !== "all") count++;
+    return count;
+  }, [statusFilter, mediaFilter]);
+
+  const isFiltered = statusFilter !== "all" || mediaFilter !== "all";
 
   return {
     filtered,
-    selectedIds,
-    toggleFilter,
-    clearFilters,
-    isFiltered: !selectedIds.includes(defaultFilterId),
+    isFiltered,
+    activeFiltersCount
   };
 }

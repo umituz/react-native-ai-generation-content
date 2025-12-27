@@ -1,5 +1,6 @@
-export { useTextToVoiceFeature } from "./useTextToVoiceFeature";
+export { useTextToVoiceForm } from "./useTextToVoiceForm";
+export { useTextToVoiceGeneration } from "./useTextToVoiceGeneration";
 export type {
-  UseTextToVoiceFeatureProps,
-  UseTextToVoiceFeatureReturn,
-} from "./useTextToVoiceFeature";
+  UseTextToVoiceGenerationProps,
+  UseTextToVoiceGenerationReturn,
+} from "./useTextToVoiceGeneration";

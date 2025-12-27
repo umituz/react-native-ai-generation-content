@@ -1,118 +1,120 @@
 declare const __DEV__: boolean;
 
-import React from 'react';
-import { View, TouchableOpacity, StyleSheet, type ViewStyle } from 'react-native';
+import React from "react";
+import { View, TouchableOpacity, StyleSheet, type ViewStyle } from "react-native";
 import { AtomicText, AtomicIcon, useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system";
 
+interface FilterButtonConfig {
+  readonly id: string;
+  readonly label: string;
+  readonly icon: string;
+  readonly isActive: boolean;
+  readonly onPress: () => void;
+}
+
 interface GalleryHeaderProps {
-    readonly title: string;
-    readonly count: number;
-    readonly countLabel: string;
-    readonly isFiltered: boolean;
-    readonly onFilterPress: () => void;
-    readonly showFilter?: boolean;
-    readonly filterLabel?: string;
-    readonly filterIcon?: string;
-    readonly style?: ViewStyle;
+  readonly title: string;
+  readonly count: number;
+  readonly countLabel: string;
+  readonly filterButtons?: FilterButtonConfig[];
+  readonly showFilter?: boolean;
+  readonly style?: ViewStyle;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
-    title,
-    count,
-    countLabel,
-    isFiltered,
-    onFilterPress,
-    showFilter = true,
-    filterLabel = 'Filter',
-    filterIcon = 'filter-outline',
-    style,
+  title,
+  count,
+  countLabel,
+  filterButtons = [],
+  showFilter = true,
+  style,
 }) => {
-    const tokens = useAppDesignTokens();
-    const styles = useStyles(tokens);
+  const tokens = useAppDesignTokens();
+  const styles = useStyles(tokens);
 
-    return (
-        <View style={[styles.headerArea, style]}>
-            <View>
-                <AtomicText style={styles.title}>{title}</AtomicText>
-                <AtomicText style={styles.subtitle}>
-                    {count} {countLabel}
-                </AtomicText>
-            </View>
-            {showFilter && (
-                <TouchableOpacity
-                    onPress={() => {
-                        if (__DEV__) {
-                            // eslint-disable-next-line no-console
-                            console.log('[GalleryHeader] Filter button pressed');
-                        }
-                        onFilterPress();
-                    }}
-                    style={[styles.filterButton, isFiltered && styles.filterButtonActive]}
-                    activeOpacity={0.7}
-                >
-                    <AtomicIcon
-                        name={filterIcon}
-                        size="sm"
-                        color={isFiltered ? "primary" : "secondary"}
-                    />
-                    <AtomicText style={[styles.filterText, { color: isFiltered ? tokens.colors.primary : tokens.colors.textSecondary }]}>
-                        {filterLabel}
-                    </AtomicText>
-                    {isFiltered && (
-                        <View style={styles.badge} />
-                    )}
-                </TouchableOpacity>
-            )}
+  return (
+    <View style={[styles.headerArea, style]}>
+      <View>
+        <AtomicText style={styles.title}>{title}</AtomicText>
+        <AtomicText style={styles.subtitle}>
+          {count} {countLabel}
+        </AtomicText>
+      </View>
+      {showFilter && filterButtons.length > 0 && (
+        <View style={styles.filterRow}>
+          {filterButtons.map((btn) => (
+            <TouchableOpacity
+              key={btn.id}
+              onPress={() => {
+                if (__DEV__) {
+                  // eslint-disable-next-line no-console
+                  console.log(`[GalleryHeader] ${btn.id} filter pressed`);
+                }
+                btn.onPress();
+              }}
+              style={[styles.filterButton, btn.isActive && styles.filterButtonActive]}
+              activeOpacity={0.7}
+            >
+              <AtomicIcon
+                name={btn.icon}
+                size="sm"
+                color={btn.isActive ? "primary" : "secondary"}
+              />
+              <AtomicText
+                style={[styles.filterText, { color: btn.isActive ? tokens.colors.primary : tokens.colors.textSecondary }]}
+              >
+                {btn.label}
+              </AtomicText>
+            </TouchableOpacity>
+          ))}
         </View>
-    );
+      )}
+    </View>
+  );
 };
 
-const useStyles = (tokens: DesignTokens) => StyleSheet.create({
+const useStyles = (tokens: DesignTokens) =>
+  StyleSheet.create({
     headerArea: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: 'space-between',
-        paddingHorizontal: tokens.spacing.md,
-        paddingVertical: tokens.spacing.sm,
-        marginBottom: tokens.spacing.sm,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: tokens.spacing.md,
+      paddingVertical: tokens.spacing.sm,
+      marginBottom: tokens.spacing.sm,
     },
     title: {
-        fontSize: 20,
-        fontWeight: "700",
-        color: tokens.colors.textPrimary,
-        marginBottom: 4,
+      fontSize: 20,
+      fontWeight: "700",
+      color: tokens.colors.textPrimary,
+      marginBottom: 4,
     },
     subtitle: {
-        fontSize: 14,
-        color: tokens.colors.textSecondary,
-        opacity: 0.6
+      fontSize: 14,
+      color: tokens.colors.textSecondary,
+      opacity: 0.6,
+    },
+    filterRow: {
+      flexDirection: "row",
+      gap: tokens.spacing.xs,
     },
     filterButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: tokens.spacing.xs,
-        paddingVertical: tokens.spacing.xs,
-        paddingHorizontal: tokens.spacing.md,
-        borderRadius: 999,
-        backgroundColor: tokens.colors.surfaceVariant,
-        borderWidth: 1,
-        borderColor: 'transparent',
+      flexDirection: "row",
+      alignItems: "center",
+      gap: tokens.spacing.xs,
+      paddingVertical: tokens.spacing.xs,
+      paddingHorizontal: tokens.spacing.sm,
+      borderRadius: 999,
+      backgroundColor: tokens.colors.surfaceVariant,
+      borderWidth: 1,
+      borderColor: "transparent",
     },
     filterButtonActive: {
-        backgroundColor: tokens.colors.primary + "15",
-        borderColor: tokens.colors.primary + "30",
+      backgroundColor: tokens.colors.primary + "15",
+      borderColor: tokens.colors.primary + "30",
     },
     filterText: {
-        fontSize: 14,
-        fontWeight: "500",
+      fontSize: 13,
+      fontWeight: "500",
     },
-    badge: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: tokens.colors.primary,
-        position: 'absolute',
-        top: 6,
-        right: 6,
-    },
-});
+  });

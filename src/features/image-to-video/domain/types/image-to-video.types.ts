@@ -3,11 +3,17 @@
  * Request, Result, Config types for image-to-video generation
  */
 
+import type { AnimationStyleId } from "./animation.types";
+import type { MusicMoodId } from "./music.types";
+import type { VideoDuration } from "./duration.types";
+
 export interface ImageToVideoOptions {
   duration?: number;
   motionStrength?: number;
   aspectRatio?: "16:9" | "9:16" | "1:1";
   fps?: number;
+  animationStyle?: AnimationStyleId;
+  musicMood?: MusicMoodId;
 }
 
 export interface ImageToVideoRequest {
@@ -16,6 +22,12 @@ export interface ImageToVideoRequest {
   userId: string;
   motionPrompt?: string;
   options?: ImageToVideoOptions;
+  allImages?: string[];
+  customAudioUri?: string | null;
+  animationStyle?: AnimationStyleId;
+  duration?: VideoDuration;
+  musicMood?: MusicMoodId;
+  model?: string;
 }
 
 export interface ImageToVideoResult {
@@ -24,6 +36,12 @@ export interface ImageToVideoResult {
   thumbnailUrl?: string;
   error?: string;
   requestId?: string;
+}
+
+export interface ImageToVideoGenerationState {
+  isGenerating: boolean;
+  progress: number;
+  error: string | null;
 }
 
 export interface ImageToVideoFeatureState {

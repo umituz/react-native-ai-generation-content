@@ -1,31 +1,28 @@
 declare const __DEV__: boolean;
 
 import React, { useMemo, useCallback, useState } from "react";
+import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useAppDesignTokens,
   useAlert,
   AlertType,
   AlertMode,
   useSharing,
-  FilterBottomSheet,
-  type BottomSheetModalRef,
-  ScreenLayout,
+  FilterSheet,
+  type DesignTokens,
 } from "@umituz/react-native-design-system";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
-import { useCreationsFilter } from "../hooks/useCreationsFilter";
-import {
-  GalleryHeader,
-  CreationsGrid,
-  CreationImageViewer,
-  GalleryEmptyStates,
-} from "../components";
-import { getFilterCategoriesFromConfig } from "../utils/filterUtils";
+import { useGalleryFilters } from "../hooks/useGalleryFilters";
+import { GalleryHeader, CreationCard, CreationImageViewer, GalleryEmptyStates } from "../components";
+import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 import { CreationDetailScreen } from "./CreationDetailScreen";
+import { CreationsProvider } from "../components/CreationsProvider";
 
 interface CreationsGalleryScreenProps {
   readonly userId: string | null;
@@ -40,8 +37,6 @@ interface CreationsGalleryScreenProps {
   readonly showFilter?: boolean;
 }
 
-import { CreationsProvider } from "../components/CreationsProvider";
-
 export function CreationsGalleryScreen(props: CreationsGalleryScreenProps) {
   return (
     <CreationsProvider config={props.config} t={props.t}>
@@ -55,13 +50,13 @@ function CreationsGalleryScreenContent({
   repository,
   config,
   t,
-  locale: _locale = "en-US",
   enableEditing = false,
   onImageEdit,
   onEmptyAction,
   emptyActionLabel,
   showFilter = config.showFilter ?? true,
 }: CreationsGalleryScreenProps) {
+  const insets = useSafeAreaInsets();
   const tokens = useAppDesignTokens();
   const { share } = useSharing();
   const alert = useAlert();
@@ -69,169 +64,134 @@ function CreationsGalleryScreenContent({
   const [viewerVisible, setViewerVisible] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
-  const filterSheetRef = React.useRef<BottomSheetModalRef>(null);
 
-  const { data: creationsData, isLoading, refetch } = useCreations({ userId, repository });
-  const creations = creationsData;
+  const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
   const deleteMutation = useDeleteCreation({ userId, repository });
-  const { filtered, selectedIds, toggleFilter, clearFilters, isFiltered } = useCreationsFilter({ creations });
 
-  // Refetch creations when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      void refetch();
-    }, [refetch])
-  );
+  const statusOptions = config.filterConfig?.statusOptions ?? STATUS_FILTER_OPTIONS;
+  const mediaOptions = config.filterConfig?.mediaOptions ?? MEDIA_FILTER_OPTIONS;
+  const showStatusFilter = config.filterConfig?.showStatusFilter ?? true;
+  const showMediaFilter = config.filterConfig?.showMediaFilter ?? true;
 
-  // Prepare data for UI using utils
-  const allCategories = useMemo(
-    () => getFilterCategoriesFromConfig(config, t),
-    [config, t],
-  );
+  const filters = useGalleryFilters({ creations, statusOptions, mediaOptions, t });
 
-  const handleShare = useCallback((creation: Creation) => {
-    void share(creation.uri, { dialogTitle: t("common.share") });
+  useFocusEffect(useCallback(() => { void refetch(); }, [refetch]));
+
+  const handleShare = useCallback((c: Creation) => {
+    void share(c.uri, { dialogTitle: t("common.share") });
   }, [share, t]);
 
-  const handleDelete = useCallback((creation: Creation) => {
-    alert.show(
-      AlertType.WARNING,
-      AlertMode.MODAL,
-      t(config.translations.deleteTitle),
-      t(config.translations.deleteMessage),
-      {
-        actions: [
-          { id: 'cancel', label: t("common.cancel"), onPress: () => { } },
-          {
-            id: 'delete',
-            label: t("common.delete"),
-            style: 'destructive',
-            onPress: async () => {
-              const success = await deleteMutation.mutateAsync(creation.id);
-              if (success) {
-                setSelectedCreation(null);
-              }
-            }
-          }
-        ]
-      }
-    );
+  const handleDelete = useCallback((c: Creation) => {
+    alert.show(AlertType.WARNING, AlertMode.MODAL, t(config.translations.deleteTitle), t(config.translations.deleteMessage), {
+      actions: [
+        { id: "cancel", label: t("common.cancel"), onPress: () => {} },
+        { id: "delete", label: t("common.delete"), style: "destructive", onPress: async () => {
+          const success = await deleteMutation.mutateAsync(c.id);
+          if (success) setSelectedCreation(null);
+        }}
+      ]
+    });
   }, [alert, config, deleteMutation, t]);
 
-  // Handle viewing a creation - shows detail screen
-  const handleView = useCallback((creation: Creation) => {
-    setSelectedCreation(creation);
-  }, []);
-
-  // Handle favorite toggle
-  const handleFavorite = useCallback((creation: Creation, isFavorite: boolean) => {
+  const handleFavorite = useCallback((c: Creation, isFavorite: boolean) => {
     void (async () => {
       if (!userId) return;
-      const success = await repository.updateFavorite(
-        userId,
-        creation.id,
-        isFavorite,
-      );
-      if (success) {
-        void refetch();
-      }
+      const success = await repository.updateFavorite(userId, c.id, isFavorite);
+      if (success) void refetch();
     })();
   }, [userId, repository, refetch]);
 
-  const renderEmptyComponent = useMemo(() => (
+  const filterButtons = useMemo(() => {
+    const buttons = [];
+    if (showStatusFilter) {
+      buttons.push({
+        id: "status",
+        label: t(config.translations.statusFilterTitle ?? "creations.filter.status"),
+        icon: "list-outline",
+        isActive: filters.statusFilter.hasActiveFilter,
+        onPress: filters.openStatusFilter,
+      });
+    }
+    if (showMediaFilter) {
+      buttons.push({
+        id: "media",
+        label: t(config.translations.mediaFilterTitle ?? "creations.filter.media"),
+        icon: "grid-outline",
+        isActive: filters.mediaFilter.hasActiveFilter,
+        onPress: filters.openMediaFilter,
+      });
+    }
+    return buttons;
+  }, [showStatusFilter, showMediaFilter, filters, t, config.translations]);
+
+  const renderItem = useCallback(({ item }: { item: Creation }) => (
+    <CreationCard
+      creation={item}
+      callbacks={{
+        onPress: () => setSelectedCreation(item),
+        onShare: async () => handleShare(item),
+        onDelete: () => handleDelete(item),
+        onFavorite: () => handleFavorite(item, !item.isFavorite),
+      }}
+    />
+  ), [handleShare, handleDelete, handleFavorite]);
+
+  const renderHeader = useMemo(() => {
+    if ((!creations || creations.length === 0) && !isLoading) return null;
+    return (
+      <View style={[styles.header, { paddingTop: insets.top + tokens.spacing.md, backgroundColor: tokens.colors.surface, borderBottomColor: tokens.colors.border }]}>
+        <GalleryHeader
+          title={t(config.translations.title)}
+          count={filters.filtered.length}
+          countLabel={t(config.translations.photoCount)}
+          showFilter={showFilter}
+          filterButtons={filterButtons}
+        />
+      </View>
+    );
+  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, insets.top, tokens]);
+
+  const renderEmpty = useMemo(() => (
     <GalleryEmptyStates
       isLoading={isLoading}
       creations={creations}
-      isFiltered={isFiltered}
+      isFiltered={filters.isFiltered}
       tokens={tokens}
       t={t}
       emptyTitle={t(config.translations.empty)}
       emptyDescription={t(config.translations.emptyDescription)}
       emptyActionLabel={emptyActionLabel}
       onEmptyAction={onEmptyAction}
-      onClearFilters={clearFilters}
+      onClearFilters={filters.clearAllFilters}
     />
-  ), [isLoading, creations, isFiltered, tokens, t, config, emptyActionLabel, onEmptyAction, clearFilters]);
+  ), [isLoading, creations, filters.isFiltered, tokens, t, config, emptyActionLabel, onEmptyAction, filters.clearAllFilters]);
 
   if (selectedCreation) {
-    return (
-      <CreationDetailScreen
-        creation={selectedCreation}
-        onClose={() => setSelectedCreation(null)}
-        onShare={handleShare}
-        onDelete={handleDelete}
-        t={t}
-      />
-    );
+    return <CreationDetailScreen creation={selectedCreation} onClose={() => setSelectedCreation(null)} onShare={handleShare} onDelete={handleDelete} t={t} />;
   }
 
   return (
-    <ScreenLayout
-      scrollable={false}
-      edges={["top"]}
-      backgroundColor={tokens.colors.background}
-      header={
-        (!creations || creations?.length === 0) && !isLoading ? null : (
-          <GalleryHeader
-            title={t(config.translations.title) || 'My Creations'}
-            count={filtered.length}
-            countLabel={t(config.translations.photoCount) || 'photos'}
-            isFiltered={isFiltered}
-            showFilter={showFilter}
-            filterLabel={t(config.translations.filterLabel) || 'Filter'}
-            onFilterPress={() => {
-              if (__DEV__) {
-                // eslint-disable-next-line no-console
-                console.log('[CreationsGallery] Filter button pressed');
-                // eslint-disable-next-line no-console
-                console.log('[CreationsGallery] filterSheetRef.current:', filterSheetRef.current);
-                // eslint-disable-next-line no-console
-                console.log('[CreationsGallery] allCategories:', allCategories);
-              }
-              filterSheetRef.current?.present();
-            }}
-          />
-        )
-      }
-    >
-      {/* Main Content Grid - handles empty/loading via ListEmptyComponent */}
-      <CreationsGrid
-        creations={filtered}
-        isLoading={isLoading}
-        onRefresh={() => void refetch()}
-        onPress={(creation) => handleView(creation as Creation)}
-        onShare={async (creation) => handleShare(creation as Creation)}
-        onDelete={(creation) => handleDelete(creation as Creation)}
-        onFavorite={(creation) => {
-          const c = creation as Creation;
-          handleFavorite(c, !c.isFavorite);
-        }}
-        contentContainerStyle={{ paddingBottom: tokens.spacing.xl }}
-        ListEmptyComponent={renderEmptyComponent}
+    <View style={[styles.container, { backgroundColor: tokens.colors.background }]}>
+      <FlatList
+        data={filters.filtered}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
+        ListEmptyComponent={renderEmpty}
+        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 100 }, (!filters.filtered || filters.filtered.length === 0) && styles.emptyContent]}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => void refetch()} tintColor={tokens.colors.primary} />}
       />
-
-      <CreationImageViewer
-        creations={filtered}
-        visible={viewerVisible}
-        index={viewerIndex}
-        onDismiss={() => setViewerVisible(false)}
-        onIndexChange={setViewerIndex}
-        enableEditing={enableEditing}
-        onImageEdit={onImageEdit}
-      />
-
-      <FilterBottomSheet
-        ref={filterSheetRef}
-        categories={allCategories}
-        selectedIds={selectedIds}
-        onFilterPress={(id, catId) => {
-          const category = allCategories.find(c => c.id === catId);
-          toggleFilter(id, category?.multiSelect);
-        }}
-        onClearFilters={clearFilters}
-        title={t(config.translations.filterTitle) || t("common.filter")}
-      />
-    </ScreenLayout>
+      <CreationImageViewer creations={filters.filtered} visible={viewerVisible} index={viewerIndex} onDismiss={() => setViewerVisible(false)} onIndexChange={setViewerIndex} enableEditing={enableEditing} onImageEdit={onImageEdit} />
+      <FilterSheet visible={filters.statusFilterVisible} onClose={filters.closeStatusFilter} options={filters.statusFilter.filterOptions} selectedIds={[filters.statusFilter.selectedId]} onFilterPress={filters.statusFilter.selectFilter} onClearFilters={filters.statusFilter.clearFilter} title={t(config.translations.statusFilterTitle ?? "creations.filter.status")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
+      <FilterSheet visible={filters.mediaFilterVisible} onClose={filters.closeMediaFilter} options={filters.mediaFilter.filterOptions} selectedIds={[filters.mediaFilter.selectedId]} onFilterPress={filters.mediaFilter.selectFilter} onClearFilters={filters.mediaFilter.clearFilter} title={t(config.translations.mediaFilterTitle ?? "creations.filter.media")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
+    </View>
   );
 }
 
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  header: { borderBottomWidth: 1 },
+  listContent: { paddingHorizontal: 16, paddingTop: 16 },
+  emptyContent: { flexGrow: 1 },
+});

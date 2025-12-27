@@ -5,6 +5,7 @@
 
 import type { Creation, CreationDocument } from "../entities/Creation";
 import type { FilterCategory } from "@umituz/react-native-design-system";
+import type { FilterOption } from "../types/creation-filter";
 
 export interface CreationType {
   readonly id: string;
@@ -23,6 +24,16 @@ export interface CreationsTranslations {
   readonly filterAll: string;
   readonly filterLabel: string;
   readonly filterTitle: string;
+  readonly statusFilterTitle?: string;
+  readonly mediaFilterTitle?: string;
+  readonly clearFilter?: string;
+}
+
+export interface CreationsFilterConfig {
+  readonly statusOptions?: FilterOption[];
+  readonly mediaOptions?: FilterOption[];
+  readonly showStatusFilter?: boolean;
+  readonly showMediaFilter?: boolean;
 }
 
 /**
@@ -35,6 +46,7 @@ export interface CreationsConfig {
   readonly collectionName: string;
   readonly types: readonly CreationType[];
   readonly filterCategories?: readonly FilterCategory[];
+  readonly filterConfig?: CreationsFilterConfig;
   readonly translations: CreationsTranslations;
   readonly showFilter?: boolean;
   readonly maxThumbnails?: number;

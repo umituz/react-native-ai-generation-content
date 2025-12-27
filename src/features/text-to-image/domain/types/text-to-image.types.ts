@@ -35,14 +35,6 @@ export interface TextToImageFeatureState {
   error: string | null;
 }
 
-export interface TextToImageTranslations {
-  promptPlaceholder: string;
-  generateButtonText: string;
-  processingText: string;
-  successText: string;
-  saveButtonText: string;
-  tryAnotherText: string;
-}
 
 export type TextToImageInputBuilder = (
   prompt: string,

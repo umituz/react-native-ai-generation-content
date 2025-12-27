@@ -1,6 +1,6 @@
 /**
  * Text-to-Video Feature
- * Provider-agnostic text-to-video generation feature
+ * Provider-agnostic text-to-video generation for 100+ apps
  */
 
 // Domain Types
@@ -9,19 +9,57 @@ export type {
   TextToVideoRequest,
   TextToVideoResult,
   TextToVideoFeatureState,
+  TextToVideoFormState,
+  TextToVideoGenerationState,
   TextToVideoTranslations,
   TextToVideoInputBuilder,
   TextToVideoResultExtractor,
-  TextToVideoFeatureConfig,
+  TextToVideoConfig,
+  TextToVideoCallbacks,
+  TabConfig,
+  StyleOption,
+  AspectRatioOption,
+  DurationOption,
+  OptionToggleConfig,
+  HeroConfig,
+  ProgressConfig,
+  FrameData,
+  ModerationResult,
+  ProjectData,
+  GenerationTabsProps,
+  FrameSelectorProps,
+  OptionsPanelProps,
+  HeroSectionProps,
+  HintCarouselProps,
+  HintItem,
+  ExamplePromptsProps,
+  ExamplePrompt,
 } from "./domain";
+
+export { INITIAL_FORM_STATE, INITIAL_GENERATION_STATE } from "./domain";
 
 // Infrastructure Services
 export { executeTextToVideo, hasTextToVideoSupport } from "./infrastructure";
 export type { ExecuteTextToVideoOptions } from "./infrastructure";
 
 // Presentation Hooks
-export { useTextToVideoFeature } from "./presentation";
+export {
+  useTextToVideoFeature,
+  useTextToVideoForm,
+} from "./presentation";
+
 export type {
   UseTextToVideoFeatureProps,
   UseTextToVideoFeatureReturn,
+  UseTextToVideoFormProps,
+  UseTextToVideoFormReturn,
+} from "./presentation";
+
+// Presentation Components
+export {
+  GenerationTabs,
+  FrameSelector,
+  OptionsPanel,
+  HeroSection,
+  HintCarousel,
 } from "./presentation";

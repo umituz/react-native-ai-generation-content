@@ -7,18 +7,10 @@ import { providerRegistry } from "../../../../infrastructure/services";
 import type {
   TextToVoiceRequest,
   TextToVoiceResult,
-  TextToVoiceInputBuilder,
-  TextToVoiceResultExtractor,
+  TextToVoiceExecuteOptions,
 } from "../../domain/types";
 
 declare const __DEV__: boolean;
-
-export interface ExecuteTextToVoiceOptions {
-  model: string;
-  buildInput: TextToVoiceInputBuilder;
-  extractResult?: TextToVoiceResultExtractor;
-  onProgress?: (progress: number) => void;
-}
 
 function defaultExtractResult(
   result: unknown,
@@ -50,7 +42,7 @@ function defaultExtractResult(
 
 export async function executeTextToVoice(
   request: TextToVoiceRequest,
-  options: ExecuteTextToVoiceOptions,
+  options: TextToVoiceExecuteOptions,
 ): Promise<TextToVoiceResult> {
   const provider = providerRegistry.getActiveProvider();
 

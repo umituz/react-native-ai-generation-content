@@ -8,20 +8,48 @@ export type {
   TextToVoiceOptions,
   TextToVoiceRequest,
   TextToVoiceResult,
-  TextToVoiceFeatureState,
-  TextToVoiceTranslations,
+  TextToVoiceGenerationState,
+  VoiceGeneration,
+  TextToVoiceFormState,
+  TextToVoiceFormSetters,
+  TextToVoiceFormReturn,
+  TextToVoiceFormConfig,
+  TextToVoiceTextInputProps,
+  TextToVoiceOptionalInputProps,
+  TextToVoiceExamplePromptsProps,
+  TextToVoiceGenerateButtonProps,
+  TextToVoiceAudioPlayerProps,
+  TextToVoiceErrorMessageProps,
+  TextToVoiceHeaderProps,
+  TextToVoiceScreenConfig,
+  TextToVoiceTranslationKeys,
   TextToVoiceInputBuilder,
   TextToVoiceResultExtractor,
   TextToVoiceFeatureConfig,
+  TextToVoiceExecuteOptions,
 } from "./domain";
 
 // Infrastructure Services
 export { executeTextToVoice, hasTextToVoiceSupport } from "./infrastructure";
-export type { ExecuteTextToVoiceOptions } from "./infrastructure";
 
 // Presentation Hooks
-export { useTextToVoiceFeature } from "./presentation";
+export {
+  useTextToVoiceForm,
+  useTextToVoiceGeneration,
+} from "./presentation";
+
 export type {
-  UseTextToVoiceFeatureProps,
-  UseTextToVoiceFeatureReturn,
+  UseTextToVoiceGenerationProps,
+  UseTextToVoiceGenerationReturn,
+} from "./presentation";
+
+// Presentation Components
+export {
+  TextToVoiceTextInput,
+  TextToVoiceOptionalInput,
+  TextToVoiceExamplePrompts,
+  TextToVoiceGenerateButton,
+  TextToVoiceAudioPlayer,
+  TextToVoiceErrorMessage,
+  TextToVoiceHeader,
 } from "./presentation";

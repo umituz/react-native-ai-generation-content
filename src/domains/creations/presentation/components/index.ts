@@ -21,6 +21,7 @@ export {
   createStatusFilterButtons,
   type FilterButton,
 } from "./CreationsFilterBar";
+export { StatusFilterSheet, MediaFilterSheet } from "./FilterSheets";
 
 // Gallery Components
 export { GalleryHeader } from "./GalleryHeader";

@@ -4,6 +4,7 @@
  */
 
 import type { CreationTypeId, CreationStatus, CreationCategory } from "./creation-types";
+import { IMAGE_CREATION_TYPES, VIDEO_CREATION_TYPES, VOICE_CREATION_TYPES } from "./creation-categories";
 
 /**
  * Filter options for querying creations
@@ -114,9 +115,6 @@ export function calculateCreationStats(
   }
 
   // Calculate category counts from type counts
-  const { IMAGE_CREATION_TYPES, VIDEO_CREATION_TYPES, VOICE_CREATION_TYPES } =
-    require("./creation-categories");
-
   for (const [typeId, count] of Object.entries(stats.byType)) {
     if (IMAGE_CREATION_TYPES.includes(typeId)) {
       stats.byCategory.image += count as number;

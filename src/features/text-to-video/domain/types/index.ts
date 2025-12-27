@@ -1,10 +1,54 @@
+/**
+ * Text-to-Video Domain Types
+ * Single Responsibility: Export all domain types
+ */
+
 export type {
   TextToVideoOptions,
   TextToVideoRequest,
   TextToVideoResult,
-  TextToVideoFeatureState,
-  TextToVideoTranslations,
   TextToVideoInputBuilder,
   TextToVideoResultExtractor,
-  TextToVideoFeatureConfig,
-} from "./text-to-video.types";
+} from "./request.types";
+
+export type {
+  TextToVideoFeatureState,
+  TextToVideoFormState,
+  TextToVideoGenerationState,
+  FrameData,
+} from "./state.types";
+
+export { INITIAL_FORM_STATE, INITIAL_GENERATION_STATE } from "./state.types";
+
+export type {
+  TabConfig,
+  StyleOption,
+  AspectRatioOption,
+  DurationOption,
+  OptionToggleConfig,
+  TextToVideoConfig,
+  HeroConfig,
+  ProgressConfig,
+} from "./config.types";
+
+export type {
+  ModerationResult,
+  ProjectData,
+  TextToVideoCallbacks,
+  TextToVideoTranslations,
+} from "./callback.types";
+
+export type {
+  GenerationTabsProps,
+  FrameSelectorProps,
+  OptionsPanelProps,
+  HeroSectionProps,
+  HintCarouselProps,
+  HintItem,
+  StyleSelectorProps,
+  AspectRatioSelectorProps,
+  DurationSelectorProps,
+  GenerateButtonProps,
+  ExamplePromptsProps,
+  ExamplePrompt,
+} from "./component.types";

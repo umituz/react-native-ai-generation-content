@@ -82,7 +82,8 @@ export function CreationCard({
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
   // Support both output object and direct uri
-  const previewUrl = creation.uri || getPreviewUrl(creation.output);
+  // Prefer getPreviewUrl (which returns thumbnailUrl first) over direct uri
+  const previewUrl = getPreviewUrl(creation.output) || creation.uri;
   const title = getCreationTitle(creation.prompt, creation.type as CreationTypeId);
 
   // Format date

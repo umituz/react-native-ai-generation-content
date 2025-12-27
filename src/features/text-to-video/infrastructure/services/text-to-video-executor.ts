@@ -1,6 +1,6 @@
 /**
  * Text-to-Video Executor
- * Provider-agnostic text-to-video execution using active AI provider
+ * Single Responsibility: Execute text-to-video using active AI provider
  */
 
 import { providerRegistry } from "../../../../infrastructure/services";

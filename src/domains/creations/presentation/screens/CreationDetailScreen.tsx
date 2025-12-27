@@ -1,13 +1,19 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import { useAppDesignTokens, type DesignTokens, ScreenLayout } from "@umituz/react-native-design-system";
+import React, { useMemo } from 'react';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import type { Creation } from '../../domain/entities/Creation';
+import { hasVideoContent, getPreviewUrl } from '../../domain/utils';
 import { DetailHeader } from '../components/CreationDetail/DetailHeader';
 import { DetailImage } from '../components/CreationDetail/DetailImage';
+import { DetailVideo } from '../components/CreationDetail/DetailVideo';
 import { DetailStory } from '../components/CreationDetail/DetailStory';
 import { DetailActions } from '../components/CreationDetail/DetailActions';
 
 import { useCreationsProvider } from '../components/CreationsProvider';
+
+/** Video creation types */
+const VIDEO_TYPES = ['text-to-video', 'image-to-video'] as const;
 
 interface CreationDetailScreenProps {
     readonly creation: Creation;
@@ -32,6 +38,7 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
     t
 }) => {
     const tokens = useAppDesignTokens();
+    const insets = useSafeAreaInsets();
     const { getLocalizedTitle } = useCreationsProvider();
 
     // Extract data safely
@@ -45,40 +52,60 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
     const story = metadata.story || metadata.description || "";
     const date = metadata.date || new Date(creation.createdAt).toLocaleDateString();
 
-    const styles = useStyles(tokens);
+    // Detect if this is a video creation
+    const isVideo = useMemo(() => {
+        if (VIDEO_TYPES.includes(creation.type as typeof VIDEO_TYPES[number])) return true;
+        if (hasVideoContent(creation.output)) return true;
+        return false;
+    }, [creation.type, creation.output]);
+
+    // Get video URL and thumbnail for video content
+    const videoUrl = creation.output?.videoUrl || creation.uri;
+    const thumbnailUrl = getPreviewUrl(creation.output) || undefined;
 
     return (
-        <ScreenLayout
-            scrollable={true}
-            edges={['top', 'bottom']}
-            backgroundColor={tokens.colors.background}
-            header={
+        <View style={[styles.container, { backgroundColor: tokens.colors.background }]}>
+            <View style={{ paddingTop: insets.top }}>
                 <DetailHeader
                     title={title}
                     date={date}
                     onClose={onClose}
                 />
-            }
-            contentContainerStyle={styles.scrollContent}
-        >
-            <DetailImage uri={creation.uri} />
+            </View>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 32 }]}
+                showsVerticalScrollIndicator={false}
+            >
+                {isVideo ? (
+                    <DetailVideo videoUrl={videoUrl} thumbnailUrl={thumbnailUrl} />
+                ) : (
+                    <DetailImage uri={creation.uri} />
+                )}
 
-            {story ? (
-                <DetailStory story={story} />
-            ) : null}
+                {story ? (
+                    <DetailStory story={story} />
+                ) : null}
 
-            <DetailActions
-                onShare={() => onShare(creation)}
-                onDelete={() => onDelete(creation)}
-                shareLabel={t("result.shareButton") || "Share"}
-                deleteLabel={t("common.delete") || "Delete"}
-            />
-        </ScreenLayout>
+                <DetailActions
+                    onShare={() => onShare(creation)}
+                    onDelete={() => onDelete(creation)}
+                    shareLabel={t("result.shareButton")}
+                    deleteLabel={t("common.delete")}
+                />
+            </ScrollView>
+        </View>
     );
 };
 
-const useStyles = (tokens: DesignTokens) => StyleSheet.create({
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    scrollView: {
+        flex: 1,
+    },
     scrollContent: {
-        paddingBottom: tokens.spacing.xxl,
+        paddingTop: 8,
     },
 });
