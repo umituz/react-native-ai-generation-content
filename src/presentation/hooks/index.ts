@@ -2,6 +2,9 @@
  * Presentation Hooks
  */
 
+// Base Feature Hooks (Provider-Agnostic)
+export * from "./base";
+
 export { useGeneration } from "./use-generation";
 export type {
   UseGenerationOptions,
