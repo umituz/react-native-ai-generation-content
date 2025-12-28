@@ -275,6 +275,10 @@ export {
   FeatureHeader,
   // Photo Upload
   PhotoUploadCard,
+  // Selectors
+  StyleSelector,
+  AspectRatioSelector,
+  DurationSelector,
 } from "./presentation/components";
 
 export type {
@@ -314,6 +318,13 @@ export type {
   // Photo Upload
   PhotoUploadCardProps,
   PhotoUploadCardConfig,
+  // Selectors
+  StyleSelectorProps,
+  AspectRatioSelectorProps,
+  DurationSelectorProps,
+  StyleOption,
+  AspectRatioOption,
+  DurationValue,
 } from "./presentation/components";
 
 // =============================================================================
