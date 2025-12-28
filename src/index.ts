@@ -25,6 +25,10 @@ export type {
   AIJobStatusType,
   AILogEntry,
   SubscribeOptions,
+  ImageFeatureType,
+  VideoFeatureType,
+  ImageFeatureInputData,
+  VideoFeatureInputData,
 } from "./domain/interfaces";
 
 export {
@@ -125,6 +129,7 @@ export {
   classifyError,
   isTransientError,
   isPermanentError,
+  isResultNotReady,
   // Polling
   calculatePollingInterval,
   createPollingDelay,

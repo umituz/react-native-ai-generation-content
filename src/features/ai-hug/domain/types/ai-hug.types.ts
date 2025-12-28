@@ -1,6 +1,6 @@
 /**
  * AI Hug Feature Types
- * Request, Result, Config types for AI hug generation
+ * Request, Result, Config types for AI hug video generation
  */
 
 export interface AIHugOptions {
@@ -14,13 +14,13 @@ export interface AIHugRequest {
   sourceImageBase64?: string;
   targetImageBase64?: string;
   userId: string;
+  prompt?: string;
   options?: AIHugOptions;
 }
 
 export interface AIHugResult {
   success: boolean;
-  imageUrl?: string;
-  imageBase64?: string;
+  videoUrl?: string;
   error?: string;
   requestId?: string;
 }
@@ -28,7 +28,7 @@ export interface AIHugResult {
 export interface AIHugFeatureState {
   sourceImageUri: string | null;
   targetImageUri: string | null;
-  processedUrl: string | null;
+  processedVideoUrl: string | null;
   isProcessing: boolean;
   progress: number;
   error: string | null;
@@ -49,19 +49,10 @@ export interface AIHugTranslations {
   tryAnotherText: string;
 }
 
-export type AIHugInputBuilder = (
-  sourceBase64: string,
-  targetBase64: string,
-  options?: AIHugOptions,
-) => Record<string, unknown>;
-
 export type AIHugResultExtractor = (result: unknown) => string | undefined;
 
 export interface AIHugFeatureConfig {
-  providerId?: string;
   creditCost?: number;
-  model: string;
-  buildInput: AIHugInputBuilder;
   extractResult?: AIHugResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onSourceImageSelect?: (uri: string) => void;

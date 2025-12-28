@@ -11,13 +11,8 @@ export type {
   PhotoRestoreFeatureState,
   PhotoRestoreTranslations,
   PhotoRestoreFeatureConfig,
-  PhotoRestoreInputBuilder,
   PhotoRestoreResultExtractor,
 } from "./domain";
-
-// Infrastructure Services
-export { executePhotoRestore, hasPhotoRestoreSupport } from "./infrastructure";
-export type { ExecutePhotoRestoreOptions } from "./infrastructure";
 
 // Presentation Hooks
 export { usePhotoRestoreFeature } from "./presentation";

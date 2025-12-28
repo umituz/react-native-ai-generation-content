@@ -21,7 +21,6 @@ import type {
 
 export interface RemoveObjectFeatureProps {
   config: RemoveObjectFeatureConfig;
-  userId: string;
   translations: RemoveObjectTranslations;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
@@ -33,7 +32,6 @@ export interface RemoveObjectFeatureProps {
 
 export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectImage,
   onSaveImage,
@@ -42,7 +40,6 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
   const tokens = useAppDesignTokens();
   const feature = useRemoveObjectFeature({
     config,
-    userId,
     onSelectImage,
     onSaveImage,
   });

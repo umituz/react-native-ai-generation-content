@@ -1,11 +1,11 @@
 /**
  * AIKissFeature Component
- * Self-contained AI kiss feature UI component
+ * Self-contained AI kiss video feature UI component
  * Uses hook internally, only requires config and translations
  */
 
 import React, { useCallback } from "react";
-import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
+import { View, ScrollView, StyleSheet, Dimensions } from "react-native";
 import {
   useAppDesignTokens,
   AtomicText,
@@ -21,11 +21,12 @@ import type {
 
 export interface AIKissFeatureProps {
   config: AIKissFeatureConfig;
-  userId: string;
   translations: AIKissTranslations;
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
-  onSaveImage: (imageUrl: string) => Promise<void>;
+  onSaveVideo: (videoUrl: string) => Promise<void>;
+  /** Custom video player renderer - required for video playback */
+  renderVideoPlayer: (props: { videoUrl: string; size: number }) => React.ReactNode;
   renderProcessingModal?: (props: {
     visible: boolean;
     progress: number;
@@ -34,21 +35,20 @@ export interface AIKissFeatureProps {
 
 export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectSourceImage,
   onSelectTargetImage,
-  onSaveImage,
+  onSaveVideo,
+  renderVideoPlayer,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
 
   const feature = useAIKissFeature({
     config,
-    userId,
     onSelectSourceImage,
     onSelectTargetImage,
-    onSaveImage,
+    onSaveVideo,
   });
 
   const handleProcess = useCallback(() => {
@@ -69,9 +69,9 @@ export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
 
   const canProcess = feature.sourceImageUri && feature.targetImageUri && !feature.isProcessing;
 
-  if (feature.processedUrl) {
+  if (feature.processedVideoUrl) {
     const screenWidth = Dimensions.get("window").width;
-    const imageSize = screenWidth - 48;
+    const videoSize = screenWidth - 48;
 
     return (
       <ScrollView
@@ -86,12 +86,8 @@ export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
           {translations.successText}
         </AtomicText>
 
-        <View style={styles.resultImageContainer}>
-          <Image
-            source={{ uri: feature.processedUrl }}
-            style={[styles.resultImage, { width: imageSize, height: imageSize }]}
-            resizeMode="contain"
-          />
+        <View style={styles.resultVideoContainer}>
+          {renderVideoPlayer({ videoUrl: feature.processedVideoUrl, size: videoSize })}
         </View>
 
         <View style={styles.resultActions}>
@@ -183,13 +179,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 24,
   },
-  resultImageContainer: {
+  resultVideoContainer: {
     alignItems: "center",
     marginHorizontal: 24,
     marginBottom: 24,
-  },
-  resultImage: {
-    borderRadius: 16,
   },
   resultActions: {
     marginHorizontal: 24,

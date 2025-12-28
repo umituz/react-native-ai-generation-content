@@ -11,13 +11,8 @@ export type {
   HDTouchUpFeatureState,
   HDTouchUpTranslations,
   HDTouchUpFeatureConfig,
-  HDTouchUpInputBuilder,
   HDTouchUpResultExtractor,
 } from "./domain";
-
-// Infrastructure Services
-export { executeHDTouchUp, hasHDTouchUpSupport } from "./infrastructure";
-export type { ExecuteHDTouchUpOptions } from "./infrastructure";
 
 // Presentation Hooks
 export { useHDTouchUpFeature } from "./presentation";

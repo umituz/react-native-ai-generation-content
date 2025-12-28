@@ -5,6 +5,5 @@ export type {
   PhotoRestoreFeatureState,
   PhotoRestoreTranslations,
   PhotoRestoreFeatureConfig,
-  PhotoRestoreInputBuilder,
   PhotoRestoreResultExtractor,
 } from "./photo-restore.types";

@@ -59,20 +59,11 @@ export interface ReplaceBackgroundTranslations {
   compareHint?: string;
 }
 
-export type ReplaceBackgroundInputBuilder = (
-  base64: string,
-  prompt?: string,
-  options?: ReplaceBackgroundOptions,
-) => Record<string, unknown>;
-
 export type ReplaceBackgroundResultExtractor = (result: unknown) => string | undefined;
 
 export interface ReplaceBackgroundFeatureConfig {
-  providerId?: string;
   creditCost?: number;
   defaultMode?: ReplaceBackgroundMode;
-  model: string;
-  buildInput: ReplaceBackgroundInputBuilder;
   extractResult?: ReplaceBackgroundResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;

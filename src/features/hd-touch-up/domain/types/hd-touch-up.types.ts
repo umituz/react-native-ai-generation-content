@@ -48,18 +48,10 @@ export interface HDTouchUpTranslations {
   compareHint?: string;
 }
 
-export type HDTouchUpInputBuilder = (
-  base64: string,
-  options?: HDTouchUpOptions,
-) => Record<string, unknown>;
-
 export type HDTouchUpResultExtractor = (result: unknown) => string | undefined;
 
 export interface HDTouchUpFeatureConfig {
-  providerId?: string;
   creditCost?: number;
-  model: string;
-  buildInput: HDTouchUpInputBuilder;
   extractResult?: HDTouchUpResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;

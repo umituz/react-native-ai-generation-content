@@ -1,6 +1,6 @@
 /**
  * AI Hug Feature
- * Provider-agnostic AI hug generation feature
+ * Provider-agnostic AI hug video generation feature
  */
 
 // Domain Types
@@ -11,13 +11,8 @@ export type {
   AIHugFeatureState,
   AIHugTranslations,
   AIHugFeatureConfig,
-  AIHugInputBuilder,
   AIHugResultExtractor,
 } from "./domain";
-
-// Infrastructure Services
-export { executeAIHug, hasAIHugSupport } from "./infrastructure";
-export type { ExecuteAIHugOptions } from "./infrastructure";
 
 // Presentation Hooks
 export { useAIHugFeature } from "./presentation";

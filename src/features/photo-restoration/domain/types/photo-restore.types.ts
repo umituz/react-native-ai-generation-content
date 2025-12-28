@@ -48,20 +48,12 @@ export interface PhotoRestoreTranslations {
   compareHint?: string;
 }
 
-export type PhotoRestoreInputBuilder = (
-  base64: string,
-  options?: PhotoRestoreOptions,
-) => Record<string, unknown>;
-
 export type PhotoRestoreResultExtractor = (
   result: unknown,
 ) => string | undefined;
 
 export interface PhotoRestoreFeatureConfig {
-  providerId?: string;
   creditCost?: number;
-  model: string;
-  buildInput: PhotoRestoreInputBuilder;
   extractResult?: PhotoRestoreResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;

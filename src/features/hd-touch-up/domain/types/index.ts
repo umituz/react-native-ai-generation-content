@@ -4,7 +4,6 @@ export type {
   HDTouchUpResult,
   HDTouchUpFeatureState,
   HDTouchUpTranslations,
-  HDTouchUpInputBuilder,
   HDTouchUpResultExtractor,
   HDTouchUpFeatureConfig,
 } from "./hd-touch-up.types";

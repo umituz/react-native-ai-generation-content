@@ -48,18 +48,10 @@ export interface RemoveBackgroundTranslations {
   compareHint?: string;
 }
 
-export type RemoveBackgroundInputBuilder = (
-  base64: string,
-  options?: RemoveBackgroundOptions,
-) => Record<string, unknown>;
-
 export type RemoveBackgroundResultExtractor = (result: unknown) => string | undefined;
 
 export interface RemoveBackgroundFeatureConfig {
-  providerId?: string;
   creditCost?: number;
-  model: string;
-  buildInput: RemoveBackgroundInputBuilder;
   extractResult?: RemoveBackgroundResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;

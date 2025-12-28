@@ -12,3 +12,23 @@ export {
   createGenerationWrapper,
 } from "./generation-wrapper.service";
 export type { WrapperConfig } from "./generation-wrapper.service";
+export {
+  executeImageFeature,
+  hasImageFeatureSupport,
+} from "./image-feature-executor.service";
+export type {
+  ImageResultExtractor,
+  ExecuteImageFeatureOptions,
+  ImageFeatureResult,
+  ImageFeatureRequest,
+} from "./image-feature-executor.service";
+export {
+  executeVideoFeature,
+  hasVideoFeatureSupport,
+} from "./video-feature-executor.service";
+export type {
+  VideoResultExtractor,
+  ExecuteVideoFeatureOptions,
+  VideoFeatureResult,
+  VideoFeatureRequest,
+} from "./video-feature-executor.service";

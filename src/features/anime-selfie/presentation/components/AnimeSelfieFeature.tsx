@@ -21,7 +21,6 @@ import type {
 
 export interface AnimeSelfieFeatureProps {
   config: AnimeSelfieFeatureConfig;
-  userId: string;
   translations: AnimeSelfieTranslations;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
@@ -33,7 +32,6 @@ export interface AnimeSelfieFeatureProps {
 
 export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectImage,
   onSaveImage,
@@ -43,7 +41,6 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
 
   const feature = useAnimeSelfieFeature({
     config,
-    userId,
     onSelectImage,
     onSaveImage,
   });

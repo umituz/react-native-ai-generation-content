@@ -50,19 +50,11 @@ export interface AnimeSelfieTranslations {
   compareHint?: string;
 }
 
-export type AnimeSelfieInputBuilder = (
-  base64: string,
-  options?: AnimeSelfieOptions,
-) => Record<string, unknown>;
-
 export type AnimeSelfieResultExtractor = (result: unknown) => string | undefined;
 
 export interface AnimeSelfieFeatureConfig {
-  providerId?: string;
   creditCost?: number;
   defaultStyle?: AnimeSelfieStyle;
-  model: string;
-  buildInput: AnimeSelfieInputBuilder;
   extractResult?: AnimeSelfieResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;

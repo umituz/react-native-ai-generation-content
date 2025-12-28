@@ -4,18 +4,15 @@
  */
 
 import { useState, useCallback } from "react";
-import { executeFaceSwap } from "../../infrastructure/services";
+import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   FaceSwapFeatureState,
   FaceSwapFeatureConfig,
   FaceSwapResult,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
-
 export interface UseFaceSwapFeatureProps {
   config: FaceSwapFeatureConfig;
-  userId: string;
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
@@ -41,7 +38,7 @@ const initialState: FaceSwapFeatureState = {
 export function useFaceSwapFeature(
   props: UseFaceSwapFeatureProps,
 ): UseFaceSwapFeatureReturn {
-  const { config, userId, onSelectSourceImage, onSelectTargetImage, onSaveImage } = props;
+  const { config, onSelectSourceImage, onSelectTargetImage, onSaveImage } = props;
   const [state, setState] = useState<FaceSwapFeatureState>(initialState);
 
   const selectSourceImage = useCallback(async () => {
@@ -86,39 +83,23 @@ export function useFaceSwapFeature(
 
     config.onProcessingStart?.();
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[useFaceSwapFeature] Starting face swap process");
-    }
-
     const sourceImageBase64 = await config.prepareImage(state.sourceImageUri);
     const targetImageBase64 = await config.prepareImage(state.targetImageUri);
 
-    const result: FaceSwapResult = await executeFaceSwap(
-      {
-        sourceImageUri: state.sourceImageUri,
-        targetImageUri: state.targetImageUri,
-        sourceImageBase64,
-        targetImageBase64,
-        userId,
-      },
-      {
-        model: config.model,
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        onProgress: handleProgress,
-      },
+    const result = await executeImageFeature(
+      "face-swap",
+      { imageBase64: sourceImageBase64, targetImageBase64 },
+      { extractResult: config.extractResult, onProgress: handleProgress },
     );
 
     if (result.success && result.imageUrl) {
-      const url = result.imageUrl;
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: url,
+        processedUrl: result.imageUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.(result);
+      config.onProcessingComplete?.(result as FaceSwapResult);
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -129,7 +110,7 @@ export function useFaceSwapFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.sourceImageUri, state.targetImageUri, userId, config, handleProgress]);
+  }, [state.sourceImageUri, state.targetImageUri, config, handleProgress]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

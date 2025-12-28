@@ -8,7 +8,6 @@ export type {
   AIKissResult,
   AIKissFeatureState,
   AIKissTranslations,
-  AIKissInputBuilder,
   AIKissResultExtractor,
   AIKissFeatureConfig,
 } from "./ai-kiss.types";

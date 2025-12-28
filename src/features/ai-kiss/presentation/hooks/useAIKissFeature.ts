@@ -1,24 +1,20 @@
 /**
  * useAIKissFeature Hook
- * Manages AI kiss feature state and actions
+ * Manages AI kiss video generation state and actions
  */
 
 import { useState, useCallback } from "react";
-import { executeAIKiss } from "../../infrastructure/services";
+import { executeVideoFeature } from "../../../../infrastructure/services";
 import type {
   AIKissFeatureState,
   AIKissFeatureConfig,
-  AIKissResult,
 } from "../../domain/types";
-
-declare const __DEV__: boolean;
 
 export interface UseAIKissFeatureProps {
   config: AIKissFeatureConfig;
-  userId: string;
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
-  onSaveImage: (imageUrl: string) => Promise<void>;
+  onSaveVideo: (videoUrl: string) => Promise<void>;
 }
 
 export interface UseAIKissFeatureReturn extends AIKissFeatureState {
@@ -32,7 +28,7 @@ export interface UseAIKissFeatureReturn extends AIKissFeatureState {
 const initialState: AIKissFeatureState = {
   sourceImageUri: null,
   targetImageUri: null,
-  processedUrl: null,
+  processedVideoUrl: null,
   isProcessing: false,
   progress: 0,
   error: null,
@@ -41,7 +37,7 @@ const initialState: AIKissFeatureState = {
 export function useAIKissFeature(
   props: UseAIKissFeatureProps,
 ): UseAIKissFeatureReturn {
-  const { config, userId, onSelectSourceImage, onSelectTargetImage, onSaveImage } = props;
+  const { config, onSelectSourceImage, onSelectTargetImage, onSaveVideo } = props;
   const [state, setState] = useState<AIKissFeatureState>(initialState);
 
   const selectSourceImage = useCallback(async () => {
@@ -86,39 +82,23 @@ export function useAIKissFeature(
 
     config.onProcessingStart?.();
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[useAIKissFeature] Starting AI kiss process");
-    }
-
     const sourceImageBase64 = await config.prepareImage(state.sourceImageUri);
     const targetImageBase64 = await config.prepareImage(state.targetImageUri);
 
-    const result: AIKissResult = await executeAIKiss(
-      {
-        sourceImageUri: state.sourceImageUri,
-        targetImageUri: state.targetImageUri,
-        sourceImageBase64,
-        targetImageBase64,
-        userId,
-      },
-      {
-        model: config.model,
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        onProgress: handleProgress,
-      },
+    const result = await executeVideoFeature(
+      "ai-kiss",
+      { sourceImageBase64, targetImageBase64 },
+      { extractResult: config.extractResult, onProgress: handleProgress },
     );
 
-    if (result.success && result.imageUrl) {
-      const url = result.imageUrl;
+    if (result.success && result.videoUrl) {
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: url,
+        processedVideoUrl: result.videoUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.(result);
+      config.onProcessingComplete?.({ success: true, videoUrl: result.videoUrl });
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -129,18 +109,18 @@ export function useAIKissFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.sourceImageUri, state.targetImageUri, userId, config, handleProgress]);
+  }, [state.sourceImageUri, state.targetImageUri, config, handleProgress]);
 
   const save = useCallback(async () => {
-    if (!state.processedUrl) return;
+    if (!state.processedVideoUrl) return;
 
     try {
-      await onSaveImage(state.processedUrl);
+      await onSaveVideo(state.processedVideoUrl);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       setState((prev) => ({ ...prev, error: message }));
     }
-  }, [state.processedUrl, onSaveImage]);
+  }, [state.processedVideoUrl, onSaveVideo]);
 
   const reset = useCallback(() => {
     setState(initialState);

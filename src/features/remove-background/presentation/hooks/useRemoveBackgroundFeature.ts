@@ -4,18 +4,15 @@
  */
 
 import { useState, useCallback } from "react";
-import { executeRemoveBackground } from "../../infrastructure/services";
+import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   RemoveBackgroundFeatureState,
   RemoveBackgroundFeatureConfig,
   RemoveBackgroundResult,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
-
 export interface UseRemoveBackgroundFeatureProps {
   config: RemoveBackgroundFeatureConfig;
-  userId: string;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
 }
@@ -38,7 +35,7 @@ const initialState: RemoveBackgroundFeatureState = {
 export function useRemoveBackgroundFeature(
   props: UseRemoveBackgroundFeatureProps,
 ): UseRemoveBackgroundFeatureReturn {
-  const { config, userId, onSelectImage, onSaveImage } = props;
+  const { config, onSelectImage, onSaveImage } = props;
   const [state, setState] = useState<RemoveBackgroundFeatureState>(initialState);
 
   const selectImage = useCallback(async () => {
@@ -70,36 +67,22 @@ export function useRemoveBackgroundFeature(
 
     config.onProcessingStart?.();
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[useRemoveBackgroundFeature] Starting background removal process");
-    }
-
     const imageBase64 = await config.prepareImage(state.imageUri);
 
-    const result: RemoveBackgroundResult = await executeRemoveBackground(
-      {
-        imageUri: state.imageUri,
-        imageBase64,
-        userId,
-      },
-      {
-        model: config.model,
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        onProgress: handleProgress,
-      },
+    const result = await executeImageFeature(
+      "remove-background",
+      { imageBase64 },
+      { extractResult: config.extractResult, onProgress: handleProgress },
     );
 
     if (result.success && result.imageUrl) {
-      const url = result.imageUrl;
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: url,
+        processedUrl: result.imageUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.(result);
+      config.onProcessingComplete?.(result as RemoveBackgroundResult);
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -110,7 +93,7 @@ export function useRemoveBackgroundFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.imageUri, userId, config, handleProgress]);
+  }, [state.imageUri, config, handleProgress]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

@@ -49,21 +49,13 @@ export interface UpscaleTranslations {
   compareHint?: string;
 }
 
-export type UpscaleInputBuilder = (
-  base64: string,
-  options?: UpscaleOptions,
-) => Record<string, unknown>;
-
 export type UpscaleResultExtractor = (
   result: unknown,
 ) => string | undefined;
 
 export interface UpscaleFeatureConfig {
-  providerId?: string;
   defaultScaleFactor?: UpscaleScaleFactor;
   creditCost?: number;
-  model: string;
-  buildInput: UpscaleInputBuilder;
   extractResult?: UpscaleResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;

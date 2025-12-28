@@ -170,3 +170,31 @@ export function isTransientError(error: unknown): boolean {
 export function isPermanentError(error: unknown): boolean {
   return !isTransientError(error);
 }
+
+/**
+ * Check if result is not ready yet (used during polling)
+ * More specific than isTransientError for result fetching scenarios
+ * Returns true for 404/not-found errors that indicate job still processing
+ */
+export function isResultNotReady(
+  error: unknown,
+  retryAttempt: number,
+  maxRetries: number,
+): boolean {
+  if (isPermanentError(error)) {
+    return false;
+  }
+
+  const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+  const errorName = error instanceof Error ? error.constructor.name.toLowerCase() : "";
+
+  return (
+    message.includes("not found") ||
+    message.includes("404") ||
+    message.includes("still in progress") ||
+    message.includes("result not ready") ||
+    message.includes("request is still in progress") ||
+    message.includes("job result not found") ||
+    (errorName === "apierror" && retryAttempt < maxRetries - 1)
+  );
+}

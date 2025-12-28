@@ -4,18 +4,15 @@
  */
 
 import { useState, useCallback } from "react";
-import { executeHDTouchUp } from "../../infrastructure/services";
+import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   HDTouchUpFeatureState,
   HDTouchUpFeatureConfig,
   HDTouchUpResult,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
-
 export interface UseHDTouchUpFeatureProps {
   config: HDTouchUpFeatureConfig;
-  userId: string;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
 }
@@ -38,7 +35,7 @@ const initialState: HDTouchUpFeatureState = {
 export function useHDTouchUpFeature(
   props: UseHDTouchUpFeatureProps,
 ): UseHDTouchUpFeatureReturn {
-  const { config, userId, onSelectImage, onSaveImage } = props;
+  const { config, onSelectImage, onSaveImage } = props;
   const [state, setState] = useState<HDTouchUpFeatureState>(initialState);
 
   const selectImage = useCallback(async () => {
@@ -70,36 +67,22 @@ export function useHDTouchUpFeature(
 
     config.onProcessingStart?.();
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[useHDTouchUpFeature] Starting HD enhancement");
-    }
-
     const imageBase64 = await config.prepareImage(state.imageUri);
 
-    const result: HDTouchUpResult = await executeHDTouchUp(
-      {
-        imageUri: state.imageUri,
-        imageBase64,
-        userId,
-      },
-      {
-        model: config.model,
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        onProgress: handleProgress,
-      },
+    const result = await executeImageFeature(
+      "hd-touch-up",
+      { imageBase64 },
+      { extractResult: config.extractResult, onProgress: handleProgress },
     );
 
     if (result.success && result.imageUrl) {
-      const url = result.imageUrl;
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: url,
+        processedUrl: result.imageUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.(result);
+      config.onProcessingComplete?.(result as HDTouchUpResult);
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -110,7 +93,7 @@ export function useHDTouchUpFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.imageUri, userId, config, handleProgress]);
+  }, [state.imageUri, config, handleProgress]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

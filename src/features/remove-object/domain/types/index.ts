@@ -8,7 +8,6 @@ export type {
   RemoveObjectResult,
   RemoveObjectFeatureState,
   RemoveObjectTranslations,
-  RemoveObjectInputBuilder,
   RemoveObjectResultExtractor,
   RemoveObjectFeatureConfig,
 } from "./remove-object.types";

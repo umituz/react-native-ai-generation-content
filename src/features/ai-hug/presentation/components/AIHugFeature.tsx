@@ -1,11 +1,11 @@
 /**
  * AIHugFeature Component
- * Self-contained AI hug feature UI component
+ * Self-contained AI hug video feature UI component
  * Uses hook internally, only requires config and translations
  */
 
 import React, { useCallback } from "react";
-import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
+import { View, ScrollView, StyleSheet, Dimensions } from "react-native";
 import {
   useAppDesignTokens,
   AtomicText,
@@ -22,16 +22,16 @@ import type {
 export interface AIHugFeatureProps {
   /** Feature configuration with provider-specific settings */
   config: AIHugFeatureConfig;
-  /** User ID for the generation request */
-  userId: string;
   /** Translations for all UI text */
   translations: AIHugTranslations;
   /** Source image picker callback */
   onSelectSourceImage: () => Promise<string | null>;
   /** Target image picker callback */
   onSelectTargetImage: () => Promise<string | null>;
-  /** Save image callback */
-  onSaveImage: (imageUrl: string) => Promise<void>;
+  /** Save video callback */
+  onSaveVideo: (videoUrl: string) => Promise<void>;
+  /** Custom video player renderer - required for video playback */
+  renderVideoPlayer: (props: { videoUrl: string; size: number }) => React.ReactNode;
   /** Optional custom processing modal renderer */
   renderProcessingModal?: (props: {
     visible: boolean;
@@ -41,21 +41,20 @@ export interface AIHugFeatureProps {
 
 export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectSourceImage,
   onSelectTargetImage,
-  onSaveImage,
+  onSaveVideo,
+  renderVideoPlayer,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
 
   const feature = useAIHugFeature({
     config,
-    userId,
     onSelectSourceImage,
     onSelectTargetImage,
-    onSaveImage,
+    onSaveVideo,
   });
 
   const handleProcess = useCallback(() => {
@@ -76,9 +75,9 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
 
   const canProcess = feature.sourceImageUri && feature.targetImageUri && !feature.isProcessing;
 
-  if (feature.processedUrl) {
+  if (feature.processedVideoUrl) {
     const screenWidth = Dimensions.get("window").width;
-    const imageSize = screenWidth - 48;
+    const videoSize = screenWidth - 48;
 
     return (
       <ScrollView
@@ -93,12 +92,8 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
           {translations.successText}
         </AtomicText>
 
-        <View style={styles.resultImageContainer}>
-          <Image
-            source={{ uri: feature.processedUrl }}
-            style={[styles.resultImage, { width: imageSize, height: imageSize }]}
-            resizeMode="contain"
-          />
+        <View style={styles.resultVideoContainer}>
+          {renderVideoPlayer({ videoUrl: feature.processedVideoUrl, size: videoSize })}
         </View>
 
         <View style={styles.resultActions}>
@@ -190,13 +185,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 24,
   },
-  resultImageContainer: {
+  resultVideoContainer: {
     alignItems: "center",
     marginHorizontal: 24,
     marginBottom: 24,
-  },
-  resultImage: {
-    borderRadius: 16,
   },
   resultActions: {
     marginHorizontal: 24,

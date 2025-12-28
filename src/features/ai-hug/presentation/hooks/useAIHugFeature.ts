@@ -1,24 +1,20 @@
 /**
  * useAIHugFeature Hook
- * Manages AI hug feature state and actions
+ * Manages AI hug video generation state and actions
  */
 
 import { useState, useCallback } from "react";
-import { executeAIHug } from "../../infrastructure/services";
+import { executeVideoFeature } from "../../../../infrastructure/services";
 import type {
   AIHugFeatureState,
   AIHugFeatureConfig,
-  AIHugResult,
 } from "../../domain/types";
-
-declare const __DEV__: boolean;
 
 export interface UseAIHugFeatureProps {
   config: AIHugFeatureConfig;
-  userId: string;
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
-  onSaveImage: (imageUrl: string) => Promise<void>;
+  onSaveVideo: (videoUrl: string) => Promise<void>;
 }
 
 export interface UseAIHugFeatureReturn extends AIHugFeatureState {
@@ -32,7 +28,7 @@ export interface UseAIHugFeatureReturn extends AIHugFeatureState {
 const initialState: AIHugFeatureState = {
   sourceImageUri: null,
   targetImageUri: null,
-  processedUrl: null,
+  processedVideoUrl: null,
   isProcessing: false,
   progress: 0,
   error: null,
@@ -41,7 +37,7 @@ const initialState: AIHugFeatureState = {
 export function useAIHugFeature(
   props: UseAIHugFeatureProps,
 ): UseAIHugFeatureReturn {
-  const { config, userId, onSelectSourceImage, onSelectTargetImage, onSaveImage } = props;
+  const { config, onSelectSourceImage, onSelectTargetImage, onSaveVideo } = props;
   const [state, setState] = useState<AIHugFeatureState>(initialState);
 
   const selectSourceImage = useCallback(async () => {
@@ -86,39 +82,23 @@ export function useAIHugFeature(
 
     config.onProcessingStart?.();
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[useAIHugFeature] Starting AI hug process");
-    }
-
     const sourceImageBase64 = await config.prepareImage(state.sourceImageUri);
     const targetImageBase64 = await config.prepareImage(state.targetImageUri);
 
-    const result: AIHugResult = await executeAIHug(
-      {
-        sourceImageUri: state.sourceImageUri,
-        targetImageUri: state.targetImageUri,
-        sourceImageBase64,
-        targetImageBase64,
-        userId,
-      },
-      {
-        model: config.model,
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        onProgress: handleProgress,
-      },
+    const result = await executeVideoFeature(
+      "ai-hug",
+      { sourceImageBase64, targetImageBase64 },
+      { extractResult: config.extractResult, onProgress: handleProgress },
     );
 
-    if (result.success && result.imageUrl) {
-      const url = result.imageUrl;
+    if (result.success && result.videoUrl) {
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: url,
+        processedVideoUrl: result.videoUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.(result);
+      config.onProcessingComplete?.({ success: true, videoUrl: result.videoUrl });
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -129,18 +109,18 @@ export function useAIHugFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.sourceImageUri, state.targetImageUri, userId, config, handleProgress]);
+  }, [state.sourceImageUri, state.targetImageUri, config, handleProgress]);
 
   const save = useCallback(async () => {
-    if (!state.processedUrl) return;
+    if (!state.processedVideoUrl) return;
 
     try {
-      await onSaveImage(state.processedUrl);
+      await onSaveVideo(state.processedVideoUrl);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       setState((prev) => ({ ...prev, error: message }));
     }
-  }, [state.processedUrl, onSaveImage]);
+  }, [state.processedVideoUrl, onSaveVideo]);
 
   const reset = useCallback(() => {
     setState(initialState);

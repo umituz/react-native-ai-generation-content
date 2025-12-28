@@ -4,18 +4,15 @@
  */
 
 import { useState, useCallback } from "react";
-import { executeUpscale } from "../../infrastructure/services";
+import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   UpscaleFeatureState,
   UpscaleFeatureConfig,
   UpscaleResult,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
-
 export interface UseUpscaleFeatureProps {
   config: UpscaleFeatureConfig;
-  userId: string;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
 }
@@ -38,7 +35,7 @@ const initialState: UpscaleFeatureState = {
 export function useUpscaleFeature(
   props: UseUpscaleFeatureProps,
 ): UseUpscaleFeatureReturn {
-  const { config, userId, onSelectImage, onSaveImage } = props;
+  const { config, onSelectImage, onSaveImage } = props;
   const [state, setState] = useState<UpscaleFeatureState>(initialState);
 
   const selectImage = useCallback(async () => {
@@ -70,37 +67,25 @@ export function useUpscaleFeature(
 
     config.onProcessingStart?.();
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[useUpscaleFeature] Starting upscale process");
-    }
-
     const imageBase64 = await config.prepareImage(state.imageUri);
 
-    const result: UpscaleResult = await executeUpscale(
+    const result = await executeImageFeature(
+      "upscale",
       {
-        imageUri: state.imageUri,
         imageBase64,
-        userId,
         options: { scaleFactor: config.defaultScaleFactor || 2 },
       },
-      {
-        model: config.model,
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        onProgress: handleProgress,
-      },
+      { extractResult: config.extractResult, onProgress: handleProgress },
     );
 
     if (result.success && result.imageUrl) {
-      const url = result.imageUrl;
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: url,
+        processedUrl: result.imageUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.(result);
+      config.onProcessingComplete?.(result as UpscaleResult);
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -111,7 +96,7 @@ export function useUpscaleFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.imageUri, userId, config, handleProgress]);
+  }, [state.imageUri, config, handleProgress]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

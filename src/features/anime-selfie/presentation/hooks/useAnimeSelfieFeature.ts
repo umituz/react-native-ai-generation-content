@@ -4,18 +4,15 @@
  */
 
 import { useState, useCallback } from "react";
-import { executeAnimeSelfie } from "../../infrastructure/services";
+import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   AnimeSelfieFeatureState,
   AnimeSelfieFeatureConfig,
   AnimeSelfieResult,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
-
 export interface UseAnimeSelfieFeatureProps {
   config: AnimeSelfieFeatureConfig;
-  userId: string;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
 }
@@ -38,7 +35,7 @@ const initialState: AnimeSelfieFeatureState = {
 export function useAnimeSelfieFeature(
   props: UseAnimeSelfieFeatureProps,
 ): UseAnimeSelfieFeatureReturn {
-  const { config, userId, onSelectImage, onSaveImage } = props;
+  const { config, onSelectImage, onSaveImage } = props;
   const [state, setState] = useState<AnimeSelfieFeatureState>(initialState);
 
   const selectImage = useCallback(async () => {
@@ -70,37 +67,22 @@ export function useAnimeSelfieFeature(
 
     config.onProcessingStart?.();
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[useAnimeSelfieFeature] Starting anime selfie process");
-    }
-
     const imageBase64 = await config.prepareImage(state.imageUri);
 
-    const result: AnimeSelfieResult = await executeAnimeSelfie(
-      {
-        imageUri: state.imageUri,
-        imageBase64,
-        userId,
-        options: { style: config.defaultStyle },
-      },
-      {
-        model: config.model,
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        onProgress: handleProgress,
-      },
+    const result = await executeImageFeature(
+      "anime-selfie",
+      { imageBase64, options: { style: config.defaultStyle } },
+      { extractResult: config.extractResult, onProgress: handleProgress },
     );
 
     if (result.success && result.imageUrl) {
-      const url = result.imageUrl;
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: url,
+        processedUrl: result.imageUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.(result);
+      config.onProcessingComplete?.(result as AnimeSelfieResult);
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -111,7 +93,7 @@ export function useAnimeSelfieFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.imageUri, userId, config, handleProgress]);
+  }, [state.imageUri, config, handleProgress]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

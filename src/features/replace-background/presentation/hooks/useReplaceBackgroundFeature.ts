@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from "react";
-import { executeReplaceBackground } from "../../infrastructure/services";
+import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   ReplaceBackgroundFeatureState,
   ReplaceBackgroundFeatureConfig,
@@ -12,11 +12,8 @@ import type {
   ReplaceBackgroundMode,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
-
 export interface UseReplaceBackgroundFeatureProps {
   config: ReplaceBackgroundFeatureConfig;
-  userId: string;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
 }
@@ -43,7 +40,7 @@ const initialState: ReplaceBackgroundFeatureState = {
 export function useReplaceBackgroundFeature(
   props: UseReplaceBackgroundFeatureProps,
 ): UseReplaceBackgroundFeatureReturn {
-  const { config, userId, onSelectImage, onSaveImage } = props;
+  const { config, onSelectImage, onSaveImage } = props;
   const [state, setState] = useState<ReplaceBackgroundFeatureState>({
     ...initialState,
     mode: config.defaultMode || "replace",
@@ -86,38 +83,26 @@ export function useReplaceBackgroundFeature(
 
     config.onProcessingStart?.();
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log("[useReplaceBackgroundFeature] Starting background replacement process");
-    }
-
     const imageBase64 = await config.prepareImage(state.imageUri);
 
-    const result: ReplaceBackgroundResult = await executeReplaceBackground(
+    const result = await executeImageFeature(
+      "replace-background",
       {
-        imageUri: state.imageUri,
         imageBase64,
-        userId,
         prompt: state.prompt || undefined,
         options: { mode: state.mode },
       },
-      {
-        model: config.model,
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        onProgress: handleProgress,
-      },
+      { extractResult: config.extractResult, onProgress: handleProgress },
     );
 
     if (result.success && result.imageUrl) {
-      const url = result.imageUrl;
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: url,
+        processedUrl: result.imageUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.(result);
+      config.onProcessingComplete?.(result as ReplaceBackgroundResult);
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -128,7 +113,7 @@ export function useReplaceBackgroundFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.imageUri, state.prompt, state.mode, userId, config, handleProgress]);
+  }, [state.imageUri, state.prompt, state.mode, config, handleProgress]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

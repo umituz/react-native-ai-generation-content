@@ -22,8 +22,6 @@ import type {
 export interface PhotoRestoreFeatureProps {
   /** Feature configuration with provider-specific settings */
   config: PhotoRestoreFeatureConfig;
-  /** User ID for the generation request */
-  userId: string;
   /** Translations for all UI text */
   translations: PhotoRestoreTranslations;
   /** Image picker callback */
@@ -39,7 +37,6 @@ export interface PhotoRestoreFeatureProps {
 
 export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectImage,
   onSaveImage,
@@ -49,7 +46,6 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
 
   const feature = usePhotoRestoreFeature({
     config,
-    userId,
     onSelectImage,
     onSaveImage,
   });

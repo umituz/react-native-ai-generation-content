@@ -8,7 +8,6 @@ export type {
   RemoveBackgroundResult,
   RemoveBackgroundFeatureState,
   RemoveBackgroundTranslations,
-  RemoveBackgroundInputBuilder,
   RemoveBackgroundResultExtractor,
   RemoveBackgroundFeatureConfig,
 } from "./remove-background.types";

@@ -21,7 +21,6 @@ import type {
 
 export interface RemoveBackgroundFeatureProps {
   config: RemoveBackgroundFeatureConfig;
-  userId: string;
   translations: RemoveBackgroundTranslations;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
@@ -33,7 +32,6 @@ export interface RemoveBackgroundFeatureProps {
 
 export const RemoveBackgroundFeature: React.FC<RemoveBackgroundFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectImage,
   onSaveImage,
@@ -43,7 +41,6 @@ export const RemoveBackgroundFeature: React.FC<RemoveBackgroundFeatureProps> = (
 
   const feature = useRemoveBackgroundFeature({
     config,
-    userId,
     onSelectImage,
     onSaveImage,
   });

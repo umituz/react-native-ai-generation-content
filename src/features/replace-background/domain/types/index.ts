@@ -9,7 +9,6 @@ export type {
   ReplaceBackgroundResult,
   ReplaceBackgroundFeatureState,
   ReplaceBackgroundTranslations,
-  ReplaceBackgroundInputBuilder,
   ReplaceBackgroundResultExtractor,
   ReplaceBackgroundFeatureConfig,
 } from "./replace-background.types";

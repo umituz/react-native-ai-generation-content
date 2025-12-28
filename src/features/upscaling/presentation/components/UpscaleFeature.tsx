@@ -22,8 +22,6 @@ import type {
 export interface UpscaleFeatureProps {
   /** Feature configuration with provider-specific settings */
   config: UpscaleFeatureConfig;
-  /** User ID for the generation request */
-  userId: string;
   /** Translations for all UI text */
   translations: UpscaleTranslations;
   /** Image picker callback */
@@ -39,7 +37,6 @@ export interface UpscaleFeatureProps {
 
 export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectImage,
   onSaveImage,
@@ -49,7 +46,6 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
 
   const feature = useUpscaleFeature({
     config,
-    userId,
     onSelectImage,
     onSaveImage,
   });

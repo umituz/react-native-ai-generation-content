@@ -1,5 +1,5 @@
 /**
- * Background Infrastructure Index
+ * Replace Background Infrastructure Export
  */
 
-export * from "./services";
+export { DEFAULT_SAMPLE_PROMPTS } from "./constants";

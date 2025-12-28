@@ -55,18 +55,10 @@ export interface RemoveObjectTranslations {
   compareHint?: string;
 }
 
-export type RemoveObjectInputBuilder = (
-  base64: string,
-  options?: RemoveObjectOptions,
-) => Record<string, unknown>;
-
 export type RemoveObjectResultExtractor = (result: unknown) => string | undefined;
 
 export interface RemoveObjectFeatureConfig {
-  providerId?: string;
   creditCost?: number;
-  model: string;
-  buildInput: RemoveObjectInputBuilder;
   extractResult?: RemoveObjectResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;

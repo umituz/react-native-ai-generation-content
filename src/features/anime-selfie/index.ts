@@ -12,13 +12,8 @@ export type {
   AnimeSelfieFeatureState,
   AnimeSelfieTranslations,
   AnimeSelfieFeatureConfig,
-  AnimeSelfieInputBuilder,
   AnimeSelfieResultExtractor,
 } from "./domain";
-
-// Infrastructure Services
-export { executeAnimeSelfie, hasAnimeSelfieSupport } from "./infrastructure";
-export type { ExecuteAnimeSelfieOptions } from "./infrastructure";
 
 // Presentation Hooks
 export { useAnimeSelfieFeature } from "./presentation";

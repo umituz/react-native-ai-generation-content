@@ -9,7 +9,6 @@ export type {
   AnimeSelfieResult,
   AnimeSelfieFeatureState,
   AnimeSelfieTranslations,
-  AnimeSelfieInputBuilder,
   AnimeSelfieResultExtractor,
   AnimeSelfieFeatureConfig,
 } from "./anime-selfie.types";

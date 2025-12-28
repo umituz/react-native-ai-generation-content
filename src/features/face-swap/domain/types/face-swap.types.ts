@@ -49,19 +49,10 @@ export interface FaceSwapTranslations {
   tryAnotherText: string;
 }
 
-export type FaceSwapInputBuilder = (
-  sourceBase64: string,
-  targetBase64: string,
-  options?: FaceSwapOptions,
-) => Record<string, unknown>;
-
 export type FaceSwapResultExtractor = (result: unknown) => string | undefined;
 
 export interface FaceSwapFeatureConfig {
-  providerId?: string;
   creditCost?: number;
-  model: string;
-  buildInput: FaceSwapInputBuilder;
   extractResult?: FaceSwapResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onSourceImageSelect?: (uri: string) => void;

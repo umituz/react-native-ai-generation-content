@@ -21,7 +21,6 @@ import type {
 
 export interface FaceSwapFeatureProps {
   config: FaceSwapFeatureConfig;
-  userId: string;
   translations: FaceSwapTranslations;
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
@@ -34,7 +33,6 @@ export interface FaceSwapFeatureProps {
 
 export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectSourceImage,
   onSelectTargetImage,
@@ -45,7 +43,6 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
 
   const feature = useFaceSwapFeature({
     config,
-    userId,
     onSelectSourceImage,
     onSelectTargetImage,
     onSaveImage,

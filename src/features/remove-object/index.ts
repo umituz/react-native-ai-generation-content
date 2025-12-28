@@ -11,13 +11,8 @@ export type {
   RemoveObjectFeatureState,
   RemoveObjectTranslations,
   RemoveObjectFeatureConfig,
-  RemoveObjectInputBuilder,
   RemoveObjectResultExtractor,
 } from "./domain";
-
-// Infrastructure Services
-export { executeRemoveObject, hasRemoveObjectSupport } from "./infrastructure";
-export type { ExecuteRemoveObjectOptions } from "./infrastructure";
 
 // Presentation Hooks
 export { useRemoveObjectFeature } from "./presentation";

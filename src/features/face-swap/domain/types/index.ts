@@ -8,7 +8,6 @@ export type {
   FaceSwapResult,
   FaceSwapFeatureState,
   FaceSwapTranslations,
-  FaceSwapInputBuilder,
   FaceSwapResultExtractor,
   FaceSwapFeatureConfig,
 } from "./face-swap.types";

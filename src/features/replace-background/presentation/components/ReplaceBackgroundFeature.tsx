@@ -22,7 +22,6 @@ import type {
 
 export interface ReplaceBackgroundFeatureProps {
   config: ReplaceBackgroundFeatureConfig;
-  userId: string;
   translations: ReplaceBackgroundTranslations;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
@@ -34,7 +33,6 @@ export interface ReplaceBackgroundFeatureProps {
 
 export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectImage,
   onSaveImage,
@@ -44,7 +42,6 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
 
   const feature = useReplaceBackgroundFeature({
     config,
-    userId,
     onSelectImage,
     onSaveImage,
   });

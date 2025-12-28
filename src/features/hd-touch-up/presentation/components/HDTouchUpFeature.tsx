@@ -21,7 +21,6 @@ import type {
 
 export interface HDTouchUpFeatureProps {
   config: HDTouchUpFeatureConfig;
-  userId: string;
   translations: HDTouchUpTranslations;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
@@ -33,7 +32,6 @@ export interface HDTouchUpFeatureProps {
 
 export const HDTouchUpFeature: React.FC<HDTouchUpFeatureProps> = ({
   config,
-  userId,
   translations,
   onSelectImage,
   onSaveImage,
@@ -43,7 +41,6 @@ export const HDTouchUpFeature: React.FC<HDTouchUpFeatureProps> = ({
 
   const feature = useHDTouchUpFeature({
     config,
-    userId,
     onSelectImage,
     onSaveImage,
   });

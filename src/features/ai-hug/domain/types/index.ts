@@ -8,7 +8,6 @@ export type {
   AIHugResult,
   AIHugFeatureState,
   AIHugTranslations,
-  AIHugInputBuilder,
   AIHugResultExtractor,
   AIHugFeatureConfig,
 } from "./ai-hug.types";

@@ -11,13 +11,8 @@ export type {
   RemoveBackgroundFeatureState,
   RemoveBackgroundTranslations,
   RemoveBackgroundFeatureConfig,
-  RemoveBackgroundInputBuilder,
   RemoveBackgroundResultExtractor,
 } from "./domain";
-
-// Infrastructure Services
-export { executeRemoveBackground, hasRemoveBackgroundSupport } from "./infrastructure";
-export type { ExecuteRemoveBackgroundOptions } from "./infrastructure";
 
 // Presentation Hooks
 export { useRemoveBackgroundFeature } from "./presentation";

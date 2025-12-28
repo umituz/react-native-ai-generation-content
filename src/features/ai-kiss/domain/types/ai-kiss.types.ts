@@ -1,6 +1,6 @@
 /**
  * AI Kiss Feature Types
- * Request, Result, Config types for AI kiss generation
+ * Request, Result, Config types for AI kiss video generation
  */
 
 export interface AIKissOptions {
@@ -14,13 +14,13 @@ export interface AIKissRequest {
   sourceImageBase64?: string;
   targetImageBase64?: string;
   userId: string;
+  prompt?: string;
   options?: AIKissOptions;
 }
 
 export interface AIKissResult {
   success: boolean;
-  imageUrl?: string;
-  imageBase64?: string;
+  videoUrl?: string;
   error?: string;
   requestId?: string;
 }
@@ -28,7 +28,7 @@ export interface AIKissResult {
 export interface AIKissFeatureState {
   sourceImageUri: string | null;
   targetImageUri: string | null;
-  processedUrl: string | null;
+  processedVideoUrl: string | null;
   isProcessing: boolean;
   progress: number;
   error: string | null;
@@ -49,19 +49,10 @@ export interface AIKissTranslations {
   tryAnotherText: string;
 }
 
-export type AIKissInputBuilder = (
-  sourceBase64: string,
-  targetBase64: string,
-  options?: AIKissOptions,
-) => Record<string, unknown>;
-
 export type AIKissResultExtractor = (result: unknown) => string | undefined;
 
 export interface AIKissFeatureConfig {
-  providerId?: string;
   creditCost?: number;
-  model: string;
-  buildInput: AIKissInputBuilder;
   extractResult?: AIKissResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onSourceImageSelect?: (uri: string) => void;

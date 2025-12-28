@@ -1,6 +1,6 @@
 /**
  * AI Kiss Feature
- * Provider-agnostic AI kiss generation feature
+ * Provider-agnostic AI kiss video generation feature
  */
 
 // Domain Types
@@ -11,13 +11,8 @@ export type {
   AIKissFeatureState,
   AIKissTranslations,
   AIKissFeatureConfig,
-  AIKissInputBuilder,
   AIKissResultExtractor,
 } from "./domain";
-
-// Infrastructure Services
-export { executeAIKiss, hasAIKissSupport } from "./infrastructure";
-export type { ExecuteAIKissOptions } from "./infrastructure";
 
 // Presentation Hooks
 export { useAIKissFeature } from "./presentation";

@@ -12,13 +12,8 @@ export type {
   UpscaleFeatureState,
   UpscaleTranslations,
   UpscaleFeatureConfig,
-  UpscaleInputBuilder,
   UpscaleResultExtractor,
 } from "./domain";
-
-// Infrastructure Services
-export { executeUpscale, hasUpscaleSupport } from "./infrastructure";
-export type { ExecuteUpscaleOptions } from "./infrastructure";
 
 // Presentation Hooks
 export { useUpscaleFeature } from "./presentation";

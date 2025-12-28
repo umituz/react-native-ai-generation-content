@@ -45,6 +45,46 @@ export interface SubscribeOptions<T = unknown> {
 }
 
 /**
+ * Feature types for image processing (output: image)
+ */
+export type ImageFeatureType =
+  | "upscale"
+  | "photo-restore"
+  | "face-swap"
+  | "anime-selfie"
+  | "remove-background"
+  | "remove-object"
+  | "hd-touch-up"
+  | "replace-background";
+
+/**
+ * Feature types for video generation (output: video)
+ */
+export type VideoFeatureType =
+  | "ai-hug"
+  | "ai-kiss";
+
+/**
+ * Input data for image features
+ */
+export interface ImageFeatureInputData {
+  imageBase64: string;
+  targetImageBase64?: string;
+  prompt?: string;
+  options?: Record<string, unknown>;
+}
+
+/**
+ * Input data for video features
+ */
+export interface VideoFeatureInputData {
+  sourceImageBase64: string;
+  targetImageBase64: string;
+  prompt?: string;
+  options?: Record<string, unknown>;
+}
+
+/**
  * AI Provider Interface
  * All AI providers must implement this interface
  */
@@ -73,4 +113,30 @@ export interface IAIProvider {
   run<T = unknown>(model: string, input: Record<string, unknown>): Promise<T>;
 
   reset(): void;
+
+  /**
+   * Get model ID for an image feature
+   */
+  getImageFeatureModel(feature: ImageFeatureType): string;
+
+  /**
+   * Build provider-specific input for an image feature
+   */
+  buildImageFeatureInput(
+    feature: ImageFeatureType,
+    data: ImageFeatureInputData,
+  ): Record<string, unknown>;
+
+  /**
+   * Get model ID for a video feature
+   */
+  getVideoFeatureModel(feature: VideoFeatureType): string;
+
+  /**
+   * Build provider-specific input for a video feature
+   */
+  buildVideoFeatureInput(
+    feature: VideoFeatureType,
+    data: VideoFeatureInputData,
+  ): Record<string, unknown>;
 }
