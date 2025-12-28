@@ -29,6 +29,14 @@ export type {
   VideoFeatureType,
   ImageFeatureInputData,
   VideoFeatureInputData,
+  // App Services Interfaces
+  INetworkService,
+  ICreditService,
+  IPaywallService,
+  IAuthService,
+  IAnalyticsService,
+  IAppServices,
+  PartialAppServices,
 } from "./domain/interfaces";
 
 export {
@@ -84,6 +92,23 @@ export {
   getPremiumModes,
   getPromptRequiredModes,
 } from "./domain/constants/processing-modes.constants";
+
+// =============================================================================
+// INFRASTRUCTURE LAYER - App Services Configuration
+// =============================================================================
+
+export {
+  configureAppServices,
+  updateAppServices,
+  getAppServices,
+  isAppServicesConfigured,
+  resetAppServices,
+  getNetworkService,
+  getCreditService,
+  getPaywallService,
+  getAuthService,
+  getAnalyticsService,
+} from "./infrastructure/config";
 
 // =============================================================================
 // INFRASTRUCTURE LAYER - Services
