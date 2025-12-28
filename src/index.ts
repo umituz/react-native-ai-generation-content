@@ -121,6 +121,10 @@ export {
   createJobPoller,
   generationWrapper,
   createGenerationWrapper,
+  executeImageFeature,
+  hasImageFeatureSupport,
+  executeVideoFeature,
+  hasVideoFeatureSupport,
 } from "./infrastructure/services";
 
 export type {
@@ -128,6 +132,14 @@ export type {
   PollJobOptions,
   PollJobResult,
   WrapperConfig,
+  ImageResultExtractor,
+  ExecuteImageFeatureOptions,
+  ImageFeatureResult,
+  ImageFeatureRequest,
+  VideoResultExtractor,
+  ExecuteVideoFeatureOptions,
+  VideoFeatureResult,
+  VideoFeatureRequest,
 } from "./infrastructure/services";
 
 // =============================================================================
