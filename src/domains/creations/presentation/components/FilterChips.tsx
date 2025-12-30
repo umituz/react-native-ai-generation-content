@@ -58,7 +58,8 @@ export function FilterChips({
     [tokens],
   );
 
-  const visibleTypes = types.filter((t) => availableTypes.includes(t.id));
+  const safeAvailableTypes = availableTypes ?? [];
+  const visibleTypes = types.filter((t) => safeAvailableTypes.includes(t.id));
 
   return (
     <View style={[styles.container, style]}>

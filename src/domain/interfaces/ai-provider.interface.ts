@@ -10,6 +10,12 @@ export interface AIProviderConfig {
   baseDelay?: number;
   maxDelay?: number;
   defaultTimeoutMs?: number;
+  /** Text generation model ID */
+  textModel?: string;
+  /** Text-to-image generation model ID */
+  textToImageModel?: string;
+  /** Image editing model ID */
+  imageEditModel?: string;
 }
 
 export interface JobSubmission {
