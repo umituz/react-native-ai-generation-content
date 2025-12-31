@@ -46,6 +46,14 @@ export interface AIGenerationFormProps extends PropsWithChildren {
   onGenerate: () => void;
   isGenerating: boolean;
   
+  // Custom Generate Button Props
+  generateButtonProps?: {
+    costLabel?: string;
+    accessoryRight?: React.ReactNode;
+    onAccessoryRightPress?: () => void;
+    icon?: string;
+  };
+  
   translations: AIGenerationFormTranslations;
 }
 
@@ -71,6 +79,8 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   
   onGenerate,
   isGenerating,
+  
+  generateButtonProps,
   
   translations,
   children,
@@ -130,7 +140,10 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
         text={translations.generateButton}
         processingText={translations.generatingButton}
         variant="solid"
-        icon="sparkles-outline"
+        icon={generateButtonProps?.icon || "sparkles-outline"}
+        costLabel={generateButtonProps?.costLabel}
+        accessoryRight={generateButtonProps?.accessoryRight}
+        onAccessoryRightPress={generateButtonProps?.onAccessoryRightPress}
       />
     </>
   );
