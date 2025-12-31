@@ -12,6 +12,7 @@ import {
   AtomicButton,
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
+import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
 import { PhotoRestoreResultView } from "./PhotoRestoreResultView";
 import { usePhotoRestoreFeature } from "../hooks";
 import type {
@@ -103,53 +104,30 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <AtomicText
-          type="bodyLarge"
-          style={[styles.description, { color: tokens.colors.textSecondary }]}
-        >
-          {translations.description}
-        </AtomicText>
-
-        <PhotoUploadCard
-          imageUri={feature.imageUri}
-          onPress={handleSelectImage}
-          isValidating={feature.isProcessing}
-          disabled={feature.isProcessing}
-          translations={photoTranslations}
-          config={{
-            aspectRatio: 1,
-            borderRadius: 24,
-            showValidationStatus: false,
-            allowChange: true,
+        <AIGenerationForm
+          onGenerate={handleProcess}
+          isGenerating={feature.isProcessing}
+          progress={feature.progress}
+          translations={{
+            generateButton: translations.processButtonText,
+            generatingButton: translations.processingText,
+            progressTitle: translations.processingText,
           }}
-        />
-
-        {feature.error && (
-          <View
-            style={[
-              styles.errorContainer,
-              { backgroundColor: `${tokens.colors.error}15` },
-            ]}
-          >
-            <AtomicText type="bodyMedium" style={{ color: tokens.colors.error }}>
-              {feature.error}
-            </AtomicText>
-          </View>
-        )}
-
-        <View style={styles.buttonContainer}>
-          <AtomicButton
-            title={
-              feature.isProcessing
-                ? translations.processingText
-                : translations.processButtonText
-            }
-            onPress={handleProcess}
-            disabled={!feature.imageUri || feature.isProcessing}
-            variant="primary"
-            size="lg"
+        >
+          <PhotoUploadCard
+            imageUri={feature.imageUri}
+            onPress={handleSelectImage}
+            isValidating={feature.isProcessing}
+            disabled={feature.isProcessing}
+            translations={photoTranslations}
+            config={{
+              aspectRatio: 1,
+              borderRadius: 24,
+              showValidationStatus: false,
+              allowChange: true,
+            }}
           />
-        </View>
+        </AIGenerationForm>
       </ScrollView>
 
       {renderProcessingModal?.({ visible: feature.isProcessing, progress: feature.progress })}

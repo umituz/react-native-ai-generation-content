@@ -288,6 +288,7 @@ export {
   GenerateButton,
   // Display
   ResultDisplay,
+  AIGenerationResult,
   ErrorDisplay,
   // Headers
   FeatureHeader,
@@ -345,6 +346,8 @@ export type {
   // Display
   ResultDisplayProps,
   ResultDisplayAction,
+  AIGenerationResultProps,
+  AIGenerationResultAction,
   ErrorDisplayProps,
   // Headers
   FeatureHeaderProps,
@@ -370,6 +373,8 @@ export type {
   AspectRatioTranslations,
   DurationOption,
   StyleTranslations,
+  AIGenerationFormProps,
+  AIGenerationFormTranslations,
 } from "./presentation/components";
 
 // Selector Factories

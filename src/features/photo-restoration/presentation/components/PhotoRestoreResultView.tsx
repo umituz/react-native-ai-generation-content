@@ -7,9 +7,9 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import {
   AtomicText,
-  AtomicButton,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
+import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
 import { ComparisonSlider } from "../../../replace-background/presentation/components/ComparisonSlider";
 import type { PhotoRestoreTranslations } from "../../domain/types";
 
@@ -38,14 +38,17 @@ export const PhotoRestoreResultView: React.FC<PhotoRestoreResultViewProps> = ({
   const tokens = useAppDesignTokens();
 
   return (
-    <View style={styles.container}>
-      <AtomicText
-        type="headlineMedium"
-        style={[styles.title, { color: tokens.colors.success }]}
-      >
-        {translations.successText}
-      </AtomicText>
-
+    <AIGenerationResult
+      successText={translations.successText}
+      primaryAction={{
+        label: translations.saveButtonText,
+        onPress: onSave,
+      }}
+      secondaryAction={{
+        label: translations.tryAnotherText,
+        onPress: onReset,
+      }}
+    >
       <ComparisonSlider
         originalUri={originalUri}
         processedUri={processedUri}
@@ -59,22 +62,7 @@ export const PhotoRestoreResultView: React.FC<PhotoRestoreResultViewProps> = ({
       >
         Drag slider to compare
       </AtomicText>
-
-      <View style={styles.actions}>
-        <AtomicButton
-          title={translations.saveButtonText}
-          onPress={onSave}
-          variant="primary"
-          size="lg"
-        />
-        <AtomicButton
-          title={translations.tryAnotherText}
-          onPress={onReset}
-          variant="secondary"
-          size="lg"
-        />
-      </View>
-    </View>
+    </AIGenerationResult>
   );
 };
 

@@ -12,7 +12,8 @@ import {
   AtomicButton,
 } from "@umituz/react-native-design-system";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
-import { ErrorDisplay } from "../../../../presentation/components/display/ErrorDisplay";
+import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
+import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
 import { useAIHugFeature } from "../hooks";
 import type {
   AIHugTranslations,
@@ -85,31 +86,19 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <AtomicText
-          type="headlineMedium"
-          style={[styles.successText, { color: tokens.colors.success }]}
+        <AIGenerationResult
+          successText={translations.successText}
+          primaryAction={{
+            label: translations.saveButtonText,
+            onPress: handleSave,
+          }}
+          secondaryAction={{
+            label: translations.tryAnotherText,
+            onPress: feature.reset,
+          }}
         >
-          {translations.successText}
-        </AtomicText>
-
-        <View style={styles.resultVideoContainer}>
           {renderVideoPlayer({ videoUrl: feature.processedVideoUrl, size: videoSize })}
-        </View>
-
-        <View style={styles.resultActions}>
-          <AtomicButton
-            title={translations.saveButtonText}
-            onPress={handleSave}
-            variant="primary"
-            size="lg"
-          />
-          <AtomicButton
-            title={translations.tryAnotherText}
-            onPress={feature.reset}
-            variant="secondary"
-            size="lg"
-          />
-        </View>
+        </AIGenerationResult>
       </ScrollView>
     );
   }
@@ -121,42 +110,28 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <AtomicText
-          type="bodyLarge"
-          style={[styles.description, { color: tokens.colors.textSecondary }]}
+        <AIGenerationForm
+          onGenerate={handleProcess}
+          isGenerating={feature.isProcessing}
+          translations={{
+            generateButton: translations.processButtonText,
+            generatingButton: translations.processingText,
+          }}
         >
-          {translations.description}
-        </AtomicText>
-
-        <View style={styles.pickerContainer}>
-          <DualImagePicker
-            sourceImageUri={feature.sourceImageUri}
-            targetImageUri={feature.targetImageUri}
-            isDisabled={feature.isProcessing}
-            onSelectSource={handleSelectSource}
-            onSelectTarget={handleSelectTarget}
-            sourcePlaceholder={translations.sourceUploadTitle}
-            targetPlaceholder={translations.targetUploadTitle}
-            layout="horizontal"
-            variant="portrait"
-          />
-        </View>
-
-        <ErrorDisplay error={feature.error} />
-
-        <View style={styles.buttonContainer}>
-          <AtomicButton
-            title={
-              feature.isProcessing
-                ? translations.processingText
-                : translations.processButtonText
-            }
-            onPress={handleProcess}
-            disabled={!canProcess}
-            variant="primary"
-            size="lg"
-          />
-        </View>
+          <View style={styles.pickerContainer}>
+            <DualImagePicker
+              sourceImageUri={feature.sourceImageUri}
+              targetImageUri={feature.targetImageUri}
+              isDisabled={feature.isProcessing}
+              onSelectSource={handleSelectSource}
+              onSelectTarget={handleSelectTarget}
+              sourcePlaceholder={translations.sourceUploadTitle}
+              targetPlaceholder={translations.targetUploadTitle}
+              layout="horizontal"
+              variant="portrait"
+            />
+          </View>
+        </AIGenerationForm>
       </ScrollView>
 
       {renderProcessingModal?.({ visible: feature.isProcessing, progress: feature.progress })}

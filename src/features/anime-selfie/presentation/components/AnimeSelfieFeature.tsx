@@ -12,7 +12,8 @@ import {
   AtomicButton,
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
-import { ErrorDisplay } from "../../../../presentation/components/display/ErrorDisplay";
+import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
+import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
 import { useAnimeSelfieFeature } from "../hooks";
 import type {
   AnimeSelfieTranslations,
@@ -77,35 +78,23 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <AtomicText
-          type="headlineMedium"
-          style={[styles.successText, { color: tokens.colors.success }]}
+        <AIGenerationResult
+          successText={translations.successText}
+          primaryAction={{
+            label: translations.saveButtonText,
+            onPress: handleSave,
+          }}
+          secondaryAction={{
+            label: translations.tryAnotherText,
+            onPress: feature.reset,
+          }}
         >
-          {translations.successText}
-        </AtomicText>
-
-        <View style={styles.resultImageContainer}>
           <Image
             source={{ uri: feature.processedUrl }}
             style={[styles.resultImage, { width: imageSize, height: imageSize }]}
             resizeMode="contain"
           />
-        </View>
-
-        <View style={styles.resultActions}>
-          <AtomicButton
-            title={translations.saveButtonText}
-            onPress={handleSave}
-            variant="primary"
-            size="lg"
-          />
-          <AtomicButton
-            title={translations.tryAnotherText}
-            onPress={feature.reset}
-            variant="secondary"
-            size="lg"
-          />
-        </View>
+        </AIGenerationResult>
       </ScrollView>
     );
   }
@@ -117,42 +106,30 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <AtomicText
-          type="bodyLarge"
-          style={[styles.description, { color: tokens.colors.textSecondary }]}
-        >
-          {translations.description}
-        </AtomicText>
-
-        <PhotoUploadCard
-          imageUri={feature.imageUri}
-          onPress={handleSelectImage}
-          isValidating={feature.isProcessing}
-          disabled={feature.isProcessing}
-          translations={photoTranslations}
-          config={{
-            aspectRatio: 1,
-            borderRadius: 24,
-            showValidationStatus: false,
-            allowChange: true,
+        <AIGenerationForm
+          onGenerate={handleProcess}
+          isGenerating={feature.isProcessing}
+          progress={feature.progress}
+          translations={{
+            generateButton: translations.processButtonText,
+            generatingButton: translations.processingText,
+            progressTitle: translations.processingText,
           }}
-        />
-
-        <ErrorDisplay error={feature.error} />
-
-        <View style={styles.buttonContainer}>
-          <AtomicButton
-            title={
-              feature.isProcessing
-                ? translations.processingText
-                : translations.processButtonText
-            }
-            onPress={handleProcess}
-            disabled={!feature.imageUri || feature.isProcessing}
-            variant="primary"
-            size="lg"
+        >
+          <PhotoUploadCard
+            imageUri={feature.imageUri}
+            onPress={handleSelectImage}
+            isValidating={feature.isProcessing}
+            disabled={feature.isProcessing}
+            translations={photoTranslations}
+            config={{
+              aspectRatio: 1,
+              borderRadius: 24,
+              showValidationStatus: false,
+              allowChange: true,
+            }}
           />
-        </View>
+        </AIGenerationForm>
       </ScrollView>
 
       {renderProcessingModal?.({ visible: feature.isProcessing, progress: feature.progress })}

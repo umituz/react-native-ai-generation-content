@@ -8,12 +8,11 @@ import React, { useCallback, useMemo } from "react";
 import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
 import {
   useAppDesignTokens,
-  AtomicText,
-  AtomicButton,
   AtomicInput,
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
-import { ErrorDisplay } from "../../../../presentation/components/display/ErrorDisplay";
+import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
+import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
 import { useReplaceBackgroundFeature } from "../hooks";
 import type {
   ReplaceBackgroundTranslations,
@@ -78,35 +77,23 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <AtomicText
-          type="headlineMedium"
-          style={[styles.successText, { color: tokens.colors.success }]}
+        <AIGenerationResult
+          successText={translations.successText}
+          primaryAction={{
+            label: translations.saveButtonText,
+            onPress: handleSave,
+          }}
+          secondaryAction={{
+            label: translations.tryAnotherText,
+            onPress: feature.reset,
+          }}
         >
-          {translations.successText}
-        </AtomicText>
-
-        <View style={styles.resultImageContainer}>
           <Image
             source={{ uri: feature.processedUrl }}
             style={[styles.resultImage, { width: imageSize, height: imageSize }]}
             resizeMode="contain"
           />
-        </View>
-
-        <View style={styles.resultActions}>
-          <AtomicButton
-            title={translations.saveButtonText}
-            onPress={handleSave}
-            variant="primary"
-            size="lg"
-          />
-          <AtomicButton
-            title={translations.tryAnotherText}
-            onPress={feature.reset}
-            variant="secondary"
-            size="lg"
-          />
-        </View>
+        </AIGenerationResult>
       </ScrollView>
     );
   }
@@ -118,53 +105,39 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <AtomicText
-          type="bodyLarge"
-          style={[styles.description, { color: tokens.colors.textSecondary }]}
-        >
-          {translations.description}
-        </AtomicText>
-
-        <PhotoUploadCard
-          imageUri={feature.imageUri}
-          onPress={handleSelectImage}
-          isValidating={feature.isProcessing}
-          disabled={feature.isProcessing}
-          translations={photoTranslations}
-          config={{
-            aspectRatio: 1,
-            borderRadius: 24,
-            showValidationStatus: false,
-            allowChange: true,
+        <AIGenerationForm
+          onGenerate={handleProcess}
+          isGenerating={feature.isProcessing}
+          translations={{
+            generateButton: translations.processButtonText,
+            generatingButton: translations.processingText,
           }}
-        />
-
-        <View style={styles.promptContainer}>
-          <AtomicInput
-            value={feature.prompt}
-            onChangeText={feature.setPrompt}
-            placeholder={translations.promptPlaceholder}
-            multiline
-            numberOfLines={3}
+        >
+          <PhotoUploadCard
+            imageUri={feature.imageUri}
+            onPress={handleSelectImage}
+            isValidating={feature.isProcessing}
             disabled={feature.isProcessing}
+            translations={photoTranslations}
+            config={{
+              aspectRatio: 1,
+              borderRadius: 24,
+              showValidationStatus: false,
+              allowChange: true,
+            }}
           />
-        </View>
 
-        <ErrorDisplay error={feature.error} />
-
-        <View style={styles.buttonContainer}>
-          <AtomicButton
-            title={
-              feature.isProcessing
-                ? translations.processingText
-                : translations.processButtonText
-            }
-            onPress={handleProcess}
-            disabled={!feature.imageUri || feature.isProcessing}
-            variant="primary"
-            size="lg"
-          />
-        </View>
+          <View style={styles.promptContainer}>
+            <AtomicInput
+              value={feature.prompt}
+              onChangeText={feature.setPrompt}
+              placeholder={translations.promptPlaceholder}
+              multiline
+              numberOfLines={3}
+              disabled={feature.isProcessing}
+            />
+          </View>
+        </AIGenerationForm>
       </ScrollView>
 
       {renderProcessingModal?.({ visible: feature.isProcessing, progress: feature.progress })}

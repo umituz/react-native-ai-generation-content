@@ -1,156 +1,166 @@
-import React, { PropsWithChildren } from "react";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  AtomicText,
+  AtomicIcon,
+  useAppDesignTokens,
+} from "@umituz/react-native-design-system";
 import { StyleSelector } from "./selectors/StyleSelector";
 import { DurationSelector } from "./selectors/DurationSelector";
 import { AspectRatioSelector } from "./selectors/AspectRatioSelector";
 import { PromptInput } from "./PromptInput";
 import { GenerateButton } from "./buttons/GenerateButton";
 import { ExamplePrompts } from "./prompts/ExamplePrompts";
-import type { StyleOption } from "./selectors/types";
-import type { AspectRatioOption } from "./selectors/types";
-
-export interface AIGenerationFormTranslations {
-  promptTitle?: string;
-  promptPlaceholder?: string;
-  styleTitle?: string;
-  durationTitle?: string;
-  aspectRatioTitle?: string;
-  examplePromptsTitle?: string;
-  generateButton: string;
-  generatingButton: string;
-}
-
-export interface AIGenerationFormProps extends PropsWithChildren {
-  prompt?: string;
-  onPromptChange?: (text: string) => void;
-  
-  // Optional: Example Prompts
-  examplePrompts?: readonly string[];
-  onExamplePromptSelect?: (prompt: string) => void;
-  
-  // Optional: Style Selection
-  styles?: StyleOption[];
-  selectedStyle?: string;
-  onStyleSelect?: (styleId: string) => void;
-  
-  // Optional: Duration Selection
-  duration?: number;
-  durationOptions?: readonly number[];
-  onDurationSelect?: (duration: number) => void;
-  formatDurationLabel?: (duration: number) => string;
-  
-  // Optional: Aspect Ratio Selection
-  aspectRatios?: AspectRatioOption[];
-  selectedAspectRatio?: string;
-  onAspectRatioSelect?: (ratio: string) => void;
-  
-  onGenerate: () => void;
-  isGenerating: boolean;
-  hideGenerateButton?: boolean;
-  
-  // Custom Generate Button Props
-  generateButtonProps?: {
-    costLabel?: string;
-    accessoryRight?: React.ReactNode;
-    onAccessoryRightPress?: () => void;
-    icon?: string;
-  };
-  
-  translations: AIGenerationFormTranslations;
-}
+import { AIGenerationProgressInline } from "./AIGenerationProgressInline";
+import { StylePresetsGrid } from "./StylePresetsGrid";
+import type { AIGenerationFormProps } from "./AIGenerationForm.types";
 
 export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   prompt,
   onPromptChange,
-  
   examplePrompts,
   onExamplePromptSelect,
-  
-  styles,
+  styles: styleOptions,
   selectedStyle,
   onStyleSelect,
-  
   duration,
   durationOptions,
   onDurationSelect,
   formatDurationLabel,
-  
   aspectRatios,
   selectedAspectRatio,
   onAspectRatioSelect,
-  
   onGenerate,
   isGenerating,
   hideGenerateButton,
-  
+  progress,
   generateButtonProps,
-  
+  showAdvanced,
+  onAdvancedToggle,
+  presets,
+  onPresetPress,
   translations,
   children,
 }) => {
+  const tokens = useAppDesignTokens();
+  const isAdvancedVisible = showAdvanced !== undefined ? showAdvanced : true;
+
   return (
     <>
-      {onPromptChange && translations.promptTitle && (
-        <PromptInput
-          title={translations.promptTitle}
-          placeholder={translations.promptPlaceholder}
-          value={prompt || ""}
-          onChangeText={onPromptChange}
+      {presets && presets.length > 0 && onPresetPress && (
+        <StylePresetsGrid
+          presets={presets}
+          onPresetPress={onPresetPress}
+          disabled={isGenerating}
+          title={translations.presetsTitle}
         />
       )}
-      
-      {examplePrompts && examplePrompts.length > 0 && onExamplePromptSelect && (
-        <ExamplePrompts
-          prompts={examplePrompts}
-          onSelectPrompt={onExamplePromptSelect}
-          title={translations.examplePromptsTitle}
-        />
+
+      {onAdvancedToggle && (
+        <TouchableOpacity
+          style={[
+            styles.toggleButton,
+            { backgroundColor: tokens.colors.backgroundSecondary },
+          ]}
+          onPress={() => onAdvancedToggle(!showAdvanced)}
+        >
+          <AtomicText type="bodyMedium" style={{ color: tokens.colors.textPrimary }}>
+            {showAdvanced ? translations.hideAdvancedLabel : translations.showAdvancedLabel}
+          </AtomicText>
+          <AtomicIcon
+            name={showAdvanced ? "chevron-up" : "chevron-down"}
+            size="sm"
+            color={tokens.colors.textSecondary}
+          />
+        </TouchableOpacity>
       )}
-      
-      {styles && styles.length > 0 && selectedStyle && onStyleSelect && translations.styleTitle && (
-        <StyleSelector
-          styles={styles}
-          selectedStyle={selectedStyle}
-          onStyleSelect={onStyleSelect}
-          title={translations.styleTitle}
-        />
+
+      {isAdvancedVisible && (
+        <>
+          {onPromptChange && translations.promptTitle && (
+            <PromptInput
+              title={translations.promptTitle}
+              placeholder={translations.promptPlaceholder}
+              value={prompt || ""}
+              onChangeText={onPromptChange}
+            />
+          )}
+
+          {examplePrompts && examplePrompts.length > 0 && onExamplePromptSelect && (
+            <ExamplePrompts
+              prompts={examplePrompts}
+              onSelectPrompt={onExamplePromptSelect}
+              title={translations.examplePromptsTitle}
+            />
+          )}
+
+          {styleOptions && styleOptions.length > 0 && selectedStyle && onStyleSelect && translations.styleTitle && (
+            <StyleSelector
+              styles={styleOptions}
+              selectedStyle={selectedStyle}
+              onStyleSelect={onStyleSelect}
+              title={translations.styleTitle}
+            />
+          )}
+
+          {aspectRatios && aspectRatios.length > 0 && selectedAspectRatio && onAspectRatioSelect && translations.aspectRatioTitle && (
+            <AspectRatioSelector
+              ratios={aspectRatios}
+              selectedRatio={selectedAspectRatio}
+              onRatioSelect={onAspectRatioSelect}
+              title={translations.aspectRatioTitle}
+            />
+          )}
+
+          {duration && durationOptions && onDurationSelect && translations.durationTitle && (
+            <DurationSelector
+              duration={duration}
+              durationOptions={durationOptions}
+              onDurationSelect={onDurationSelect}
+              title={translations.durationTitle}
+              formatLabel={formatDurationLabel}
+            />
+          )}
+
+          {children}
+
+          {!hideGenerateButton && (
+            <GenerateButton
+              onPress={onGenerate}
+              isProcessing={isGenerating}
+              isDisabled={onPromptChange ? !prompt?.trim() : false}
+              text={translations.generateButton}
+              processingText={translations.generatingButton}
+              variant="solid"
+              icon={generateButtonProps?.icon || "sparkles-outline"}
+              costLabel={generateButtonProps?.costLabel}
+              accessoryRight={generateButtonProps?.accessoryRight}
+              onAccessoryRightPress={generateButtonProps?.onAccessoryRightPress}
+            />
+          )}
+        </>
       )}
-      
-      {aspectRatios && aspectRatios.length > 0 && selectedAspectRatio && onAspectRatioSelect && translations.aspectRatioTitle && (
-        <AspectRatioSelector
-          ratios={aspectRatios}
-          selectedRatio={selectedAspectRatio}
-          onRatioSelect={onAspectRatioSelect}
-          title={translations.aspectRatioTitle}
-        />
-      )}
-      
-      {duration && durationOptions && onDurationSelect && translations.durationTitle && (
-        <DurationSelector
-          duration={duration}
-          durationOptions={durationOptions}
-          onDurationSelect={onDurationSelect}
-          title={translations.durationTitle}
-          formatLabel={formatDurationLabel}
-        />
-      )}
-      
-      {/* Custom children injected here */}
-      {children}
-      
-      {!hideGenerateButton && (
-        <GenerateButton
-          onPress={onGenerate}
-          isProcessing={isGenerating}
-          isDisabled={onPromptChange ? !prompt?.trim() : false}
-          text={translations.generateButton}
-          processingText={translations.generatingButton}
-          variant="solid"
-          icon={generateButtonProps?.icon || "sparkles-outline"}
-          costLabel={generateButtonProps?.costLabel}
-          accessoryRight={generateButtonProps?.accessoryRight}
-          onAccessoryRightPress={generateButtonProps?.onAccessoryRightPress}
+
+      {isGenerating && progress !== undefined && (
+        <AIGenerationProgressInline
+          progress={progress}
+          title={translations.progressTitle || translations.generatingButton}
+          hint={translations.progressHint}
         />
       )}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  toggleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    gap: 8,
+    marginVertical: 12,
+  },
+});

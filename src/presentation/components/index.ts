@@ -9,6 +9,7 @@ export { PromptInput } from "./PromptInput";
 export { AIGenerationHero } from "./AIGenerationHero";
 export * from "./StylePresetsGrid";
 export * from "./AIGenerationForm";
+export * from "./AIGenerationForm.types";
 
 export type {
   GenerationProgressModalProps,
