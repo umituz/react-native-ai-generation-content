@@ -8,7 +8,7 @@ import type {
   FlashcardGenerationRequest,
   GeneratedFlashcard,
   FlashcardGenerationResult,
-} from "../domains/flashcard-generation/FlashcardGenerationService";
+} from "../../domains/flashcard-generation/FlashcardGenerationService";
 
 export interface UseFlashcardGenerationResult {
   generateFlashcards: (
@@ -17,6 +17,7 @@ export interface UseFlashcardGenerationResult {
   isGenerating: boolean;
   result: FlashcardGenerationResult | null;
   error: string | null;
+  reset: () => void;
 }
 
 export const useFlashcardGeneration = (): UseFlashcardGenerationResult => {

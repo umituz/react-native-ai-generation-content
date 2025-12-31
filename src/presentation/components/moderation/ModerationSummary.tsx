@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, type ViewStyle } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
@@ -14,7 +14,7 @@ export interface ModerationSummaryProps {
   readonly ageRating?: string;
   readonly contentWarnings: readonly string[];
   readonly title?: string;
-  readonly style?: any;
+  readonly style?: ViewStyle;
 }
 
 export const ModerationSummary: React.FC<ModerationSummaryProps> = ({

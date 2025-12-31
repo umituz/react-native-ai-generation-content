@@ -1,4 +1,4 @@
-import { VideoTypeOption } from "../presentation/components/VideoTypeSelector";
+import { VideoTypeOption } from "../types/script.types";
 
 export const DEFAULT_VIDEO_TYPES: readonly VideoTypeOption[] = [
   { id: "product", name: "Product Demo", emoji: "📦" },

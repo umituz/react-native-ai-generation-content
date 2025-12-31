@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { View, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import { View, ScrollView, TouchableOpacity, StyleSheet, type ViewStyle } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
@@ -16,7 +16,7 @@ export interface ExamplePromptsProps {
   readonly onSelectPrompt: (prompt: string) => void;
   readonly title?: string;
   readonly cardWidth?: number;
-  readonly style?: any;
+  readonly style?: ViewStyle;
 }
 
 export const ExamplePrompts: React.FC<ExamplePromptsProps> = ({

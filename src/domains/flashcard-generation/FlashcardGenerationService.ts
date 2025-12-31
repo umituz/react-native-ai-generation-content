@@ -3,14 +3,6 @@
  * AI-powered flashcard generation for educational content
  */
 
-import type {
-  GenerationRequest,
-  GenerationResult,
-  GenerationStatus,
-  PhotoGenerationInput,
-  DirectExecutionResult,
-} from "../domain/entities";
-
 export interface FlashcardGenerationRequest {
   topic: string;
   difficulty: "beginner" | "intermediate" | "advanced";
@@ -66,18 +58,8 @@ export class FlashcardGenerationService {
       // Create AI generation prompt
       const prompt = this.buildFlashcardPrompt(request);
 
-      // Use the AI generation orchestrator
-      const generationRequest: GenerationRequest = {
-        prompt,
-        type: "text_to_text" as any,
-        options: {
-          maxTokens: this.calculateMaxTokens(request.count),
-          temperature: 0.7,
-          language: request.language || "en",
-        },
-      };
-
-      const result = await this.executeGeneration(generationRequest);
+      // Execute generation
+      const result = await this.executeGeneration(prompt, request.count);
 
       // Parse AI response into flashcards
       const flashcards = this.parseFlashcardsFromResult(result, request);
@@ -118,9 +100,6 @@ export class FlashcardGenerationService {
     overall: number;
   }> {
     // Simple validation heuristic
-    const frontLength = front.length;
-    const backLength = back.length;
-
     const accuracy = this.calculateAccuracy(front, back);
     const relevance = this.calculateRelevance(front, back);
     const clarity = this.calculateClarity(front, back);
@@ -185,16 +164,25 @@ Output format: JSON array with structure:
     return Math.max(count * 50, 200);
   }
 
-  private async executeGeneration(request: GenerationRequest): Promise<any> {
+  private async executeGeneration(
+    prompt: string,
+    count: number,
+  ): Promise<{
+    success: boolean;
+    result: string;
+    metadata: { tokensUsed: number; processingTime: number };
+    jobId: string;
+  }> {
     // This would integrate with the actual AI generation orchestrator
     // For now, return mock result
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
+    const maxTokens = this.calculateMaxTokens(count);
     return {
       success: true,
-      result: this.generateMockContent(request.options?.maxTokens || 200),
+      result: this.generateMockContent(maxTokens),
       metadata: {
-        tokensUsed: request.options?.maxTokens || 200,
+        tokensUsed: maxTokens,
         processingTime: 2000,
       },
       jobId: `job_${Date.now()}`,
@@ -227,11 +215,16 @@ Output format: JSON array with structure:
   }
 
   private parseFlashcardsFromResult(
-    result: any,
+    result: {
+      success: boolean;
+      result: string | unknown[];
+      metadata: { tokensUsed: number; processingTime: number };
+      jobId: string;
+    },
     request: FlashcardGenerationRequest,
   ): GeneratedFlashcard[] {
     try {
-      let flashcards: any[];
+      let flashcards: unknown[];
 
       if (typeof result.result === "string") {
         flashcards = JSON.parse(result.result);
@@ -241,23 +234,34 @@ Output format: JSON array with structure:
         throw new Error("Invalid AI response format");
       }
 
-      return flashcards.map((item, index) => ({
-        id: `generated_${Date.now()}_${index}`,
-        front: item.front || "",
-        back: item.back || "",
-        difficulty: item.difficulty || "medium",
-        tags: Array.isArray(item.tags)
-          ? item.tags
-          : item.tags
-            ? [item.tags]
-            : [],
-        source: "ai_generated" as const,
-        generationRequest: request,
-        confidence: 0.8 + Math.random() * 0.2, // 0.8-1.0
-        createdAt: new Date().toISOString(),
-      }));
+      return flashcards.map((item: unknown, index) => {
+        const flashcard = item as {
+          front?: string;
+          back?: string;
+          difficulty?: "easy" | "medium" | "hard";
+          tags?: string | string[];
+        };
+        return {
+          id: `generated_${Date.now()}_${index}`,
+          front: flashcard.front || "",
+          back: flashcard.back || "",
+          difficulty: flashcard.difficulty || "medium",
+          tags: Array.isArray(flashcard.tags)
+            ? flashcard.tags
+            : flashcard.tags
+              ? [flashcard.tags]
+              : [],
+          source: "ai_generated" as const,
+          generationRequest: request,
+          confidence: 0.8 + Math.random() * 0.2, // 0.8-1.0
+          createdAt: new Date().toISOString(),
+        };
+      });
     } catch (error) {
-      console.error("Failed to parse AI response:", error);
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to parse AI response:", error);
+      }
       return [];
     }
   }

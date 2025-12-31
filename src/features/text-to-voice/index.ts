@@ -20,7 +20,6 @@ export type {
   TextToVoiceGenerateButtonProps,
   TextToVoiceAudioPlayerProps,
   TextToVoiceErrorMessageProps,
-  TextToVoiceHeaderProps,
   TextToVoiceScreenConfig,
   TextToVoiceTranslationKeys,
   TextToVoiceInputBuilder,
@@ -51,5 +50,4 @@ export {
   TextToVoiceGenerateButton,
   TextToVoiceAudioPlayer,
   TextToVoiceErrorMessage,
-  TextToVoiceHeader,
 } from "./presentation";

@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator, type ViewStyle } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
@@ -26,7 +26,7 @@ export interface GenerateButtonProps {
   readonly costLabel?: string;
   readonly accessoryRight?: React.ReactNode;
   readonly onAccessoryRightPress?: () => void;
-  readonly style?: any;
+  readonly style?: ViewStyle;
 }
 
 export const GenerateButton: React.FC<GenerateButtonProps> = ({

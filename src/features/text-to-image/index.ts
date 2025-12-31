@@ -102,14 +102,8 @@ export {
 export type {
   TextToImagePromptInputProps,
   TextToImageExamplePromptsProps,
-  TextToImageNumImagesSelectorProps,
   TextToImageStyleSelectorProps,
   TextToImageAspectRatioSelectorProps,
-  TextToImageAspectRatioOption,
-  TextToImageSizeSelectorProps,
-  TextToImageSizeOption,
-  TextToImageOutputFormatSelectorProps,
-  TextToImageOutputFormatOption,
   TextToImageGenerateButtonProps,
   TextToImageSettingsSheetProps,
 } from "./presentation";

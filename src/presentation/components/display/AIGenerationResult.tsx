@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, type ViewStyle } from "react-native";
 import {
   useAppDesignTokens,
   AtomicText,
@@ -29,7 +29,7 @@ export interface AIGenerationResultProps extends PropsWithChildren {
   /** Standard translations */
   translations?: AIGenerationResultTranslations;
   /** Custom style for the content container */
-  contentStyle?: any;
+  contentStyle?: ViewStyle;
 }
 
 /**
@@ -73,7 +73,6 @@ export const AIGenerationResult: React.FC<AIGenerationResultProps> = ({
             onPress={primaryAction.onPress}
             variant="primary"
             size="lg"
-            leftIcon={primaryAction.icon}
           />
         )}
 
@@ -83,7 +82,6 @@ export const AIGenerationResult: React.FC<AIGenerationResultProps> = ({
             onPress={secondaryAction.onPress}
             variant="secondary"
             size="lg"
-            leftIcon={secondaryAction.icon}
           />
         )}
 
@@ -94,7 +92,6 @@ export const AIGenerationResult: React.FC<AIGenerationResultProps> = ({
             onPress={action.onPress}
             variant={action.variant || "outline"}
             size="lg"
-            leftIcon={action.icon}
           />
         ))}
       </View>

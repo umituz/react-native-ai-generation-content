@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, type ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   AtomicText,
@@ -18,7 +18,7 @@ export interface AIGenerationHeroProps {
   readonly subtitle?: string;
   readonly iconName?: string;
   readonly gradientColors?: readonly [string, string, ...string[]];
-  readonly style?: any;
+  readonly style?: ViewStyle;
 }
 
 export const AIGenerationHero: React.FC<AIGenerationHeroProps> = ({
@@ -38,7 +38,7 @@ export const AIGenerationHero: React.FC<AIGenerationHeroProps> = ({
   return (
     <View style={[styles.container, style]}>
       <LinearGradient
-        colors={finalColors as any}
+        colors={finalColors as [string, string, ...string[]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}

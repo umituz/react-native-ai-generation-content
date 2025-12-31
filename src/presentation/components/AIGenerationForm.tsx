@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import {
   AtomicText,
   AtomicIcon,
@@ -70,7 +70,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
           <AtomicIcon
             name={showAdvanced ? "chevron-up" : "chevron-down"}
             size="sm"
-            color={tokens.colors.textSecondary}
+            customColor={tokens.colors.textSecondary}
           />
         </TouchableOpacity>
       )}

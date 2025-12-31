@@ -10,7 +10,7 @@ import {
   AtomicIcon,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
-import type { ScriptSection } from "../domain/types/script.types";
+import type { ScriptSection } from "../../domain/types/script.types";
 
 export interface ScriptDisplayProps {
   readonly script: readonly ScriptSection[];

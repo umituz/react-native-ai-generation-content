@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet, type ViewStyle } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
@@ -22,7 +22,7 @@ export interface PromptInputProps {
   readonly isDisabled?: boolean;
   readonly showCharacterCount?: boolean;
   readonly characterCountLabel?: string;
-  readonly style?: any;
+  readonly style?: ViewStyle;
 }
 
 export const PromptInput: React.FC<PromptInputProps> = ({

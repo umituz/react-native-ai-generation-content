@@ -2,6 +2,12 @@
  * AI Script Generator Types
  */
 
+export interface VideoTypeOption {
+  readonly id: string;
+  readonly name: string;
+  readonly emoji: string;
+}
+
 export interface ScriptSection {
   readonly id: string;
   readonly type: "hook" | "intro" | "main" | "transition" | "cta";

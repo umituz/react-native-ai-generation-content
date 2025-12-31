@@ -45,7 +45,10 @@ export function useScriptGenerator({
           setGeneratedScript(script);
         }
       } catch (error) {
-        console.error("Script generation error:", error);
+        if (__DEV__) {
+          // eslint-disable-next-line no-console
+          console.error("Script generation error:", error);
+        }
       } finally {
         setIsGenerating(false);
       }

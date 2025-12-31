@@ -6,11 +6,7 @@
 
 import React, { useCallback } from "react";
 import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicText,
-  AtomicButton,
-} from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
 import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
@@ -64,8 +60,6 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
   const handleSelectTarget = useCallback(() => {
     void feature.selectTargetImage();
   }, [feature]);
-
-  const canProcess = feature.sourceImageUri && feature.targetImageUri && !feature.isProcessing;
 
   if (feature.processedUrl) {
     const screenWidth = Dimensions.get("window").width;

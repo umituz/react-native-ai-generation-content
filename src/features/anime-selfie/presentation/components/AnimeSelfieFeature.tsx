@@ -5,12 +5,8 @@
  */
 
 import React, { useCallback, useMemo } from "react";
-import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicText,
-  AtomicButton,
-} from "@umituz/react-native-design-system";
+import { ScrollView, StyleSheet, Image, Dimensions } from "react-native";
+import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
 import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";

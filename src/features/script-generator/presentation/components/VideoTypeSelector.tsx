@@ -9,12 +9,7 @@ import {
   AtomicText,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
-
-export interface VideoTypeOption {
-  readonly id: string;
-  readonly name: string;
-  readonly emoji: string;
-}
+import { VideoTypeOption } from "../../domain/types/script.types";
 
 export interface VideoTypeSelectorProps {
   readonly selectedType: string;
@@ -68,7 +63,7 @@ export const VideoTypeSelector: React.FC<VideoTypeSelectorProps> = ({
               style={{
                 color:
                   selectedType === type.id
-                    ? "#FFFFFF"
+                    ? tokens.colors.onPrimary
                     : tokens.colors.textPrimary,
                 fontWeight: selectedType === type.id ? "600" : "400",
                 marginTop: 8,

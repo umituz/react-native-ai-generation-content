@@ -5,7 +5,7 @@
  */
 
 import React, { useCallback, useMemo } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
   AtomicText,

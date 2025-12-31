@@ -1,8 +1,8 @@
 import {
   ScriptSection,
   ScriptGenerationRequest,
-} from "../domain/types/script.types";
-import { DEFAULT_VIDEO_TYPES } from "../domain/constants";
+} from "../../domain/types/script.types";
+import { DEFAULT_VIDEO_TYPES } from "../../domain/constants";
 
 /**
  * ScriptGenerationService
@@ -51,7 +51,7 @@ Format as JSON with this structure:
    * Generate script from request
    */
   async generateScript(
-    request: ScriptGenerationRequest,
+    _request: ScriptGenerationRequest,
   ): Promise<readonly ScriptSection[] | null> {
     // NOTE: This will be implemented by the app using a specific AI provider (like OpenAI or FAL)
     // The package provides the structure and prompt building.

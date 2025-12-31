@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, type ViewStyle } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
@@ -19,7 +19,7 @@ export interface GridSelectorProps<T> {
   readonly title?: string;
   readonly columns?: number;
   readonly disabled?: boolean;
-  readonly style?: any;
+  readonly style?: ViewStyle;
 }
 
 export function GridSelector<T>({
@@ -30,7 +30,7 @@ export function GridSelector<T>({
   columns = 2,
   disabled = false,
   style,
-}: GridSelectorProps<T>): JSX.Element {
+}: GridSelectorProps<T>): React.ReactElement {
   const tokens = useAppDesignTokens();
 
   return (

@@ -40,8 +40,6 @@ export * from "./selectors/StyleSelector";
 export * from "./selectors/factories";
 export * from "./selectors/types";
 export * from "./PromptInput";
-export * from "./ExamplePrompts";
-export * from "./ModerationSummary";
 export * from "./image-picker";
 export * from "./buttons";
 export * from "./display";

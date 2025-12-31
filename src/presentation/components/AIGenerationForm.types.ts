@@ -1,5 +1,6 @@
 import React, { PropsWithChildren } from "react";
-import type { StyleOption, AspectRatioOption, StylePreset } from "./selectors/types";
+import type { StyleOption, AspectRatioOption } from "./selectors/types";
+import type { StylePreset } from "./StylePresetsGrid";
 
 /**
  * Translations for AIGenerationForm

@@ -99,7 +99,6 @@ export {
   ImageToVideoDurationSelector,
   ImageToVideoMusicMoodSelector,
   ImageToVideoSelectionGrid,
-  ImageToVideoHeroSection,
   ImageToVideoGenerateButton,
 } from "./presentation";
 
@@ -109,6 +108,5 @@ export type {
   ImageToVideoMusicMoodSelectorProps,
   ImageToVideoSelectionGridProps,
   ImageToVideoSelectionGridTranslations,
-  ImageToVideoHeroSectionProps,
   ImageToVideoGenerateButtonProps,
 } from "./presentation";

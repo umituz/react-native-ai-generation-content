@@ -1,2 +1,2 @@
-export * from "./ScriptDisplay";
-export * from "./VideoTypeSelector";
+export { ScriptDisplay } from "./ScriptDisplay";
+export { VideoTypeSelector, type VideoTypeSelectorProps } from "./VideoTypeSelector";

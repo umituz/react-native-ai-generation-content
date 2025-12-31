@@ -234,7 +234,7 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
                 style={styles.iconGradient}
               >
                 <AtomicIcon
-                  name={(icon as any) || "camera"}
+                  name={(icon as string) || "camera"}
                   size={cfg.iconSize}
                   customColor={tokens.colors.primary}
                 />

@@ -26,5 +26,5 @@ export type {
 // export type { HeroSectionProps as ImageToVideoHeroSectionProps } from "./HeroSection";
 
 // Action Components
-export { GenerateButton as ImageToVideoGenerateButton } from "../../../presentation/components/buttons/GenerateButton";
-export type { GenerateButtonProps as ImageToVideoGenerateButtonProps } from "../../../presentation/components/buttons/GenerateButton";
+export { GenerateButton as ImageToVideoGenerateButton } from "../../../../presentation/components/buttons";
+export type { GenerateButtonProps as ImageToVideoGenerateButtonProps } from "../../../../presentation/components/buttons";
