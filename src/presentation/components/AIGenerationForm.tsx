@@ -9,8 +9,8 @@ import type { StyleOption } from "./selectors/types";
 import type { AspectRatioOption } from "./selectors/types";
 
 export interface AIGenerationFormTranslations {
-  promptTitle: string;
-  promptPlaceholder: string;
+  promptTitle?: string;
+  promptPlaceholder?: string;
   styleTitle?: string;
   durationTitle?: string;
   aspectRatioTitle?: string;
@@ -20,8 +20,8 @@ export interface AIGenerationFormTranslations {
 }
 
 export interface AIGenerationFormProps extends PropsWithChildren {
-  prompt: string;
-  onPromptChange: (text: string) => void;
+  prompt?: string;
+  onPromptChange?: (text: string) => void;
   
   // Optional: Example Prompts
   examplePrompts?: readonly string[];
@@ -87,12 +87,14 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
 }) => {
   return (
     <>
-      <PromptInput
-        title={translations.promptTitle}
-        placeholder={translations.promptPlaceholder}
-        value={prompt}
-        onChangeText={onPromptChange}
-      />
+      {onPromptChange && translations.promptTitle && (
+        <PromptInput
+          title={translations.promptTitle}
+          placeholder={translations.promptPlaceholder}
+          value={prompt || ""}
+          onChangeText={onPromptChange}
+        />
+      )}
       
       {examplePrompts && examplePrompts.length > 0 && onExamplePromptSelect && (
         <ExamplePrompts
@@ -136,7 +138,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
       <GenerateButton
         onPress={onGenerate}
         isProcessing={isGenerating}
-        isDisabled={!prompt.trim()}
+        isDisabled={onPromptChange ? !prompt?.trim() : false}
         text={translations.generateButton}
         processingText={translations.generatingButton}
         variant="solid"
