@@ -4,6 +4,9 @@ export { GenerationProgressBar } from "./GenerationProgressBar";
 export { PendingJobCard } from "./PendingJobCard";
 export { PendingJobProgressBar } from "./PendingJobProgressBar";
 export { PendingJobCardActions } from "./PendingJobCardActions";
+export { AIGenerationProgressInline } from "./AIGenerationProgressInline";
+export { PromptInput } from "./PromptInput";
+export { HeroSection } from "./HeroSection";
 
 export type {
   GenerationProgressModalProps,
@@ -20,6 +23,9 @@ export type {
 
 export type { PendingJobProgressBarProps } from "./PendingJobProgressBar";
 export type { PendingJobCardActionsProps } from "./PendingJobCardActions";
+export type { AIGenerationProgressInlineProps } from "./AIGenerationProgressInline";
+export type { PromptInputProps } from "./PromptInput";
+export type { HeroSectionProps } from "./HeroSection";
 
 export * from "./result";
 export * from "./photo-step";

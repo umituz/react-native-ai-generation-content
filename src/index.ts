@@ -278,6 +278,10 @@ export {
   // Image Picker
   ImagePickerBox,
   DualImagePicker,
+  // New Generic Sections
+  AIGenerationProgressInline,
+  PromptInput,
+  HeroSection,
   // Buttons
   GenerateButton,
   // Display
@@ -319,6 +323,9 @@ export type {
   // Image Picker
   ImagePickerBoxProps,
   DualImagePickerProps,
+  AIGenerationProgressInlineProps,
+  PromptInputProps,
+  HeroSectionProps,
   // Buttons
   GenerateButtonProps,
   // Display
