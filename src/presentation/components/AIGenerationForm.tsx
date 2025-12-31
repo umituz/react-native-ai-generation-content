@@ -1,30 +1,47 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { StyleSelector } from "./selectors/StyleSelector";
 import { DurationSelector } from "./selectors/DurationSelector";
+import { AspectRatioSelector } from "./selectors/AspectRatioSelector";
 import { PromptInput } from "./PromptInput";
 import { GenerateButton } from "./buttons/GenerateButton";
+import { ExamplePrompts } from "./prompts/ExamplePrompts";
 import type { StyleOption } from "./selectors/types";
+import type { AspectRatioOption } from "./selectors/types";
 
 export interface AIGenerationFormTranslations {
   promptTitle: string;
   promptPlaceholder: string;
-  styleTitle: string;
-  durationTitle: string;
+  styleTitle?: string;
+  durationTitle?: string;
+  aspectRatioTitle?: string;
+  examplePromptsTitle?: string;
   generateButton: string;
   generatingButton: string;
 }
 
-export interface AIGenerationFormProps {
+export interface AIGenerationFormProps extends PropsWithChildren {
   prompt: string;
   onPromptChange: (text: string) => void;
   
-  styles: StyleOption[];
-  selectedStyle: string;
-  onStyleSelect: (styleId: string) => void;
+  // Optional: Example Prompts
+  examplePrompts?: readonly string[];
+  onExamplePromptSelect?: (prompt: string) => void;
   
-  duration: number;
-  durationOptions: readonly number[];
-  onDurationSelect: (duration: number) => void;
+  // Optional: Style Selection
+  styles?: StyleOption[];
+  selectedStyle?: string;
+  onStyleSelect?: (styleId: string) => void;
+  
+  // Optional: Duration Selection
+  duration?: number;
+  durationOptions?: readonly number[];
+  onDurationSelect?: (duration: number) => void;
+  formatDurationLabel?: (duration: number) => string;
+  
+  // Optional: Aspect Ratio Selection
+  aspectRatios?: AspectRatioOption[];
+  selectedAspectRatio?: string;
+  onAspectRatioSelect?: (ratio: string) => void;
   
   onGenerate: () => void;
   isGenerating: boolean;
@@ -36,6 +53,9 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   prompt,
   onPromptChange,
   
+  examplePrompts,
+  onExamplePromptSelect,
+  
   styles,
   selectedStyle,
   onStyleSelect,
@@ -43,11 +63,17 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   duration,
   durationOptions,
   onDurationSelect,
+  formatDurationLabel,
+  
+  aspectRatios,
+  selectedAspectRatio,
+  onAspectRatioSelect,
   
   onGenerate,
   isGenerating,
   
   translations,
+  children,
 }) => {
   return (
     <>
@@ -58,19 +84,44 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
         onChangeText={onPromptChange}
       />
       
-      <StyleSelector
-        styles={styles}
-        selectedStyle={selectedStyle}
-        onStyleSelect={onStyleSelect}
-        title={translations.styleTitle}
-      />
+      {examplePrompts && examplePrompts.length > 0 && onExamplePromptSelect && (
+        <ExamplePrompts
+          prompts={examplePrompts}
+          onSelectPrompt={onExamplePromptSelect}
+          title={translations.examplePromptsTitle}
+        />
+      )}
       
-      <DurationSelector
-        duration={duration}
-        durationOptions={durationOptions}
-        onDurationSelect={onDurationSelect}
-        title={translations.durationTitle}
-      />
+      {styles && styles.length > 0 && selectedStyle && onStyleSelect && translations.styleTitle && (
+        <StyleSelector
+          styles={styles}
+          selectedStyle={selectedStyle}
+          onStyleSelect={onStyleSelect}
+          title={translations.styleTitle}
+        />
+      )}
+      
+      {aspectRatios && aspectRatios.length > 0 && selectedAspectRatio && onAspectRatioSelect && translations.aspectRatioTitle && (
+        <AspectRatioSelector
+          ratios={aspectRatios}
+          selectedRatio={selectedAspectRatio}
+          onRatioSelect={onAspectRatioSelect}
+          title={translations.aspectRatioTitle}
+        />
+      )}
+      
+      {duration && durationOptions && onDurationSelect && translations.durationTitle && (
+        <DurationSelector
+          duration={duration}
+          durationOptions={durationOptions}
+          onDurationSelect={onDurationSelect}
+          title={translations.durationTitle}
+          formatLabel={formatDurationLabel}
+        />
+      )}
+      
+      {/* Custom children injected here */}
+      {children}
       
       <GenerateButton
         onPress={onGenerate}
