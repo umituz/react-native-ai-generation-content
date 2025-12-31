@@ -248,4 +248,4 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
     </View>
   );
 };
-```
+
