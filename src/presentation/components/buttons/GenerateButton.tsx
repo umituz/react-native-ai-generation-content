@@ -98,7 +98,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
           onPress={onPress}
           disabled={disabled}
           activeOpacity={0.85}
-          style={[styles.buttonWrapper, accessoryRight && { flex: 1 }]}
+          style={[styles.buttonWrapper, accessoryRight ? { flex: 1 } : undefined]}
         >
           <LinearGradient
             colors={disabled ? ["#9CA3AF", "#6B7280"] : gradientColors}
