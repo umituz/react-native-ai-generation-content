@@ -19,6 +19,7 @@ export interface GridSelectorProps<T> {
   readonly title?: string;
   readonly columns?: number;
   readonly disabled?: boolean;
+  readonly style?: any;
 }
 
 export function GridSelector<T>({
@@ -26,12 +27,14 @@ export function GridSelector<T>({
   selectedValue,
   onSelect,
   title,
+  columns = 2,
   disabled = false,
+  style,
 }: GridSelectorProps<T>): JSX.Element {
   const tokens = useAppDesignTokens();
 
   return (
-    <View style={styles.section}>
+    <View style={[styles.section, style]}>
       {title && (
         <AtomicText
           type="bodyMedium"
@@ -53,6 +56,7 @@ export function GridSelector<T>({
               style={[
                 styles.card,
                 {
+                  width: `${100 / columns - 4}%`,
                   backgroundColor: isSelected
                     ? tokens.colors.primary + "15"
                     : tokens.colors.surface,
@@ -111,8 +115,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    flex: 1,
-    minWidth: "45%",
     padding: 12,
     borderRadius: 12,
     borderWidth: 2,

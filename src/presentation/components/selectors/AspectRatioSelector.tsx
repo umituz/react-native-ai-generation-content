@@ -14,8 +14,8 @@ import type { AspectRatioOption } from "./types";
 
 export interface AspectRatioSelectorProps {
   ratios: AspectRatioOption[];
-  selectedRatio: "16:9" | "9:16" | "1:1";
-  onRatioSelect: (ratio: "16:9" | "9:16" | "1:1") => void;
+  selectedRatio: string;
+  onRatioSelect: (ratio: string) => void;
   title: string;
 }
 

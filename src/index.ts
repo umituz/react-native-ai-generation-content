@@ -282,6 +282,8 @@ export {
   AIGenerationProgressInline,
   PromptInput,
   AIGenerationHero,
+  ExamplePrompts,
+  ModerationSummary,
   // Buttons
   GenerateButton,
   // Display
@@ -293,6 +295,8 @@ export {
 
   // Photo Upload
   PhotoUploadCard,
+  // Modals
+  SettingsSheet,
   // Selectors
   StyleSelector,
   AspectRatioSelector,
@@ -331,6 +335,8 @@ export type {
   AIGenerationProgressInlineProps,
   PromptInputProps,
   AIGenerationHeroProps,
+  ExamplePromptsProps,
+  ModerationSummaryProps,
   StylePresetsGridProps,
   StylePreset,
   // Buttons
@@ -347,6 +353,8 @@ export type {
   // Photo Upload
   PhotoUploadCardProps,
   PhotoUploadCardConfig,
+  // Modals
+  SettingsSheetProps,
   // Selectors
   StyleSelectorProps,
   AspectRatioSelectorProps,

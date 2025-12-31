@@ -4,41 +4,27 @@
  */
 
 // Input Components
-export { TextToImagePromptInput } from "./TextToImagePromptInput";
-export type { TextToImagePromptInputProps } from "./TextToImagePromptInput";
+export { PromptInput as TextToImagePromptInput } from "../../../presentation/components/PromptInput";
+export type { PromptInputProps as TextToImagePromptInputProps } from "../../../presentation/components/PromptInput";
 
-export { ExamplePrompts as TextToImageExamplePrompts } from "./ExamplePrompts";
-export type { ExamplePromptsProps as TextToImageExamplePromptsProps } from "./ExamplePrompts";
+export { ExamplePrompts as TextToImageExamplePrompts } from "../../../presentation/components/prompts/ExamplePrompts";
+export type { ExamplePromptsProps as TextToImageExamplePromptsProps } from "../../../presentation/components/prompts/ExamplePrompts";
 
 // Selector Components
-export { NumImagesSelector as TextToImageNumImagesSelector } from "./NumImagesSelector";
-export type { NumImagesSelectorProps as TextToImageNumImagesSelectorProps } from "./NumImagesSelector";
+export { StyleSelector as TextToImageStyleSelector } from "../../../presentation/components/selectors/StyleSelector";
+export type { StyleSelectorProps as TextToImageStyleSelectorProps } from "../../../presentation/components/selectors/StyleSelector";
 
-export { StyleSelector as TextToImageStyleSelector } from "./StyleSelector";
-export type { StyleSelectorProps as TextToImageStyleSelectorProps } from "./StyleSelector";
+export { AspectRatioSelector as TextToImageAspectRatioSelector } from "../../../presentation/components/selectors/AspectRatioSelector";
+export type { AspectRatioSelectorProps as TextToImageAspectRatioSelectorProps } from "../../../presentation/components/selectors/AspectRatioSelector";
 
-export { AspectRatioSelector as TextToImageAspectRatioSelector } from "./AspectRatioSelector";
-export type {
-  AspectRatioSelectorProps as TextToImageAspectRatioSelectorProps,
-  AspectRatioOption as TextToImageAspectRatioOption,
-} from "./AspectRatioSelector";
-
-export { ImageSizeSelector as TextToImageSizeSelector } from "./ImageSizeSelector";
-export type {
-  ImageSizeSelectorProps as TextToImageSizeSelectorProps,
-  ImageSizeOption as TextToImageSizeOption,
-} from "./ImageSizeSelector";
-
-export { OutputFormatSelector as TextToImageOutputFormatSelector } from "./OutputFormatSelector";
-export type {
-  OutputFormatSelectorProps as TextToImageOutputFormatSelectorProps,
-  OutputFormatOption as TextToImageOutputFormatOption,
-} from "./OutputFormatSelector";
+export { GridSelector as TextToImageSizeSelector } from "../../../presentation/components/selectors/GridSelector";
+export { GridSelector as TextToImageOutputFormatSelector } from "../../../presentation/components/selectors/GridSelector";
+export { GridSelector as TextToImageNumImagesSelector } from "../../../presentation/components/selectors/GridSelector";
 
 // Action Components
-export { TextToImageGenerateButton } from "./TextToImageGenerateButton";
-export type { TextToImageGenerateButtonProps } from "./TextToImageGenerateButton";
+export { GenerateButton as TextToImageGenerateButton } from "../../../presentation/components/buttons/GenerateButton";
+export type { GenerateButtonProps as TextToImageGenerateButtonProps } from "../../../presentation/components/buttons/GenerateButton";
 
 // Sheet Components
-export { SettingsSheet as TextToImageSettingsSheet } from "./SettingsSheet";
-export type { SettingsSheetProps as TextToImageSettingsSheetProps } from "./SettingsSheet";
+export { SettingsSheet as TextToImageSettingsSheet } from "../../../presentation/components/modals/SettingsSheet";
+export type { SettingsSheetProps as TextToImageSettingsSheetProps } from "../../../presentation/components/modals/SettingsSheet";

@@ -18,7 +18,11 @@ export interface PromptInputProps {
   readonly placeholder?: string;
   readonly minHeight?: number;
   readonly maxLines?: number;
+  readonly maxLength?: number;
   readonly isDisabled?: boolean;
+  readonly showCharacterCount?: boolean;
+  readonly characterCountLabel?: string;
+  readonly style?: any;
 }
 
 export const PromptInput: React.FC<PromptInputProps> = ({
@@ -28,20 +32,34 @@ export const PromptInput: React.FC<PromptInputProps> = ({
   placeholder,
   minHeight = 120,
   maxLines = 6,
+  maxLength = 500,
   isDisabled = false,
+  showCharacterCount = false,
+  characterCountLabel,
+  style,
 }) => {
   const tokens = useAppDesignTokens();
 
   return (
-    <View style={styles.container}>
-      {title && (
-        <AtomicText
-          type="bodyMedium"
-          style={[styles.label, { color: tokens.colors.textPrimary }]}
-        >
-          {title}
-        </AtomicText>
-      )}
+    <View style={[styles.container, style]}>
+      <View style={styles.header}>
+        {title && (
+          <AtomicText
+            type="bodyMedium"
+            style={[styles.label, { color: tokens.colors.textPrimary }]}
+          >
+            {title}
+          </AtomicText>
+        )}
+        {showCharacterCount && (
+          <AtomicText
+            type="labelSmall"
+            style={[styles.count, { color: tokens.colors.textSecondary }]}
+          >
+            {characterCountLabel ?? `${value.length}/${maxLength}`}
+          </AtomicText>
+        )}
+      </View>
       <TextInput
         style={[
           styles.input,
@@ -57,8 +75,8 @@ export const PromptInput: React.FC<PromptInputProps> = ({
         value={value}
         onChangeText={onChangeText}
         multiline
-        numberOfLines={4}
-        maxLength={500}
+        numberOfLines={maxLines}
+        maxLength={maxLength}
         textAlignVertical="top"
         editable={!isDisabled}
       />
@@ -68,14 +86,24 @@ export const PromptInput: React.FC<PromptInputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    paddingVertical: 16,
     width: "100%",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+    paddingHorizontal: 16,
   },
   label: {
     fontWeight: "600",
-    marginBottom: 8,
+  },
+  count: {
+    opacity: 0.8,
   },
   input: {
+    marginHorizontal: 16,
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,

@@ -1,6 +1,7 @@
 /**
- * Settings Sheet Component
- * Modal sheet for advanced image generation settings
+ * SettingsSheet Component
+ * Generic modal bottom sheet for settings or options
+ * Props-driven for 100+ apps compatibility
  */
 
 import React from "react";
@@ -20,11 +21,11 @@ import {
 } from "@umituz/react-native-design-system";
 
 export interface SettingsSheetProps {
-  visible: boolean;
-  onClose: () => void;
-  title: string;
-  doneLabel: string;
-  children: React.ReactNode;
+  readonly visible: boolean;
+  readonly onClose: () => void;
+  readonly title: string;
+  readonly doneLabel: string;
+  readonly children: React.ReactNode;
 }
 
 export const SettingsSheet: React.FC<SettingsSheetProps> = ({
@@ -129,11 +130,12 @@ const styles = StyleSheet.create({
   },
   doneButton: {
     paddingHorizontal: 0,
+    backgroundColor: "transparent",
   },
   doneText: {
     fontWeight: "600",
   },
   content: {
-    padding: 20,
+    paddingHorizontal: 4,
   },
 });

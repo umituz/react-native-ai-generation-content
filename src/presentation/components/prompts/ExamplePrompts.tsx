@@ -1,6 +1,7 @@
 /**
- * Example Prompts Component
+ * ExamplePrompts Component
  * Horizontal scrollable list of example prompts
+ * Props-driven for 100+ apps compatibility
  */
 
 import React from "react";
@@ -11,17 +12,19 @@ import {
 } from "@umituz/react-native-design-system";
 
 export interface ExamplePromptsProps {
-  prompts: string[];
-  onSelectPrompt: (prompt: string) => void;
-  label: string;
-  cardWidth?: number;
+  readonly prompts: readonly string[];
+  readonly onSelectPrompt: (prompt: string) => void;
+  readonly title?: string;
+  readonly cardWidth?: number;
+  readonly style?: any;
 }
 
 export const ExamplePrompts: React.FC<ExamplePromptsProps> = ({
   prompts,
   onSelectPrompt,
-  label,
+  title = "✨ Example Prompts",
   cardWidth = 180,
+  style,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -30,17 +33,20 @@ export const ExamplePrompts: React.FC<ExamplePromptsProps> = ({
   }
 
   return (
-    <View style={styles.container}>
-      <AtomicText
-        type="bodyMedium"
-        style={[styles.label, { color: tokens.colors.textPrimary }]}
-      >
-        {label}
-      </AtomicText>
+    <View style={[styles.container, style]}>
+      {title && (
+        <AtomicText
+          type="bodyMedium"
+          style={[styles.label, { color: tokens.colors.textPrimary }]}
+        >
+          {title}
+        </AtomicText>
+      )}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        style={styles.scrollView}
       >
         {prompts.map((prompt, index) => (
           <TouchableOpacity
@@ -57,7 +63,7 @@ export const ExamplePrompts: React.FC<ExamplePromptsProps> = ({
           >
             <AtomicText
               type="bodySmall"
-              style={{ color: tokens.colors.textPrimary }}
+              style={[styles.promptText, { color: tokens.colors.textPrimary }]}
               numberOfLines={2}
             >
               {prompt}
@@ -71,18 +77,29 @@ export const ExamplePrompts: React.FC<ExamplePromptsProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    paddingVertical: 16,
+    width: "100%",
   },
   label: {
     fontWeight: "600",
     marginBottom: 12,
+    marginHorizontal: 16,
+  },
+  scrollView: {
+    marginHorizontal: 0,
   },
   scrollContent: {
-    paddingRight: 16,
+    paddingHorizontal: 16,
+    paddingRight: 32,
   },
   card: {
-    padding: 12,
-    borderRadius: 8,
+    padding: 16,
+    borderRadius: 12,
     marginRight: 12,
+    minHeight: 60,
+    justifyContent: "center",
+  },
+  promptText: {
+    lineHeight: 18,
   },
 });

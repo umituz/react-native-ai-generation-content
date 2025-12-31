@@ -21,10 +21,10 @@ export type {
   ImageSelectionGridTranslations as ImageToVideoSelectionGridTranslations,
 } from "./ImageSelectionGrid";
 
-// Hero Section
-export { HeroSection as ImageToVideoHeroSection } from "./HeroSection";
-export type { HeroSectionProps as ImageToVideoHeroSectionProps } from "./HeroSection";
+// Hero Section - Using AIGenerationHero from common components
+// export { HeroSection as ImageToVideoHeroSection } from "./HeroSection";
+// export type { HeroSectionProps as ImageToVideoHeroSectionProps } from "./HeroSection";
 
-// Generate Button
-export { GenerateButton as ImageToVideoGenerateButton } from "./GenerateButton";
-export type { GenerateButtonProps as ImageToVideoGenerateButtonProps } from "./GenerateButton";
+// Action Components
+export { GenerateButton as ImageToVideoGenerateButton } from "../../../presentation/components/buttons/GenerateButton";
+export type { GenerateButtonProps as ImageToVideoGenerateButtonProps } from "../../../presentation/components/buttons/GenerateButton";

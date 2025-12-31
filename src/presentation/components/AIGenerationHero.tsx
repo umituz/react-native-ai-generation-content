@@ -18,6 +18,7 @@ export interface AIGenerationHeroProps {
   readonly subtitle?: string;
   readonly iconName?: string;
   readonly gradientColors?: readonly [string, string, ...string[]];
+  readonly style?: any;
 }
 
 export const AIGenerationHero: React.FC<AIGenerationHeroProps> = ({
@@ -25,13 +26,19 @@ export const AIGenerationHero: React.FC<AIGenerationHeroProps> = ({
   subtitle,
   iconName,
   gradientColors = ["#00FF88", "#10B981"],
+  style,
 }) => {
   const tokens = useAppDesignTokens();
 
+  const finalColors = gradientColors || [
+    tokens.colors.secondary ?? tokens.colors.info,
+    tokens.colors.primary,
+  ];
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <LinearGradient
-        colors={gradientColors}
+        colors={finalColors as any}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}

@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
@@ -23,6 +23,10 @@ export interface GenerateButtonProps {
   readonly gradientColors?: readonly [string, string, ...string[]];
   readonly icon?: string;
   readonly iconSize?: number;
+  readonly costLabel?: string;
+  readonly accessoryRight?: React.ReactNode;
+  readonly onAccessoryRightPress?: () => void;
+  readonly style?: any;
 }
 
 export const GenerateButton: React.FC<GenerateButtonProps> = ({
@@ -35,60 +39,94 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
   gradientColors = ["#FF6B9D", "#C74375", "#FF6B9D"],
   icon = "sparkles",
   iconSize = 24,
+  costLabel,
+  accessoryRight,
+  onAccessoryRightPress,
+  style,
 }) => {
   const tokens = useAppDesignTokens();
   const disabled = isDisabled || isProcessing;
   const displayText = isProcessing && processingText ? processingText : text;
+  const finalDisplayText = costLabel ? `${displayText} (${costLabel})` : displayText;
 
   if (variant === "solid") {
     return (
-      <View style={[styles.solidContainer, { marginTop: tokens.spacing.xl }]}>
-        <TouchableOpacity
-          onPress={onPress}
-          disabled={disabled}
-          activeOpacity={0.8}
-          style={[
-            styles.solidButton,
-            {
-              backgroundColor: disabled
-                ? tokens.colors.surfaceSecondary
-                : tokens.colors.primary,
-            },
-          ]}
-        >
-          <View style={styles.buttonContent}>
-            <AtomicIcon name={icon} customSize={20} customColor="#FFFFFF" />
-            <AtomicText type="bodyLarge" style={styles.solidButtonText}>
-              {displayText}
-            </AtomicText>
-          </View>
-        </TouchableOpacity>
+      <View style={[styles.solidContainer, { marginTop: tokens.spacing.xl }, style]}>
+        <View style={styles.row}>
+          <TouchableOpacity
+            onPress={onPress}
+            disabled={disabled}
+            activeOpacity={0.8}
+            style={[
+              styles.solidButton,
+              {
+                backgroundColor: disabled
+                  ? tokens.colors.surfaceSecondary
+                  : tokens.colors.primary,
+                flex: 1,
+              },
+            ]}
+          >
+            <View style={styles.buttonContent}>
+              {isProcessing ? (
+                <ActivityIndicator color="#FFFFFF" size="small" />
+              ) : (
+                <AtomicIcon name={icon} customSize={20} customColor="#FFFFFF" />
+              )}
+              <AtomicText type="bodyLarge" style={styles.solidButtonText}>
+                {finalDisplayText}
+              </AtomicText>
+            </View>
+          </TouchableOpacity>
+          {accessoryRight && (
+            <TouchableOpacity
+              onPress={onAccessoryRightPress}
+              style={[styles.accessory, { backgroundColor: tokens.colors.surfaceSecondary }]}
+            >
+              {accessoryRight}
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     );
   }
 
   return (
-    <View style={[styles.gradientContainer, { marginTop: tokens.spacing.xl }]}>
-      <TouchableOpacity
-        onPress={onPress}
-        disabled={disabled}
-        activeOpacity={0.85}
-        style={styles.buttonWrapper}
-      >
-        <LinearGradient
-          colors={disabled ? ["#9CA3AF", "#6B7280"] : gradientColors}
-          start={[0, 0]}
-          end={[1, 0]}
-          style={[styles.gradientButton, disabled && styles.disabledButton]}
+    <View style={[styles.gradientContainer, { marginTop: tokens.spacing.xl }, style]}>
+      <View style={styles.row}>
+        <TouchableOpacity
+          onPress={onPress}
+          disabled={disabled}
+          activeOpacity={0.85}
+          style={[styles.buttonWrapper, accessoryRight && { flex: 1 }]}
         >
-          <View style={styles.buttonContent}>
-            <AtomicIcon name={icon} customSize={iconSize} customColor="#FFF" />
-            <AtomicText type="bodyLarge" style={styles.gradientButtonText}>
-              {displayText}
-            </AtomicText>
-          </View>
-        </LinearGradient>
-      </TouchableOpacity>
+          <LinearGradient
+            colors={disabled ? ["#9CA3AF", "#6B7280"] : gradientColors}
+            start={[0, 0]}
+            end={[1, 0]}
+            style={[styles.gradientButton, disabled && styles.disabledButton]}
+          >
+            <View style={styles.buttonContent}>
+            {isProcessing ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <AtomicIcon name={icon} customSize={iconSize} customColor="#FFF" />
+            )}
+              <AtomicText type="bodyLarge" style={styles.gradientButtonText}>
+                {finalDisplayText}
+              </AtomicText>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+        {accessoryRight && (
+          <TouchableOpacity
+            onPress={onAccessoryRightPress}
+            style={[styles.accessory, { backgroundColor: tokens.colors.surface, height: 56, width: 56 }]}
+          >
+            {accessoryRight}
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
@@ -128,6 +166,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    width: "100%",
+  },
+  accessory: {
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
   },
   gradientButtonText: {
     color: "#FFFFFF",
