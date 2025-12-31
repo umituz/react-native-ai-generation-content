@@ -414,6 +414,8 @@ export * from "./features/replace-background";
 // =============================================================================
 
 export * from "./features/upscaling";
+export * from "./features/script-generator";
+
 
 // =============================================================================
 // FEATURES - Photo Restoration
