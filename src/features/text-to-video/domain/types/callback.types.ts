@@ -20,7 +20,7 @@ export interface ProjectData {
 }
 
 export interface TextToVideoCallbacks {
-  onCreditCheck?: (cost: number) => boolean;
+  onCreditCheck?: (cost: number) => boolean | Promise<boolean>;
   onAuthCheck?: () => boolean;
   onModeration?: (prompt: string) => Promise<VideoModerationResult>;
   onProjectCreate?: (data: ProjectData) => Promise<void>;
