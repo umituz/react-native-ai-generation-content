@@ -7,6 +7,7 @@ export { PendingJobCardActions } from "./PendingJobCardActions";
 export { AIGenerationProgressInline } from "./AIGenerationProgressInline";
 export { PromptInput } from "./PromptInput";
 export { AIGenerationHero } from "./AIGenerationHero";
+export * from "./StylePresetsGrid";
 
 export type {
   GenerationProgressModalProps,

@@ -295,6 +295,7 @@ export {
   StyleSelector,
   AspectRatioSelector,
   DurationSelector,
+  StylePresetsGrid,
 } from "./presentation/components";
 
 export type {
@@ -326,6 +327,8 @@ export type {
   AIGenerationProgressInlineProps,
   PromptInputProps,
   AIGenerationHeroProps,
+  StylePresetsGridProps,
+  StylePreset,
   // Buttons
   GenerateButtonProps,
   // Display
