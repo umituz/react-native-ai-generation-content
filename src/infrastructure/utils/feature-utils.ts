@@ -38,7 +38,7 @@ export interface FeatureUtilsConfig {
 /**
  * Prepare image from URI (generic passthrough)
  */
-export function prepareImage(uri: string): string {
+export async function prepareImage(uri: string): Promise<string> {
   return uri;
 }
 

@@ -195,6 +195,14 @@ export {
   isValidBase64,
   getBase64Size,
   getBase64SizeMB,
+  // Feature utils
+  prepareImage,
+  createDevCallbacks,
+  createFeatureUtils,
+  // Video helpers
+  showVideoGenerationSuccess,
+  handleGenerationError,
+  showContentModerationWarning,
 } from "./infrastructure/utils";
 
 export type {
@@ -205,6 +213,14 @@ export type {
   ValidateResultOptions,
   PhotoInput,
   PreparedImage,
+  // Feature utils types
+  ImageSelector,
+  VideoSaver,
+  CreditChecker,
+  AlertFunction,
+  FeatureUtilsConfig,
+  // Video helpers types
+  VideoAlertFunction,
 } from "./infrastructure/utils";
 
 // =============================================================================

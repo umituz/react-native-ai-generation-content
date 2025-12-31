@@ -9,3 +9,4 @@ export * from "./status-checker.util";
 export * from "./result-validator.util";
 export * from "./photo-generation";
 export * from "./feature-utils";
+export * from "./video-helpers";

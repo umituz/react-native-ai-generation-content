@@ -12,7 +12,7 @@ export interface AIGenScreenHeaderProps {
   readonly title: string;
   readonly description?: string;
   readonly navigationType?: NavigationButtonType;
-  readonly onNavigationPress: () => void;
+  readonly onNavigationPress?: () => void;
   readonly headerContent?: ReactNode;
   readonly rightContent?: ReactNode;
   readonly titleType?: "headlineLarge" | "titleLarge";
@@ -62,13 +62,15 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
         </View>
         <View style={styles.headerActions}>
           {rightContent}
-          <TouchableOpacity
-            onPress={onNavigationPress}
-            style={buttonStyle}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <AtomicIcon name={iconName} size="md" color={iconColor} />
-          </TouchableOpacity>
+          {onNavigationPress && (
+            <TouchableOpacity
+              onPress={onNavigationPress}
+              style={buttonStyle}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <AtomicIcon name={iconName} size="md" color={iconColor} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
       {showDescription && description && (
