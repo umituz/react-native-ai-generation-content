@@ -13,14 +13,14 @@ import {
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 
-export interface HeroSectionProps {
+export interface AIGenerationHeroProps {
   readonly title: string;
   readonly subtitle?: string;
   readonly iconName?: string;
   readonly gradientColors?: readonly [string, string, ...string[]];
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({
+export const AIGenerationHero: React.FC<AIGenerationHeroProps> = ({
   title,
   subtitle,
   iconName,

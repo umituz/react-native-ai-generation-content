@@ -281,7 +281,7 @@ export {
   // New Generic Sections
   AIGenerationProgressInline,
   PromptInput,
-  HeroSection,
+  AIGenerationHero,
   // Buttons
   GenerateButton,
   // Display
@@ -325,7 +325,7 @@ export type {
   DualImagePickerProps,
   AIGenerationProgressInlineProps,
   PromptInputProps,
-  HeroSectionProps,
+  AIGenerationHeroProps,
   // Buttons
   GenerateButtonProps,
   // Display
