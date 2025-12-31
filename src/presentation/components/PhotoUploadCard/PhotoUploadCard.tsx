@@ -39,10 +39,9 @@ export interface PhotoUploadCardProps {
   isValid?: boolean | null;
   disabled?: boolean;
   config?: PhotoUploadCardConfig;
-  translations: {
+  translations?: {
     tapToUpload: string;
     selectPhoto: string;
-    change: string;
     change: string;
     analyzing?: string;
   };
@@ -68,7 +67,12 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
   isValid = null,
   disabled = false,
   config = DEFAULT_CONFIG,
-  translations,
+  translations = {
+    tapToUpload: "Tap to Upload",
+    selectPhoto: "Select a photo",
+    change: "Change",
+    analyzing: "Analyzing...",
+  },
   title,
   subtitle,
   icon,
