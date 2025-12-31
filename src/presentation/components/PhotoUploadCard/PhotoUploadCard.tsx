@@ -43,8 +43,12 @@ export interface PhotoUploadCardProps {
     tapToUpload: string;
     selectPhoto: string;
     change: string;
+    change: string;
     analyzing?: string;
   };
+  title?: string;
+  subtitle?: string;
+  icon?: string;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -65,6 +69,9 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
   disabled = false,
   config = DEFAULT_CONFIG,
   translations,
+  title,
+  subtitle,
+  icon,
   style,
 }) => {
   const tokens = useAppDesignTokens();
@@ -223,17 +230,17 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
                 style={styles.iconGradient}
               >
                 <AtomicIcon
-                  name="camera"
+                  name={(icon as any) || "camera"}
                   size={cfg.iconSize}
                   customColor={tokens.colors.primary}
                 />
               </LinearGradient>
             </View>
             <AtomicText style={styles.title}>
-              {translations.tapToUpload}
+              {title || translations.tapToUpload}
             </AtomicText>
             <AtomicText style={styles.subtitle}>
-              {translations.selectPhoto}
+              {subtitle || translations.selectPhoto}
             </AtomicText>
           </View>
         )}
@@ -241,3 +248,4 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
     </View>
   );
 };
+```
