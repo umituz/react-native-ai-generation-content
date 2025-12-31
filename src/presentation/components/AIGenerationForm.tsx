@@ -45,6 +45,7 @@ export interface AIGenerationFormProps extends PropsWithChildren {
   
   onGenerate: () => void;
   isGenerating: boolean;
+  hideGenerateButton?: boolean;
   
   // Custom Generate Button Props
   generateButtonProps?: {
@@ -79,6 +80,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   
   onGenerate,
   isGenerating,
+  hideGenerateButton,
   
   generateButtonProps,
   
@@ -135,18 +137,20 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
       {/* Custom children injected here */}
       {children}
       
-      <GenerateButton
-        onPress={onGenerate}
-        isProcessing={isGenerating}
-        isDisabled={onPromptChange ? !prompt?.trim() : false}
-        text={translations.generateButton}
-        processingText={translations.generatingButton}
-        variant="solid"
-        icon={generateButtonProps?.icon || "sparkles-outline"}
-        costLabel={generateButtonProps?.costLabel}
-        accessoryRight={generateButtonProps?.accessoryRight}
-        onAccessoryRightPress={generateButtonProps?.onAccessoryRightPress}
-      />
+      {!hideGenerateButton && (
+        <GenerateButton
+          onPress={onGenerate}
+          isProcessing={isGenerating}
+          isDisabled={onPromptChange ? !prompt?.trim() : false}
+          text={translations.generateButton}
+          processingText={translations.generatingButton}
+          variant="solid"
+          icon={generateButtonProps?.icon || "sparkles-outline"}
+          costLabel={generateButtonProps?.costLabel}
+          accessoryRight={generateButtonProps?.accessoryRight}
+          onAccessoryRightPress={generateButtonProps?.onAccessoryRightPress}
+        />
+      )}
     </>
   );
 };
