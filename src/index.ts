@@ -303,6 +303,7 @@ export {
   DurationSelector,
   GridSelector,
   StylePresetsGrid,
+  AIGenerationForm,
 
 } from "./presentation/components";
 
