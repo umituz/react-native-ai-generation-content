@@ -1,1 +1,2 @@
-export { FeatureHeader, type FeatureHeaderProps } from "./FeatureHeader";
+export * from "./FeatureHeader";
+export * from "./AIGenScreenHeader";

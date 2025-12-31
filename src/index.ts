@@ -289,13 +289,17 @@ export {
   ErrorDisplay,
   // Headers
   FeatureHeader,
+  AIGenScreenHeader,
+
   // Photo Upload
   PhotoUploadCard,
   // Selectors
   StyleSelector,
   AspectRatioSelector,
   DurationSelector,
+  GridSelector,
   StylePresetsGrid,
+
 } from "./presentation/components";
 
 export type {
@@ -337,6 +341,9 @@ export type {
   ErrorDisplayProps,
   // Headers
   FeatureHeaderProps,
+  AIGenScreenHeaderProps,
+  NavigationButtonType,
+
   // Photo Upload
   PhotoUploadCardProps,
   PhotoUploadCardConfig,
@@ -344,6 +351,9 @@ export type {
   StyleSelectorProps,
   AspectRatioSelectorProps,
   DurationSelectorProps,
+  GridSelectorProps,
+  GridSelectorOption,
+
   StyleOption,
   AspectRatioOption,
   DurationValue,

@@ -6,6 +6,7 @@
 export { StyleSelector } from "./StyleSelector";
 export { AspectRatioSelector } from "./AspectRatioSelector";
 export { DurationSelector } from "./DurationSelector";
+export { GridSelector, type GridSelectorProps, type GridSelectorOption } from "./GridSelector";
 
 export type { StyleSelectorProps } from "./StyleSelector";
 export type { AspectRatioSelectorProps } from "./AspectRatioSelector";
