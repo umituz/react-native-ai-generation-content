@@ -337,6 +337,20 @@ export type {
   StyleOption,
   AspectRatioOption,
   DurationValue,
+  // Selector Factories
+  AspectRatioTranslations,
+  DurationOption,
+  StyleTranslations,
+} from "./presentation/components";
+
+// Selector Factories
+export {
+  createAspectRatioOptions,
+  createDurationOptions,
+  createStyleOptions,
+  createStyleOptionsFromConfig,
+  ASPECT_RATIO_IDS,
+  COMMON_DURATIONS,
 } from "./presentation/components";
 
 // =============================================================================
