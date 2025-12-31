@@ -13,12 +13,19 @@ import type {
 
 export const DEFAULT_NUM_IMAGES_OPTIONS: NumImages[] = [1, 2, 3, 4];
 
+/**
+ * @deprecated Use createAspectRatioOptions factory with translations instead
+ * This will be removed in next major version
+ */
 export const DEFAULT_ASPECT_RATIO_OPTIONS: { value: AspectRatio; label: string }[] = [
-  { value: "9:16", label: "Portrait (9:16)" },
-  { value: "16:9", label: "Landscape (16:9)" },
-  { value: "1:1", label: "Square (1:1)" },
+  { value: "9:16", label: "9:16" },
+  { value: "16:9", label: "16:9" },
+  { value: "1:1", label: "1:1" },
 ];
 
+/**
+ * @deprecated Apps should provide their own translated labels
+ */
 export const DEFAULT_SIZE_OPTIONS: { value: ImageSize; label: string }[] = [
   { value: "512x512", label: "512×512" },
   { value: "768x768", label: "768×768" },
@@ -27,6 +34,9 @@ export const DEFAULT_SIZE_OPTIONS: { value: ImageSize; label: string }[] = [
   { value: "1792x1024", label: "1792×1024" },
 ];
 
+/**
+ * @deprecated Apps should provide their own translated labels
+ */
 export const DEFAULT_OUTPUT_FORMAT_OPTIONS: { value: OutputFormat; label: string }[] = [
   { value: "png", label: "PNG" },
   { value: "jpeg", label: "JPEG" },

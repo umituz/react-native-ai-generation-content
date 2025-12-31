@@ -16,3 +16,5 @@ export type {
   AspectRatioOption,
   DurationValue,
 } from "./types";
+
+export * from "./factories";
