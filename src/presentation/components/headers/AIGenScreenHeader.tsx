@@ -26,7 +26,7 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
   onNavigationPress,
   headerContent,
   rightContent,
-  titleType = "titleLarge",
+  titleType = "headlineLarge",
   showDescription = !!description,
 }) => {
   const tokens = useAppDesignTokens();
@@ -49,7 +49,19 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
   return (
     <View style={styles.header}>
       <View style={styles.headerTop}>
-        <View style={styles.leftContainer}>
+        <View style={styles.titleContainer}>
+          <AtomicText
+            type={titleType}
+            style={{
+              color: tokens.colors.textPrimary,
+              fontWeight: "700",
+            }}
+          >
+            {title}
+          </AtomicText>
+        </View>
+        <View style={styles.headerActions}>
+          {rightContent}
           <TouchableOpacity
             onPress={onNavigationPress}
             style={buttonStyle}
@@ -57,25 +69,14 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
           >
             <AtomicIcon name={iconName} size="md" color={iconColor} />
           </TouchableOpacity>
-          <AtomicText
-            type={titleType}
-            style={{
-              color: tokens.colors.textPrimary,
-              fontWeight: "700",
-              marginLeft: navigationType === "back" ? 8 : 0,
-            }}
-          >
-            {title}
-          </AtomicText>
         </View>
-        <View style={styles.headerActions}>{rightContent}</View>
       </View>
       {showDescription && description && (
         <AtomicText
           type="bodyMedium"
           style={[
             styles.description,
-            { color: tokens.colors.textSecondary, marginTop: 8 },
+            { color: tokens.colors.textSecondary, marginTop: 4 },
           ]}
         >
           {description}
@@ -88,34 +89,37 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    padding: 16,
+    paddingHorizontal: 16,
     paddingTop: 60,
     width: "100%",
+    marginBottom: 24,
   },
   headerTop: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
   },
-  leftContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  titleContainer: {
     flex: 1,
+    marginRight: 12,
   },
   headerActions: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 8,
   },
   navigationButton: {
-    width: 40,
-    height: 40,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },
-  backButton: {},
+  backButton: {
+    width: 40,
+    height: 40,
+  },
   closeButton: {
-    borderRadius: 20,
     borderWidth: 1,
   },
   description: {
