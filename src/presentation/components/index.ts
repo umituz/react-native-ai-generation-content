@@ -8,6 +8,7 @@ export { AIGenerationProgressInline } from "./AIGenerationProgressInline";
 export { PromptInput } from "./PromptInput";
 export { AIGenerationHero } from "./AIGenerationHero";
 export * from "./StylePresetsGrid";
+export * from "./AIGenerationForm";
 
 export type {
   GenerationProgressModalProps,
