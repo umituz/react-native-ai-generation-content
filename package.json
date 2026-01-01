@@ -37,16 +37,18 @@
     "type": "git",
     "url": "git+https://github.com/umituz/react-native-ai-generation-content.git"
   },
-  "peerDependencies": {
-    "@react-navigation/native": ">=6.0.0",
-    "@tanstack/react-query": ">=5.0.0",
+  "dependencies": {
     "@umituz/react-native-animation": "*",
     "@umituz/react-native-design-system": "*",
     "@umituz/react-native-firebase": "*",
     "@umituz/react-native-image": "*",
     "@umituz/react-native-offline": "*",
     "@umituz/react-native-timezone": "*",
-    "@umituz/react-native-uuid": "*",
+    "@umituz/react-native-uuid": "*"
+  },
+  "peerDependencies": {
+    "@react-navigation/native": ">=6.0.0",
+    "@tanstack/react-query": ">=5.0.0",
     "expo-linear-gradient": ">=15.0.0",
     "firebase": ">=10.0.0",
     "react": ">=18.0.0",
