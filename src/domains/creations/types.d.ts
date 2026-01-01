@@ -37,6 +37,6 @@ declare module "@umituz/react-native-firestore" {
   export function isFirestoreInitialized(): boolean;
 }
 
-declare module "@umituz/react-native-sentry";
+
 declare module "expo-apple-authentication";
 declare module "@umituz/react-native-filesystem";
