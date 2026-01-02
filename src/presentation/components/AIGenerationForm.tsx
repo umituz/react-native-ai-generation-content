@@ -131,7 +131,6 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
               isDisabled={onPromptChange ? !prompt?.trim() : false}
               text={translations.generateButton}
               processingText={translations.generatingButton}
-              variant="solid"
               icon={generateButtonProps?.icon || "sparkles-outline"}
               costLabel={generateButtonProps?.costLabel}
               accessoryRight={generateButtonProps?.accessoryRight}

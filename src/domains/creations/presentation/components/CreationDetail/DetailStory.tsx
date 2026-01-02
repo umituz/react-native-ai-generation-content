@@ -2,7 +2,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { AtomicText, useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system";
-import { LinearGradient } from 'expo-linear-gradient';
 
 interface DetailStoryProps {
     readonly story: string;
@@ -16,16 +15,13 @@ export const DetailStory: React.FC<DetailStoryProps> = ({ story }) => {
 
     return (
         <View style={styles.container}>
-            <LinearGradient
-                colors={[tokens.colors.primary + '15', tokens.colors.primary + '05']}
-                style={styles.gradient}
-            >
+            <View style={styles.storyContainer}>
                 <AtomicText style={styles.quoteMark}>&quot;</AtomicText>
                 <AtomicText style={styles.text}>{story}</AtomicText>
                 <View style={styles.quoteEndRow}>
                     <AtomicText style={[styles.quoteMark, styles.quoteEnd]}>&quot;</AtomicText>
                 </View>
-            </LinearGradient>
+            </View>
         </View>
     );
 };
@@ -35,11 +31,12 @@ const useStyles = (tokens: DesignTokens) => StyleSheet.create({
         paddingHorizontal: tokens.spacing.lg,
         marginBottom: tokens.spacing.lg,
     },
-    gradient: {
+    storyContainer: {
         padding: tokens.spacing.lg,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: tokens.colors.primary + '20',
+        borderColor: tokens.colors.border,
+        backgroundColor: tokens.colors.surface,
     },
     quoteMark: {
         fontSize: 48,

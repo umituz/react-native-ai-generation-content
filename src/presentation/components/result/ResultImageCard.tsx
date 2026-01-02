@@ -11,7 +11,6 @@ import {
   AtomicIcon,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
-import { LinearGradient } from "expo-linear-gradient";
 import type { ResultImageConfig } from "../../types/result-config.types";
 import { DEFAULT_RESULT_CONFIG } from "../../types/result-config.types";
 
@@ -45,12 +44,12 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
 
   const badgeBackground = useMemo(() => {
     if (cfg.badgeStyle === "light") {
-      return "rgba(255, 255, 255, 0.9)";
+      return tokens.colors.surface;
     } else if (cfg.badgeStyle === "dark") {
-      return "rgba(0, 0, 0, 0.6)";
+      return tokens.colors.modalOverlay;
     }
-    return null;
-  }, [cfg.badgeStyle]);
+    return tokens.colors.primary;
+  }, [cfg.badgeStyle, tokens]);
 
   const styles = useMemo(
     () =>
@@ -76,16 +75,9 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
           gap: 4,
           paddingHorizontal: 10,
           paddingVertical: 5,
-          backgroundColor: badgeBackground ?? undefined,
+          backgroundColor: badgeBackground,
           borderRadius: 12,
           overflow: "hidden",
-        },
-        gradientBadge: {
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 4,
-          paddingHorizontal: 10,
-          paddingVertical: 5,
         },
         badgeText: {
           fontSize: 10,
@@ -93,7 +85,7 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
           color:
             cfg.badgeStyle === "light"
               ? tokens.colors.textPrimary
-              : "#FFFFFF",
+              : tokens.colors.textInverse,
           letterSpacing: 0.5,
         },
       }),
@@ -104,35 +96,20 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
     if (!cfg.showBadge) return null;
 
     const iconColor =
-      cfg.badgeStyle === "light" ? tokens.colors.primary : "#FFFFFF";
+      cfg.badgeStyle === "light"
+        ? tokens.colors.primary
+        : tokens.colors.textInverse;
 
-    const badgeContent = (
-      <>
+    return (
+      <View style={styles.badge}>
         <AtomicIcon
           name={cfg.badgeIcon ?? "sparkles"}
           size="xs"
           customColor={iconColor}
         />
         <AtomicText style={styles.badgeText}>{badgeText}</AtomicText>
-      </>
+      </View>
     );
-
-    if (cfg.badgeStyle === "gradient") {
-      return (
-        <View style={styles.badge}>
-          <LinearGradient
-            colors={[tokens.colors.primary, tokens.colors.secondary]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.gradientBadge}
-          >
-            {badgeContent}
-          </LinearGradient>
-        </View>
-      );
-    }
-
-    return <View style={styles.badge}>{badgeContent}</View>;
   };
 
   return (

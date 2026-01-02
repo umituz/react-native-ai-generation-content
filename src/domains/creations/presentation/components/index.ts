@@ -31,9 +31,6 @@ export { CreationsHomeCard } from "./CreationsHomeCard";
 export { CreationImageViewer } from "./CreationImageViewer";
 export { CreationsGrid } from "./CreationsGrid";
 
-// Provider
-export { CreationsProvider, useCreationsProvider } from "./CreationsProvider";
-
 // Detail Components
 export { DetailHeader } from "./CreationDetail/DetailHeader";
 export { DetailImage } from "./CreationDetail/DetailImage";

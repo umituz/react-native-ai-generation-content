@@ -11,34 +11,41 @@ import {
   AtomicText,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
-import { LinearGradient } from "expo-linear-gradient";
 
 export interface FeatureHeaderProps {
   readonly imageSource: ImageSourcePropType;
   readonly description: string;
-  readonly gradientColors?: readonly [string, string, ...string[]];
   readonly minHeight?: number;
 }
 
 export const FeatureHeader: React.FC<FeatureHeaderProps> = ({
   imageSource,
   description,
-  gradientColors = ["rgba(0,0,0,0.3)", "rgba(0,0,0,0.1)", "rgba(0,0,0,0.4)"],
   minHeight = 200,
 }) => {
   const tokens = useAppDesignTokens();
 
   return (
     <>
-      <View style={styles.headerContainer}>
+      <View
+        style={[
+          styles.headerContainer,
+          { borderColor: tokens.colors.border },
+        ]}
+      >
         <ImageBackground
           source={imageSource}
           style={[styles.heroImage, { minHeight }]}
           imageStyle={styles.heroImageStyle}
         >
-          <LinearGradient
-            colors={gradientColors}
-            style={[styles.gradient, { minHeight }]}
+          <View
+            style={[
+              styles.overlay,
+              {
+                minHeight,
+                backgroundColor: tokens.colors.modalOverlay,
+              },
+            ]}
           />
         </ImageBackground>
       </View>
@@ -65,7 +72,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   heroImage: {
     width: "100%",
@@ -73,7 +79,7 @@ const styles = StyleSheet.create({
   heroImageStyle: {
     borderRadius: 20,
   },
-  gradient: {
+  overlay: {
     flex: 1,
   },
   description: {

@@ -68,8 +68,8 @@ export const MusicMoodSelector: React.FC<MusicMoodSelectorProps> = ({
                   componentStyles.iconContainer,
                   {
                     backgroundColor: isSelected
-                      ? "rgba(255, 255, 255, 0.2)"
-                      : "rgba(0, 0, 0, 0.05)",
+                      ? tokens.colors.modalOverlay
+                      : tokens.colors.surface,
                   },
                 ]}
               >
@@ -114,7 +114,7 @@ export const MusicMoodSelector: React.FC<MusicMoodSelectorProps> = ({
         <View
           style={[
             componentStyles.customBadge,
-            { backgroundColor: tokens.colors.primary + "20" },
+            { backgroundColor: tokens.colors.surfaceVariant },
           ]}
         >
           <AtomicIcon name="checkmark-circle-outline" size="sm" color="primary" />

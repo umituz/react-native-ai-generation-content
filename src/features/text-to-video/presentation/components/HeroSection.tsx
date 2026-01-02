@@ -5,7 +5,6 @@
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import {
   AtomicText,
   AtomicIcon,
@@ -22,12 +21,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const tokens = useAppDesignTokens();
 
   return (
-    <LinearGradient
-      colors={[tokens.colors.secondary, tokens.colors.primary]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={[styles.container, style]}
-    >
+    <View style={[styles.container, { backgroundColor: tokens.colors.primary }, style]}>
       <View style={styles.iconContainer}>
         <AtomicIcon
           name={icon || "sparkles-outline"}
@@ -41,7 +35,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <AtomicText type="bodyMedium" color="textInverse" style={styles.subtitle}>
         {subtitle}
       </AtomicText>
-    </LinearGradient>
+    </View>
   );
 };
 

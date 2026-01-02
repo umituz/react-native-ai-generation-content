@@ -29,7 +29,7 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = memo(
 
         return (
             <View style={styles.container}>
-                <View style={styles.resultContainer}>
+                <View style={[styles.resultContainer, { borderColor: tokens.colors.borderLight }]}>
                     <Image
                         source={{ uri: imageUrl }}
                         style={styles.resultImage}
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.1)",
     },
     resultImage: {
         width: "100%",

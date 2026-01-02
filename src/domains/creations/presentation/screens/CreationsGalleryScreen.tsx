@@ -19,7 +19,6 @@ import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 import { CreationDetailScreen } from "./CreationDetailScreen";
-import { CreationsProvider } from "../components/CreationsProvider";
 
 interface CreationsGalleryScreenProps {
   readonly userId: string | null;
@@ -34,15 +33,7 @@ interface CreationsGalleryScreenProps {
   readonly showFilter?: boolean;
 }
 
-export function CreationsGalleryScreen(props: CreationsGalleryScreenProps) {
-  return (
-    <CreationsProvider config={props.config} t={props.t}>
-      <CreationsGalleryScreenContent {...props} />
-    </CreationsProvider>
-  );
-}
-
-function CreationsGalleryScreenContent({
+export function CreationsGalleryScreen({
   userId,
   repository,
   config,
@@ -164,7 +155,7 @@ function CreationsGalleryScreenContent({
   ), [isLoading, creations, filters.isFiltered, tokens, t, config, emptyActionLabel, onEmptyAction, filters.clearAllFilters]);
 
   if (selectedCreation) {
-    return <CreationDetailScreen creation={selectedCreation} onClose={() => setSelectedCreation(null)} onShare={handleShare} onDelete={handleDelete} t={t} />;
+    return <CreationDetailScreen creation={selectedCreation} config={config} onClose={() => setSelectedCreation(null)} onShare={handleShare} onDelete={handleDelete} t={t} />;
   }
 
   return (

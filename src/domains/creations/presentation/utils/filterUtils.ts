@@ -36,7 +36,7 @@ export const getFilterCategoriesFromConfig = (
 
 /**
  * Translates the creation types for display.
- * 
+ *
  * @param config The creations configuration object
  * @param t Translation function
  * @returns Array of types with translated labels
@@ -49,4 +49,21 @@ export const getTranslatedTypes = (
         ...type,
         labelKey: t(type.labelKey)
     }));
+};
+
+/**
+ * Gets the localized title for a creation type.
+ *
+ * @param config The creations configuration object
+ * @param t Translation function
+ * @param typeId The creation type ID
+ * @returns Localized title string
+ */
+export const getLocalizedTitle = (
+    config: CreationsConfig,
+    t: (key: string) => string,
+    typeId: string
+): string => {
+    const typeConfig = config.types.find(type => type.id === typeId);
+    return typeConfig ? t(typeConfig.labelKey) : typeId;
 };

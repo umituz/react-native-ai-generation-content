@@ -35,7 +35,7 @@ export const OptionsPanel: React.FC<OptionsPanelProps> = ({
             <View
               style={[styles.badge, { backgroundColor: tokens.colors.success }]}
             >
-              <AtomicText type="labelSmall" style={styles.badgeText}>
+              <AtomicText type="labelSmall" style={[styles.badgeText, { color: tokens.colors.textInverse }]}>
                 {soundBadge}
               </AtomicText>
             </View>
@@ -55,7 +55,7 @@ export const OptionsPanel: React.FC<OptionsPanelProps> = ({
         <TouchableOpacity
           style={[
             styles.controlButton,
-            professionalMode && { backgroundColor: tokens.colors.surface },
+            { backgroundColor: professionalMode ? tokens.colors.surface : tokens.colors.surfaceVariant },
           ]}
           onPress={() => onProfessionalModeToggle(!professionalMode)}
         >
@@ -67,7 +67,7 @@ export const OptionsPanel: React.FC<OptionsPanelProps> = ({
           </AtomicText>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.controlButton, styles.durationButton]}>
+        <TouchableOpacity style={[styles.controlButton, styles.durationButton, { backgroundColor: tokens.colors.surfaceVariant }]}>
           <AtomicText type="labelMedium" color="textSecondary">
             {duration}s
           </AtomicText>
@@ -101,7 +101,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   badgeText: {
-    color: "#000",
     fontWeight: "bold",
     fontSize: 10,
   },
@@ -113,7 +112,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
     alignItems: "center",
     justifyContent: "center",
   },

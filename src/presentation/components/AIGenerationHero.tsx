@@ -1,12 +1,11 @@
 /**
  * HeroSection Component
- * Generic hero section with gradient background and optional icon
+ * Generic hero section with solid background and optional icon
  * Props-driven for 100+ apps compatibility
  */
 
 import React from "react";
 import { View, StyleSheet, type ViewStyle } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import {
   AtomicText,
   AtomicIcon,
@@ -17,7 +16,6 @@ export interface AIGenerationHeroProps {
   readonly title: string;
   readonly subtitle?: string;
   readonly iconName?: string;
-  readonly gradientColors?: readonly [string, string, ...string[]];
   readonly style?: ViewStyle;
 }
 
@@ -25,38 +23,47 @@ export const AIGenerationHero: React.FC<AIGenerationHeroProps> = ({
   title,
   subtitle,
   iconName,
-  gradientColors = ["#00FF88", "#10B981"],
   style,
 }) => {
   const tokens = useAppDesignTokens();
 
-  const finalColors = gradientColors || [
-    tokens.colors.secondary ?? tokens.colors.info,
-    tokens.colors.primary,
-  ];
-
   return (
     <View style={[styles.container, style]}>
-      <LinearGradient
-        colors={finalColors as [string, string, ...string[]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
+      <View
+        style={[
+          styles.heroBackground,
+          { backgroundColor: tokens.colors.primary },
+        ]}
       >
         {iconName && (
-          <View style={styles.iconWrapper}>
-            <AtomicIcon name={iconName} size="xl" color="onSurface" />
+          <View
+            style={[
+              styles.iconWrapper,
+              { backgroundColor: tokens.colors.surface },
+            ]}
+          >
+            <AtomicIcon
+              name={iconName}
+              size="xl"
+              customColor={tokens.colors.primary}
+            />
           </View>
         )}
-        <AtomicText type="headlineSmall" style={styles.title}>
+        <AtomicText
+          type="headlineSmall"
+          style={[styles.title, { color: tokens.colors.textInverse }]}
+        >
           {title}
         </AtomicText>
         {subtitle && (
-          <AtomicText type="bodyMedium" style={styles.subtitle}>
+          <AtomicText
+            type="bodyMedium"
+            style={[styles.subtitle, { color: tokens.colors.textInverse }]}
+          >
             {subtitle}
           </AtomicText>
         )}
-      </LinearGradient>
+      </View>
     </View>
   );
 };
@@ -68,7 +75,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
   },
-  gradient: {
+  heroBackground: {
     padding: 32,
     alignItems: "center",
     justifyContent: "center",
@@ -77,20 +84,16 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 16,
   },
   title: {
-    color: "#FFFFFF",
     textAlign: "center",
     fontWeight: "700",
   },
   subtitle: {
-    color: "#FFFFFF",
     textAlign: "center",
     marginTop: 8,
-    opacity: 0.9,
   },
 });

@@ -35,7 +35,7 @@ export function CreationThumbnail({
         },
         overlay: {
           ...StyleSheet.absoluteFillObject,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          backgroundColor: tokens.colors.modalOverlay,
           borderRadius: tokens.spacing.sm,
           justifyContent: "center",
           alignItems: "center",

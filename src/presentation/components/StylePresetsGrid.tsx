@@ -47,7 +47,10 @@ export const StylePresetsGrid: React.FC<StylePresetsGridProps> = ({
             key={preset.id}
             style={[
               styles.card,
-              { backgroundColor: tokens.colors.surface },
+              {
+                backgroundColor: tokens.colors.surface,
+                borderColor: tokens.colors.border,
+              },
             ]}
             onPress={() => onPresetPress(preset)}
             disabled={disabled}
@@ -58,7 +61,7 @@ export const StylePresetsGrid: React.FC<StylePresetsGridProps> = ({
                 <View
                   style={[
                     styles.badge,
-                    { backgroundColor: tokens.colors.primary + "20" },
+                    { backgroundColor: tokens.colors.surfaceVariant },
                   ]}
                 >
                   <AtomicText
@@ -109,7 +112,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.05)",
   },
   cardHeader: {
     flexDirection: "row",

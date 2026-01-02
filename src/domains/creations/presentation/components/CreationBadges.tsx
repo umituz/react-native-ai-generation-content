@@ -78,17 +78,17 @@ export function CreationBadges({
           paddingHorizontal: 8,
           paddingVertical: 4,
           borderRadius: 12,
-          backgroundColor: "rgba(0,0,0,0.6)",
+          backgroundColor: tokens.colors.modalOverlay,
           gap: 4,
         },
         typeText: {
           fontSize: 10,
           fontWeight: "600",
-          color: "white",
+          color: tokens.colors.textInverse,
           textTransform: "capitalize",
         },
       }),
-    [statusColor]
+    [statusColor, tokens]
   );
 
   return (

@@ -1,6 +1,6 @@
 /**
  * ImagePickerBox Component
- * Generic image picker box with gradient design
+ * Generic image picker box with solid color design
  * Props-driven for 100+ apps compatibility
  */
 
@@ -17,14 +17,12 @@ import {
   useAppDesignTokens,
   AtomicIcon,
 } from "@umituz/react-native-design-system";
-import { LinearGradient } from "expo-linear-gradient";
 
 export interface ImagePickerBoxProps {
   readonly imageUri: string | null;
   readonly isDisabled?: boolean;
   readonly onPress: () => void;
   readonly placeholderText: string;
-  readonly gradientColors?: readonly [string, string, ...string[]];
   readonly variant?: "portrait" | "square" | "landscape";
   readonly size?: "sm" | "md" | "lg";
   readonly uploadIcon?: string;
@@ -44,7 +42,6 @@ export const ImagePickerBox: React.FC<ImagePickerBoxProps> = ({
   isDisabled = false,
   onPress,
   placeholderText,
-  gradientColors = ["#667eea", "#764ba2"],
   variant = "portrait",
   size = "md",
   uploadIcon = "cloud-upload-outline",
@@ -70,42 +67,57 @@ export const ImagePickerBox: React.FC<ImagePickerBoxProps> = ({
         {imageUri ? (
           <View style={styles.imageContainer}>
             <Image source={{ uri: imageUri }} style={styles.image} />
-            <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.3)"]}
-              style={styles.imageOverlay}
+            <View
+              style={[
+                styles.imageOverlay,
+                { backgroundColor: tokens.colors.modalOverlay },
+              ]}
             >
               <View
                 style={[
                   styles.editBadge,
-                  { backgroundColor: `${gradientColors[1]}E6` },
+                  { backgroundColor: tokens.colors.primary },
                 ]}
               >
                 <AtomicIcon
                   name={editIcon}
                   customSize={Math.round(16 * multiplier)}
-                  customColor="#FFFFFF"
+                  customColor={tokens.colors.textInverse}
                 />
               </View>
-            </LinearGradient>
+            </View>
           </View>
         ) : (
-          <LinearGradient colors={gradientColors} style={styles.placeholder}>
+          <View
+            style={[
+              styles.placeholder,
+              { backgroundColor: tokens.colors.primary },
+            ]}
+          >
             <View style={styles.placeholderContent}>
-              <View style={styles.uploadIconContainer}>
+              <View
+                style={[
+                  styles.uploadIconContainer,
+                  { backgroundColor: tokens.colors.surface },
+                ]}
+              >
                 <AtomicIcon
                   name={uploadIcon}
                   customSize={iconSize}
-                  customColor="#FFFFFF"
+                  customColor={tokens.colors.primary}
                 />
               </View>
               <AtomicText
                 type="bodyMedium"
-                style={[styles.placeholderText, { color: "#FFFFFF" }]}
+                style={[
+                  styles.placeholderText,
+                  { color: tokens.colors.textInverse },
+                ]}
               >
                 {placeholderText}
               </AtomicText>
             </View>
-          </LinearGradient>
+          </View>
         )}
       </TouchableOpacity>
     </View>
@@ -153,7 +165,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   uploadIconContainer: {
-    backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 40,
     padding: 16,
     marginBottom: 12,

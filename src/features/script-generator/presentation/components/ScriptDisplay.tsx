@@ -59,7 +59,7 @@ export const ScriptDisplay: React.FC<ScriptDisplayProps> = ({
             <View
               style={[
                 styles.badge,
-                { backgroundColor: tokens.colors.primary + "20" },
+                { backgroundColor: tokens.colors.surfaceVariant },
               ]}
             >
               <AtomicText
@@ -102,10 +102,10 @@ export const ScriptDisplay: React.FC<ScriptDisplayProps> = ({
         ]}
         onPress={onUseScript}
       >
-        <AtomicIcon name="Check" size="md" color="onSurface" />
+        <AtomicIcon name="Check" size="md" color="textInverse" />
         <AtomicText
           type="bodyLarge"
-          style={styles.useButtonText}
+          style={[styles.useButtonText, { color: tokens.colors.textInverse }]}
         >
           {useButtonText}
         </AtomicText>
@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   useButtonText: {
-    color: "#FFFFFF",
     fontWeight: "700",
     marginLeft: 12,
   },

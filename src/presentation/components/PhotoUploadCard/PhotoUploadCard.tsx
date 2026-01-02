@@ -15,7 +15,6 @@ import {
   type ViewStyle,
   type StyleProp,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import {
   AtomicText,
   AtomicIcon,
@@ -83,12 +82,12 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
 
   const borderColor = useMemo(() => {
     if (!cfg.showValidationStatus) {
-      return `${tokens.colors.primary}40`;
+      return tokens.colors.borderLight;
     }
     if (isValidating) return tokens.colors.primary;
     if (isValid === true) return tokens.colors.success;
     if (isValid === false) return tokens.colors.error;
-    return `${tokens.colors.primary}40`;
+    return tokens.colors.borderLight;
   }, [isValidating, isValid, tokens, cfg.showValidationStatus]);
 
   const styles = useMemo(
@@ -120,14 +119,8 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
           alignItems: "center",
           marginBottom: 20,
           borderWidth: 2,
-          borderColor: `${tokens.colors.primary}30`,
-        },
-        iconGradient: {
-          width: 88,
-          height: 88,
-          borderRadius: 44,
-          justifyContent: "center",
-          alignItems: "center",
+          borderColor: tokens.colors.borderLight,
+          backgroundColor: tokens.colors.surfaceSecondary,
         },
         title: {
           fontSize: 20,
@@ -150,7 +143,8 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
         },
         imageOverlay: {
           ...StyleSheet.absoluteFillObject,
-          backgroundColor: "rgba(0,0,0,0.15)",
+          backgroundColor: tokens.colors.modalOverlay,
+          opacity: 0.3,
         },
         changeButton: {
           position: "absolute",
@@ -185,7 +179,7 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
           height: 100,
           borderRadius: 50,
           borderWidth: 2,
-          borderColor: `${tokens.colors.primary}30`,
+          borderColor: tokens.colors.borderLight,
         },
       }),
     [tokens, imageUri, cfg],
@@ -226,19 +220,11 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
         ) : (
           <View style={styles.placeholder}>
             <View style={styles.iconCircle}>
-              <LinearGradient
-                colors={[
-                  `${tokens.colors.primary}20`,
-                  `${tokens.colors.primary}10`,
-                ]}
-                style={styles.iconGradient}
-              >
-                <AtomicIcon
-                  name={(icon as string) || "camera"}
-                  size={cfg.iconSize}
-                  customColor={tokens.colors.primary}
-                />
-              </LinearGradient>
+              <AtomicIcon
+                name={(icon as string) || "camera"}
+                size={cfg.iconSize}
+                customColor={tokens.colors.primary}
+              />
             </View>
             <AtomicText style={styles.title}>
               {title || translations.tapToUpload}

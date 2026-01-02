@@ -17,8 +17,6 @@ export interface DualImagePickerProps {
   readonly onSelectTarget: () => void;
   readonly sourcePlaceholder: string;
   readonly targetPlaceholder: string;
-  readonly sourceGradient?: ImagePickerBoxProps["gradientColors"];
-  readonly targetGradient?: ImagePickerBoxProps["gradientColors"];
   readonly variant?: ImagePickerBoxProps["variant"];
   readonly layout?: "horizontal" | "vertical";
 }
@@ -31,8 +29,6 @@ export const DualImagePicker: React.FC<DualImagePickerProps> = ({
   onSelectTarget,
   sourcePlaceholder,
   targetPlaceholder,
-  sourceGradient = ["#667eea", "#764ba2"],
-  targetGradient = ["#f093fb", "#f5576c"],
   variant = "portrait",
   layout = "horizontal",
 }) => {
@@ -53,7 +49,6 @@ export const DualImagePicker: React.FC<DualImagePickerProps> = ({
           isDisabled={isDisabled}
           onPress={onSelectSource}
           placeholderText={sourcePlaceholder}
-          gradientColors={sourceGradient}
           variant={variant}
         />
       </View>
@@ -64,7 +59,6 @@ export const DualImagePicker: React.FC<DualImagePickerProps> = ({
           isDisabled={isDisabled}
           onPress={onSelectTarget}
           placeholderText={targetPlaceholder}
-          gradientColors={targetGradient}
           variant={variant}
         />
       </View>

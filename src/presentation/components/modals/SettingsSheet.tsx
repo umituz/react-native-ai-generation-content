@@ -53,7 +53,10 @@ export const SettingsSheet: React.FC<SettingsSheetProps> = ({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.backdrop} onPress={handleBackdropPress}>
+      <Pressable
+        style={[styles.backdrop, { backgroundColor: tokens.colors.modalOverlay }]}
+        onPress={handleBackdropPress}
+      >
         <Pressable
           style={[
             styles.sheet,
@@ -102,7 +105,6 @@ export const SettingsSheet: React.FC<SettingsSheetProps> = ({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "flex-end",
   },
   sheet: {

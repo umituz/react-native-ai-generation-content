@@ -149,10 +149,13 @@ export {
 // Gallery Components
 export { CreationsHomeCard } from "./presentation/components/CreationsHomeCard";
 export { EmptyState } from "./presentation/components/EmptyState";
+
+// Utilities
 export {
-  CreationsProvider,
-  useCreationsProvider,
-} from "./presentation/components/CreationsProvider";
+  getLocalizedTitle,
+  getFilterCategoriesFromConfig,
+  getTranslatedTypes,
+} from "./presentation/utils/filterUtils";
 
 // =============================================================================
 // PRESENTATION LAYER - Screens

@@ -11,36 +11,23 @@ import type {
   TextToImageFormDefaults,
 } from "../types/form.types";
 
+/** Available number of images options */
 export const DEFAULT_NUM_IMAGES_OPTIONS: NumImages[] = [1, 2, 3, 4];
 
-/**
- * @deprecated Use createAspectRatioOptions factory with translations instead
- * This will be removed in next major version
- */
-export const DEFAULT_ASPECT_RATIO_OPTIONS: { value: AspectRatio; label: string }[] = [
-  { value: "9:16", label: "9:16" },
-  { value: "16:9", label: "16:9" },
-  { value: "1:1", label: "1:1" },
+/** Available aspect ratio values */
+export const ASPECT_RATIO_VALUES: AspectRatio[] = ["9:16", "16:9", "1:1"];
+
+/** Available image size values */
+export const IMAGE_SIZE_VALUES: ImageSize[] = [
+  "512x512",
+  "768x768",
+  "1024x1024",
+  "1024x1792",
+  "1792x1024",
 ];
 
-/**
- * @deprecated Apps should provide their own translated labels
- */
-export const DEFAULT_SIZE_OPTIONS: { value: ImageSize; label: string }[] = [
-  { value: "512x512", label: "512×512" },
-  { value: "768x768", label: "768×768" },
-  { value: "1024x1024", label: "1024×1024" },
-  { value: "1024x1792", label: "1024×1792" },
-  { value: "1792x1024", label: "1792×1024" },
-];
-
-/**
- * @deprecated Apps should provide their own translated labels
- */
-export const DEFAULT_OUTPUT_FORMAT_OPTIONS: { value: OutputFormat; label: string }[] = [
-  { value: "png", label: "PNG" },
-  { value: "jpeg", label: "JPEG" },
-];
+/** Available output format values */
+export const OUTPUT_FORMAT_VALUES: OutputFormat[] = ["png", "jpeg"];
 
 export const DEFAULT_FORM_VALUES: TextToImageFormDefaults = {
   aspectRatio: "9:16",

@@ -3,20 +3,21 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import type { Creation } from '../../domain/entities/Creation';
+import type { CreationsConfig } from '../../domain/value-objects/CreationsConfig';
 import { hasVideoContent, getPreviewUrl } from '../../domain/utils';
 import { DetailHeader } from '../components/CreationDetail/DetailHeader';
 import { DetailImage } from '../components/CreationDetail/DetailImage';
 import { DetailVideo } from '../components/CreationDetail/DetailVideo';
 import { DetailStory } from '../components/CreationDetail/DetailStory';
 import { DetailActions } from '../components/CreationDetail/DetailActions';
-
-import { useCreationsProvider } from '../components/CreationsProvider';
+import { getLocalizedTitle } from '../utils/filterUtils';
 
 /** Video creation types */
 const VIDEO_TYPES = ['text-to-video', 'image-to-video'] as const;
 
 interface CreationDetailScreenProps {
     readonly creation: Creation;
+    readonly config: CreationsConfig;
     readonly onClose: () => void;
     readonly onShare: (creation: Creation) => void;
     readonly onDelete: (creation: Creation) => void;
@@ -32,6 +33,7 @@ interface CreationMetadata {
 
 export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
     creation,
+    config,
     onClose,
     onShare,
     onDelete,
@@ -39,7 +41,6 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
 }) => {
     const tokens = useAppDesignTokens();
     const insets = useSafeAreaInsets();
-    const { getLocalizedTitle } = useCreationsProvider();
 
     // Extract data safely
     const metadata = (creation.metadata || {}) as CreationMetadata;
@@ -48,7 +49,7 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
     // 1. Manually set names in metadata
     // 2. Localized title from config types mapping
     // 3. Fallback to raw creation type (formatted)
-    const title = metadata.names || getLocalizedTitle(creation.type);
+    const title = metadata.names || getLocalizedTitle(config, t, creation.type);
     const story = metadata.story || metadata.description || "";
     const date = metadata.date || new Date(creation.createdAt).toLocaleDateString();
 

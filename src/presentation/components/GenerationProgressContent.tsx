@@ -110,7 +110,10 @@ export const GenerationProgressContent: React.FC<
           ]}
           onPress={onDismiss}
         >
-          <AtomicText type="bodyMedium" style={styles.dismissText}>
+          <AtomicText
+            type="bodyMedium"
+            style={[styles.dismissText, { color: tokens.colors.textInverse }]}
+          >
             {dismissLabel || "OK"}
           </AtomicText>
         </TouchableOpacity>
@@ -155,7 +158,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dismissText: {
-    color: "#FFFFFF",
     fontWeight: "600",
   },
 });

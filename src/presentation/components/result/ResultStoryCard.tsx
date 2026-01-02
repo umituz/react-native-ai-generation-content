@@ -10,7 +10,6 @@ import {
   AtomicText,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
-import { LinearGradient } from "expo-linear-gradient";
 import type { ResultStoryConfig } from "../../types/result-config.types";
 import { DEFAULT_RESULT_CONFIG } from "../../types/result-config.types";
 
@@ -37,16 +36,24 @@ export const ResultStoryCard: React.FC<ResultStoryCardProps> = ({
         ...base,
         borderWidth: 1,
         borderColor: tokens.colors.primaryContainer,
-        backgroundColor: "transparent",
+        backgroundColor: tokens.colors.surface,
       };
     } else if (cfg.borderStyle === "filled") {
       return {
         ...base,
         backgroundColor: tokens.colors.primaryContainer,
       };
+    } else if (cfg.borderStyle === "gradient") {
+      return {
+        ...base,
+        backgroundColor: tokens.colors.primaryContainer,
+      };
     }
 
-    return base;
+    return {
+      ...base,
+      backgroundColor: tokens.colors.surface,
+    };
   }, [cfg.borderStyle, cfg.spacing, tokens]);
 
   const styles = useMemo(
@@ -101,19 +108,6 @@ export const ResultStoryCard: React.FC<ResultStoryCardProps> = ({
       )}
     </>
   );
-
-  if (cfg.borderStyle === "gradient") {
-    return (
-      <View style={styles.outer}>
-        <LinearGradient
-          colors={[tokens.colors.primaryContainer, tokens.colors.surface]}
-          style={styles.container}
-        >
-          {renderContent()}
-        </LinearGradient>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.outer}>
