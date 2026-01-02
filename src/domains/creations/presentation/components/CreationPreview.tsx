@@ -4,10 +4,11 @@
  */
 
 import React, { useMemo } from "react";
-import { View, StyleSheet, Image, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import {
   useAppDesignTokens,
   AtomicIcon,
+  AtomicSpinner,
 } from "@umituz/react-native-design-system";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { isInProgress } from "../../domain/utils";
@@ -86,7 +87,7 @@ export function CreationPreview({
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
           <View style={styles.loadingIcon}>
-            <ActivityIndicator size="large" color={tokens.colors.primary} />
+            <AtomicSpinner size="lg" color="primary" />
           </View>
         </View>
       </View>

@@ -4,10 +4,11 @@
  */
 
 import React, { memo } from "react";
-import { StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import {
     AtomicText,
     AtomicIcon,
+    AtomicSpinner,
     useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import type { GenerateButtonProps } from "../../domain/entities";
@@ -38,7 +39,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = memo(
                 ]}
             >
                 {isProcessing ? (
-                    <ActivityIndicator color={tokens.colors.backgroundPrimary} />
+                    <AtomicSpinner size="sm" color={tokens.colors.backgroundPrimary} />
                 ) : (
                     <>
                         <AtomicIcon

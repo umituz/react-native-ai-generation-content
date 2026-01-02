@@ -5,11 +5,12 @@
  */
 
 import React from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
   AtomicProgress,
+  AtomicSpinner,
 } from "@umituz/react-native-design-system";
 
 export interface AIGenerationProgressInlineProps {
@@ -39,8 +40,8 @@ export const AIGenerationProgressInline: React.FC<
 
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
-      <ActivityIndicator size="large" color={primaryColor} />
-      
+      <AtomicSpinner size="lg" color={primaryColor} />
+
       {title && (
         <AtomicText
           type="bodyMedium"

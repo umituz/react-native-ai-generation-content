@@ -8,11 +8,11 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 import {
   useAppDesignTokens,
   AtomicIcon,
+  AtomicSpinner,
 } from "@umituz/react-native-design-system";
 
 export interface CreationAction {
@@ -102,8 +102,8 @@ export function CreationActions({
           activeOpacity={0.7}
         >
           {action.loading ? (
-            <ActivityIndicator
-              size="small"
+            <AtomicSpinner
+              size="sm"
               color={action.filled ? tokens.colors.textInverse : tokens.colors.primary}
             />
           ) : (

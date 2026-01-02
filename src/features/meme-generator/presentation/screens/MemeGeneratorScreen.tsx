@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Image,
-  ActivityIndicator,
   Alert,
 } from "react-native";
 import {
@@ -11,6 +10,7 @@ import {
   useAppDesignTokens,
   AtomicIcon,
   AtomicInput,
+  AtomicSpinner,
   ScreenLayout,
   ScreenHeader,
 } from "@umituz/react-native-design-system";
@@ -109,7 +109,7 @@ export const MemeGeneratorScreen: React.FC<MemeGeneratorScreenProps> = ({
       <View style={styles.content}>
         <View style={styles.previewContainer}>
           {isGenerating ? (
-            <ActivityIndicator size="large" color={tokens.colors.primary} />
+            <AtomicSpinner size="lg" color="primary" />
           ) : generatedImage ? (
             <Image
               source={{ uri: generatedImage }}

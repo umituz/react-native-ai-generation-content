@@ -12,7 +12,6 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
-  ActivityIndicator,
   type ViewStyle,
   type StyleProp,
 } from "react-native";
@@ -20,6 +19,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import {
   AtomicText,
   AtomicIcon,
+  AtomicSpinner,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 
@@ -201,7 +201,7 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
         {isValidating ? (
           <View style={styles.validatingContainer}>
             <View style={styles.pulseRing} />
-            <ActivityIndicator size="large" color={tokens.colors.primary} />
+            <AtomicSpinner size="lg" color="primary" />
             <AtomicText style={styles.validatingText}>
               {translations.analyzing || "Analyzing..."}
             </AtomicText>

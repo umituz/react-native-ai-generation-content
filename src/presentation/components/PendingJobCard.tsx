@@ -4,8 +4,8 @@
  */
 
 import React from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
-import { AtomicText, useAppDesignTokens } from "@umituz/react-native-design-system";
+import { View, StyleSheet } from "react-native";
+import { AtomicText, AtomicSpinner, useAppDesignTokens } from "@umituz/react-native-design-system";
 import type { BackgroundJob } from "../../domain/entities/job.types";
 import { PendingJobProgressBar } from "./PendingJobProgressBar";
 import { PendingJobCardActions } from "./PendingJobCardActions";
@@ -96,9 +96,9 @@ export function PendingJobCard<TInput = unknown, TResult = unknown>({
         <View style={styles.thumbnailWrapper}>
           {renderThumbnail(job)}
           {!isFailed && (
-            <ActivityIndicator
-              color={tokens.colors.primary}
-              size="small"
+            <AtomicSpinner
+              size="sm"
+              color="primary"
               style={styles.loader}
             />
           )}

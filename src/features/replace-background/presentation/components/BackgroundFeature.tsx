@@ -16,7 +16,6 @@ import { PromptInput } from "./PromptInput";
 import { GenerateButton } from "./GenerateButton";
 import { ResultDisplay } from "./ResultDisplay";
 import { ErrorDisplay } from "./ErrorDisplay";
-import { ProcessingModal } from "./ProcessingModal";
 import { FeatureHeader } from "./FeatureHeader";
 import { useBackgroundFeature } from "../hooks";
 import type { ImageSourcePropType } from "react-native";
@@ -35,6 +34,7 @@ export interface BackgroundFeatureProps {
     readonly resetButtonText?: string;
     readonly processingText?: string;
     readonly placeholderText?: string;
+    readonly renderProcessingModal?: (props: { visible: boolean; progress: number; title?: string }) => React.ReactNode;
 }
 
 export const BackgroundFeature: React.FC<BackgroundFeatureProps> = ({
@@ -51,6 +51,7 @@ export const BackgroundFeature: React.FC<BackgroundFeatureProps> = ({
     resetButtonText,
     processingText,
     placeholderText,
+    renderProcessingModal,
 }) => {
     const tokens = useAppDesignTokens();
     const [prompt, setPrompt] = useState("");
@@ -130,11 +131,7 @@ export const BackgroundFeature: React.FC<BackgroundFeatureProps> = ({
                 />
             </ScrollView>
 
-            <ProcessingModal
-                visible={feature.isProcessing}
-                progress={feature.progress}
-                title={processingText}
-            />
+            {renderProcessingModal?.({ visible: feature.isProcessing, progress: feature.progress, title: processingText })}
         </>
     );
 };

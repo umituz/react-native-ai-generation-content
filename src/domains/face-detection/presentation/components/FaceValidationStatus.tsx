@@ -6,10 +6,11 @@
  */
 
 import * as React from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {
   AtomicText,
   AtomicIcon,
+  AtomicSpinner,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import type { FaceValidationState } from "../../domain/entities/FaceDetection";
@@ -38,7 +39,7 @@ export const FaceValidationStatus: React.FC<FaceValidationStatusProps> = ({
       <View
         style={[styles.container, { backgroundColor: tokens.colors.surface }]}
       >
-        <ActivityIndicator size="small" color={tokens.colors.primary} />
+        <AtomicSpinner size="sm" color="primary" />
         <AtomicText
           style={[styles.text, { color: tokens.colors.textSecondary }]}
         >

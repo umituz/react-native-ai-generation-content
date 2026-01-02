@@ -5,11 +5,12 @@
  */
 
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, ActivityIndicator, type ViewStyle } from "react-native";
+import { View, StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
   AtomicIcon,
+  AtomicSpinner,
 } from "@umituz/react-native-design-system";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -69,7 +70,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
           >
             <View style={styles.buttonContent}>
               {isProcessing ? (
-                <ActivityIndicator color="#FFFFFF" size="small" />
+                <AtomicSpinner size="sm" color="white" />
               ) : (
                 <AtomicIcon name={icon} customSize={20} customColor="#FFFFFF" />
               )}
@@ -107,11 +108,11 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
             style={[styles.gradientButton, disabled && styles.disabledButton]}
           >
             <View style={styles.buttonContent}>
-            {isProcessing ? (
-              <ActivityIndicator color="#FFFFFF" size="small" />
-            ) : (
-              <AtomicIcon name={icon} customSize={iconSize} customColor="#FFF" />
-            )}
+              {isProcessing ? (
+                <AtomicSpinner size="sm" color="white" />
+              ) : (
+                <AtomicIcon name={icon} customSize={iconSize} customColor="#FFF" />
+              )}
               <AtomicText type="bodyLarge" style={styles.gradientButtonText}>
                 {finalDisplayText}
               </AtomicText>

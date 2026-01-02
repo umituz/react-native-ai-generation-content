@@ -18,7 +18,6 @@ export type {
     GenerateButtonProps,
     ResultDisplayProps,
     ErrorDisplayProps,
-    ProcessingModalProps,
     FeatureHeaderProps,
     ModeSelectorProps,
     ComparisonSliderProps,

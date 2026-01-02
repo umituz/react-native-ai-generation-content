@@ -59,15 +59,6 @@ export interface ErrorDisplayProps {
 }
 
 /**
- * Processing modal component props
- */
-export interface ProcessingModalProps {
-    readonly visible: boolean;
-    readonly progress?: number;
-    readonly title?: string;
-}
-
-/**
  * Feature header component props
  */
 export interface FeatureHeaderProps {
