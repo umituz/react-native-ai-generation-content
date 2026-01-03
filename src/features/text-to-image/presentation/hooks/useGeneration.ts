@@ -119,7 +119,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
         const logResult = {
           success: result.success,
           imageCount: result.success ? result.imageUrls?.length : 0,
-          error: !result.success ? result.error : undefined,
+          error: result.success === false ? result.error : undefined,
         };
         // eslint-disable-next-line no-console
         console.log("[TextToImage] Result:", JSON.stringify(logResult));

@@ -25,10 +25,14 @@ export interface UseTextToVideoFeatureProps {
   extractResult?: TextToVideoResultExtractor;
 }
 
+export interface TextToVideoGenerateParams extends TextToVideoOptions {
+  prompt?: string;
+}
+
 export interface UseTextToVideoFeatureReturn {
   state: TextToVideoFeatureState;
   setPrompt: (prompt: string) => void;
-  generate: (options?: TextToVideoOptions) => Promise<TextToVideoResult>;
+  generate: (params?: TextToVideoGenerateParams) => Promise<TextToVideoResult>;
   reset: () => void;
   isReady: boolean;
   canGenerate: boolean;
@@ -58,25 +62,44 @@ export function useTextToVideoFeature(
   );
 
   const generate = useCallback(
-    async (options?: TextToVideoOptions): Promise<TextToVideoResult> => {
-      if (!state.prompt.trim()) {
+    async (params?: TextToVideoGenerateParams): Promise<TextToVideoResult> => {
+      const { prompt: paramPrompt, ...options } = params || {};
+      const effectivePrompt = paramPrompt?.trim() || state.prompt.trim();
+
+      if (!effectivePrompt) {
         const error = "Prompt is required";
         setState((prev) => ({ ...prev, error }));
         callbacks.onError?.(error);
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          // eslint-disable-next-line no-console
+          console.log("[TextToVideoFeature] Generate failed: Prompt is required");
+        }
         return { success: false, error };
       }
 
+      if (paramPrompt) {
+        setState((prev) => ({ ...prev, prompt: effectivePrompt }));
+      }
+
       if (callbacks.onAuthCheck && !callbacks.onAuthCheck()) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          // eslint-disable-next-line no-console
+          console.log("[TextToVideoFeature] Generate failed: Authentication required");
+        }
         return { success: false, error: "Authentication required" };
       }
 
-      if (callbacks.onCreditCheck && !callbacks.onCreditCheck(config.creditCost)) {
+      if (callbacks.onCreditCheck && !(await callbacks.onCreditCheck(config.creditCost))) {
         callbacks.onShowPaywall?.(config.creditCost);
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          // eslint-disable-next-line no-console
+          console.log("[TextToVideoFeature] Generate failed: Insufficient credits");
+        }
         return { success: false, error: "Insufficient credits" };
       }
 
       if (callbacks.onModeration) {
-        const moderationResult = await callbacks.onModeration(state.prompt);
+        const moderationResult = await callbacks.onModeration(effectivePrompt);
         if (!moderationResult.allowed && moderationResult.warnings.length > 0) {
           return new Promise((resolve) => {
             callbacks.onShowModerationWarning?.(
@@ -86,7 +109,7 @@ export function useTextToVideoFeature(
                 resolve({ success: false, error: "Content policy violation" });
               },
               async () => {
-                const result = await executeGeneration(options);
+                const result = await executeGeneration(effectivePrompt, options);
                 resolve(result);
               },
             );
@@ -94,13 +117,13 @@ export function useTextToVideoFeature(
         }
       }
 
-      return executeGeneration(options);
+      return executeGeneration(effectivePrompt, options);
     },
-    [state.prompt, callbacks, config.creditCost, buildInput, extractResult, userId],
+    [state.prompt, callbacks, config.creditCost],
   );
 
   const executeGeneration = useCallback(
-    async (options?: TextToVideoOptions): Promise<TextToVideoResult> => {
+    async (prompt: string, options?: TextToVideoOptions): Promise<TextToVideoResult> => {
       setState((prev) => ({
         ...prev,
         isProcessing: true,
@@ -108,13 +131,13 @@ export function useTextToVideoFeature(
         error: null,
       }));
 
-      if (__DEV__) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
         // eslint-disable-next-line no-console
-        console.log("[TextToVideoFeature] Starting generation");
+        console.log("[TextToVideoFeature] Starting generation with prompt:", prompt);
       }
 
       const result = await executeTextToVideo(
-        { prompt: state.prompt, userId, options },
+        { prompt, userId, options },
         {
           model: config.model,
           buildInput,
@@ -134,6 +157,23 @@ export function useTextToVideoFeature(
           isProcessing: false,
           progress: 100,
         }));
+
+        // Deduct credits after successful generation
+        if (callbacks.onCreditDeduct) {
+          await callbacks.onCreditDeduct(config.creditCost);
+        }
+
+        // Save creation after successful generation
+        if (callbacks.onCreationSave) {
+          await callbacks.onCreationSave({
+            type: "text-to-video",
+            videoUrl: result.videoUrl,
+            thumbnailUrl: result.thumbnailUrl,
+            prompt,
+            metadata: options as Record<string, unknown> | undefined,
+          });
+        }
+
         callbacks.onGenerate?.(result);
       } else {
         const error = result.error || "Generation failed";
@@ -147,7 +187,7 @@ export function useTextToVideoFeature(
 
       return result;
     },
-    [state.prompt, userId, config.model, buildInput, extractResult, callbacks],
+    [userId, config.model, buildInput, extractResult, callbacks],
   );
 
   const reset = useCallback(() => {

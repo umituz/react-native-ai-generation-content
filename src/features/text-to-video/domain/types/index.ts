@@ -34,6 +34,7 @@ export type {
 export type {
   VideoModerationResult,
   ProjectData,
+  CreationData,
   TextToVideoCallbacks,
   TextToVideoTranslations,
 } from "./callback.types";

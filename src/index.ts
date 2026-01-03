@@ -25,6 +25,7 @@ export type {
   AIJobStatusType,
   AILogEntry,
   SubscribeOptions,
+  RunOptions,
   ImageFeatureType,
   VideoFeatureType,
   ImageFeatureInputData,

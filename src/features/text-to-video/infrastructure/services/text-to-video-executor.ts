@@ -71,13 +71,15 @@ export async function executeTextToVideo(
   }
 
   try {
-    onProgress?.(10);
+    onProgress?.(5);
 
     const input = buildInput(request.prompt, request.options);
-    onProgress?.(20);
 
-    const result = await provider.run(model, input);
-    onProgress?.(90);
+    const result = await provider.run(model, input, {
+      onProgress: (progress) => {
+        onProgress?.(progress);
+      },
+    });
 
     const extractor = extractResult || defaultExtractResult;
     const extracted = extractor(result);

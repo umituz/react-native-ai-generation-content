@@ -26,6 +26,7 @@ export type {
   FrameData,
   VideoModerationResult,
   ProjectData,
+  CreationData,
   GenerationTabsProps,
   FrameSelectorProps,
   OptionsPanelProps,
@@ -51,6 +52,7 @@ export {
 export type {
   UseTextToVideoFeatureProps,
   UseTextToVideoFeatureReturn,
+  TextToVideoGenerateParams,
   UseTextToVideoFormProps,
   UseTextToVideoFormReturn,
 } from "./presentation";

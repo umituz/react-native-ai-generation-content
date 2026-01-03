@@ -19,11 +19,20 @@ export interface ProjectData {
   style: string;
 }
 
+export interface CreationData {
+  type: "text-to-video";
+  videoUrl: string;
+  thumbnailUrl?: string;
+  prompt: string;
+  metadata?: Record<string, unknown>;
+}
+
 export interface TextToVideoCallbacks {
   onCreditCheck?: (cost: number) => Promise<boolean>;
+  onCreditDeduct?: (cost: number) => Promise<void>;
   onAuthCheck?: () => boolean;
   onModeration?: (prompt: string) => Promise<VideoModerationResult>;
-  onProjectCreate?: (data: ProjectData) => Promise<void>;
+  onCreationSave?: (data: CreationData) => Promise<void>;
   onGenerate?: (result: TextToVideoResult) => void;
   onError?: (error: string) => void;
   onProgress?: (progress: number) => void;

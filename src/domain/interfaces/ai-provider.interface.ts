@@ -50,6 +50,10 @@ export interface SubscribeOptions<T = unknown> {
   onResult?: (result: T) => void;
 }
 
+export interface RunOptions {
+  onProgress?: (progress: number) => void;
+}
+
 /**
  * Feature types for image processing (output: image)
  */
@@ -116,7 +120,11 @@ export interface IAIProvider {
     options?: SubscribeOptions<T>,
   ): Promise<T>;
 
-  run<T = unknown>(model: string, input: Record<string, unknown>): Promise<T>;
+  run<T = unknown>(
+    model: string,
+    input: Record<string, unknown>,
+    options?: RunOptions,
+  ): Promise<T>;
 
   reset(): void;
 

@@ -7,6 +7,7 @@ export { useTextToVideoFeature } from "./useTextToVideoFeature";
 export type {
   UseTextToVideoFeatureProps,
   UseTextToVideoFeatureReturn,
+  TextToVideoGenerateParams,
 } from "./useTextToVideoFeature";
 
 export { useTextToVideoForm } from "./useTextToVideoForm";
