@@ -28,3 +28,11 @@ export type {
   UseTextToImageFeatureProps,
   UseTextToImageFeatureReturn,
 } from "./useTextToImageFeature";
+
+// Callbacks Builder Hook
+export { useTextToImageCallbacksBuilder } from "./useTextToImageCallbacksBuilder";
+export type {
+  TextToImageCallbacksBuilderConfig,
+  UseTextToImageCallbacksBuilderOptions,
+  UseTextToImageCallbacksBuilderReturn,
+} from "./useTextToImageCallbacksBuilder";

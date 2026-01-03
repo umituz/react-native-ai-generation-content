@@ -65,7 +65,12 @@ export type { ExecuteTextToImageOptions } from "./infrastructure";
 // PRESENTATION LAYER - Hooks
 // =============================================================================
 
-export { useFormState, useGeneration, useTextToImageForm } from "./presentation";
+export {
+  useFormState,
+  useGeneration,
+  useTextToImageForm,
+  useTextToImageCallbacksBuilder,
+} from "./presentation";
 export type {
   UseFormStateOptions,
   UseFormStateReturn,
@@ -74,6 +79,9 @@ export type {
   UseGenerationReturn,
   UseTextToImageFormOptions,
   UseTextToImageFormReturn,
+  TextToImageCallbacksBuilderConfig,
+  UseTextToImageCallbacksBuilderOptions,
+  UseTextToImageCallbacksBuilderReturn,
 } from "./presentation";
 
 // Provider-based Feature Hook
