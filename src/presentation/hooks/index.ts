@@ -43,3 +43,19 @@ export type {
   UseGenerationFlowOptions,
   UseGenerationFlowReturn,
 } from "./useGenerationFlow";
+
+export { useGenerationCallbacksBuilder } from "./useGenerationCallbacksBuilder";
+export type {
+  CreditType,
+  GenerationExecutionResult,
+  GenerationCallbacksConfig,
+  GenerationCallbacks,
+  UseGenerationCallbacksBuilderOptions,
+} from "./generation-callbacks.types";
+
+export { useAIFeatureCallbacks } from "./useAIFeatureCallbacks";
+export type {
+  AIFeatureCallbacksConfig,
+  AIFeatureCallbacks,
+  AIFeatureGenerationResult,
+} from "./useAIFeatureCallbacks";

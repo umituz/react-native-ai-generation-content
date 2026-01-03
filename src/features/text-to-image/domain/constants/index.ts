@@ -12,3 +12,9 @@ export {
   OUTPUT_FORMAT_VALUES,
   DEFAULT_FORM_VALUES,
 } from "./options.constants";
+
+export {
+  DEFAULT_TEXT_TO_IMAGE_PROMPTS,
+  DEFAULT_TEXT_TO_VOICE_PROMPTS,
+  type PromptSuggestion,
+} from "./prompts.constants";

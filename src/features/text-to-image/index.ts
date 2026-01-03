@@ -52,6 +52,9 @@ export {
   IMAGE_SIZE_VALUES,
   OUTPUT_FORMAT_VALUES,
   DEFAULT_FORM_VALUES,
+  DEFAULT_TEXT_TO_IMAGE_PROMPTS,
+  DEFAULT_TEXT_TO_VOICE_PROMPTS,
+  type PromptSuggestion,
 } from "./domain";
 
 // =============================================================================
@@ -69,7 +72,6 @@ export {
   useFormState,
   useGeneration,
   useTextToImageForm,
-  useTextToImageCallbacksBuilder,
 } from "./presentation";
 export type {
   UseFormStateOptions,
@@ -79,9 +81,6 @@ export type {
   UseGenerationReturn,
   UseTextToImageFormOptions,
   UseTextToImageFormReturn,
-  TextToImageCallbacksBuilderConfig,
-  UseTextToImageCallbacksBuilderOptions,
-  UseTextToImageCallbacksBuilderReturn,
 } from "./presentation";
 
 // Provider-based Feature Hook

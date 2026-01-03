@@ -216,7 +216,6 @@ export type {
   // Feature utils types
   ImageSelector,
   VideoSaver,
-  CreditChecker,
   AlertFunction,
   FeatureUtilsConfig,
   // Video helpers types
@@ -252,6 +251,8 @@ export {
   useBackgroundGeneration,
   usePhotoGeneration,
   useGenerationFlow,
+  useGenerationCallbacksBuilder,
+  useAIFeatureCallbacks,
 } from "./presentation/hooks";
 
 export type {
@@ -271,6 +272,14 @@ export type {
   PhotoGenerationStatus,
   UseGenerationFlowOptions,
   UseGenerationFlowReturn,
+  CreditType,
+  GenerationExecutionResult,
+  GenerationCallbacksConfig,
+  GenerationCallbacks,
+  UseGenerationCallbacksBuilderOptions,
+  AIFeatureCallbacksConfig,
+  AIFeatureCallbacks,
+  AIFeatureGenerationResult,
 } from "./presentation/hooks";
 
 // =============================================================================

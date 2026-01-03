@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import {
   AtomicText,
   AtomicIcon,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
+
+declare const __DEV__: boolean;
 import { StyleSelector } from "./selectors/StyleSelector";
 import { DurationSelector } from "./selectors/DurationSelector";
 import { AspectRatioSelector } from "./selectors/AspectRatioSelector";
@@ -42,8 +44,21 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   translations,
   children,
 }) => {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    // eslint-disable-next-line no-console
+    console.log("[AIGenerationForm] RENDERING NOW - hideGenerateButton:", hideGenerateButton);
+  }
+
   const tokens = useAppDesignTokens();
   const isAdvancedVisible = showAdvanced !== undefined ? showAdvanced : true;
+  const buttonIsDisabled = onPromptChange ? !prompt?.trim() : false;
+
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[AIGenerationForm] MOUNTED/UPDATED - prompt:", prompt, "isGenerating:", isGenerating, "buttonIsDisabled:", buttonIsDisabled, "hideGenerateButton:", hideGenerateButton);
+    }
+  }, [prompt, isGenerating, buttonIsDisabled, hideGenerateButton]);
 
   return (
     <>
@@ -128,7 +143,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
             <GenerateButton
               onPress={onGenerate}
               isProcessing={isGenerating}
-              isDisabled={onPromptChange ? !prompt?.trim() : false}
+              isDisabled={buttonIsDisabled}
               text={translations.generateButton}
               processingText={translations.generatingButton}
               icon={generateButtonProps?.icon || "sparkles-outline"}

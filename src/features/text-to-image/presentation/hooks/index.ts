@@ -22,17 +22,9 @@ export type {
   UseTextToImageFormReturn,
 } from "./useTextToImageForm";
 
-// Provider-based Feature Hook (existing)
+// Provider-based Feature Hook
 export { useTextToImageFeature } from "./useTextToImageFeature";
 export type {
   UseTextToImageFeatureProps,
   UseTextToImageFeatureReturn,
 } from "./useTextToImageFeature";
-
-// Callbacks Builder Hook
-export { useTextToImageCallbacksBuilder } from "./useTextToImageCallbacksBuilder";
-export type {
-  TextToImageCallbacksBuilderConfig,
-  UseTextToImageCallbacksBuilderOptions,
-  UseTextToImageCallbacksBuilderReturn,
-} from "./useTextToImageCallbacksBuilder";

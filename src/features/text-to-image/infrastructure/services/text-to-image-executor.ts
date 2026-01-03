@@ -27,10 +27,24 @@ function defaultExtractResult(
 
   const r = result as Record<string, unknown>;
 
-  if (typeof r.image === "string") {
-    return { imageUrl: r.image };
+  // GeminiClient returns imageUrl (data URL) or imageBase64
+  if (typeof r.imageUrl === "string") {
+    return { imageUrl: r.imageUrl, imageUrls: [r.imageUrl] };
   }
 
+  // Fallback: construct data URL from imageBase64
+  if (typeof r.imageBase64 === "string") {
+    const mimeType = typeof r.mimeType === "string" ? r.mimeType : "image/png";
+    const dataUrl = `data:${mimeType};base64,${r.imageBase64}`;
+    return { imageUrl: dataUrl, imageUrls: [dataUrl] };
+  }
+
+  // Legacy: check for 'image' field
+  if (typeof r.image === "string") {
+    return { imageUrl: r.image, imageUrls: [r.image] };
+  }
+
+  // Legacy: check for 'images' array
   if (Array.isArray(r.images)) {
     const urls = r.images
       .map((img) => {

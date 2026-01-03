@@ -1,50 +1,25 @@
 /**
  * Feature Utilities
- * Generic utilities for AI generation features
- * App provides implementations via dependency injection
+ * Uses ONLY configured app services - no alternatives
  */
 
-/**
- * Image selector function type
- */
+import { getAuthService, getCreditService, getPaywallService, isAppServicesConfigured } from "../config/app-services.config";
+
+declare const __DEV__: boolean;
+
 export type ImageSelector = () => Promise<string | null>;
-
-/**
- * Video saver function type
- */
 export type VideoSaver = (uri: string) => Promise<void>;
-
-/**
- * Credit checker function type
- */
-export type CreditChecker = (cost: number, featureName: string, type: string) => Promise<boolean>;
-
-/**
- * Alert function type
- */
 export type AlertFunction = (title: string, message: string) => void;
 
-/**
- * Feature utilities configuration
- */
 export interface FeatureUtilsConfig {
   selectImage: ImageSelector;
   saveVideo: VideoSaver;
-  checkCredit: CreditChecker;
-  showSuccessAlert?: AlertFunction;
-  showErrorAlert?: AlertFunction;
 }
 
-/**
- * Prepare image from URI (generic passthrough)
- */
 export async function prepareImage(uri: string): Promise<string> {
   return uri;
 }
 
-/**
- * Create dev callbacks for logging
- */
 export function createDevCallbacks(featureName: string) {
   return {
     onSuccess: (result: unknown) => {
@@ -63,23 +38,49 @@ export function createDevCallbacks(featureName: string) {
 }
 
 /**
- * Create feature utils with injected dependencies
+ * Credit guard - ONLY uses configured app services
  */
+async function checkCreditGuard(cost: number, featureName: string): Promise<boolean> {
+  if (!isAppServicesConfigured()) {
+    throw new Error(`[${featureName}] App services not configured. Call configureAppServices() at startup.`);
+  }
+
+  const authService = getAuthService();
+  const creditService = getCreditService();
+  const paywallService = getPaywallService();
+
+  if (!authService.isAuthenticated()) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log(`[${featureName}] Auth required`);
+    }
+    try {
+      authService.requireAuth();
+    } catch {
+      return false;
+    }
+    return false;
+  }
+
+  const hasCredits = await creditService.checkCredits(cost);
+  if (!hasCredits) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log(`[${featureName}] Insufficient credits`);
+    }
+    paywallService.showPaywall(cost);
+    return false;
+  }
+
+  return true;
+}
+
 export function createFeatureUtils(config: FeatureUtilsConfig) {
   return {
     selectImage: config.selectImage,
     saveVideo: config.saveVideo,
-    checkCreditGuard: config.checkCredit,
+    checkCreditGuard,
     prepareImage,
     createDevCallbacks,
-  };
-}
-
-/**
- * Hook factory for feature utilities
- */
-export function createUseFeatureUtils(config: FeatureUtilsConfig) {
-  return function useFeatureUtils() {
-    return createFeatureUtils(config);
   };
 }

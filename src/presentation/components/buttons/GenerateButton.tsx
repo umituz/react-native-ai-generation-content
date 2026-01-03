@@ -4,7 +4,7 @@
  * Props-driven for 100+ apps compatibility
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
 import {
   AtomicText,
@@ -27,6 +27,8 @@ export interface GenerateButtonProps {
   readonly style?: ViewStyle;
 }
 
+declare const __DEV__: boolean;
+
 export const GenerateButton: React.FC<GenerateButtonProps> = ({
   isDisabled = false,
   isProcessing = false,
@@ -40,16 +42,38 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
   onAccessoryRightPress,
   style,
 }) => {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    // eslint-disable-next-line no-console
+    console.log("[GenerateButton] RENDERING NOW");
+  }
+
   const tokens = useAppDesignTokens();
   const disabled = isDisabled || isProcessing;
   const displayText = isProcessing && processingText ? processingText : text;
   const finalDisplayText = costLabel ? `${displayText} (${costLabel})` : displayText;
 
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[GenerateButton] MOUNTED/UPDATED - isDisabled:", isDisabled, "isProcessing:", isProcessing, "disabled:", disabled, "text:", text);
+    }
+  }, [isDisabled, isProcessing, disabled, text]);
+
+  const handlePress = () => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[GenerateButton] PRESSED - disabled:", disabled, "isDisabled:", isDisabled, "isProcessing:", isProcessing);
+    }
+    if (!disabled) {
+      onPress();
+    }
+  };
+
   return (
     <View style={[styles.container, { marginTop: tokens.spacing.xl }, style]}>
       <View style={styles.row}>
         <TouchableOpacity
-          onPress={onPress}
+          onPress={handlePress}
           disabled={disabled}
           activeOpacity={0.8}
           style={[

@@ -24,6 +24,14 @@ const defaultAnalytics = {
  * @param services - App-specific service implementations
  */
 export function configureAppServices(services: IAppServices): void {
+  if (appServices !== null) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[AppServices] Already configured, skipping");
+    }
+    return;
+  }
+
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     // eslint-disable-next-line no-console
     console.log("[AppServices] Configuring app services");

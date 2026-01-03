@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-ai-generation-content",
-  "version": "1.17.88",
+  "version": "1.17.103",
   "description": "Provider-agnostic AI generation orchestration for React Native",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -42,6 +42,7 @@
     "@umituz/react-native-firebase": "*",
     "@umituz/react-native-image": "*",
     "@umituz/react-native-offline": "*",
+    "@umituz/react-native-tanstack": "*",
     "@umituz/react-native-timezone": "*",
     "@umituz/react-native-uuid": "*"
   },
@@ -73,6 +74,7 @@
     "@umituz/react-native-localization": "latest",
     "@umituz/react-native-offline": "*",
     "@umituz/react-native-storage": "latest",
+    "@umituz/react-native-tanstack": "latest",
     "@umituz/react-native-timezone": "latest",
     "@umituz/react-native-uuid": "*",
     "eslint": "^9.0.0",
