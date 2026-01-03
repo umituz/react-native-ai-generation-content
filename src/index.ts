@@ -175,6 +175,7 @@ export {
   getProgressForStatus,
   interpolateProgress,
   createProgressTracker,
+  calculatePollingProgress,
   // Status checking
   checkStatusForErrors,
   isJobComplete,

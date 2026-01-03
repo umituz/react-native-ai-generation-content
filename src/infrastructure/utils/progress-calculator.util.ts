@@ -45,6 +45,27 @@ export function interpolateProgress(
   return Math.round(progress);
 }
 
+/**
+ * Calculate progress for polling-based operations
+ * Returns a rounded integer between minProgress and maxProgress
+ *
+ * @param currentAttempt - Current polling attempt (1-based)
+ * @param maxAttempts - Maximum number of polling attempts
+ * @param minProgress - Starting progress percentage (default: 10)
+ * @param maxProgress - Maximum progress percentage before completion (default: 95)
+ * @returns Rounded progress percentage
+ */
+export function calculatePollingProgress(
+  currentAttempt: number,
+  maxAttempts: number,
+  minProgress: number = 10,
+  maxProgress: number = 95,
+): number {
+  const ratio = currentAttempt / maxAttempts;
+  const progress = minProgress + ratio * (maxProgress - minProgress);
+  return Math.round(Math.min(maxProgress, progress));
+}
+
 export function createProgressTracker(stages?: ProgressStageConfig[]) {
   const effectiveStages = stages ?? DEFAULT_PROGRESS_STAGES;
   let currentStatus: GenerationStatus = "idle";
