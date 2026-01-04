@@ -6,7 +6,7 @@
 
 import React, { useCallback } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
-import { useAppDesignTokens, useResponsive } from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
 import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
@@ -27,8 +27,6 @@ export interface AIHugFeatureProps {
   onSelectTargetImage: () => Promise<string | null>;
   /** Save video callback */
   onSaveVideo: (videoUrl: string) => Promise<void>;
-  /** Custom video player renderer - required for video playback */
-  renderVideoPlayer: (props: { videoUrl: string; size: number }) => React.ReactNode;
   /** Called before processing starts. Return false to cancel. */
   onBeforeProcess?: () => Promise<boolean>;
   /** Optional custom processing modal renderer */
@@ -44,13 +42,10 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
   onSelectSourceImage,
   onSelectTargetImage,
   onSaveVideo,
-  renderVideoPlayer,
   onBeforeProcess,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
-  const { width: screenWidth, horizontalPadding } = useResponsive();
-  const videoSize = screenWidth - horizontalPadding * 2;
 
   const feature = useAIHugFeature({
     config,
@@ -93,9 +88,7 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
             label: translations.tryAnotherText,
             onPress: feature.reset,
           }}
-        >
-          {renderVideoPlayer({ videoUrl: feature.processedVideoUrl, size: videoSize })}
-        </AIGenerationResult>
+        />
       </ScrollView>
     );
   }
@@ -142,31 +135,8 @@ const styles = StyleSheet.create({
   content: {
     paddingVertical: 16,
   },
-  description: {
-    textAlign: "center",
-    marginHorizontal: 24,
-    marginBottom: 24,
-    lineHeight: 24,
-  },
   pickerContainer: {
     marginHorizontal: 16,
     marginBottom: 16,
-  },
-  successText: {
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  resultVideoContainer: {
-    alignItems: "center",
-    marginHorizontal: 24,
-    marginBottom: 24,
-  },
-  resultActions: {
-    marginHorizontal: 24,
-    gap: 12,
-  },
-  buttonContainer: {
-    marginHorizontal: 24,
-    marginTop: 8,
   },
 });
