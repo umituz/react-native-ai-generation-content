@@ -7,7 +7,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
-import { ImagePickerBox, type ImagePickerBoxProps } from "./ImagePickerBox";
+import { PhotoUploadCard } from "../PhotoUploadCard";
 
 export interface DualImagePickerProps {
   readonly sourceImageUri: string | null;
@@ -17,7 +17,6 @@ export interface DualImagePickerProps {
   readonly onSelectTarget: () => void;
   readonly sourcePlaceholder: string;
   readonly targetPlaceholder: string;
-  readonly variant?: ImagePickerBoxProps["variant"];
   readonly layout?: "horizontal" | "vertical";
 }
 
@@ -29,7 +28,6 @@ export const DualImagePicker: React.FC<DualImagePickerProps> = ({
   onSelectTarget,
   sourcePlaceholder,
   targetPlaceholder,
-  variant = "portrait",
   layout = "horizontal",
 }) => {
   const tokens = useAppDesignTokens();
@@ -44,22 +42,22 @@ export const DualImagePicker: React.FC<DualImagePickerProps> = ({
       ]}
     >
       <View style={isHorizontal ? styles.pickerHalf : styles.pickerFull}>
-        <ImagePickerBox
+        <PhotoUploadCard
           imageUri={sourceImageUri}
-          isDisabled={isDisabled}
+          disabled={isDisabled}
           onPress={onSelectSource}
-          placeholderText={sourcePlaceholder}
-          variant={variant}
+          title={sourcePlaceholder}
+          config={{ aspectRatio: 1, borderRadius: 20 }}
         />
       </View>
 
       <View style={isHorizontal ? styles.pickerHalf : styles.pickerFull}>
-        <ImagePickerBox
+        <PhotoUploadCard
           imageUri={targetImageUri}
-          isDisabled={isDisabled}
+          disabled={isDisabled}
           onPress={onSelectTarget}
-          placeholderText={targetPlaceholder}
-          variant={variant}
+          title={targetPlaceholder}
+          config={{ aspectRatio: 1, borderRadius: 20 }}
         />
       </View>
     </View>

@@ -89,7 +89,7 @@ export const AnimationStyleSelector: React.FC<AnimationStyleSelectorProps> = ({
                 </AtomicText>
               </View>
               {isSelected && (
-                <AtomicIcon name="Check" size="md" color="primary" />
+                <AtomicIcon name="checkmark-outline" size="md" color="primary" />
               )}
             </View>
           </TouchableOpacity>

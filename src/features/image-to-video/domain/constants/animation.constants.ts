@@ -10,37 +10,37 @@ export const DEFAULT_ANIMATION_STYLES: AnimationStyle[] = [
     id: "ken_burns",
     name: "Ken Burns",
     description: "Slow zoom and pan effect",
-    icon: "Maximize2",
+    icon: "expand-outline",
   },
   {
     id: "zoom_in",
     name: "Zoom In",
     description: "Gradual zoom in effect",
-    icon: "ZoomIn",
+    icon: "add-circle-outline",
   },
   {
     id: "zoom_out",
     name: "Zoom Out",
     description: "Gradual zoom out effect",
-    icon: "ZoomOut",
+    icon: "remove-circle-outline",
   },
   {
     id: "slide_left",
     name: "Slide Left",
     description: "Pan from right to left",
-    icon: "ArrowLeft",
+    icon: "arrow-back-outline",
   },
   {
     id: "slide_right",
     name: "Slide Right",
     description: "Pan from left to right",
-    icon: "ArrowRight",
+    icon: "arrow-forward-outline",
   },
   {
     id: "parallax",
     name: "Parallax",
     description: "3D depth effect",
-    icon: "Layers",
+    icon: "layers-outline",
   },
 ];
 

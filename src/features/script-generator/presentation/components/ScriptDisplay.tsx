@@ -37,7 +37,7 @@ export const ScriptDisplay: React.FC<ScriptDisplayProps> = ({
           📝 {title}
         </AtomicText>
         <TouchableOpacity onPress={onUseScript}>
-          <AtomicIcon name="Check" size="md" color="primary" />
+          <AtomicIcon name="checkmark-outline" size="md" color="primary" />
         </TouchableOpacity>
       </View>
 
@@ -102,7 +102,7 @@ export const ScriptDisplay: React.FC<ScriptDisplayProps> = ({
         ]}
         onPress={onUseScript}
       >
-        <AtomicIcon name="Check" size="md" color="textInverse" />
+        <AtomicIcon name="checkmark-outline" size="md" color="textInverse" />
         <AtomicText
           type="bodyLarge"
           style={[styles.useButtonText, { color: tokens.colors.textInverse }]}

@@ -4,6 +4,8 @@
  */
 
 import { useMemo, useCallback } from "react";
+
+declare const __DEV__: boolean;
 import { useFormState, type UseFormStateOptions } from "./useFormState";
 import { useGeneration } from "./useGeneration";
 import type {
@@ -60,10 +62,29 @@ export function useImageToVideoForm(
   );
 
   const handleSelectImages = useCallback(async () => {
+    if (__DEV__) {
+      console.log("[useImageToVideoForm] handleSelectImages called");
+    }
     if (callbacks.onSelectImages) {
-      const images = await callbacks.onSelectImages();
-      if (images.length > 0) {
-        actions.addImages(images);
+      try {
+        const images = await callbacks.onSelectImages();
+        if (__DEV__) {
+          console.log("[useImageToVideoForm] Images selected:", images.length);
+        }
+        if (images.length > 0) {
+          actions.addImages(images);
+          if (__DEV__) {
+            console.log("[useImageToVideoForm] Images added to state");
+          }
+        }
+      } catch (error) {
+        if (__DEV__) {
+          console.error("[useImageToVideoForm] Error selecting images:", error);
+        }
+      }
+    } else {
+      if (__DEV__) {
+        console.warn("[useImageToVideoForm] No onSelectImages callback provided");
       }
     }
   }, [callbacks, actions]);

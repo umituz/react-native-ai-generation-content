@@ -305,7 +305,6 @@ export {
   DEFAULT_RESULT_CONFIG,
   PhotoStep,
   // Image Picker
-  ImagePickerBox,
   DualImagePicker,
   // New Generic Sections
   PromptInput,
@@ -361,7 +360,6 @@ export type {
   ResultActionButton,
   PhotoStepProps,
   // Image Picker
-  ImagePickerBoxProps,
   DualImagePickerProps,
   PromptInputProps,
   AIGenerationHeroProps,

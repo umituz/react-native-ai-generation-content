@@ -61,7 +61,7 @@ export const ImageSelectionGrid: React.FC<ImageSelectionGridProps> = ({
           onPress={onSelectImages}
           activeOpacity={0.7}
         >
-          <AtomicIcon name="Upload" size="xl" color="primary" />
+          <AtomicIcon name="cloud-upload-outline" size="xl" color="primary" />
           <AtomicText
             type="bodyMedium"
             style={[
