@@ -3,7 +3,7 @@
  * Uses ONLY configured app services - no alternatives
  */
 
-import * as FileSystem from "expo-file-system";
+import { readFileAsBase64 } from "@umituz/react-native-filesystem";
 import { getAuthService, getCreditService, getPaywallService, isAppServicesConfigured } from "../config/app-services.config";
 
 declare const __DEV__: boolean;
@@ -18,15 +18,33 @@ export interface FeatureUtilsConfig {
 }
 
 export async function prepareImage(uri: string): Promise<string> {
-  const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
-
-  if (!base64) {
-    throw new Error("Failed to convert image to base64");
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[prepareImage] Starting with URI:", uri);
   }
 
-  return base64;
+  if (!uri) {
+    throw new Error("[prepareImage] No URI provided");
+  }
+
+  try {
+    const base64 = await readFileAsBase64(uri);
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[prepareImage] Base64 length:", base64?.length || 0);
+    }
+
+    if (!base64) {
+      throw new Error("[prepareImage] Failed to convert image to base64");
+    }
+
+    return base64;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.error("[prepareImage] Error:", message);
+    }
+    throw new Error(`[prepareImage] Failed: ${message}`);
+  }
 }
 
 export function createDevCallbacks(featureName: string) {

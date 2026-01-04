@@ -3,7 +3,8 @@
  * Manages photo restore feature state and actions
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+import { generateUUID } from "@umituz/react-native-uuid";
 import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   PhotoRestoreFeatureState,
@@ -38,6 +39,7 @@ export function usePhotoRestoreFeature(
 ): UsePhotoRestoreFeatureReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
   const [state, setState] = useState<PhotoRestoreFeatureState>(initialState);
+  const creationIdRef = useRef<string | null>(null);
 
   const selectImage = useCallback(async () => {
     try {
@@ -64,6 +66,9 @@ export function usePhotoRestoreFeature(
       if (!canProceed) return;
     }
 
+    const creationId = generateUUID();
+    creationIdRef.current = creationId;
+
     setState((prev) => ({
       ...prev,
       isProcessing: true,
@@ -71,33 +76,44 @@ export function usePhotoRestoreFeature(
       error: null,
     }));
 
-    config.onProcessingStart?.();
+    config.onProcessingStart?.({ creationId, imageUri: state.imageUri });
 
-    const imageBase64 = await config.prepareImage(state.imageUri);
+    try {
+      const imageBase64 = await config.prepareImage(state.imageUri);
 
-    const result = await executeImageFeature(
-      "photo-restore",
-      { imageBase64 },
-      { extractResult: config.extractResult, onProgress: handleProgress },
-    );
+      const result = await executeImageFeature(
+        "photo-restore",
+        { imageBase64 },
+        { extractResult: config.extractResult, onProgress: handleProgress },
+      );
 
-    if (result.success && result.imageUrl) {
+      if (result.success && result.imageUrl) {
+        setState((prev) => ({
+          ...prev,
+          isProcessing: false,
+          processedUrl: result.imageUrl!,
+          progress: 100,
+        }));
+        config.onProcessingComplete?.({ ...result, creationId } as PhotoRestoreResult & { creationId?: string });
+      } else {
+        const errorMessage = result.error || "Processing failed";
+        setState((prev) => ({
+          ...prev,
+          isProcessing: false,
+          error: errorMessage,
+          progress: 0,
+        }));
+        config.onError?.(errorMessage, creationId);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: result.imageUrl!,
-        progress: 100,
-      }));
-      config.onProcessingComplete?.(result as PhotoRestoreResult);
-    } else {
-      const errorMessage = result.error || "Processing failed";
-      setState((prev) => ({
-        ...prev,
-        isProcessing: false,
-        error: errorMessage,
+        error: message,
         progress: 0,
       }));
-      config.onError?.(errorMessage);
+      config.onError?.(message, creationIdRef.current ?? undefined);
     }
   }, [state.imageUri, config, handleProgress, onBeforeProcess]);
 

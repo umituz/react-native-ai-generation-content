@@ -3,7 +3,8 @@
  * Base hook for dual image processing features (e.g., face-swap)
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+import { generateUUID } from "@umituz/react-native-uuid";
 import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   BaseDualImageState,
@@ -39,6 +40,7 @@ export function useDualImageFeature<
 ): BaseDualImageHookReturn {
   const { config, onSelectSourceImage, onSelectTargetImage, onSaveImage, onBeforeProcess } = props;
   const [state, setState] = useState<BaseDualImageState>(INITIAL_STATE);
+  const creationIdRef = useRef<string | null>(null);
 
   const selectSourceImage = useCallback(async () => {
     try {
@@ -73,11 +75,13 @@ export function useDualImageFeature<
   const process = useCallback(async () => {
     if (!state.sourceImageUri || !state.targetImageUri) return;
 
-    // Check if processing is allowed (credit check, etc.)
     if (onBeforeProcess) {
       const canProceed = await onBeforeProcess();
       if (!canProceed) return;
     }
+
+    const creationId = generateUUID();
+    creationIdRef.current = creationId;
 
     setState((prev) => ({
       ...prev,
@@ -86,7 +90,11 @@ export function useDualImageFeature<
       error: null,
     }));
 
-    config.onProcessingStart?.();
+    config.onProcessingStart?.({
+      creationId,
+      sourceImageUri: state.sourceImageUri,
+      targetImageUri: state.targetImageUri,
+    });
 
     try {
       const [sourceBase64, targetBase64] = await Promise.all([
@@ -111,7 +119,7 @@ export function useDualImageFeature<
           processedUrl: result.imageUrl!,
           progress: 100,
         }));
-        config.onProcessingComplete?.(result as TResult);
+        config.onProcessingComplete?.({ ...result, creationId } as unknown as TResult);
       } else {
         const errorMessage = result.error || "Processing failed";
         setState((prev) => ({
@@ -120,7 +128,7 @@ export function useDualImageFeature<
           error: errorMessage,
           progress: 0,
         }));
-        config.onError?.(errorMessage);
+        config.onError?.(errorMessage, creationId);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -130,7 +138,7 @@ export function useDualImageFeature<
         error: message,
         progress: 0,
       }));
-      config.onError?.(message);
+      config.onError?.(message, creationIdRef.current ?? undefined);
     }
   }, [state.sourceImageUri, state.targetImageUri, config, options, handleProgress, onBeforeProcess]);
 

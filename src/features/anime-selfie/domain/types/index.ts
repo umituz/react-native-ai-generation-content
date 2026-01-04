@@ -7,6 +7,7 @@ export type {
   AnimeSelfieOptions,
   AnimeSelfieRequest,
   AnimeSelfieResult,
+  AnimeSelfieProcessingStartData,
   AnimeSelfieFeatureState,
   AnimeSelfieTranslations,
   AnimeSelfieResultExtractor,

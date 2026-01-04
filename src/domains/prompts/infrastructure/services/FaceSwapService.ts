@@ -1,40 +1,20 @@
+/**
+ * Face Swap Service
+ * AI prompt generation for face transformation tasks
+ */
+
 import type { IFaceSwapService } from '../../domain/repositories/IAIPromptServices';
-import type {
-  AIPromptTemplate
-} from '../../domain/entities/AIPromptTemplate';
-import type {
-  FaceSwapConfig,
-  FaceSwapSafety
-} from '../../domain/entities/FaceSwapConfig';
-import type { AIPromptCategory } from '../../domain/entities/types';
-import { createAIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
+import type { FaceSwapConfig } from '../../domain/entities/FaceSwapConfig';
+import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
 import { validateFaceSwapConfig } from '../../domain/entities/FaceSwapConfig';
-import type { AIPromptResult } from '../../domain/entities/types';
-import { PromptGenerationService } from '../services/PromptGenerationService';
+import { BasePromptService } from './base';
 
-const DEFAULT_FACE_SWAP_SAFETY: FaceSwapSafety = {
-  contentFilter: true,
-  identityPreservation: true,
-  adultContentFilter: true,
-};
-
-const createFaceSwapBaseTemplate = (config?: {
-  targetPerson?: string;
-  transformationType?: string;
-  quality?: string;
-}): string => {
-  const {
-    targetPerson = 'SAME PERSON',
-    transformationType = 'transformation',
-    quality = 'App Store–ready'
-  } = config || {};
-
-  return `
+const BASE_TEMPLATE = `
 You are an expert AI photo editor.
 This is a PHOTO EDITING task, not text-to-image generation.
 
 IDENTITY PRESERVATION (CRITICAL):
-The output must clearly depict the ${targetPerson} from the uploaded photo.
+The output must clearly depict the SAME PERSON from the uploaded photo.
 The person must remain recognizable after transformation.
 
 FACE IDENTITY (DO NOT CHANGE):
@@ -44,78 +24,31 @@ FACE IDENTITY (DO NOT CHANGE):
 - Lip shape and proportions
 - Skin tone and natural facial texture
 
-ALLOWED NON-DESTRUCTIVE CHANGES:
+ALLOWED CHANGES:
 - Hair style and hair color (wig-like or costume-based)
-- Facial hair (beard, mustache) as costume elements
 - Accessories (hats, glasses, headwear)
-- Subtle expression adjustments that do NOT alter facial structure
 - Costume makeup that does NOT reshape the face
 
-STRICTLY FORBIDDEN:
-- Face replacement or face swapping with another identity
-- Changing the person into a different real individual
+FORBIDDEN:
+- Face replacement with another identity
 - Changing gender or ethnicity
 - Extreme age transformation
-- Distorted faces or unrealistic anatomy
+- Nudity, violence, weapons, copyrighted characters
 
-SAFETY CONSTRAINTS:
-Do NOT add nudity, sexual content, violence, weapons, drugs, political or religious symbols,
-copyrighted characters, celebrities, text overlays, logos, or watermarks.
-
-STYLE & QUALITY:
+QUALITY:
 - Realistic photographic style
 - High-quality, natural lighting
-- Clean, premium, ${quality} result
+- Clean, premium result
+`.trim();
 
-FINAL RULE:
-This is a fictional, cosmetic ${transformationType} for entertainment only.
-  `.trim();
-};
-
-export class FaceSwapService implements IFaceSwapService {
-  private promptService: PromptGenerationService;
+export class FaceSwapService
+  extends BasePromptService<FaceSwapConfig>
+  implements IFaceSwapService
+{
   private availableStyles: string[] = [];
 
-  constructor() {
-    this.promptService = new PromptGenerationService();
-    this.initializeDefaultStyles();
-  }
-
-  generateTemplate(config: FaceSwapConfig): Promise<AIPromptResult<AIPromptTemplate>> {
-    try {
-      if (!this.validateConfig(config)) {
-        return Promise.resolve({
-          success: false,
-          error: 'INVALID_VARIABLES',
-          message: 'Invalid face swap configuration'
-        });
-      }
-
-      const template = this.createFaceSwapTemplate(config);
-      return Promise.resolve({ success: true, data: template });
-    } catch {
-      return Promise.resolve({
-        success: false,
-        error: 'GENERATION_FAILED',
-        message: 'Failed to generate face swap template'
-      });
-    }
-  }
-
-  async generatePrompt(
-    template: AIPromptTemplate,
-    config: FaceSwapConfig
-  ): Promise<AIPromptResult<string>> {
-    const variables = {
-      styleName: config.styleName,
-      environment: config.environment || 'Neutral studio background',
-      preserveIdentity: config.preserveIdentity,
-      allowHairStyle: config.allowHairStyle,
-      allowAccessories: config.allowAccessories,
-      allowExpression: config.allowExpression,
-    };
-
-    return this.promptService.generateFromTemplate(template, variables);
+  protected getServiceName(): string {
+    return 'face swap';
   }
 
   validateConfig(config: FaceSwapConfig): boolean {
@@ -126,72 +59,48 @@ export class FaceSwapService implements IFaceSwapService {
     return Promise.resolve([...this.availableStyles]);
   }
 
-  private initializeDefaultStyles(): void {
-    this.availableStyles = [];
-  }
-
-  public registerStyle(style: string): void {
+  registerStyle(style: string): void {
     if (!this.availableStyles.includes(style)) {
       this.availableStyles.push(style);
     }
   }
 
-  public registerStyles(styles: string[]): void {
-    styles.forEach(style => this.registerStyle(style));
+  registerStyles(styles: string[]): void {
+    styles.forEach((s) => this.registerStyle(s));
   }
 
-  public clearStyles(): void {
+  clearStyles(): void {
     this.availableStyles = [];
   }
 
-  private createFaceSwapTemplate(config: FaceSwapConfig): AIPromptTemplate {
-    const templateId = `face-swap-${config.styleName.toLowerCase().replace(/\s+/g, '-')}`;
-
-    return createAIPromptTemplate({
-      id: templateId,
-      name: `Face Swap: ${config.styleName}`,
-      description: `Transform face into ${config.styleName} style`,
-      category: 'face-swap' as AIPromptCategory,
-      template: this.buildFaceSwapTemplate(config),
-      variables: [],
-      safety: {
-        contentFilter: DEFAULT_FACE_SWAP_SAFETY.contentFilter,
-        adultContentFilter: DEFAULT_FACE_SWAP_SAFETY.adultContentFilter,
-        violenceFilter: true,
-        hateSpeechFilter: true,
-        copyrightFilter: true,
-      },
-      version: '1.0.0',
-    });
+  protected buildVariables(config: FaceSwapConfig): Record<string, unknown> {
+    return {
+      styleName: config.styleName,
+      environment: config.environment || 'Neutral studio background',
+      preserveIdentity: config.preserveIdentity,
+      allowHairStyle: config.allowHairStyle,
+      allowAccessories: config.allowAccessories,
+      allowExpression: config.allowExpression,
+    };
   }
 
-  private buildFaceSwapTemplate(config: FaceSwapConfig): string {
-    const baseTemplate = createFaceSwapBaseTemplate({
-      targetPerson: 'SAME PERSON',
-      transformationType: 'transformation',
-      quality: 'App Store–ready',
-    });
+  protected createTemplate(config: FaceSwapConfig): AIPromptTemplate {
+    const styleId = config.styleName.toLowerCase().replace(/\s+/g, '-');
 
-    return `${baseTemplate}
+    return this.createTemplateWithDefaults({
+      id: `face-swap-${styleId}`,
+      name: `Face Swap: ${config.styleName}`,
+      description: `Transform face into ${config.styleName} style`,
+      category: 'face-swap',
+      template: `${BASE_TEMPLATE}
 
-STYLE NAME:
-${config.styleName}
-
-TRANSFORMATION GOAL:
-Transform the same person into this ${config.styleName} style
-${config.preserveIdentity ? 'while preserving their facial identity.' : ''}
-
-ENVIRONMENT:
-${config.environment || 'Neutral studio background'}
-
-EXPRESSION:
-- Natural expression
-- Subtle and natural, without changing facial structure
+STYLE: ${config.styleName}
+ENVIRONMENT: ${config.environment || 'Neutral studio background'}
+PRESERVE IDENTITY: ${config.preserveIdentity}
 
 OUTPUT:
-The same person from the uploaded photo,
-clearly recognizable,
-realistically transformed into a ${config.styleName} style.
-    `.trim();
+The same person, clearly recognizable,
+transformed into ${config.styleName} style.`,
+    });
   }
 }

@@ -116,6 +116,13 @@ export { useCreations } from "./presentation/hooks/useCreations";
 export { useDeleteCreation } from "./presentation/hooks/useDeleteCreation";
 export { useCreationsFilter } from "./presentation/hooks/useCreationsFilter";
 export { useAdvancedFilter } from "./presentation/hooks/useAdvancedFilter";
+export { useCreationPersistence } from "./presentation/hooks/useCreationPersistence";
+export type {
+  UseCreationPersistenceConfig,
+  UseCreationPersistenceReturn,
+  BaseProcessingStartData,
+  BaseProcessingResult,
+} from "./presentation/hooks/useCreationPersistence";
 
 // =============================================================================
 // PRESENTATION LAYER - Components

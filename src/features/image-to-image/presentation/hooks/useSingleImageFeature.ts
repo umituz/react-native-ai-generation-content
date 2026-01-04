@@ -3,7 +3,8 @@
  * Base hook for single image processing features
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+import { generateUUID } from "@umituz/react-native-uuid";
 import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   BaseSingleImageState,
@@ -34,6 +35,7 @@ export function useSingleImageFeature<
 ): BaseSingleImageHookReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
   const [state, setState] = useState<BaseSingleImageState>(INITIAL_STATE);
+  const creationIdRef = useRef<string | null>(null);
 
   const selectImage = useCallback(async () => {
     try {
@@ -55,11 +57,13 @@ export function useSingleImageFeature<
   const process = useCallback(async () => {
     if (!state.imageUri) return;
 
-    // Check if processing is allowed (credit check, etc.)
     if (onBeforeProcess) {
       const canProceed = await onBeforeProcess();
       if (!canProceed) return;
     }
+
+    const creationId = generateUUID();
+    creationIdRef.current = creationId;
 
     setState((prev) => ({
       ...prev,
@@ -68,7 +72,7 @@ export function useSingleImageFeature<
       error: null,
     }));
 
-    config.onProcessingStart?.();
+    config.onProcessingStart?.({ creationId, imageUri: state.imageUri });
 
     try {
       const imageBase64 = await config.prepareImage(state.imageUri);
@@ -90,7 +94,7 @@ export function useSingleImageFeature<
           processedUrl: result.imageUrl!,
           progress: 100,
         }));
-        config.onProcessingComplete?.(result as TResult);
+        config.onProcessingComplete?.({ ...result, creationId } as unknown as TResult);
       } else {
         const errorMessage = result.error || "Processing failed";
         setState((prev) => ({
@@ -99,7 +103,7 @@ export function useSingleImageFeature<
           error: errorMessage,
           progress: 0,
         }));
-        config.onError?.(errorMessage);
+        config.onError?.(errorMessage, creationId);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -109,7 +113,7 @@ export function useSingleImageFeature<
         error: message,
         progress: 0,
       }));
-      config.onError?.(message);
+      config.onError?.(message, creationIdRef.current ?? undefined);
     }
   }, [state.imageUri, config, options, handleProgress, onBeforeProcess]);
 

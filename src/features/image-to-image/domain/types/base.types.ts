@@ -103,6 +103,30 @@ export interface BaseDualImageTranslations {
 export type ImageResultExtractor = (result: unknown) => string | undefined;
 
 /**
+ * Single image processing start data
+ */
+export interface SingleImageProcessingStartData {
+  creationId: string;
+  imageUri: string;
+}
+
+/**
+ * Dual image processing start data
+ */
+export interface DualImageProcessingStartData {
+  creationId: string;
+  sourceImageUri: string;
+  targetImageUri: string;
+}
+
+/**
+ * Base result with optional creationId for persistence
+ */
+export interface BaseImageResultWithCreationId extends BaseImageResult {
+  creationId?: string;
+}
+
+/**
  * Base config for all image features
  */
 export interface BaseImageConfig<TResult extends BaseImageResult = BaseImageResult> {
@@ -110,9 +134,9 @@ export interface BaseImageConfig<TResult extends BaseImageResult = BaseImageResu
   creditCost?: number;
   extractResult?: ImageResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
-  onProcessingStart?: () => void;
+  onProcessingStart?: (data: { creationId: string; [key: string]: unknown }) => void;
   onProcessingComplete?: (result: TResult) => void;
-  onError?: (error: string) => void;
+  onError?: (error: string, creationId?: string) => void;
 }
 
 /**

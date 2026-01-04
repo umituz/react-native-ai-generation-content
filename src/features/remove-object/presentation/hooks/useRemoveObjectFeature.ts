@@ -3,7 +3,8 @@
  * Manages remove object feature state and actions
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+import { generateUUID } from "@umituz/react-native-uuid";
 import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   RemoveObjectFeatureState,
@@ -43,6 +44,7 @@ export function useRemoveObjectFeature(
 ): UseRemoveObjectFeatureReturn {
   const { config, onSelectImage, onSelectMask, onSaveImage, onBeforeProcess } = props;
   const [state, setState] = useState<RemoveObjectFeatureState>(initialState);
+  const creationIdRef = useRef<string | null>(null);
 
   const selectImage = useCallback(async () => {
     try {
@@ -88,6 +90,9 @@ export function useRemoveObjectFeature(
       if (!canProceed) return;
     }
 
+    const creationId = generateUUID();
+    creationIdRef.current = creationId;
+
     setState((prev) => ({
       ...prev,
       isProcessing: true,
@@ -95,40 +100,51 @@ export function useRemoveObjectFeature(
       error: null,
     }));
 
-    config.onProcessingStart?.();
+    config.onProcessingStart?.({ creationId, imageUri: state.imageUri });
 
-    const imageBase64 = await config.prepareImage(state.imageUri);
-    const maskBase64 = state.maskUri
-      ? await config.prepareImage(state.maskUri)
-      : undefined;
+    try {
+      const imageBase64 = await config.prepareImage(state.imageUri);
+      const maskBase64 = state.maskUri
+        ? await config.prepareImage(state.maskUri)
+        : undefined;
 
-    const result = await executeImageFeature(
-      "remove-object",
-      {
-        imageBase64,
-        targetImageBase64: maskBase64,
-        prompt: state.prompt || undefined,
-      },
-      { extractResult: config.extractResult, onProgress: handleProgress },
-    );
+      const result = await executeImageFeature(
+        "remove-object",
+        {
+          imageBase64,
+          targetImageBase64: maskBase64,
+          prompt: state.prompt || undefined,
+        },
+        { extractResult: config.extractResult, onProgress: handleProgress },
+      );
 
-    if (result.success && result.imageUrl) {
+      if (result.success && result.imageUrl) {
+        setState((prev) => ({
+          ...prev,
+          isProcessing: false,
+          processedUrl: result.imageUrl!,
+          progress: 100,
+        }));
+        config.onProcessingComplete?.({ ...result, creationId } as RemoveObjectResult & { creationId?: string });
+      } else {
+        const errorMessage = result.error || "Processing failed";
+        setState((prev) => ({
+          ...prev,
+          isProcessing: false,
+          error: errorMessage,
+          progress: 0,
+        }));
+        config.onError?.(errorMessage, creationId);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       setState((prev) => ({
         ...prev,
         isProcessing: false,
-        processedUrl: result.imageUrl!,
-        progress: 100,
-      }));
-      config.onProcessingComplete?.(result as RemoveObjectResult);
-    } else {
-      const errorMessage = result.error || "Processing failed";
-      setState((prev) => ({
-        ...prev,
-        isProcessing: false,
-        error: errorMessage,
+        error: message,
         progress: 0,
       }));
-      config.onError?.(errorMessage);
+      config.onError?.(message, creationIdRef.current ?? undefined);
     }
   }, [state.imageUri, state.maskUri, state.prompt, config, handleProgress, onBeforeProcess]);
 

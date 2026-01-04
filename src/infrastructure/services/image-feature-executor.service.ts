@@ -45,17 +45,38 @@ export interface ImageFeatureRequest {
 
 /**
  * Default result extractor - handles common response formats
+ * Supports both direct response and data-wrapped response (fal.ai)
  */
 function defaultExtractImageResult(result: unknown): string | undefined {
   if (typeof result !== "object" || result === null) return undefined;
 
   const r = result as Record<string, unknown>;
 
-  if (typeof r.image === "string") return r.image;
-  if (typeof r.imageUrl === "string") return r.imageUrl;
-  if (typeof r.output === "string") return r.output;
-  if (Array.isArray(r.images) && typeof r.images[0]?.url === "string") {
-    return r.images[0].url;
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[ImageExtractor] Result keys:", Object.keys(r));
+    console.log("[ImageExtractor] Has data:", !!r.data);
+    console.log("[ImageExtractor] Has images:", !!r.images);
+  }
+
+  // Handle fal.ai data wrapper
+  const data = (r.data as Record<string, unknown>) ?? r;
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[ImageExtractor] Data keys:", Object.keys(data));
+  }
+
+  if (typeof data.image === "string") return data.image;
+  if (typeof data.imageUrl === "string") return data.imageUrl;
+  if (typeof data.output === "string") return data.output;
+  if (Array.isArray(data.images) && typeof data.images[0]?.url === "string") {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[ImageExtractor] Found images[0].url:", data.images[0].url);
+    }
+    return data.images[0].url;
+  }
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[ImageExtractor] No image URL found in result");
   }
 
   return undefined;

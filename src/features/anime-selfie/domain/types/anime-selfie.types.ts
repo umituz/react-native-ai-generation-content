@@ -24,6 +24,12 @@ export interface AnimeSelfieResult {
   imageBase64?: string;
   error?: string;
   requestId?: string;
+  creationId?: string;
+}
+
+export interface AnimeSelfieProcessingStartData {
+  creationId: string;
+  imageUri: string;
 }
 
 export interface AnimeSelfieFeatureState {
@@ -58,7 +64,7 @@ export interface AnimeSelfieFeatureConfig {
   extractResult?: AnimeSelfieResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;
-  onProcessingStart?: () => void;
+  onProcessingStart?: (data: AnimeSelfieProcessingStartData) => void;
   onProcessingComplete?: (result: AnimeSelfieResult) => void;
-  onError?: (error: string) => void;
+  onError?: (error: string, creationId?: string) => void;
 }

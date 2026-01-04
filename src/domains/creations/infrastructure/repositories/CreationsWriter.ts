@@ -22,7 +22,6 @@ export class CreationsWriter {
 
         const data: CreationDocument = {
             type: creation.type,
-            prompt: creation.prompt,
             uri: creation.uri,
             createdAt: creation.createdAt,
             metadata: creation.metadata || {},
@@ -30,6 +29,7 @@ export class CreationsWriter {
             isFavorite: creation.isFavorite || false,
             status: creation.status,
             output: creation.output ?? null,
+            ...(creation.prompt !== undefined && { prompt: creation.prompt }),
         };
 
         try {

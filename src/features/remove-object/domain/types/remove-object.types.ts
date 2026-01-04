@@ -63,7 +63,7 @@ export interface RemoveObjectFeatureConfig {
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;
   onMaskSelect?: (uri: string) => void;
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: RemoveObjectResult) => void;
-  onError?: (error: string) => void;
+  onProcessingStart?: (data: { creationId: string; imageUri: string }) => void;
+  onProcessingComplete?: (result: RemoveObjectResult & { creationId?: string }) => void;
+  onError?: (error: string, creationId?: string) => void;
 }

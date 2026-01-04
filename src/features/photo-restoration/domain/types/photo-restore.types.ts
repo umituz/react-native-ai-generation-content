@@ -57,7 +57,7 @@ export interface PhotoRestoreFeatureConfig {
   extractResult?: PhotoRestoreResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: PhotoRestoreResult) => void;
-  onError?: (error: string) => void;
+  onProcessingStart?: (data: { creationId: string; imageUri: string }) => void;
+  onProcessingComplete?: (result: PhotoRestoreResult & { creationId?: string }) => void;
+  onError?: (error: string, creationId?: string) => void;
 }

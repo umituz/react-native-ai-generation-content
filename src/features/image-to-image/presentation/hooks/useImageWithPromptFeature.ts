@@ -3,7 +3,8 @@
  * Base hook for image + prompt processing features (e.g., replace-background)
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+import { generateUUID } from "@umituz/react-native-uuid";
 import { executeImageFeature } from "../../../../infrastructure/services";
 import type {
   BaseImageWithPromptState,
@@ -65,6 +66,7 @@ export function useImageWithPromptFeature<
     ...INITIAL_STATE,
     prompt: config.defaultPrompt || "",
   });
+  const creationIdRef = useRef<string | null>(null);
 
   const selectImage = useCallback(async () => {
     try {
@@ -94,7 +96,6 @@ export function useImageWithPromptFeature<
   const process = useCallback(async () => {
     if (!state.imageUri) return;
 
-    // Check if processing is allowed (credit check, etc.)
     if (onBeforeProcess) {
       const canProceed = await onBeforeProcess();
       if (!canProceed) return;
@@ -103,9 +104,12 @@ export function useImageWithPromptFeature<
     if (options?.promptRequired && !state.prompt.trim()) {
       const error = "Prompt is required";
       setState((prev) => ({ ...prev, error }));
-      config.onError?.(error);
+      config.onError?.(error, creationIdRef.current ?? undefined);
       return;
     }
+
+    const creationId = generateUUID();
+    creationIdRef.current = creationId;
 
     setState((prev) => ({
       ...prev,
@@ -114,7 +118,7 @@ export function useImageWithPromptFeature<
       error: null,
     }));
 
-    config.onProcessingStart?.();
+    config.onProcessingStart?.({ creationId, imageUri: state.imageUri });
 
     try {
       const imageBase64 = await config.prepareImage(state.imageUri);
@@ -136,7 +140,7 @@ export function useImageWithPromptFeature<
           processedUrl: result.imageUrl!,
           progress: 100,
         }));
-        config.onProcessingComplete?.(result as TResult);
+        config.onProcessingComplete?.({ ...result, creationId } as unknown as TResult);
       } else {
         const errorMessage = result.error || "Processing failed";
         setState((prev) => ({
@@ -145,7 +149,7 @@ export function useImageWithPromptFeature<
           error: errorMessage,
           progress: 0,
         }));
-        config.onError?.(errorMessage);
+        config.onError?.(errorMessage, creationId);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -155,7 +159,7 @@ export function useImageWithPromptFeature<
         error: message,
         progress: 0,
       }));
-      config.onError?.(message);
+      config.onError?.(message, creationIdRef.current ?? undefined);
     }
   }, [state.imageUri, state.prompt, config, options, handleProgress, onBeforeProcess]);
 
