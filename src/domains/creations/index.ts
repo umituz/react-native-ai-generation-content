@@ -62,6 +62,7 @@ export {
   getPrimaryMediaUrl,
   type CreationOutput,
   // Creation helpers
+  generateCreationId,
   getTypeIcon,
   getTypeTextKey,
   getTypeText,

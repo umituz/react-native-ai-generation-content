@@ -3,7 +3,15 @@
  * Utility functions for creation data manipulation
  */
 
+import { generateUUID } from "@umituz/react-native-uuid";
 import type { CreationTypeId } from "../types";
+
+/**
+ * Generate a unique creation ID using UUID v4
+ */
+export function generateCreationId(): string {
+  return generateUUID();
+}
 
 /**
  * Icon name type for design system

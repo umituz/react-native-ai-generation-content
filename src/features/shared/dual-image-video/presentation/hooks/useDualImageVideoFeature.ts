@@ -4,8 +4,9 @@
  * DRY: Consolidates common logic from useAIHugFeature and useAIKissFeature
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { executeVideoFeature } from "../../../../../infrastructure/services";
+import { generateCreationId } from "../../../../../domains/creations/domain/utils";
 import type {
   DualImageVideoFeatureState,
   UseDualImageVideoFeatureProps,
@@ -26,6 +27,7 @@ export function useDualImageVideoFeature(
 ): UseDualImageVideoFeatureReturn {
   const { featureType, config, onSelectSourceImage, onSelectTargetImage, onSaveVideo, onBeforeProcess } = props;
   const [state, setState] = useState<DualImageVideoFeatureState>(initialState);
+  const currentCreationIdRef = useRef<string | null>(null);
 
   const selectSourceImage = useCallback(async () => {
     try {
@@ -65,6 +67,10 @@ export function useDualImageVideoFeature(
       if (!canProceed) return;
     }
 
+    // Generate creationId for this processing session
+    const creationId = generateCreationId();
+    currentCreationIdRef.current = creationId;
+
     setState((prev) => ({
       ...prev,
       isProcessing: true,
@@ -72,7 +78,13 @@ export function useDualImageVideoFeature(
       error: null,
     }));
 
-    config.onProcessingStart?.();
+    // Notify start with creationId for Firestore creation
+    config.onProcessingStart?.({
+      creationId,
+      featureType,
+      sourceImageUri: state.sourceImageUri,
+      targetImageUri: state.targetImageUri,
+    });
 
     const sourceImageBase64 = await config.prepareImage(state.sourceImageUri);
     const targetImageBase64 = await config.prepareImage(state.targetImageUri);
@@ -90,7 +102,8 @@ export function useDualImageVideoFeature(
         processedVideoUrl: result.videoUrl!,
         progress: 100,
       }));
-      config.onProcessingComplete?.({ success: true, videoUrl: result.videoUrl });
+      // Notify completion with creationId and videoUrl for Firestore update
+      config.onProcessingComplete?.({ success: true, videoUrl: result.videoUrl, creationId });
     } else {
       const errorMessage = result.error || "Processing failed";
       setState((prev) => ({
@@ -99,7 +112,8 @@ export function useDualImageVideoFeature(
         error: errorMessage,
         progress: 0,
       }));
-      config.onError?.(errorMessage);
+      // Notify error with creationId for Firestore update to "failed"
+      config.onError?.(errorMessage, creationId);
     }
   }, [state.sourceImageUri, state.targetImageUri, featureType, config, handleProgress, onBeforeProcess]);
 

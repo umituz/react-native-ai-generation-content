@@ -20,6 +20,14 @@ export interface DualImageVideoResult {
   videoUrl?: string;
   error?: string;
   requestId?: string;
+  creationId?: string;
+}
+
+export interface DualImageVideoProcessingStartData {
+  creationId: string;
+  featureType: string;
+  sourceImageUri: string;
+  targetImageUri: string;
 }
 
 export type DualImageVideoResultExtractor = (result: unknown) => string | undefined;
@@ -30,9 +38,12 @@ export interface DualImageVideoFeatureConfig {
   prepareImage: (imageUri: string) => Promise<string>;
   onSourceImageSelect?: (uri: string) => void;
   onTargetImageSelect?: (uri: string) => void;
-  onProcessingStart?: () => void;
+  /** Called when processing starts - use to create Firestore doc with "processing" status */
+  onProcessingStart?: (data: DualImageVideoProcessingStartData) => void;
+  /** Called when processing completes - use to update Firestore doc with result */
   onProcessingComplete?: (result: DualImageVideoResult) => void;
-  onError?: (error: string) => void;
+  /** Called on error - use to update Firestore doc with "failed" status */
+  onError?: (error: string, creationId?: string) => void;
 }
 
 export interface DualImageVideoTranslations {

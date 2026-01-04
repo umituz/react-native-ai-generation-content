@@ -3,6 +3,7 @@
  * Uses ONLY configured app services - no alternatives
  */
 
+import * as FileSystem from "expo-file-system";
 import { getAuthService, getCreditService, getPaywallService, isAppServicesConfigured } from "../config/app-services.config";
 
 declare const __DEV__: boolean;
@@ -17,7 +18,15 @@ export interface FeatureUtilsConfig {
 }
 
 export async function prepareImage(uri: string): Promise<string> {
-  return uri;
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+
+  if (!base64) {
+    throw new Error("Failed to convert image to base64");
+  }
+
+  return base64;
 }
 
 export function createDevCallbacks(featureName: string) {

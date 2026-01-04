@@ -6,6 +6,7 @@
 export type {
   DualImageVideoFeatureState,
   DualImageVideoResult,
+  DualImageVideoProcessingStartData,
   DualImageVideoResultExtractor,
   DualImageVideoFeatureConfig,
   DualImageVideoTranslations,

@@ -484,6 +484,16 @@ export * from "./features/script-generator";
 export * from "./features/photo-restoration";
 
 // =============================================================================
+// FEATURES - Shared Dual Image Video Types
+// =============================================================================
+
+export type {
+  DualImageVideoProcessingStartData,
+  DualImageVideoResult,
+  DualImageVideoFeatureConfig,
+} from "./features/shared/dual-image-video";
+
+// =============================================================================
 // FEATURES - AI Hug
 // =============================================================================
 
