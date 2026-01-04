@@ -5,8 +5,8 @@
  */
 
 import React, { useCallback } from "react";
-import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { View, ScrollView, StyleSheet, Image } from "react-native";
+import { useAppDesignTokens, useResponsive } from "@umituz/react-native-design-system";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
 import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
@@ -37,6 +37,8 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
+  const { width: screenWidth, horizontalPadding } = useResponsive();
+  const imageSize = screenWidth - horizontalPadding * 2;
 
   const feature = useFaceSwapFeature({
     config,
@@ -62,9 +64,6 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
   }, [feature]);
 
   if (feature.processedUrl) {
-    const screenWidth = Dimensions.get("window").width;
-    const imageSize = screenWidth - 48;
-
     return (
       <ScrollView
         style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}

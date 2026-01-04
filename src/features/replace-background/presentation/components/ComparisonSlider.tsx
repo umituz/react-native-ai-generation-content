@@ -5,20 +5,13 @@
 
 import * as React from "react";
 import { memo, useState, useRef, useMemo } from "react";
-import {
-    View,
-    StyleSheet,
-    Image,
-    PanResponder,
-    Dimensions,
-} from "react-native";
+import { View, StyleSheet, Image, PanResponder } from "react-native";
 import {
     AtomicText,
     useAppDesignTokens,
+    useResponsive,
 } from "@umituz/react-native-design-system";
 import type { ComparisonSliderProps } from "../../domain/entities";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
     function ComparisonSlider({
@@ -28,8 +21,9 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = memo(
         afterLabel,
     }) {
         const tokens = useAppDesignTokens();
+        const { width: screenWidth, horizontalPadding } = useResponsive();
         const [sliderPosition, setSliderPosition] = useState(50);
-        const containerWidth = useRef(SCREEN_WIDTH - 32);
+        const containerWidth = useRef(screenWidth - horizontalPadding * 2);
 
         const panResponder = useRef(
             PanResponder.create({

@@ -5,8 +5,8 @@
  */
 
 import React, { useCallback } from "react";
-import { View, ScrollView, StyleSheet, Dimensions } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { View, ScrollView, StyleSheet } from "react-native";
+import { useAppDesignTokens, useResponsive } from "@umituz/react-native-design-system";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
 import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
@@ -46,6 +46,8 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
+  const { width: screenWidth, horizontalPadding } = useResponsive();
+  const videoSize = screenWidth - horizontalPadding * 2;
 
   const feature = useAIHugFeature({
     config,
@@ -71,9 +73,6 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
   }, [feature]);
 
   if (feature.processedVideoUrl) {
-    const screenWidth = Dimensions.get("window").width;
-    const videoSize = screenWidth - 48;
-
     return (
       <ScrollView
         style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}

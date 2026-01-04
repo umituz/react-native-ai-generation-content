@@ -5,9 +5,10 @@
  */
 
 import React, { useCallback, useMemo } from "react";
-import { View, ScrollView, StyleSheet, Image, Dimensions, TextInput } from "react-native";
+import { View, ScrollView, StyleSheet, Image, TextInput } from "react-native";
 import {
   useAppDesignTokens,
+  useResponsive,
   AtomicText,
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
@@ -38,6 +39,9 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
+  const { width: screenWidth, horizontalPadding } = useResponsive();
+  const imageSize = screenWidth - horizontalPadding * 2;
+
   const feature = useRemoveObjectFeature({
     config,
     onSelectImage,
@@ -67,9 +71,6 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
   }, [feature]);
 
   if (feature.processedUrl) {
-    const screenWidth = Dimensions.get("window").width;
-    const imageSize = screenWidth - 48;
-
     return (
       <ScrollView
         style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}

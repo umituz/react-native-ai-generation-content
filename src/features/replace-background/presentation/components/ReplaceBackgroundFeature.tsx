@@ -5,9 +5,10 @@
  */
 
 import React, { useCallback, useMemo } from "react";
-import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
+import { View, ScrollView, StyleSheet, Image } from "react-native";
 import {
   useAppDesignTokens,
+  useResponsive,
   AtomicInput,
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
@@ -38,6 +39,8 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
+  const { width: screenWidth, horizontalPadding } = useResponsive();
+  const imageSize = screenWidth - horizontalPadding * 2;
 
   const feature = useReplaceBackgroundFeature({
     config,
@@ -68,9 +71,6 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
   }, [feature]);
 
   if (feature.processedUrl) {
-    const screenWidth = Dimensions.get("window").width;
-    const imageSize = screenWidth - 48;
-
     return (
       <ScrollView
         style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}

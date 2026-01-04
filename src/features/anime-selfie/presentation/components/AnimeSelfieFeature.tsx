@@ -5,8 +5,8 @@
  */
 
 import React, { useCallback, useMemo } from "react";
-import { ScrollView, StyleSheet, Image, Dimensions } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { ScrollView, StyleSheet, Image } from "react-native";
+import { useAppDesignTokens, useResponsive } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
 import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
@@ -35,6 +35,8 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
+  const { width: screenWidth, horizontalPadding } = useResponsive();
+  const imageSize = screenWidth - horizontalPadding * 2;
 
   const feature = useAnimeSelfieFeature({
     config,
@@ -65,9 +67,6 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
   }, [feature]);
 
   if (feature.processedUrl) {
-    const screenWidth = Dimensions.get("window").width;
-    const imageSize = screenWidth - 48;
-
     return (
       <ScrollView
         style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
