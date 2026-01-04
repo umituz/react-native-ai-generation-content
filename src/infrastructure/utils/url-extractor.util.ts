@@ -34,6 +34,14 @@ export function extractOutputUrl(
     }
   }
 
+  // Check top-level image/video objects (for birefnet, rembg, etc.)
+  const topMedia =
+    (resultObj.image as Record<string, unknown>) ||
+    (resultObj.video as Record<string, unknown>);
+  if (topMedia && typeof topMedia === "object" && typeof topMedia.url === "string") {
+    return topMedia.url;
+  }
+
   // Check nested data/output objects
   const nested =
     (resultObj.data as Record<string, unknown>) ||
@@ -177,6 +185,13 @@ export function extractImageUrls(result: unknown): string[] {
 
   const urls: string[] = [];
   const resultObj = result as Record<string, unknown>;
+
+  // Check top-level image object (birefnet, rembg format)
+  const topImage = resultObj.image as Record<string, unknown>;
+  if (topImage && typeof topImage === "object" && typeof topImage.url === "string") {
+    urls.push(topImage.url);
+    return urls;
+  }
 
   // Check images array
   if (Array.isArray(resultObj.images)) {
