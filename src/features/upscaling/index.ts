@@ -12,15 +12,11 @@ export type {
   UpscaleFeatureState,
   UpscaleTranslations,
   UpscaleFeatureConfig,
-  UpscaleResultExtractor,
 } from "./domain";
 
 // Presentation Hooks
 export { useUpscaleFeature } from "./presentation";
-export type {
-  UseUpscaleFeatureProps,
-  UseUpscaleFeatureReturn,
-} from "./presentation";
+export type { UseUpscaleFeatureProps } from "./presentation";
 
 // Presentation Components
 export { UpscaleFeature, UpscaleResultView } from "./presentation";

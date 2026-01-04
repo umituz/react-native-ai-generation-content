@@ -24,6 +24,8 @@ export interface AIKissFeatureProps {
   onSaveVideo: (videoUrl: string) => Promise<void>;
   /** Custom video player renderer - required for video playback */
   renderVideoPlayer: (props: { videoUrl: string; size: number }) => React.ReactNode;
+  /** Called before processing starts. Return false to cancel. */
+  onBeforeProcess?: () => Promise<boolean>;
   renderProcessingModal?: (props: {
     visible: boolean;
     progress: number;
@@ -37,6 +39,7 @@ export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
   onSelectTargetImage,
   onSaveVideo,
   renderVideoPlayer,
+  onBeforeProcess,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
@@ -48,6 +51,7 @@ export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
     onSelectSourceImage,
     onSelectTargetImage,
     onSaveVideo,
+    onBeforeProcess,
   });
 
   const handleProcess = useCallback(() => {

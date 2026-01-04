@@ -17,7 +17,7 @@ export class CreationsFetcher {
 
     async getAll(userId: string): Promise<Creation[]> {
         if (__DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log("[CreationsRepository] getAll()", { userId });
         }
 
@@ -29,7 +29,7 @@ export class CreationsFetcher {
             const snapshot = await getDocs(q);
 
             if (__DEV__) {
-                // eslint-disable-next-line no-console
+                 
                 console.log("[CreationsRepository] Fetched:", snapshot.docs.length);
             }
 
@@ -39,7 +39,7 @@ export class CreationsFetcher {
             });
         } catch (error) {
             if (__DEV__) {
-                // eslint-disable-next-line no-console
+                 
                 console.error("[CreationsRepository] getAll() ERROR", error);
             }
             return [];
@@ -48,7 +48,7 @@ export class CreationsFetcher {
 
     async getById(userId: string, id: string): Promise<Creation | null> {
         if (__DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log("[CreationsRepository] getById()", { userId, id });
         }
 
@@ -60,7 +60,7 @@ export class CreationsFetcher {
 
             if (!docSnap.exists()) {
                 if (__DEV__) {
-                    // eslint-disable-next-line no-console
+                     
                     console.log("[CreationsRepository] Document not found");
                 }
                 return null;
@@ -70,7 +70,7 @@ export class CreationsFetcher {
             return this.documentMapper(docSnap.id, data);
         } catch (error) {
             if (__DEV__) {
-                // eslint-disable-next-line no-console
+                 
                 console.error("[CreationsRepository] getById() ERROR", error);
             }
             return null;

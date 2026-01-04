@@ -29,7 +29,7 @@ export function showVideoGenerationSuccess(
   onEditVideo?: VideoNavigationFunction,
 ): void {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log("[VideoGeneration] Success");
   }
 
@@ -57,7 +57,7 @@ export function handleGenerationError(
   const message = error instanceof Error ? error.message : "An error occurred";
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.error("[VideoGeneration] Error:", error);
   }
 
@@ -72,7 +72,7 @@ export function showContentModerationWarning(
   reason?: string
 ): void {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.warn("[VideoGeneration] Content moderation warning:", reason);
   }
 

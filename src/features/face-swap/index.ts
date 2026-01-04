@@ -11,15 +11,11 @@ export type {
   FaceSwapFeatureState,
   FaceSwapTranslations,
   FaceSwapFeatureConfig,
-  FaceSwapResultExtractor,
 } from "./domain";
 
 // Presentation Hooks
 export { useFaceSwapFeature } from "./presentation";
-export type {
-  UseFaceSwapFeatureProps,
-  UseFaceSwapFeatureReturn,
-} from "./presentation";
+export type { UseFaceSwapFeatureProps } from "./presentation";
 
 // Presentation Components
 export { FaceSwapFeature } from "./presentation";

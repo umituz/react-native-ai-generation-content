@@ -105,7 +105,7 @@ export async function executeTextToImage(
   const { model, buildInput, extractResult, onProgress } = options;
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log(`[TextToImage] Provider: ${provider.providerId}, Model: ${model}`);
   }
 
@@ -134,7 +134,7 @@ export async function executeTextToImage(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("[TextToImage] Error:", message);
     }
     return { success: false, error: message };

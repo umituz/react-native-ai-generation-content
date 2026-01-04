@@ -46,7 +46,7 @@ export function useScriptGenerator({
         }
       } catch (error) {
         if (__DEV__) {
-          // eslint-disable-next-line no-console
+           
           console.error("Script generation error:", error);
         }
       } finally {

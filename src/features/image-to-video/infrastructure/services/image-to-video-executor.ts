@@ -52,7 +52,7 @@ export async function executeImageToVideo(
   options: ExecuteImageToVideoOptions,
 ): Promise<ImageToVideoResult> {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log("[ImageToVideoExecutor] executeImageToVideo() called");
   }
 
@@ -60,7 +60,7 @@ export async function executeImageToVideo(
 
   if (!provider) {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("[ImageToVideoExecutor] No AI provider configured");
     }
     return { success: false, error: "No AI provider configured" };
@@ -68,7 +68,7 @@ export async function executeImageToVideo(
 
   if (!provider.isInitialized()) {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("[ImageToVideoExecutor] AI provider not initialized");
     }
     return { success: false, error: "AI provider not initialized" };
@@ -81,7 +81,7 @@ export async function executeImageToVideo(
   const { model, buildInput, extractResult, onProgress } = options;
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log(`[ImageToVideoExecutor] Provider: ${provider.providerId}, Model: ${model}`);
   }
 
@@ -89,7 +89,7 @@ export async function executeImageToVideo(
     onProgress?.(5);
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[ImageToVideoExecutor] Starting provider.subscribe()...");
     }
 
@@ -101,7 +101,7 @@ export async function executeImageToVideo(
     const result = await provider.subscribe(model, input, {
       onQueueUpdate: (status) => {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-          // eslint-disable-next-line no-console
+           
           console.log("[ImageToVideoExecutor] Queue status:", status.status, "position:", status.queuePosition);
         }
         // Map provider status to progress using centralized mapper
@@ -112,12 +112,12 @@ export async function executeImageToVideo(
     });
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[ImageToVideoExecutor] Subscribe resolved, result keys:", result ? Object.keys(result as object) : "null");
     }
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[ImageToVideoExecutor] provider.subscribe() completed");
     }
 
@@ -127,7 +127,7 @@ export async function executeImageToVideo(
 
     if (!extracted?.videoUrl) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.error("[ImageToVideoExecutor] No video URL in response");
       }
       return { success: false, error: "No video in response" };
@@ -141,7 +141,7 @@ export async function executeImageToVideo(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("[ImageToVideoExecutor] Error:", message);
     }
     return { success: false, error: message };

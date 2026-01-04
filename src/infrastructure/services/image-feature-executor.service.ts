@@ -84,7 +84,7 @@ export async function executeImageFeature(
   const model = provider.getImageFeatureModel(featureType);
 
   if (__DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log(`[Image:${featureType}] Provider: ${provider.providerId}, Model: ${model}`);
   }
 
@@ -127,7 +127,7 @@ export async function executeImageFeature(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (__DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error(`[Image:${featureType}] Error:`, message);
     }
     return { success: false, error: message };

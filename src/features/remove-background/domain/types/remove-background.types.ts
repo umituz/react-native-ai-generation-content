@@ -1,7 +1,14 @@
 /**
  * Remove Background Feature Types
- * Request, Result, Config types for background removal
+ * Extends base image-to-image types with remove-background options
  */
+
+import type {
+  BaseImageResult,
+  BaseSingleImageState,
+  BaseImageTranslations,
+  SingleImageConfig,
+} from "../../../image-to-image/domain/types";
 
 export interface RemoveBackgroundOptions {
   refineEdges?: boolean;
@@ -16,46 +23,13 @@ export interface RemoveBackgroundRequest {
   options?: RemoveBackgroundOptions;
 }
 
-export interface RemoveBackgroundResult {
-  success: boolean;
-  imageUrl?: string;
-  imageBase64?: string;
-  error?: string;
-  requestId?: string;
-}
+export type RemoveBackgroundResult = BaseImageResult;
 
-export interface RemoveBackgroundFeatureState {
-  imageUri: string | null;
-  processedUrl: string | null;
-  isProcessing: boolean;
-  progress: number;
-  error: string | null;
-}
+export type RemoveBackgroundFeatureState = BaseSingleImageState;
 
-export interface RemoveBackgroundTranslations {
-  uploadTitle: string;
-  uploadSubtitle: string;
-  uploadChange: string;
-  uploadAnalyzing: string;
-  description: string;
-  processingText: string;
-  processButtonText: string;
-  successText: string;
-  saveButtonText: string;
-  tryAnotherText: string;
-  beforeLabel?: string;
-  afterLabel?: string;
-  compareHint?: string;
-}
+export type RemoveBackgroundTranslations = BaseImageTranslations;
 
-export type RemoveBackgroundResultExtractor = (result: unknown) => string | undefined;
-
-export interface RemoveBackgroundFeatureConfig {
-  creditCost?: number;
-  extractResult?: RemoveBackgroundResultExtractor;
-  prepareImage: (imageUri: string) => Promise<string>;
-  onImageSelect?: (uri: string) => void;
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: RemoveBackgroundResult) => void;
-  onError?: (error: string) => void;
+export interface RemoveBackgroundFeatureConfig
+  extends SingleImageConfig<RemoveBackgroundResult> {
+  defaultOptions?: RemoveBackgroundOptions;
 }

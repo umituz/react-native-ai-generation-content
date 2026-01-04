@@ -11,15 +11,11 @@ export type {
   RemoveBackgroundFeatureState,
   RemoveBackgroundTranslations,
   RemoveBackgroundFeatureConfig,
-  RemoveBackgroundResultExtractor,
 } from "./domain";
 
 // Presentation Hooks
 export { useRemoveBackgroundFeature } from "./presentation";
-export type {
-  UseRemoveBackgroundFeatureProps,
-  UseRemoveBackgroundFeatureReturn,
-} from "./presentation";
+export type { UseRemoveBackgroundFeatureProps } from "./presentation";
 
 // Presentation Components
 export { RemoveBackgroundFeature } from "./presentation";

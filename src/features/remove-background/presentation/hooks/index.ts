@@ -3,7 +3,4 @@
  */
 
 export { useRemoveBackgroundFeature } from "./useRemoveBackgroundFeature";
-export type {
-  UseRemoveBackgroundFeatureProps,
-  UseRemoveBackgroundFeatureReturn,
-} from "./useRemoveBackgroundFeature";
+export type { UseRemoveBackgroundFeatureProps } from "./useRemoveBackgroundFeature";

@@ -50,7 +50,7 @@ export async function executeTextToVideo(
   options: ExecuteTextToVideoOptions,
 ): Promise<TextToVideoResult> {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log("[TextToVideoExecutor] executeTextToVideo() called");
   }
 
@@ -58,7 +58,7 @@ export async function executeTextToVideo(
 
   if (!provider) {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("[TextToVideoExecutor] No AI provider configured");
     }
     return { success: false, error: "No AI provider configured" };
@@ -66,7 +66,7 @@ export async function executeTextToVideo(
 
   if (!provider.isInitialized()) {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("[TextToVideoExecutor] AI provider not initialized");
     }
     return { success: false, error: "AI provider not initialized" };
@@ -79,14 +79,14 @@ export async function executeTextToVideo(
   const { model, buildInput, extractResult, onProgress } = options;
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log(`[TextToVideoExecutor] Provider: ${provider.providerId}, Model: ${model}`);
   }
 
   try {
     onProgress?.(5);
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[TextToVideoExecutor] Starting provider.run()...");
     }
 
@@ -96,7 +96,7 @@ export async function executeTextToVideo(
       onProgress: (progressInfo) => {
         const progressValue = progressInfo.progress;
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-          // eslint-disable-next-line no-console
+           
           console.log("[TextToVideoExecutor] Progress:", progressValue);
         }
         onProgress?.(progressValue);
@@ -104,7 +104,7 @@ export async function executeTextToVideo(
     });
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[TextToVideoExecutor] provider.run() completed", result);
     }
 
@@ -114,7 +114,7 @@ export async function executeTextToVideo(
 
     if (!extracted?.videoUrl) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.error("[TextToVideoExecutor] No video URL in response");
       }
       return { success: false, error: "No video in response" };
@@ -128,7 +128,7 @@ export async function executeTextToVideo(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("[TextToVideoExecutor] Error:", message);
     }
     return { success: false, error: message };

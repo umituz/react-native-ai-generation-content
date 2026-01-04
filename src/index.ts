@@ -10,7 +10,7 @@
  *   } from '@umituz/react-native-ai-generation-content';
  */
 
-// eslint-disable-next-line no-console
+ 
 if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] @umituz/react-native-ai-generation-content/index.ts - Module loading");
 
 // =============================================================================
@@ -456,6 +456,12 @@ export * from "./domains/creations";
 // =============================================================================
 
 export * from "./domains/face-detection";
+
+// =============================================================================
+// FEATURES - Image-to-Image (Base)
+// =============================================================================
+
+export * from "./features/image-to-image";
 
 // =============================================================================
 // FEATURES - Background

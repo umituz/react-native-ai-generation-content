@@ -15,6 +15,7 @@ export interface UsePhotoRestoreFeatureProps {
   config: PhotoRestoreFeatureConfig;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
+  onBeforeProcess?: () => Promise<boolean>;
 }
 
 export interface UsePhotoRestoreFeatureReturn extends PhotoRestoreFeatureState {
@@ -35,7 +36,7 @@ const initialState: PhotoRestoreFeatureState = {
 export function usePhotoRestoreFeature(
   props: UsePhotoRestoreFeatureProps,
 ): UsePhotoRestoreFeatureReturn {
-  const { config, onSelectImage, onSaveImage } = props;
+  const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
   const [state, setState] = useState<PhotoRestoreFeatureState>(initialState);
 
   const selectImage = useCallback(async () => {
@@ -57,6 +58,11 @@ export function usePhotoRestoreFeature(
 
   const process = useCallback(async () => {
     if (!state.imageUri) return;
+
+    if (onBeforeProcess) {
+      const canProceed = await onBeforeProcess();
+      if (!canProceed) return;
+    }
 
     setState((prev) => ({
       ...prev,
@@ -93,7 +99,7 @@ export function usePhotoRestoreFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.imageUri, config, handleProgress]);
+  }, [state.imageUri, config, handleProgress, onBeforeProcess]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

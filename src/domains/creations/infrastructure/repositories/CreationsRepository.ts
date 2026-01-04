@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-console
+ 
 if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository.ts - Module loading");
 
 import { BaseRepository, FirestorePathResolver } from "@umituz/react-native-firebase";
@@ -39,22 +39,22 @@ export class CreationsRepository
     collectionName: string,
     options?: RepositoryOptions,
   ) {
-    // eslint-disable-next-line no-console
+     
     if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - Constructor start");
     super();
 
     const documentMapper = options?.documentMapper ?? mapDocumentToCreation;
 
-    // eslint-disable-next-line no-console
+     
     if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - Getting db");
     const db = this.getDb();
-    // eslint-disable-next-line no-console
+     
     if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - db:", db ? "available" : "null");
 
     this.pathResolver = new FirestorePathResolver(collectionName, db);
     this.fetcher = new CreationsFetcher(this.pathResolver, documentMapper);
     this.writer = new CreationsWriter(this.pathResolver);
-    // eslint-disable-next-line no-console
+     
     if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - Constructor end");
   }
 

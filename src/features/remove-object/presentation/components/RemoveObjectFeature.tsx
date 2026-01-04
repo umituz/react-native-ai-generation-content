@@ -25,6 +25,8 @@ export interface RemoveObjectFeatureProps {
   translations: RemoveObjectTranslations;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
+  /** Called before processing starts. Return false to cancel. */
+  onBeforeProcess?: () => Promise<boolean>;
   renderProcessingModal?: (props: {
     visible: boolean;
     progress: number;
@@ -36,6 +38,7 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
   translations,
   onSelectImage,
   onSaveImage,
+  onBeforeProcess,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
@@ -46,6 +49,7 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
     config,
     onSelectImage,
     onSaveImage,
+    onBeforeProcess,
   });
 
   const photoTranslations = useMemo(

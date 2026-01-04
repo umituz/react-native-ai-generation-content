@@ -32,7 +32,7 @@ export class MemeGenerationService {
       return text;
     } catch (error) {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.error("[MemeGenerationService] Enhance prompt error:", error);
       }
       return prompt;
@@ -71,7 +71,7 @@ export class MemeGenerationService {
       throw new Error("No image generated");
     } catch (error) {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.error("[MemeGenerationService] Generate meme error:", error);
       }
       throw error;

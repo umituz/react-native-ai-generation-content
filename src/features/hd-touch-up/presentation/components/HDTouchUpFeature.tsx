@@ -21,6 +21,8 @@ export interface HDTouchUpFeatureProps {
   translations: HDTouchUpTranslations;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
+  /** Called before processing starts. Return false to cancel. */
+  onBeforeProcess?: () => Promise<boolean>;
   renderProcessingModal?: (props: {
     visible: boolean;
     progress: number;
@@ -32,6 +34,7 @@ export const HDTouchUpFeature: React.FC<HDTouchUpFeatureProps> = ({
   translations,
   onSelectImage,
   onSaveImage,
+  onBeforeProcess,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
@@ -42,6 +45,7 @@ export const HDTouchUpFeature: React.FC<HDTouchUpFeatureProps> = ({
     config,
     onSelectImage,
     onSaveImage,
+    onBeforeProcess,
   });
 
   const photoTranslations = useMemo(

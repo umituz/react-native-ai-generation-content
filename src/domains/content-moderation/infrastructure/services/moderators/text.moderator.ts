@@ -44,7 +44,7 @@ class TextModerator extends BaseModerator {
 
   moderate(content: string): ModerationResult {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[TextModerator] moderate() called", {
         contentLength: content?.length ?? 0,
       });
@@ -53,7 +53,7 @@ class TextModerator extends BaseModerator {
     const validationError = this.validate(content);
     if (validationError) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.log("[TextModerator] validation failed", {
           ruleId: validationError.ruleId,
           violationType: validationError.violationType,
@@ -65,7 +65,7 @@ class TextModerator extends BaseModerator {
     const violations = this.evaluateRules(content);
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[TextModerator] moderate() completed", {
         isAllowed: violations.length === 0,
         violationsCount: violations.length,

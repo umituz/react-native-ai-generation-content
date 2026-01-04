@@ -63,7 +63,7 @@ export function useGenerationCallbacksBuilder<TRequest, TResult>(
 
       if (!canAfford()) {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-          // eslint-disable-next-line no-console
+           
           console.log("[Generation] Insufficient credits", {
             balance: config.creditBalance,
             cost: config.creditCost,

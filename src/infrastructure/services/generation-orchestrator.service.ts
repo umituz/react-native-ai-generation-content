@@ -28,7 +28,7 @@ class GenerationOrchestratorService {
 
   configure(config: OrchestratorConfig): void {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[Orchestrator] configure() called", {
         hasPollingConfig: !!config.polling,
         hasStatusUpdate: !!config.onStatusUpdate,
@@ -50,7 +50,7 @@ class GenerationOrchestratorService {
     const startTime = Date.now();
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[Orchestrator] Generate started:", {
         model: request.model,
         capability: request.capability,
@@ -73,7 +73,7 @@ class GenerationOrchestratorService {
       updateProgress("submitting");
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.log("[Orchestrator] Job submitted:", {
           requestId: submission.requestId,
           provider: provider.providerId,
@@ -101,7 +101,7 @@ class GenerationOrchestratorService {
       const duration = Date.now() - startTime;
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.log("[Orchestrator] Generate completed:", {
           requestId: submission.requestId,
           duration: `${duration}ms`,
@@ -126,7 +126,7 @@ class GenerationOrchestratorService {
       const errorInfo = classifyError(error);
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.error("[Orchestrator] Generation failed:", errorInfo);
       }
 

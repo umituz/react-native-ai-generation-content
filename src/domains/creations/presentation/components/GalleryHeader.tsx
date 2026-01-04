@@ -47,7 +47,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
               key={btn.id}
               onPress={() => {
                 if (__DEV__) {
-                  // eslint-disable-next-line no-console
+                   
                   console.log(`[GalleryHeader] ${btn.id} filter pressed`);
                 }
                 btn.onPress();

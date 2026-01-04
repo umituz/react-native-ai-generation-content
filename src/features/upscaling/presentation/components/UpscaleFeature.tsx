@@ -28,6 +28,8 @@ export interface UpscaleFeatureProps {
   onSelectImage: () => Promise<string | null>;
   /** Save image callback */
   onSaveImage: (imageUrl: string) => Promise<void>;
+  /** Called before processing starts. Return false to cancel. */
+  onBeforeProcess?: () => Promise<boolean>;
   /** Optional custom processing modal renderer */
   renderProcessingModal?: (props: {
     visible: boolean;
@@ -40,6 +42,7 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
   translations,
   onSelectImage,
   onSaveImage,
+  onBeforeProcess,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
@@ -48,6 +51,7 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
     config,
     onSelectImage,
     onSaveImage,
+    onBeforeProcess,
   });
 
   const photoTranslations = useMemo(

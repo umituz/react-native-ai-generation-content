@@ -29,7 +29,7 @@ export class JobPoller {
         onStatusUpdate?: (status: JobStatus, attempt: number, config: PollingConfig) => void,
     ): Promise<T> {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log("[JobPoller] pollForResult() started", {
                 provider: provider.providerId,
                 model,
@@ -48,7 +48,7 @@ export class JobPoller {
             await createPollingDelay(attempt, config);
 
             if (typeof __DEV__ !== "undefined" && __DEV__ && attempt % 5 === 0) {
-                // eslint-disable-next-line no-console
+                 
                 console.log("[JobPoller] pollForResult() attempt", {
                     attempt,
                     maxAttempts: config.maxAttempts,
@@ -64,7 +64,7 @@ export class JobPoller {
 
                 if (status.status === "COMPLETED") {
                     if (typeof __DEV__ !== "undefined" && __DEV__) {
-                        // eslint-disable-next-line no-console
+                         
                         console.log("[JobPoller] pollForResult() job COMPLETED", {
                             requestId,
                             attempt,

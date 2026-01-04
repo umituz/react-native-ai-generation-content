@@ -36,7 +36,7 @@ export function CreationsHomeCard({
 
    
   if (__DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log("[CreationsHomeCard] Render:", {
       isLoading,
       count: creations?.length ?? 0,

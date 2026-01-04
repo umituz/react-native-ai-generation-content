@@ -24,7 +24,7 @@ const initialState: DualImageVideoFeatureState = {
 export function useDualImageVideoFeature(
   props: UseDualImageVideoFeatureProps,
 ): UseDualImageVideoFeatureReturn {
-  const { featureType, config, onSelectSourceImage, onSelectTargetImage, onSaveVideo } = props;
+  const { featureType, config, onSelectSourceImage, onSelectTargetImage, onSaveVideo, onBeforeProcess } = props;
   const [state, setState] = useState<DualImageVideoFeatureState>(initialState);
 
   const selectSourceImage = useCallback(async () => {
@@ -59,6 +59,11 @@ export function useDualImageVideoFeature(
 
   const process = useCallback(async () => {
     if (!state.sourceImageUri || !state.targetImageUri) return;
+
+    if (onBeforeProcess) {
+      const canProceed = await onBeforeProcess();
+      if (!canProceed) return;
+    }
 
     setState((prev) => ({
       ...prev,
@@ -96,7 +101,7 @@ export function useDualImageVideoFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.sourceImageUri, state.targetImageUri, featureType, config, handleProgress]);
+  }, [state.sourceImageUri, state.targetImageUri, featureType, config, handleProgress, onBeforeProcess]);
 
   const save = useCallback(async () => {
     if (!state.processedVideoUrl) return;

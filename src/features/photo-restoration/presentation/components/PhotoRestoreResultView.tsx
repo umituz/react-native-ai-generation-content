@@ -10,7 +10,7 @@ import {
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
-import { ComparisonSlider } from "../../../replace-background/presentation/components/ComparisonSlider";
+import { ComparisonSlider } from "../../../upscaling/presentation/components/ComparisonSlider";
 import type { PhotoRestoreTranslations } from "../../domain/types";
 
 export interface PhotoRestoreResultViewProps {

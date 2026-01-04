@@ -15,6 +15,7 @@ export interface UseAIKissFeatureProps {
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
   onSaveVideo: (videoUrl: string) => Promise<void>;
+  onBeforeProcess?: () => Promise<boolean>;
 }
 
 export interface UseAIKissFeatureReturn extends AIKissFeatureState {

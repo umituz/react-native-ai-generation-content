@@ -56,6 +56,8 @@ export interface UseDualImageVideoFeatureProps {
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
   onSaveVideo: (videoUrl: string) => Promise<void>;
+  /** Called before processing starts. Return false to cancel. */
+  onBeforeProcess?: () => Promise<boolean>;
 }
 
 export interface UseDualImageVideoFeatureReturn extends DualImageVideoFeatureState {

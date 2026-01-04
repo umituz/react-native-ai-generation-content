@@ -3,7 +3,4 @@
  */
 
 export { useFaceSwapFeature } from "./useFaceSwapFeature";
-export type {
-  UseFaceSwapFeatureProps,
-  UseFaceSwapFeatureReturn,
-} from "./useFaceSwapFeature";
+export type { UseFaceSwapFeatureProps } from "./useFaceSwapFeature";

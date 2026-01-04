@@ -1,7 +1,14 @@
 /**
  * Face Swap Feature Types
- * Request, Result, Config types for face swap generation
+ * Extends base image-to-image types for dual image processing
  */
+
+import type {
+  BaseImageResult,
+  BaseDualImageState,
+  BaseDualImageTranslations,
+  DualImageConfig,
+} from "../../../image-to-image/domain/types";
 
 export interface FaceSwapOptions {
   enhanceFace?: boolean;
@@ -17,47 +24,12 @@ export interface FaceSwapRequest {
   options?: FaceSwapOptions;
 }
 
-export interface FaceSwapResult {
-  success: boolean;
-  imageUrl?: string;
-  imageBase64?: string;
-  error?: string;
-  requestId?: string;
-}
+export type FaceSwapResult = BaseImageResult;
 
-export interface FaceSwapFeatureState {
-  sourceImageUri: string | null;
-  targetImageUri: string | null;
-  processedUrl: string | null;
-  isProcessing: boolean;
-  progress: number;
-  error: string | null;
-}
+export type FaceSwapFeatureState = BaseDualImageState;
 
-export interface FaceSwapTranslations {
-  sourceUploadTitle: string;
-  sourceUploadSubtitle: string;
-  targetUploadTitle: string;
-  targetUploadSubtitle: string;
-  uploadChange: string;
-  uploadAnalyzing: string;
-  description: string;
-  processingText: string;
-  processButtonText: string;
-  successText: string;
-  saveButtonText: string;
-  tryAnotherText: string;
-}
+export type FaceSwapTranslations = BaseDualImageTranslations;
 
-export type FaceSwapResultExtractor = (result: unknown) => string | undefined;
-
-export interface FaceSwapFeatureConfig {
-  creditCost?: number;
-  extractResult?: FaceSwapResultExtractor;
-  prepareImage: (imageUri: string) => Promise<string>;
-  onSourceImageSelect?: (uri: string) => void;
-  onTargetImageSelect?: (uri: string) => void;
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: FaceSwapResult) => void;
-  onError?: (error: string) => void;
+export interface FaceSwapFeatureConfig extends DualImageConfig<FaceSwapResult> {
+  defaultOptions?: FaceSwapOptions;
 }

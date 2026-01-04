@@ -11,7 +11,7 @@ declare const __DEV__: boolean;
 export class ProviderValidator {
     getProvider(): IAIProvider {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log("[ProviderValidator] getProvider() called");
         }
 
@@ -19,7 +19,7 @@ export class ProviderValidator {
 
         if (!provider) {
             if (typeof __DEV__ !== "undefined" && __DEV__) {
-                // eslint-disable-next-line no-console
+                 
                 console.error("[ProviderValidator] No active provider found!");
             }
             throw new Error(
@@ -29,7 +29,7 @@ export class ProviderValidator {
 
         if (!provider.isInitialized()) {
             if (typeof __DEV__ !== "undefined" && __DEV__) {
-                // eslint-disable-next-line no-console
+                 
                 console.error("[ProviderValidator] Provider not initialized:", provider.providerId);
             }
             throw new Error(
@@ -38,7 +38,7 @@ export class ProviderValidator {
         }
 
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log("[ProviderValidator] getProvider() returning:", {
                 providerId: provider.providerId,
                 isInitialized: provider.isInitialized(),

@@ -64,7 +64,7 @@ function getStatusCode(error: unknown): number | undefined {
 
 function logClassification(info: AIErrorInfo): AIErrorInfo {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log("[ErrorClassifier] Classified as:", {
       type: info.type,
       messageKey: info.messageKey,
@@ -79,7 +79,7 @@ export function classifyError(error: unknown): AIErrorInfo {
   const statusCode = getStatusCode(error);
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log("[ErrorClassifier] Classifying error:", {
       message: message.slice(0, 100),
       statusCode,

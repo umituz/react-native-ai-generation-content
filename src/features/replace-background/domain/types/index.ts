@@ -1,5 +1,5 @@
 /**
- * Background Domain Types Index
+ * Replace Background Domain Types Index
  */
 
 export type {
@@ -9,6 +9,5 @@ export type {
   ReplaceBackgroundResult,
   ReplaceBackgroundFeatureState,
   ReplaceBackgroundTranslations,
-  ReplaceBackgroundResultExtractor,
   ReplaceBackgroundFeatureConfig,
 } from "./replace-background.types";

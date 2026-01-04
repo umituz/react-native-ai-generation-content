@@ -15,6 +15,7 @@ export interface UseAIHugFeatureProps {
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
   onSaveVideo: (videoUrl: string) => Promise<void>;
+  onBeforeProcess?: () => Promise<boolean>;
 }
 
 export interface UseAIHugFeatureReturn extends AIHugFeatureState {

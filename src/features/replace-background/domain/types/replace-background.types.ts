@@ -1,7 +1,14 @@
 /**
  * Replace Background Feature Types
- * Request, Result, Config types for background replacement
+ * Extends base image-to-image types with replace-background options
  */
+
+import type {
+  BaseImageResult,
+  BaseImageWithPromptState,
+  BaseImageTranslations,
+  SingleImageConfig,
+} from "../../../image-to-image/domain/types";
 
 export type ReplaceBackgroundMode =
   | "replace"
@@ -24,50 +31,18 @@ export interface ReplaceBackgroundRequest {
   options?: ReplaceBackgroundOptions;
 }
 
-export interface ReplaceBackgroundResult {
-  success: boolean;
-  imageUrl?: string;
-  imageBase64?: string;
-  error?: string;
-  requestId?: string;
-}
+export type ReplaceBackgroundResult = BaseImageResult;
 
-export interface ReplaceBackgroundFeatureState {
-  imageUri: string | null;
-  prompt: string;
-  processedUrl: string | null;
-  isProcessing: boolean;
-  progress: number;
-  error: string | null;
+export interface ReplaceBackgroundFeatureState extends BaseImageWithPromptState {
   mode: ReplaceBackgroundMode;
 }
 
-export interface ReplaceBackgroundTranslations {
-  uploadTitle: string;
-  uploadSubtitle: string;
-  uploadChange: string;
-  uploadAnalyzing: string;
+export interface ReplaceBackgroundTranslations extends BaseImageTranslations {
   promptPlaceholder: string;
-  description: string;
-  processingText: string;
-  processButtonText: string;
-  successText: string;
-  saveButtonText: string;
-  tryAnotherText: string;
-  beforeLabel?: string;
-  afterLabel?: string;
-  compareHint?: string;
 }
 
-export type ReplaceBackgroundResultExtractor = (result: unknown) => string | undefined;
-
-export interface ReplaceBackgroundFeatureConfig {
-  creditCost?: number;
+export interface ReplaceBackgroundFeatureConfig
+  extends SingleImageConfig<ReplaceBackgroundResult> {
   defaultMode?: ReplaceBackgroundMode;
-  extractResult?: ReplaceBackgroundResultExtractor;
-  prepareImage: (imageUri: string) => Promise<string>;
-  onImageSelect?: (uri: string) => void;
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: ReplaceBackgroundResult) => void;
-  onError?: (error: string) => void;
+  onPromptChange?: (prompt: string) => void;
 }

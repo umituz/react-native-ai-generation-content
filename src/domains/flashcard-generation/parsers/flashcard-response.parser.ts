@@ -26,7 +26,7 @@ export function parseFlashcardsFromResponse(
     return rawFlashcards.map((item, index) => mapToGeneratedFlashcard(item, request, index));
   } catch (error) {
     if (__DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("Failed to parse AI response:", error);
     }
     return [];

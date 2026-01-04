@@ -1,31 +1,9 @@
 /**
  * Replace Background Feature
- * AI-powered background replacement and removal feature for React Native
+ * AI-powered background replacement feature for React Native
  */
 
-// Domain Types - Legacy
-export type {
-  BackgroundProcessRequest,
-  BackgroundProcessResult,
-  BackgroundFeatureState,
-  SamplePrompt,
-  StudioMode,
-  StudioModeConfig,
-  ComparisonState,
-  ImagePickerProps,
-  PromptInputProps,
-  GenerateButtonProps,
-  ResultDisplayProps,
-  ErrorDisplayProps,
-  FeatureHeaderProps,
-  ModeSelectorProps,
-  ComparisonSliderProps,
-  ProcessRequestParams,
-  BackgroundFeatureConfig,
-  UseBackgroundFeatureConfig,
-} from "./domain/entities";
-
-// Domain Types - Provider-Agnostic
+// Domain Types
 export type {
   ReplaceBackgroundMode,
   ReplaceBackgroundOptions,
@@ -34,39 +12,15 @@ export type {
   ReplaceBackgroundFeatureState,
   ReplaceBackgroundTranslations,
   ReplaceBackgroundFeatureConfig,
-  ReplaceBackgroundResultExtractor,
 } from "./domain/types";
 
-// Constants
-export { DEFAULT_SAMPLE_PROMPTS } from "./infrastructure/constants";
-
 // Presentation Components
-export {
-  BackgroundFeature,
-  ReplaceBackgroundFeature,
-  ImagePicker,
-  PromptInput,
-  GenerateButton,
-  ResultDisplay,
-  ErrorDisplay,
-  FeatureHeader,
-  ComparisonSlider,
-  ModeSelector,
-} from "./presentation/components";
-
-export type {
-  BackgroundFeatureProps,
-  ReplaceBackgroundFeatureProps,
-} from "./presentation/components";
+export { ReplaceBackgroundFeature } from "./presentation/components";
+export type { ReplaceBackgroundFeatureProps } from "./presentation/components";
 
 // Presentation Hooks
-export {
-  useBackgroundFeature,
-  useReplaceBackgroundFeature,
-} from "./presentation/hooks";
-
+export { useReplaceBackgroundFeature } from "./presentation/hooks";
 export type {
-  UseBackgroundFeatureReturn,
   UseReplaceBackgroundFeatureProps,
   UseReplaceBackgroundFeatureReturn,
 } from "./presentation/hooks";

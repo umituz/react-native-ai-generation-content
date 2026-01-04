@@ -13,7 +13,7 @@ export class CreationsWriter {
 
     async create(userId: string, creation: Creation): Promise<void> {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log("[CreationsWriter] create() start", { userId, creationId: creation.id });
         }
 
@@ -35,12 +35,12 @@ export class CreationsWriter {
         try {
             await setDoc(docRef, data);
             if (typeof __DEV__ !== "undefined" && __DEV__) {
-                // eslint-disable-next-line no-console
+                 
                 console.log("[CreationsWriter] create() success", { creationId: creation.id });
             }
         } catch (error) {
             if (typeof __DEV__ !== "undefined" && __DEV__) {
-                // eslint-disable-next-line no-console
+                 
                 console.error("[CreationsWriter] create() error", error);
             }
             throw error;
@@ -53,7 +53,7 @@ export class CreationsWriter {
         updates: Partial<Creation>,
     ): Promise<boolean> {
         if (__DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log("[CreationsRepository] update()", { userId, id, updates });
         }
 
@@ -89,7 +89,7 @@ export class CreationsWriter {
             return true;
         } catch (error) {
             if (__DEV__) {
-                // eslint-disable-next-line no-console
+                 
                 console.error("[CreationsRepository] update() ERROR", error);
             }
             return false;

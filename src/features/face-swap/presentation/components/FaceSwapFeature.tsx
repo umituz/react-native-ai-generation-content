@@ -22,6 +22,8 @@ export interface FaceSwapFeatureProps {
   onSelectSourceImage: () => Promise<string | null>;
   onSelectTargetImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
+  /** Called before processing starts. Return false to cancel. */
+  onBeforeProcess?: () => Promise<boolean>;
   renderProcessingModal?: (props: {
     visible: boolean;
     progress: number;
@@ -34,6 +36,7 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
   onSelectSourceImage,
   onSelectTargetImage,
   onSaveImage,
+  onBeforeProcess,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
@@ -45,6 +48,7 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
     onSelectSourceImage,
     onSelectTargetImage,
     onSaveImage,
+    onBeforeProcess,
   });
 
   const handleProcess = useCallback(() => {

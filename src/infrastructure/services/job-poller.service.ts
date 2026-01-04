@@ -144,7 +144,7 @@ export async function pollJob<T = unknown>(
         // Continue retrying
         if (attempt < maxAttempts - 1) {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log(
               `[JobPoller] Transient error, retrying (${attempt + 1}/${maxAttempts})`,
             );

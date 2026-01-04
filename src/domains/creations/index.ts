@@ -3,7 +3,7 @@
  * AI-generated creations gallery with filtering, sharing, and management
  */
 
-// eslint-disable-next-line no-console
+ 
 if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] creations/index.ts - Module loading");
 
 // =============================================================================

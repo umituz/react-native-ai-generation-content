@@ -14,7 +14,7 @@ class ProviderRegistry {
   register(provider: IAIProvider): void {
     if (this.providers.has(provider.providerId)) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.warn(
           `[ProviderRegistry] Provider ${provider.providerId} already registered`,
         );
@@ -25,7 +25,7 @@ class ProviderRegistry {
     this.providers.set(provider.providerId, provider);
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log(
         `[ProviderRegistry] Registered provider: ${provider.providerId}`,
       );
@@ -46,14 +46,14 @@ class ProviderRegistry {
     this.activeProviderId = providerId;
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log(`[ProviderRegistry] Active provider set to: ${providerId}`);
     }
   }
 
   getActiveProvider(): IAIProvider | null {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[ProviderRegistry] getActiveProvider() called", {
         activeProviderId: this.activeProviderId,
         registeredProviders: Array.from(this.providers.keys()),
@@ -62,7 +62,7 @@ class ProviderRegistry {
 
     if (!this.activeProviderId) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.warn("[ProviderRegistry] No active provider set!");
       }
       return null;
@@ -71,7 +71,7 @@ class ProviderRegistry {
     const provider = this.providers.get(this.activeProviderId) ?? null;
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[ProviderRegistry] getActiveProvider() returning", {
         providerId: provider?.providerId,
         isInitialized: provider?.isInitialized(),

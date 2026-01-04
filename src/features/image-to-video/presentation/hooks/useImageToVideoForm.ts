@@ -63,32 +63,32 @@ export function useImageToVideoForm(
 
   const handleSelectImages = useCallback(async () => {
     if (__DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[useImageToVideoForm] handleSelectImages called");
     }
     if (callbacks.onSelectImages) {
       try {
         const images = await callbacks.onSelectImages();
         if (__DEV__) {
-          // eslint-disable-next-line no-console
+           
           console.log("[useImageToVideoForm] Images selected:", images.length);
         }
         if (images.length > 0) {
           actions.addImages(images);
           if (__DEV__) {
-            // eslint-disable-next-line no-console
+             
             console.log("[useImageToVideoForm] Images added to state");
           }
         }
       } catch (error) {
         if (__DEV__) {
-          // eslint-disable-next-line no-console
+           
           console.error("[useImageToVideoForm] Error selecting images:", error);
         }
       }
     } else {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.warn("[useImageToVideoForm] No onSelectImages callback provided");
       }
     }

@@ -25,6 +25,8 @@ export interface PhotoRestoreFeatureProps {
   onSelectImage: () => Promise<string | null>;
   /** Save image callback */
   onSaveImage: (imageUrl: string) => Promise<void>;
+  /** Called before processing starts. Return false to cancel. */
+  onBeforeProcess?: () => Promise<boolean>;
   /** Optional custom processing modal renderer */
   renderProcessingModal?: (props: {
     visible: boolean;
@@ -37,6 +39,7 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
   translations,
   onSelectImage,
   onSaveImage,
+  onBeforeProcess,
   renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
@@ -45,6 +48,7 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
     config,
     onSelectImage,
     onSaveImage,
+    onBeforeProcess,
   });
 
   const photoTranslations = useMemo(

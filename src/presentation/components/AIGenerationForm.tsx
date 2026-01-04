@@ -48,7 +48,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   children,
 }) => {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log("[AIGenerationForm] RENDERING NOW - hideGenerateButton:", hideGenerateButton);
   }
 
@@ -58,7 +58,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
 
   useEffect(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[AIGenerationForm] MOUNTED/UPDATED - prompt:", prompt, "isGenerating:", isGenerating, "buttonIsDisabled:", buttonIsDisabled, "hideGenerateButton:", hideGenerateButton);
     }
   }, [prompt, isGenerating, buttonIsDisabled, hideGenerateButton]);

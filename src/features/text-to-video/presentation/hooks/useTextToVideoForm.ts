@@ -90,7 +90,7 @@ export function useTextToVideoForm(
 
   const handleFrameChange = useCallback((index: number) => {
     if (__DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[TextToVideoForm] Frame change requested:", index);
     }
   }, []);

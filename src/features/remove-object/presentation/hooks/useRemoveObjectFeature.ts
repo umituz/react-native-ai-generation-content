@@ -16,6 +16,7 @@ export interface UseRemoveObjectFeatureProps {
   onSelectImage: () => Promise<string | null>;
   onSelectMask?: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
+  onBeforeProcess?: () => Promise<boolean>;
 }
 
 export interface UseRemoveObjectFeatureReturn extends RemoveObjectFeatureState {
@@ -40,7 +41,7 @@ const initialState: RemoveObjectFeatureState = {
 export function useRemoveObjectFeature(
   props: UseRemoveObjectFeatureProps,
 ): UseRemoveObjectFeatureReturn {
-  const { config, onSelectImage, onSelectMask, onSaveImage } = props;
+  const { config, onSelectImage, onSelectMask, onSaveImage, onBeforeProcess } = props;
   const [state, setState] = useState<RemoveObjectFeatureState>(initialState);
 
   const selectImage = useCallback(async () => {
@@ -81,6 +82,11 @@ export function useRemoveObjectFeature(
 
   const process = useCallback(async () => {
     if (!state.imageUri) return;
+
+    if (onBeforeProcess) {
+      const canProceed = await onBeforeProcess();
+      if (!canProceed) return;
+    }
 
     setState((prev) => ({
       ...prev,
@@ -124,7 +130,7 @@ export function useRemoveObjectFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.imageUri, state.maskUri, state.prompt, config, handleProgress]);
+  }, [state.imageUri, state.maskUri, state.prompt, config, handleProgress, onBeforeProcess]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

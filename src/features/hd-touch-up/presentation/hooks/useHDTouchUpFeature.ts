@@ -15,6 +15,7 @@ export interface UseHDTouchUpFeatureProps {
   config: HDTouchUpFeatureConfig;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
+  onBeforeProcess?: () => Promise<boolean>;
 }
 
 export interface UseHDTouchUpFeatureReturn extends HDTouchUpFeatureState {
@@ -35,7 +36,7 @@ const initialState: HDTouchUpFeatureState = {
 export function useHDTouchUpFeature(
   props: UseHDTouchUpFeatureProps,
 ): UseHDTouchUpFeatureReturn {
-  const { config, onSelectImage, onSaveImage } = props;
+  const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
   const [state, setState] = useState<HDTouchUpFeatureState>(initialState);
 
   const selectImage = useCallback(async () => {
@@ -57,6 +58,11 @@ export function useHDTouchUpFeature(
 
   const process = useCallback(async () => {
     if (!state.imageUri) return;
+
+    if (onBeforeProcess) {
+      const canProceed = await onBeforeProcess();
+      if (!canProceed) return;
+    }
 
     setState((prev) => ({
       ...prev,
@@ -93,7 +99,7 @@ export function useHDTouchUpFeature(
       }));
       config.onError?.(errorMessage);
     }
-  }, [state.imageUri, config, handleProgress]);
+  }, [state.imageUri, config, handleProgress, onBeforeProcess]);
 
   const save = useCallback(async () => {
     if (!state.processedUrl) return;

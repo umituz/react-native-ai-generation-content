@@ -43,7 +43,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
   style,
 }) => {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log("[GenerateButton] RENDERING NOW");
   }
 
@@ -54,14 +54,14 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
 
   useEffect(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[GenerateButton] MOUNTED/UPDATED - isDisabled:", isDisabled, "isProcessing:", isProcessing, "disabled:", disabled, "text:", text);
     }
   }, [isDisabled, isProcessing, disabled, text]);
 
   const handlePress = () => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log("[GenerateButton] PRESSED - disabled:", disabled, "isDisabled:", isDisabled, "isProcessing:", isProcessing);
     }
     if (!disabled) {

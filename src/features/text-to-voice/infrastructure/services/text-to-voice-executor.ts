@@ -61,7 +61,7 @@ export async function executeTextToVoice(
   const { model, buildInput, extractResult, onProgress } = options;
 
   if (__DEV__) {
-    // eslint-disable-next-line no-console
+     
     console.log(`[TextToVoice] Provider: ${provider.providerId}, Model: ${model}`);
   }
 
@@ -90,7 +90,7 @@ export async function executeTextToVoice(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (__DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.error("[TextToVoice] Error:", message);
     }
     return { success: false, error: message };

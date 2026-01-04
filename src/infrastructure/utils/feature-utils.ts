@@ -24,13 +24,13 @@ export function createDevCallbacks(featureName: string) {
   return {
     onSuccess: (result: unknown) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.log(`[${featureName}] Success:`, result);
       }
     },
     onError: (error: unknown) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
+         
         console.error(`[${featureName}] Error:`, error);
       }
     },
@@ -51,7 +51,7 @@ async function checkCreditGuard(cost: number, featureName: string): Promise<bool
 
   if (!authService.isAuthenticated()) {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log(`[${featureName}] Auth required`);
     }
     try {
@@ -65,7 +65,7 @@ async function checkCreditGuard(cost: number, featureName: string): Promise<bool
   const hasCredits = await creditService.checkCredits(cost);
   if (!hasCredits) {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      // eslint-disable-next-line no-console
+       
       console.log(`[${featureName}] Insufficient credits`);
     }
     paywallService.showPaywall(cost);

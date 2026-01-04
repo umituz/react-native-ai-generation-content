@@ -4,7 +4,6 @@
  */
 
 import { useState, useCallback, useMemo } from "react";
-import { executeTextToVideo } from "../../infrastructure/services";
 import type {
   TextToVideoFeatureState,
   TextToVideoConfig,
@@ -14,6 +13,7 @@ import type {
   TextToVideoInputBuilder,
   TextToVideoResultExtractor,
 } from "../../domain/types";
+import { executeVideoGeneration } from "./textToVideoExecution";
 
 declare const __DEV__: boolean;
 
@@ -70,8 +70,7 @@ export function useTextToVideoFeature(
         const error = "Prompt is required";
         setState((prev) => ({ ...prev, error }));
         callbacks.onError?.(error);
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          // eslint-disable-next-line no-console
+        if (__DEV__) {
           console.log("[TextToVideoFeature] Generate failed: Prompt is required");
         }
         return { success: false, error };
@@ -82,17 +81,18 @@ export function useTextToVideoFeature(
       }
 
       if (callbacks.onAuthCheck && !callbacks.onAuthCheck()) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          // eslint-disable-next-line no-console
+        if (__DEV__) {
           console.log("[TextToVideoFeature] Generate failed: Authentication required");
         }
         return { success: false, error: "Authentication required" };
       }
 
-      if (callbacks.onCreditCheck && !(await callbacks.onCreditCheck(config.creditCost))) {
+      if (
+        callbacks.onCreditCheck &&
+        !(await callbacks.onCreditCheck(config.creditCost))
+      ) {
         callbacks.onShowPaywall?.(config.creditCost);
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          // eslint-disable-next-line no-console
+        if (__DEV__) {
           console.log("[TextToVideoFeature] Generate failed: Insufficient credits");
         }
         return { success: false, error: "Insufficient credits" };
@@ -109,7 +109,15 @@ export function useTextToVideoFeature(
                 resolve({ success: false, error: "Content policy violation" });
               },
               async () => {
-                const result = await executeGeneration(effectivePrompt, options);
+                const result = await executeVideoGeneration(
+                  effectivePrompt,
+                  options,
+                  { userId, config, callbacks, buildInput, extractResult },
+                  {
+                    onStateUpdate: (update) =>
+                      setState((prev) => ({ ...prev, ...update })),
+                  },
+                );
                 resolve(result);
               },
             );
@@ -117,116 +125,14 @@ export function useTextToVideoFeature(
         }
       }
 
-      return executeGeneration(effectivePrompt, options);
+      return executeVideoGeneration(
+        effectivePrompt,
+        options,
+        { userId, config, callbacks, buildInput, extractResult },
+        { onStateUpdate: (update) => setState((prev) => ({ ...prev, ...update })) },
+      );
     },
-    [state.prompt, callbacks, config.creditCost],
-  );
-
-  const executeGeneration = useCallback(
-    async (prompt: string, options?: TextToVideoOptions): Promise<TextToVideoResult> => {
-      // Generate unique creation ID for tracking
-      const creationId = `text-to-video_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-
-      setState((prev) => ({
-        ...prev,
-        isProcessing: true,
-        progress: 0,
-        error: null,
-      }));
-
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
-        console.log("[TextToVideoFeature] Starting generation with prompt:", prompt, "creationId:", creationId);
-      }
-
-      // Create "processing" creation at start (fire-and-forget to not block generation)
-      if (callbacks.onGenerationStart) {
-        callbacks.onGenerationStart({
-          creationId,
-          type: "text-to-video",
-          prompt,
-          metadata: options as Record<string, unknown> | undefined,
-        }).catch((err) => {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            // eslint-disable-next-line no-console
-            console.warn("[TextToVideoFeature] onGenerationStart failed:", err);
-          }
-        });
-      }
-
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        // eslint-disable-next-line no-console
-        console.log("[TextToVideoFeature] Starting executeTextToVideo...");
-      }
-
-      try {
-        const result = await executeTextToVideo(
-          { prompt, userId, options },
-          {
-            model: config.model,
-            buildInput,
-            extractResult,
-            onProgress: (progress) => {
-              setState((prev) => ({ ...prev, progress }));
-              callbacks.onProgress?.(progress);
-            },
-          },
-        );
-
-        if (result.success && result.videoUrl) {
-          setState((prev) => ({
-            ...prev,
-            videoUrl: result.videoUrl ?? null,
-            thumbnailUrl: result.thumbnailUrl ?? null,
-            isProcessing: false,
-            progress: 100,
-          }));
-
-          // Deduct credits after successful generation
-          if (callbacks.onCreditDeduct) {
-            await callbacks.onCreditDeduct(config.creditCost);
-          }
-
-          // Update creation to completed after successful generation
-          if (callbacks.onCreationSave) {
-            await callbacks.onCreationSave({
-              creationId,
-              type: "text-to-video",
-              videoUrl: result.videoUrl,
-              thumbnailUrl: result.thumbnailUrl,
-              prompt,
-              metadata: options as Record<string, unknown> | undefined,
-            });
-          }
-
-          callbacks.onGenerate?.(result);
-        } else {
-          const error = result.error || "Generation failed";
-          setState((prev) => ({
-            ...prev,
-            isProcessing: false,
-            error,
-          }));
-          callbacks.onError?.(error);
-        }
-
-        return result;
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          // eslint-disable-next-line no-console
-          console.error("[TextToVideoFeature] Generation error:", errorMessage);
-        }
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: errorMessage,
-        }));
-        callbacks.onError?.(errorMessage);
-        return { success: false, error: errorMessage };
-      }
-    },
-    [userId, config.model, config.creditCost, buildInput, extractResult, callbacks],
+    [state.prompt, callbacks, config, userId, buildInput, extractResult],
   );
 
   const reset = useCallback(() => {
