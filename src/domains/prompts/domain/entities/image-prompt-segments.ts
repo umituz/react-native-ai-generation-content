@@ -4,15 +4,27 @@
 
 export const IDENTITY_SEGMENTS = {
   samePerson: "same person",
-  preserveGender: "preserve original gender",
+  preserveIdentity: "preserve identity",
+  preserveGender: "STRICTLY preserve original gender",
+  keepGender: "keep exact same gender as input",
+  maintainGender: "maintain original sex",
   sameFeatures: "same facial features",
+  preserveFace: "preserve original face structure",
+  sameHairColor: "same hair color as original",
+  sameEyeColor: "same eye color as original",
 } as const;
 
 export const IDENTITY_NEGATIVE_SEGMENTS = {
   genderSwap: "gender swap",
+  genderChange: "gender change",
+  sexChange: "sex change",
+  maleToFemale: "male to female",
+  femaleToMale: "female to male",
   differentPerson: "different person",
   wrongGender: "wrong gender",
   changedIdentity: "changed identity",
+  differentFace: "different face",
+  changedGender: "changed gender",
 } as const;
 
 export const ANIME_STYLE_SEGMENTS = {

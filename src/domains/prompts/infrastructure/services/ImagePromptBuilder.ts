@@ -167,12 +167,13 @@ export class ImagePromptBuilder {
 
 /**
  * Create anime selfie prompt with recommended parameters
- * IMPORTANT: Anime style FIRST (highest priority), identity preservation secondary
+ * CRITICAL: Identity preservation FIRST to maintain gender/face, then anime style
+ * Low strength (0.55) ensures original image features are preserved
  */
 export function createAnimeSelfiePrompt(customStyle?: string): AnimeSelfiePromptResult {
   const builder = ImagePromptBuilder.create()
-    .withAnimeStyle()        // Anime style FIRST - highest priority
-    .withIdentityPreservation()  // Identity preservation secondary
+    .withIdentityPreservation()  // Identity FIRST - critical for gender preservation
+    .withAnimeStyle()            // Anime style second
     .withAnatomySafety();
 
   if (customStyle) {
@@ -184,9 +185,9 @@ export function createAnimeSelfiePrompt(customStyle?: string): AnimeSelfiePrompt
   return {
     prompt,
     negativePrompt,
-    strength: 0.92,           // High strength for style transformation
-    guidance_scale: 8.5,      // Strong guidance for anime style
-    num_inference_steps: 50,  // More steps for quality
+    strength: 0.55,           // Low strength to preserve original features
+    guidance_scale: 7.5,      // Balanced guidance
+    num_inference_steps: 50,  // Quality steps
   };
 }
 
