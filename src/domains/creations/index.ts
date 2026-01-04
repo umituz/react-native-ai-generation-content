@@ -105,10 +105,7 @@ export {
   CreationsRepository,
   type RepositoryOptions,
 } from "./infrastructure/repositories";
-export { CreationsStorageService } from "./infrastructure/services/CreationsStorageService";
 export { createCreationsRepository } from "./infrastructure/adapters";
-export { CreationsService } from "./application/services/CreationsService";
-export type { ICreationsStorageService } from "./domain/services/ICreationsStorageService";
 
 // =============================================================================
 // PRESENTATION LAYER - Hooks

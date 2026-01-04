@@ -22,6 +22,7 @@ export interface GenerationProgressRenderProps {
   readonly message?: string;
   readonly hint?: string;
   readonly onDismiss?: () => void;
+  readonly onClose?: () => void;
 }
 
 export interface GenerationProgressModalProps
@@ -44,6 +45,8 @@ export const GenerationProgressModal: React.FC<
   hint,
   dismissLabel,
   onDismiss,
+  onClose,
+  backgroundHint,
   modalBackgroundColor,
   textColor,
   hintColor,
@@ -67,6 +70,7 @@ export const GenerationProgressModal: React.FC<
       message,
       hint,
       onDismiss,
+      onClose,
     })
   ) : (
     <GenerationProgressContent
@@ -77,6 +81,8 @@ export const GenerationProgressModal: React.FC<
       hint={hint}
       dismissLabel={dismissLabel}
       onDismiss={onDismiss}
+      onClose={onClose}
+      backgroundHint={backgroundHint}
       backgroundColor={modalBackgroundColor || tokens.colors.surface}
       textColor={textColor || tokens.colors.textPrimary}
       hintColor={hintColor || tokens.colors.textTertiary}

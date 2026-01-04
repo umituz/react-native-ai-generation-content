@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { ImageGallery } from "@umituz/react-native-image";
 import type { Creation } from '../../domain/entities/Creation';
 import type { CreationsConfig } from '../../domain/value-objects/CreationsConfig';
 import { hasVideoContent, getPreviewUrl } from '../../domain/utils';
@@ -41,6 +42,15 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
 }) => {
     const tokens = useAppDesignTokens();
     const insets = useSafeAreaInsets();
+    const [showFullScreen, setShowFullScreen] = useState(false);
+
+    const handleImagePress = useCallback(() => {
+        setShowFullScreen(true);
+    }, []);
+
+    const handleDismissFullScreen = useCallback(() => {
+        setShowFullScreen(false);
+    }, []);
 
     // Extract data safely
     const metadata = (creation.metadata || {}) as CreationMetadata;
@@ -81,7 +91,7 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
                 {isVideo ? (
                     <DetailVideo videoUrl={videoUrl} thumbnailUrl={thumbnailUrl} />
                 ) : (
-                    <DetailImage uri={creation.uri} />
+                    <DetailImage uri={creation.uri} onPress={handleImagePress} />
                 )}
 
                 {story ? (
@@ -95,6 +105,15 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
                     deleteLabel={t("common.delete")}
                 />
             </ScrollView>
+
+            {!isVideo && (
+                <ImageGallery
+                    images={[{ uri: creation.uri }]}
+                    visible={showFullScreen}
+                    onDismiss={handleDismissFullScreen}
+                    index={0}
+                />
+            )}
         </View>
     );
 };

@@ -1,26 +1,31 @@
 /**
  * CreationPreview Component
- * Displays creation preview image with loading/placeholder states
+ * Smart wrapper that delegates to CreationImagePreview or CreationVideoPreview
+ * based on creation type
  */
 
-import React, { useMemo } from "react";
-import { View, StyleSheet, Image } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicIcon,
-  AtomicSpinner,
-} from "@umituz/react-native-design-system";
+import React from "react";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
-import { isInProgress } from "../../domain/utils";
-import { getTypeIcon } from "../../domain/utils";
+import { CreationImagePreview } from "./CreationImagePreview";
+import { CreationVideoPreview } from "./CreationVideoPreview";
+
+/** Video creation types */
+const VIDEO_TYPES: CreationTypeId[] = ["text-to-video", "image-to-video"];
+
+/** Check if creation type is a video type */
+function isVideoType(type?: CreationTypeId | string): boolean {
+  return VIDEO_TYPES.includes(type as CreationTypeId);
+}
 
 interface CreationPreviewProps {
-  /** Preview image URL */
+  /** Preview image/thumbnail URL */
   readonly uri?: string | null;
+  /** Thumbnail URL for videos (optional, if different from uri) */
+  readonly thumbnailUrl?: string | null;
   /** Creation status */
   readonly status?: CreationStatus;
-  /** Creation type for placeholder icon */
-  readonly type?: CreationTypeId;
+  /** Creation type for determining preview type */
+  readonly type?: CreationTypeId | string;
   /** Aspect ratio (default: 16/9) */
   readonly aspectRatio?: number;
   /** Custom height (overrides aspectRatio) */
@@ -31,88 +36,37 @@ interface CreationPreviewProps {
 
 export function CreationPreview({
   uri,
+  thumbnailUrl,
   status = "completed",
   type = "text-to-image",
   aspectRatio = 16 / 9,
   height,
   showLoadingIndicator = true,
 }: CreationPreviewProps) {
-  const tokens = useAppDesignTokens();
-  const inProgress = isInProgress(status);
-  const typeIcon = getTypeIcon(type);
-  const hasPreview = !!uri && !inProgress;
-
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          width: "100%",
-          aspectRatio: height ? undefined : aspectRatio,
-          height: height,
-          backgroundColor: tokens.colors.backgroundSecondary,
-          position: "relative",
-          overflow: "hidden",
-        },
-        image: {
-          width: "100%",
-          height: "100%",
-        },
-        placeholder: {
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        loadingContainer: {
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        loadingIcon: {
-          width: 64,
-          height: 64,
-          borderRadius: 32,
-          backgroundColor: tokens.colors.primary + "20",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-      }),
-    [tokens, aspectRatio, height]
-  );
-
-  // Show loading state
-  if (inProgress && showLoadingIndicator) {
+  // For video types, use CreationVideoPreview
+  if (isVideoType(type)) {
     return (
-      <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <View style={styles.loadingIcon}>
-            <AtomicSpinner size="lg" color="primary" />
-          </View>
-        </View>
-      </View>
+      <CreationVideoPreview
+        thumbnailUrl={thumbnailUrl || uri}
+        videoUrl={uri}
+        status={status}
+        type={type as CreationTypeId}
+        aspectRatio={aspectRatio}
+        height={height}
+        showLoadingIndicator={showLoadingIndicator}
+      />
     );
   }
 
-  // Show image preview
-  if (hasPreview) {
-    return (
-      <View style={styles.container}>
-        <Image
-          source={{ uri }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-      </View>
-    );
-  }
-
-  // Show placeholder
+  // For image types, use CreationImagePreview
   return (
-    <View style={styles.container}>
-      <View style={styles.placeholder}>
-        <AtomicIcon name={typeIcon} color="secondary" size="xl" />
-      </View>
-    </View>
+    <CreationImagePreview
+      uri={uri}
+      status={status}
+      type={type as CreationTypeId}
+      aspectRatio={aspectRatio}
+      height={height}
+      showLoadingIndicator={showLoadingIndicator}
+    />
   );
 }

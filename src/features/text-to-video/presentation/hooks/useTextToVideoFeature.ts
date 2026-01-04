@@ -124,6 +124,9 @@ export function useTextToVideoFeature(
 
   const executeGeneration = useCallback(
     async (prompt: string, options?: TextToVideoOptions): Promise<TextToVideoResult> => {
+      // Generate unique creation ID for tracking
+      const creationId = `text-to-video_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
       setState((prev) => ({
         ...prev,
         isProcessing: true,
@@ -133,61 +136,97 @@ export function useTextToVideoFeature(
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         // eslint-disable-next-line no-console
-        console.log("[TextToVideoFeature] Starting generation with prompt:", prompt);
+        console.log("[TextToVideoFeature] Starting generation with prompt:", prompt, "creationId:", creationId);
       }
 
-      const result = await executeTextToVideo(
-        { prompt, userId, options },
-        {
-          model: config.model,
-          buildInput,
-          extractResult,
-          onProgress: (progress) => {
-            setState((prev) => ({ ...prev, progress }));
-            callbacks.onProgress?.(progress);
+      // Create "processing" creation at start (fire-and-forget to not block generation)
+      if (callbacks.onGenerationStart) {
+        callbacks.onGenerationStart({
+          creationId,
+          type: "text-to-video",
+          prompt,
+          metadata: options as Record<string, unknown> | undefined,
+        }).catch((err) => {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            // eslint-disable-next-line no-console
+            console.warn("[TextToVideoFeature] onGenerationStart failed:", err);
+          }
+        });
+      }
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        // eslint-disable-next-line no-console
+        console.log("[TextToVideoFeature] Starting executeTextToVideo...");
+      }
+
+      try {
+        const result = await executeTextToVideo(
+          { prompt, userId, options },
+          {
+            model: config.model,
+            buildInput,
+            extractResult,
+            onProgress: (progress) => {
+              setState((prev) => ({ ...prev, progress }));
+              callbacks.onProgress?.(progress);
+            },
           },
-        },
-      );
+        );
 
-      if (result.success && result.videoUrl) {
-        setState((prev) => ({
-          ...prev,
-          videoUrl: result.videoUrl ?? null,
-          thumbnailUrl: result.thumbnailUrl ?? null,
-          isProcessing: false,
-          progress: 100,
-        }));
+        if (result.success && result.videoUrl) {
+          setState((prev) => ({
+            ...prev,
+            videoUrl: result.videoUrl ?? null,
+            thumbnailUrl: result.thumbnailUrl ?? null,
+            isProcessing: false,
+            progress: 100,
+          }));
 
-        // Deduct credits after successful generation
-        if (callbacks.onCreditDeduct) {
-          await callbacks.onCreditDeduct(config.creditCost);
+          // Deduct credits after successful generation
+          if (callbacks.onCreditDeduct) {
+            await callbacks.onCreditDeduct(config.creditCost);
+          }
+
+          // Update creation to completed after successful generation
+          if (callbacks.onCreationSave) {
+            await callbacks.onCreationSave({
+              creationId,
+              type: "text-to-video",
+              videoUrl: result.videoUrl,
+              thumbnailUrl: result.thumbnailUrl,
+              prompt,
+              metadata: options as Record<string, unknown> | undefined,
+            });
+          }
+
+          callbacks.onGenerate?.(result);
+        } else {
+          const error = result.error || "Generation failed";
+          setState((prev) => ({
+            ...prev,
+            isProcessing: false,
+            error,
+          }));
+          callbacks.onError?.(error);
         }
 
-        // Save creation after successful generation
-        if (callbacks.onCreationSave) {
-          await callbacks.onCreationSave({
-            type: "text-to-video",
-            videoUrl: result.videoUrl,
-            thumbnailUrl: result.thumbnailUrl,
-            prompt,
-            metadata: options as Record<string, unknown> | undefined,
-          });
+        return result;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          // eslint-disable-next-line no-console
+          console.error("[TextToVideoFeature] Generation error:", errorMessage);
         }
-
-        callbacks.onGenerate?.(result);
-      } else {
-        const error = result.error || "Generation failed";
         setState((prev) => ({
           ...prev,
           isProcessing: false,
-          error,
+          error: errorMessage,
         }));
-        callbacks.onError?.(error);
+        callbacks.onError?.(errorMessage);
+        return { success: false, error: errorMessage };
       }
-
-      return result;
     },
-    [userId, config.model, buildInput, extractResult, callbacks],
+    [userId, config.model, config.creditCost, buildInput, extractResult, callbacks],
   );
 
   const reset = useCallback(() => {

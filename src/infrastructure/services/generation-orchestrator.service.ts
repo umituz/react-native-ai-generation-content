@@ -86,8 +86,7 @@ class GenerationOrchestratorService {
         provider,
         request.model,
         submission.requestId,
-        request.onProgress,
-        (status, attempt, config) => {
+        (status: import("../../domain/interfaces").JobStatus, attempt: number, config: PollingConfig) => {
           this.progressManager.updateProgressFromStatus(
             status,
             attempt,

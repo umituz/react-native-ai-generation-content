@@ -1,26 +1,37 @@
 import React from 'react';
-import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, useWindowDimensions, TouchableOpacity } from 'react-native';
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { Image } from 'expo-image';
 
 interface DetailImageProps {
     readonly uri: string;
+    readonly onPress?: () => void;
 }
 
 const HORIZONTAL_PADDING = 16;
 const ASPECT_RATIO = 16 / 9;
 
-export const DetailImage: React.FC<DetailImageProps> = ({ uri }) => {
+export const DetailImage: React.FC<DetailImageProps> = ({ uri, onPress }) => {
     const tokens = useAppDesignTokens();
     const { width } = useWindowDimensions();
     const imageWidth = width - (HORIZONTAL_PADDING * 2);
     const imageHeight = imageWidth / ASPECT_RATIO;
 
+    const content = (
+        <View style={[styles.frame, { width: imageWidth, height: imageHeight, backgroundColor: tokens.colors.surface }]}>
+            <Image source={{ uri }} style={styles.image} contentFit="cover" />
+        </View>
+    );
+
     return (
         <View style={styles.container}>
-            <View style={[styles.frame, { width: imageWidth, height: imageHeight, backgroundColor: tokens.colors.surface }]}>
-                <Image source={{ uri }} style={styles.image} contentFit="cover" />
-            </View>
+            {onPress ? (
+                <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
+                    {content}
+                </TouchableOpacity>
+            ) : (
+                content
+            )}
         </View>
     );
 };

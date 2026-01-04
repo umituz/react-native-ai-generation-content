@@ -1,7 +1,6 @@
 /**
  * AI Provider Interface
  * Provider-agnostic interface for AI generation services
- * Implementations: FAL, Gemini, etc.
  */
 
 export interface AIProviderConfig {
@@ -16,6 +15,42 @@ export interface AIProviderConfig {
   textToImageModel?: string;
   /** Image editing model ID */
   imageEditModel?: string;
+  /** Video generation model ID */
+  videoGenerationModel?: string;
+}
+
+/**
+ * Provider-level progress info for run/subscribe operations
+ */
+export interface ProviderProgressInfo {
+  /** Progress percentage (0-100) */
+  progress: number;
+  /** Current job status */
+  status?: AIJobStatusType;
+  /** Human-readable message */
+  message?: string;
+  /** Estimated time remaining in ms */
+  estimatedTimeRemaining?: number;
+}
+
+/**
+ * Provider capabilities and metadata
+ */
+export interface ProviderCapabilities {
+  /** Supported image features */
+  imageFeatures: readonly ImageFeatureType[];
+  /** Supported video features */
+  videoFeatures: readonly VideoFeatureType[];
+  /** Supports text-to-image generation */
+  textToImage: boolean;
+  /** Supports text-to-video generation */
+  textToVideo: boolean;
+  /** Supports image-to-video generation */
+  imageToVideo: boolean;
+  /** Supports text-to-voice generation */
+  textToVoice: boolean;
+  /** Supports text-to-text (LLM) generation */
+  textToText: boolean;
 }
 
 export interface JobSubmission {
@@ -46,12 +81,12 @@ export interface AILogEntry {
 export interface SubscribeOptions<T = unknown> {
   timeoutMs?: number;
   onQueueUpdate?: (status: JobStatus) => void;
-  onProgress?: (progress: number) => void;
+  onProgress?: (progress: ProviderProgressInfo) => void;
   onResult?: (result: T) => void;
 }
 
 export interface RunOptions {
-  onProgress?: (progress: number) => void;
+  onProgress?: (progress: ProviderProgressInfo) => void;
 }
 
 /**
@@ -105,6 +140,16 @@ export interface IAIProvider {
   initialize(config: AIProviderConfig): void;
   isInitialized(): boolean;
 
+  /**
+   * Get provider capabilities
+   */
+  getCapabilities(): ProviderCapabilities;
+
+  /**
+   * Check if a specific feature is supported
+   */
+  isFeatureSupported(feature: ImageFeatureType | VideoFeatureType): boolean;
+
   submitJob(
     model: string,
     input: Record<string, unknown>,
@@ -130,11 +175,13 @@ export interface IAIProvider {
 
   /**
    * Get model ID for an image feature
+   * @throws Error if feature is not supported
    */
   getImageFeatureModel(feature: ImageFeatureType): string;
 
   /**
    * Build provider-specific input for an image feature
+   * @throws Error if feature is not supported
    */
   buildImageFeatureInput(
     feature: ImageFeatureType,
@@ -143,11 +190,13 @@ export interface IAIProvider {
 
   /**
    * Get model ID for a video feature
+   * @throws Error if feature is not supported
    */
   getVideoFeatureModel(feature: VideoFeatureType): string;
 
   /**
    * Build provider-specific input for a video feature
+   * @throws Error if feature is not supported
    */
   buildVideoFeatureInput(
     feature: VideoFeatureType,

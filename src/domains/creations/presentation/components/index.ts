@@ -4,6 +4,8 @@
 
 // Core Components
 export { CreationPreview } from "./CreationPreview";
+export { CreationImagePreview, type CreationImagePreviewProps } from "./CreationImagePreview";
+export { CreationVideoPreview, type CreationVideoPreviewProps } from "./CreationVideoPreview";
 export { CreationBadges } from "./CreationBadges";
 export { CreationActions, type CreationAction } from "./CreationActions";
 export {

@@ -4,7 +4,7 @@
  */
 
 import type { IAIProvider, JobStatus } from "../../domain/interfaces";
-import { DEFAULT_POLLING_CONFIG, type PollingConfig, type GenerationProgress } from "../../domain/entities";
+import { DEFAULT_POLLING_CONFIG, type PollingConfig } from "../../domain/entities";
 import { isTransientError } from "../utils/error-classifier.util";
 import { createPollingDelay } from "../utils/polling-interval.util";
 
@@ -26,7 +26,6 @@ export class JobPoller {
         provider: IAIProvider,
         model: string,
         requestId: string,
-        onProgress?: (progress: GenerationProgress) => void,
         onStatusUpdate?: (status: JobStatus, attempt: number, config: PollingConfig) => void,
     ): Promise<T> {
         if (typeof __DEV__ !== "undefined" && __DEV__) {

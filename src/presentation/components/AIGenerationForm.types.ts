@@ -14,8 +14,12 @@ export interface AIGenerationFormTranslations {
   examplePromptsTitle?: string;
   generateButton: string;
   generatingButton: string;
+  // Progress Modal (mandatory when isGenerating)
   progressTitle?: string;
+  progressMessage?: string;
   progressHint?: string;
+  /** Hint for background generation (e.g., "Continue in background") */
+  progressBackgroundHint?: string;
   presetsTitle?: string;
   showAdvancedLabel?: string;
   hideAdvancedLabel?: string;
@@ -54,7 +58,12 @@ export interface AIGenerationFormProps extends PropsWithChildren {
   
   // Optional: Generation Progress
   progress?: number;
-  
+  progressIcon?: string;
+  /** Override modal visibility (defaults to isGenerating) */
+  isProgressModalVisible?: boolean;
+  /** Callback when user closes the progress modal (for background generation) */
+  onCloseProgressModal?: () => void;
+
   // Custom Generate Button Props
   generateButtonProps?: {
     costLabel?: string;

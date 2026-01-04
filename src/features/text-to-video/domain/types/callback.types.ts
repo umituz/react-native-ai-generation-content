@@ -27,12 +27,22 @@ export interface CreationData {
   metadata?: Record<string, unknown>;
 }
 
+export interface GenerationStartData {
+  creationId: string;
+  type: "text-to-video";
+  prompt: string;
+  metadata?: Record<string, unknown>;
+}
+
 export interface TextToVideoCallbacks {
   onCreditCheck?: (cost: number) => Promise<boolean>;
   onCreditDeduct?: (cost: number) => Promise<void>;
   onAuthCheck?: () => boolean;
   onModeration?: (prompt: string) => Promise<VideoModerationResult>;
-  onCreationSave?: (data: CreationData) => Promise<void>;
+  /** Called when generation starts - save a "processing" creation */
+  onGenerationStart?: (data: GenerationStartData) => Promise<void>;
+  /** Called when generation completes - update creation to "completed" */
+  onCreationSave?: (data: CreationData & { creationId: string }) => Promise<void>;
   onGenerate?: (result: TextToVideoResult) => void;
   onError?: (error: string) => void;
   onProgress?: (progress: number) => void;

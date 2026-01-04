@@ -21,6 +21,10 @@ export interface GenerationProgressContentProps {
   readonly hint?: string;
   readonly dismissLabel?: string;
   readonly onDismiss?: () => void;
+  /** Close button in top-right corner for background generation */
+  readonly onClose?: () => void;
+  /** Hint text shown near close button (e.g., "Continue in background") */
+  readonly backgroundHint?: string;
   readonly backgroundColor?: string;
   readonly textColor?: string;
   readonly hintColor?: string;
@@ -39,6 +43,8 @@ export const GenerationProgressContent: React.FC<
   hint,
   dismissLabel,
   onDismiss,
+  onClose,
+  backgroundHint,
   backgroundColor,
   textColor,
   hintColor,
@@ -62,6 +68,17 @@ export const GenerationProgressContent: React.FC<
         },
       ]}
     >
+      {/* Close button in top-right corner */}
+      {onClose && (
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={onClose}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <AtomicIcon name="close" size="md" color="secondary" />
+        </TouchableOpacity>
+      )}
+
       {icon && (
         <View style={styles.iconContainer}>
           <AtomicIcon name={icon} size="xl" color="primary" />
@@ -102,6 +119,21 @@ export const GenerationProgressContent: React.FC<
         </AtomicText>
       )}
 
+      {/* Background hint - clickable to close and continue in background */}
+      {onClose && backgroundHint && (
+        <TouchableOpacity
+          style={styles.backgroundHintButton}
+          onPress={onClose}
+        >
+          <AtomicText
+            type="bodySmall"
+            style={[styles.backgroundHintText, { color: tokens.colors.primary }]}
+          >
+            {backgroundHint}
+          </AtomicText>
+        </TouchableOpacity>
+      )}
+
       {onDismiss && (
         <TouchableOpacity
           style={[
@@ -130,6 +162,18 @@ const styles = StyleSheet.create({
     padding: 32,
     borderWidth: 1,
     alignItems: "center",
+    position: "relative",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
   },
   iconContainer: {
     marginBottom: 20,
@@ -148,6 +192,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 18,
     paddingHorizontal: 8,
+  },
+  backgroundHintButton: {
+    marginTop: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  backgroundHintText: {
+    textAlign: "center",
+    textDecorationLine: "underline",
   },
   dismissButton: {
     marginTop: 16,

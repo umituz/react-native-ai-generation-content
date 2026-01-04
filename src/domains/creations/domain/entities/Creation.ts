@@ -46,7 +46,7 @@ export interface CreationDocument {
   readonly transformationType?: string;
   readonly type?: string;
   readonly status?: string;
-  readonly output?: CreationOutput;
+  readonly output?: CreationOutput | null;
   readonly isShared: boolean;
   readonly isFavorite?: boolean;
   readonly createdAt: FirebaseTimestamp | Date;
@@ -89,6 +89,6 @@ export function mapDocumentToCreation(
     isShared: data.isShared ?? false,
     isFavorite: data.isFavorite ?? false,
     status: data.status as CreationStatus | undefined,
-    output: data.output,
+    output: data.output ?? undefined,
   };
 }

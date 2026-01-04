@@ -3,7 +3,6 @@ import type { StyleTransferConfig } from '../../domain/entities/StyleTransferCon
 import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
 import type { IStyleTransferService } from '../../domain/repositories/IAIPromptServices';
 import { StyleTransferService } from '../../infrastructure/services/StyleTransferService';
-import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
 import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
 import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
 import { useAsyncState } from './useAsyncState';
@@ -31,7 +30,6 @@ export interface UseStyleTransferActions {
 
 export const useStyleTransfer = (
   service: IStyleTransferService,
-  templateRepository: ITemplateRepository,
   historyRepository: IPromptHistoryRepository
 ): UseStyleTransferState & UseStyleTransferActions => {
   const {

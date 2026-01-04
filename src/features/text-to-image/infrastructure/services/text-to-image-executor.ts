@@ -20,14 +20,51 @@ export interface ExecuteTextToImageOptions {
   onProgress?: (progress: number) => void;
 }
 
+function extractImagesFromObject(
+  obj: Record<string, unknown>,
+): string[] | null {
+  // Direct images array
+  if (Array.isArray(obj.images)) {
+    const urls = obj.images
+      .map((img) => {
+        if (typeof img === "string") return img;
+        if (img && typeof img === "object" && "url" in img) {
+          return (img as { url: string }).url;
+        }
+        return null;
+      })
+      .filter((url): url is string => url !== null);
+
+    if (urls.length > 0) return urls;
+  }
+  return null;
+}
+
 function defaultExtractResult(
   result: unknown,
 ): { imageUrl?: string; imageUrls?: string[] } | undefined {
-  if (typeof result !== "object" || result === null) return undefined;
+  if (typeof result !== "object" || result === null) {
+    return undefined;
+  }
 
   const r = result as Record<string, unknown>;
 
-  // GeminiClient returns imageUrl (data URL) or imageBase64
+  // Check nested 'data' object first (common API wrapper format)
+  if (r.data && typeof r.data === "object") {
+    const dataObj = r.data as Record<string, unknown>;
+    const urls = extractImagesFromObject(dataObj);
+    if (urls) {
+      return { imageUrl: urls[0], imageUrls: urls };
+    }
+  }
+
+  // Check direct 'images' array
+  const directUrls = extractImagesFromObject(r);
+  if (directUrls) {
+    return { imageUrl: directUrls[0], imageUrls: directUrls };
+  }
+
+  // Check for imageUrl (data URL)
   if (typeof r.imageUrl === "string") {
     return { imageUrl: r.imageUrl, imageUrls: [r.imageUrl] };
   }
@@ -42,23 +79,6 @@ function defaultExtractResult(
   // Legacy: check for 'image' field
   if (typeof r.image === "string") {
     return { imageUrl: r.image, imageUrls: [r.image] };
-  }
-
-  // Legacy: check for 'images' array
-  if (Array.isArray(r.images)) {
-    const urls = r.images
-      .map((img) => {
-        if (typeof img === "string") return img;
-        if (img && typeof img === "object" && "url" in img) {
-          return (img as { url: string }).url;
-        }
-        return null;
-      })
-      .filter((url): url is string => url !== null);
-
-    if (urls.length > 0) {
-      return { imageUrl: urls[0], imageUrls: urls };
-    }
   }
 
   return undefined;
@@ -84,7 +104,7 @@ export async function executeTextToImage(
 
   const { model, buildInput, extractResult, onProgress } = options;
 
-  if (__DEV__) {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
     // eslint-disable-next-line no-console
     console.log(`[TextToImage] Provider: ${provider.providerId}, Model: ${model}`);
   }
@@ -113,7 +133,7 @@ export async function executeTextToImage(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       // eslint-disable-next-line no-console
       console.error("[TextToImage] Error:", message);
     }

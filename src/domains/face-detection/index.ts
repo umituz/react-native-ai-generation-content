@@ -1,7 +1,7 @@
 /**
  * React Native AI Face Detection - Public API
  *
- * AI-powered face detection for React Native apps using Gemini Vision
+ * AI-powered face detection for React Native apps
  */
 
 export type {

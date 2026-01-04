@@ -27,6 +27,7 @@ export type {
   VideoModerationResult,
   ProjectData,
   CreationData,
+  GenerationStartData,
   GenerationTabsProps,
   FrameSelectorProps,
   OptionsPanelProps,

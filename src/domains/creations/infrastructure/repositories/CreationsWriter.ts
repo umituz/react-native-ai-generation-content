@@ -12,6 +12,11 @@ export class CreationsWriter {
     constructor(private readonly pathResolver: FirestorePathResolver) { }
 
     async create(userId: string, creation: Creation): Promise<void> {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+            // eslint-disable-next-line no-console
+            console.log("[CreationsWriter] create() start", { userId, creationId: creation.id });
+        }
+
         const docRef = this.pathResolver.getDocRef(userId, creation.id);
         if (!docRef) throw new Error("Firestore not initialized");
 
@@ -23,9 +28,23 @@ export class CreationsWriter {
             metadata: creation.metadata || {},
             isShared: creation.isShared || false,
             isFavorite: creation.isFavorite || false,
+            status: creation.status,
+            output: creation.output ?? null,
         };
 
-        await setDoc(docRef, data);
+        try {
+            await setDoc(docRef, data);
+            if (typeof __DEV__ !== "undefined" && __DEV__) {
+                // eslint-disable-next-line no-console
+                console.log("[CreationsWriter] create() success", { creationId: creation.id });
+            }
+        } catch (error) {
+            if (typeof __DEV__ !== "undefined" && __DEV__) {
+                // eslint-disable-next-line no-console
+                console.error("[CreationsWriter] create() error", error);
+            }
+            throw error;
+        }
     }
 
     async update(
@@ -58,6 +77,12 @@ export class CreationsWriter {
             }
             if (updates.prompt !== undefined) {
                 updateData.prompt = updates.prompt;
+            }
+            if (updates.status !== undefined) {
+                updateData.status = updates.status;
+            }
+            if (updates.output !== undefined) {
+                updateData.output = updates.output;
             }
 
             await updateDoc(docRef, updateData);

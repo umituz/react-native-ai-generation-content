@@ -53,7 +53,7 @@ Format as JSON with this structure:
   async generateScript(
     _request: ScriptGenerationRequest,
   ): Promise<readonly ScriptSection[] | null> {
-    // NOTE: This will be implemented by the app using a specific AI provider (like OpenAI or FAL)
+    // NOTE: This will be implemented by the app using a specific AI provider
     // The package provides the structure and prompt building.
     return null;
   }

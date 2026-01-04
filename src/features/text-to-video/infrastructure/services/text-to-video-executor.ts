@@ -49,13 +49,26 @@ export async function executeTextToVideo(
   request: TextToVideoRequest,
   options: ExecuteTextToVideoOptions,
 ): Promise<TextToVideoResult> {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    // eslint-disable-next-line no-console
+    console.log("[TextToVideoExecutor] executeTextToVideo() called");
+  }
+
   const provider = providerRegistry.getActiveProvider();
 
   if (!provider) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.error("[TextToVideoExecutor] No AI provider configured");
+    }
     return { success: false, error: "No AI provider configured" };
   }
 
   if (!provider.isInitialized()) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.error("[TextToVideoExecutor] AI provider not initialized");
+    }
     return { success: false, error: "AI provider not initialized" };
   }
 
@@ -65,27 +78,45 @@ export async function executeTextToVideo(
 
   const { model, buildInput, extractResult, onProgress } = options;
 
-  if (__DEV__) {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
     // eslint-disable-next-line no-console
-    console.log(`[TextToVideo] Provider: ${provider.providerId}, Model: ${model}`);
+    console.log(`[TextToVideoExecutor] Provider: ${provider.providerId}, Model: ${model}`);
   }
 
   try {
     onProgress?.(5);
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[TextToVideoExecutor] Starting provider.run()...");
+    }
 
     const input = buildInput(request.prompt, request.options);
 
     const result = await provider.run(model, input, {
-      onProgress: (progress) => {
-        onProgress?.(progress);
+      onProgress: (progressInfo) => {
+        const progressValue = progressInfo.progress;
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          // eslint-disable-next-line no-console
+          console.log("[TextToVideoExecutor] Progress:", progressValue);
+        }
+        onProgress?.(progressValue);
       },
     });
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[TextToVideoExecutor] provider.run() completed", result);
+    }
 
     const extractor = extractResult || defaultExtractResult;
     const extracted = extractor(result);
     onProgress?.(100);
 
     if (!extracted?.videoUrl) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        // eslint-disable-next-line no-console
+        console.error("[TextToVideoExecutor] No video URL in response");
+      }
       return { success: false, error: "No video in response" };
     }
 
@@ -96,9 +127,9 @@ export async function executeTextToVideo(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       // eslint-disable-next-line no-console
-      console.error("[TextToVideo] Error:", message);
+      console.error("[TextToVideoExecutor] Error:", message);
     }
     return { success: false, error: message };
   }

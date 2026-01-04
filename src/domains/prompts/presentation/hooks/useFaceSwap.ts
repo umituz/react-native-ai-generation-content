@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import type { FaceSwapConfig, FaceSwapGenerationResult } from '../../domain/entities/FaceSwapConfig';
 import type { IFaceSwapService } from '../../domain/repositories/IAIPromptServices';
-import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
 import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
 import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
 import { useAsyncState } from './useAsyncState';
@@ -20,7 +19,6 @@ export interface UseFaceSwapActions {
 
 export const useFaceSwap = (
   faceSwapService: IFaceSwapService,
-  templateRepository: ITemplateRepository,
   historyRepository: IPromptHistoryRepository
 ): UseFaceSwapState & UseFaceSwapActions => {
   const {

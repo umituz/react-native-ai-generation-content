@@ -10,7 +10,6 @@ import {
     validateFuturePredictionConfig,
     getFutureYear,
 } from '../../domain/entities/FuturePredictionConfig';
-import { PromptGenerationService } from './PromptGenerationService';
 
 /**
  * Core preservation instruction for photorealistic couple/family transformations
@@ -90,10 +89,7 @@ Style:
 `.trim();
 
 export class FuturePredictionService implements IFuturePredictionService {
-    private promptService: PromptGenerationService;
-
     constructor() {
-        this.promptService = new PromptGenerationService();
     }
 
     generateTemplate(

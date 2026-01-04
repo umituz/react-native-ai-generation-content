@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import type { ImageEnhancementConfig, EnhancementAdjustments } from '../../domain/entities/ImageEnhancementConfig';
 import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
 import type { IImageEnhancementService } from '../../domain/repositories/IAIPromptServices';
-import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
 import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
 import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
 import { useAsyncState } from './useAsyncState';
@@ -28,7 +27,6 @@ export interface UseImageEnhancementActions {
 
 export const useImageEnhancement = (
   service: IImageEnhancementService,
-  templateRepository: ITemplateRepository,
   historyRepository: IPromptHistoryRepository
 ): UseImageEnhancementState & UseImageEnhancementActions => {
   const {

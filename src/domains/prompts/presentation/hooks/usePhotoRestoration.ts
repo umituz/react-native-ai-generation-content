@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import type { PhotoRestorationConfig } from '../../domain/entities/PhotoRestorationConfig';
 import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
 import type { IPhotoRestorationService } from '../../domain/repositories/IAIPromptServices';
-import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
 import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
 import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
 import { useAsyncState } from './useAsyncState';
@@ -28,7 +27,6 @@ export interface UsePhotoRestorationActions {
 
 export const usePhotoRestoration = (
   service: IPhotoRestorationService,
-  templateRepository: ITemplateRepository,
   historyRepository: IPromptHistoryRepository
 ): UsePhotoRestorationState & UsePhotoRestorationActions => {
   const {

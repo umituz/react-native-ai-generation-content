@@ -30,6 +30,8 @@ export type {
   VideoFeatureType,
   ImageFeatureInputData,
   VideoFeatureInputData,
+  ProviderCapabilities,
+  ProviderProgressInfo,
   // App Services Interfaces
   INetworkService,
   ICreditService,
@@ -306,7 +308,6 @@ export {
   ImagePickerBox,
   DualImagePicker,
   // New Generic Sections
-  AIGenerationProgressInline,
   PromptInput,
   AIGenerationHero,
   ExamplePrompts,
@@ -320,6 +321,7 @@ export {
   // Headers
   FeatureHeader,
   AIGenScreenHeader,
+  CreditBadge,
 
   // Photo Upload
   PhotoUploadCard,
@@ -361,7 +363,6 @@ export type {
   // Image Picker
   ImagePickerBoxProps,
   DualImagePickerProps,
-  AIGenerationProgressInlineProps,
   PromptInputProps,
   AIGenerationHeroProps,
   ExamplePromptsProps,
@@ -380,6 +381,7 @@ export type {
   FeatureHeaderProps,
   AIGenScreenHeaderProps,
   NavigationButtonType,
+  CreditBadgeProps,
 
   // Photo Upload
   PhotoUploadCardProps,
