@@ -93,10 +93,7 @@ export function useAnimeSelfieFeature(
           imageBase64,
           prompt: promptConfig.prompt,
           options: {
-            negativePrompt: promptConfig.negativePrompt,
-            strength: promptConfig.strength,
             guidance_scale: promptConfig.guidance_scale,
-            num_inference_steps: promptConfig.num_inference_steps,
           },
         },
         { extractResult: config.extractResult, onProgress: handleProgress },

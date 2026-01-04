@@ -17,10 +17,9 @@ export interface ImagePromptResult {
   negativePrompt: string;
 }
 
-export interface AnimeSelfiePromptResult extends ImagePromptResult {
-  strength: number;
+export interface AnimeSelfiePromptResult {
+  prompt: string;
   guidance_scale: number;
-  num_inference_steps: number;
 }
 
 export interface ImagePromptBuilderOptions {
@@ -166,28 +165,24 @@ export class ImagePromptBuilder {
 }
 
 /**
- * Create anime selfie prompt with recommended parameters
- * CRITICAL: Identity preservation FIRST to maintain gender/face, then anime style
- * Low strength (0.55) ensures original image features are preserved
+ * Create anime selfie prompt for Kontext model
+ * Kontext uses instruction-based editing that preserves character identity automatically
  */
 export function createAnimeSelfiePrompt(customStyle?: string): AnimeSelfiePromptResult {
-  const builder = ImagePromptBuilder.create()
-    .withIdentityPreservation()  // Identity FIRST - critical for gender preservation
-    .withAnimeStyle()            // Anime style second
-    .withAnatomySafety();
+  const stylePrefix = customStyle ? `${customStyle} anime style` : "anime style";
 
-  if (customStyle) {
-    builder.prependSegments([`${customStyle} style`]);
-  }
-
-  const { prompt, negativePrompt } = builder.build();
+  const prompt = [
+    `Transform this person into a ${stylePrefix} illustration.`,
+    "IMPORTANT: Preserve the exact same gender - if male keep male, if female keep female.",
+    "Keep the same face structure, hair color, eye color, skin tone, and facial expression.",
+    "Make it look like a high-quality Japanese anime character portrait.",
+    "Use vibrant anime colors, clean lineart, and cel-shaded rendering.",
+    "Large expressive anime eyes with detailed iris, smooth anime skin with subtle blush.",
+  ].join(" ");
 
   return {
     prompt,
-    negativePrompt,
-    strength: 0.55,           // Low strength to preserve original features
-    guidance_scale: 7.5,      // Balanced guidance
-    num_inference_steps: 50,  // Quality steps
+    guidance_scale: 4.0,
   };
 }
 
