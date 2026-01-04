@@ -16,6 +16,11 @@ export interface ImageToVideoOptions {
   musicMood?: MusicMoodId;
 }
 
+export interface ImageToVideoGenerateParams extends ImageToVideoOptions {
+  imageUri?: string;
+  motionPrompt?: string;
+}
+
 export interface ImageToVideoRequest {
   imageUri: string;
   imageBase64?: string;
@@ -74,6 +79,34 @@ export type ImageToVideoInputBuilder = (
 export type ImageToVideoResultExtractor = (
   result: unknown,
 ) => { videoUrl?: string; thumbnailUrl?: string } | undefined;
+
+export interface ImageToVideoFeatureCallbacks {
+  onCreditCheck?: (cost: number) => Promise<boolean>;
+  onCreditDeduct?: (cost: number) => Promise<void>;
+  onAuthCheck?: () => boolean;
+  onShowPaywall?: (creditCost: number) => void;
+  onGenerationStart?: (data: ImageToVideoGenerationStartData) => Promise<void>;
+  onCreationSave?: (data: ImageToVideoCreationData) => Promise<void>;
+  onGenerate?: (result: ImageToVideoResult) => void;
+  onProgress?: (progress: number) => void;
+  onError?: (error: string) => void;
+}
+
+export interface ImageToVideoGenerationStartData {
+  creationId: string;
+  type: string;
+  imageUri: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ImageToVideoCreationData {
+  creationId: string;
+  type: string;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  imageUri: string;
+  metadata?: Record<string, unknown>;
+}
 
 export interface ImageToVideoFeatureConfig {
   providerId?: string;

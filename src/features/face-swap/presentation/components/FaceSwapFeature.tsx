@@ -118,7 +118,6 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
               sourcePlaceholder={translations.sourceUploadTitle}
               targetPlaceholder={translations.targetUploadTitle}
               layout="horizontal"
-              variant="portrait"
             />
           </View>
         </AIGenerationForm>

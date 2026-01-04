@@ -7,8 +7,7 @@
 import { useState, useCallback } from "react";
 import type { Creation } from "../../domain/entities/Creation";
 import type { FilterOption } from "../../domain/types/creation-filter";
-import { useStatusFilter } from "./useStatusFilter";
-import { useMediaFilter } from "./useMediaFilter";
+import { useFilter } from "./useFilter";
 import { useCreationsFilter } from "./useCreationsFilter";
 
 interface UseGalleryFiltersProps {
@@ -24,8 +23,8 @@ interface UseGalleryFiltersReturn {
   readonly activeFiltersCount: number;
   readonly statusFilterVisible: boolean;
   readonly mediaFilterVisible: boolean;
-  readonly statusFilter: ReturnType<typeof useStatusFilter>;
-  readonly mediaFilter: ReturnType<typeof useMediaFilter>;
+  readonly statusFilter: ReturnType<typeof useFilter>;
+  readonly mediaFilter: ReturnType<typeof useFilter>;
   readonly openStatusFilter: () => void;
   readonly closeStatusFilter: () => void;
   readonly openMediaFilter: () => void;
@@ -42,8 +41,8 @@ export function useGalleryFilters({
   const [statusFilterVisible, setStatusFilterVisible] = useState(false);
   const [mediaFilterVisible, setMediaFilterVisible] = useState(false);
 
-  const statusFilter = useStatusFilter({ options: statusOptions, t });
-  const mediaFilter = useMediaFilter({ options: mediaOptions, t });
+  const statusFilter = useFilter({ options: statusOptions, t });
+  const mediaFilter = useFilter({ options: mediaOptions, t });
 
   const { filtered, isFiltered, activeFiltersCount } = useCreationsFilter({
     creations,

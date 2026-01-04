@@ -121,7 +121,6 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
               sourcePlaceholder={translations.sourceUploadTitle}
               targetPlaceholder={translations.targetUploadTitle}
               layout="horizontal"
-              variant="portrait"
             />
           </View>
         </AIGenerationForm>

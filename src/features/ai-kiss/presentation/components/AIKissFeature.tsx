@@ -115,7 +115,6 @@ export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
               sourcePlaceholder={translations.sourceUploadTitle}
               targetPlaceholder={translations.targetUploadTitle}
               layout="horizontal"
-              variant="portrait"
             />
           </View>
         </AIGenerationForm>

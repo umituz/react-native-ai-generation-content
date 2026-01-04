@@ -1,10 +1,11 @@
 /**
  * Image-to-Video Executor
  * Provider-agnostic image-to-video execution using active AI provider
+ * Uses progress mapper for consistent progress reporting
  */
 
 import { providerRegistry } from "../../../../infrastructure/services";
-import { cleanBase64 } from "../../../../infrastructure/utils";
+import { getProgressFromJobStatus } from "../../../../infrastructure/utils";
 import type {
   ImageToVideoRequest,
   ImageToVideoResult,
@@ -50,13 +51,26 @@ export async function executeImageToVideo(
   request: ImageToVideoRequest,
   options: ExecuteImageToVideoOptions,
 ): Promise<ImageToVideoResult> {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    // eslint-disable-next-line no-console
+    console.log("[ImageToVideoExecutor] executeImageToVideo() called");
+  }
+
   const provider = providerRegistry.getActiveProvider();
 
   if (!provider) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.error("[ImageToVideoExecutor] No AI provider configured");
+    }
     return { success: false, error: "No AI provider configured" };
   }
 
   if (!provider.isInitialized()) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.error("[ImageToVideoExecutor] AI provider not initialized");
+    }
     return { success: false, error: "AI provider not initialized" };
   }
 
@@ -68,26 +82,54 @@ export async function executeImageToVideo(
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     // eslint-disable-next-line no-console
-    console.log(`[ImageToVideo] Provider: ${provider.providerId}, Model: ${model}`);
+    console.log(`[ImageToVideoExecutor] Provider: ${provider.providerId}, Model: ${model}`);
   }
 
   try {
-    onProgress?.(10);
+    onProgress?.(5);
 
-    const imageBase64 = cleanBase64(request.imageBase64);
-    onProgress?.(30);
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[ImageToVideoExecutor] Starting provider.subscribe()...");
+    }
 
-    const input = buildInput(imageBase64, request.motionPrompt, request.options);
-    onProgress?.(40);
+    // Build input directly - let buildInput handle base64 format
+    const input = buildInput(request.imageBase64, request.motionPrompt, request.options);
 
-    const result = await provider.run(model, input);
-    onProgress?.(90);
+    // Use subscribe for video generation (long-running operation with queue)
+    // subscribe provides progress updates unlike run()
+    const result = await provider.subscribe(model, input, {
+      onQueueUpdate: (status) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          // eslint-disable-next-line no-console
+          console.log("[ImageToVideoExecutor] Queue status:", status.status, "position:", status.queuePosition);
+        }
+        // Map provider status to progress using centralized mapper
+        const progress = getProgressFromJobStatus(status.status);
+        onProgress?.(progress);
+      },
+      timeoutMs: 300000, // 5 minutes timeout for video generation
+    });
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[ImageToVideoExecutor] Subscribe resolved, result keys:", result ? Object.keys(result as object) : "null");
+    }
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log("[ImageToVideoExecutor] provider.subscribe() completed");
+    }
 
     const extractor = extractResult || defaultExtractResult;
     const extracted = extractor(result);
     onProgress?.(100);
 
     if (!extracted?.videoUrl) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        // eslint-disable-next-line no-console
+        console.error("[ImageToVideoExecutor] No video URL in response");
+      }
       return { success: false, error: "No video in response" };
     }
 
@@ -100,7 +142,7 @@ export async function executeImageToVideo(
     const message = error instanceof Error ? error.message : String(error);
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       // eslint-disable-next-line no-console
-      console.error("[ImageToVideo] Error:", message);
+      console.error("[ImageToVideoExecutor] Error:", message);
     }
     return { success: false, error: message };
   }

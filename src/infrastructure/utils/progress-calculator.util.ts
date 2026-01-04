@@ -1,6 +1,7 @@
 /**
  * Progress Calculator Utility
  * Calculates progress based on generation stage
+ * Maps provider status to generation progress
  */
 
 import type { GenerationStatus } from "../../domain/entities";
@@ -8,6 +9,7 @@ import {
   DEFAULT_PROGRESS_STAGES,
   type ProgressStageConfig,
 } from "../../domain/entities";
+import type { AIJobStatusType } from "../../domain/interfaces/ai-provider.interface";
 
 export interface ProgressOptions {
   status: GenerationStatus;
@@ -94,4 +96,33 @@ export function createProgressTracker(stages?: ProgressStageConfig[]) {
       return Date.now() - stageStartTime;
     },
   };
+}
+
+/**
+ * Maps provider job status to generation status
+ * Provider: IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED
+ * Generation: idle, preparing, submitting, generating, polling, finalizing, completed, failed
+ */
+export function mapJobStatusToGenerationStatus(
+  jobStatus: AIJobStatusType
+): GenerationStatus {
+  const statusMap: Record<AIJobStatusType, GenerationStatus> = {
+    IN_QUEUE: "submitting",
+    IN_PROGRESS: "generating",
+    COMPLETED: "completed",
+    FAILED: "failed",
+  };
+  return statusMap[jobStatus] ?? "generating";
+}
+
+/**
+ * Calculate progress from provider job status
+ * Uses default progress stages for consistent progress reporting
+ */
+export function getProgressFromJobStatus(
+  jobStatus: AIJobStatusType,
+  stages: ProgressStageConfig[] = DEFAULT_PROGRESS_STAGES
+): number {
+  const generationStatus = mapJobStatusToGenerationStatus(jobStatus);
+  return getProgressForStatus({ status: generationStatus, stages });
 }

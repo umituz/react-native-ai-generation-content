@@ -1,19 +1,20 @@
 /**
- * useStatusFilter Hook
- * Handles status filtering (completed, pending, processing, failed)
- * SOLID: Single Responsibility - Only handles status filter state
+ * useFilter Hook
+ * Generic filter state management for any filter type
+ * SOLID: Single Responsibility - Only handles filter state
+ * DRY: Replaces duplicate useMediaFilter and useStatusFilter
  */
 
 import { useState, useCallback, useMemo } from "react";
 import type { FilterOption } from "../../domain/types/creation-filter";
 
-interface UseStatusFilterProps {
+export interface UseFilterProps {
   readonly options: FilterOption[];
   readonly t: (key: string) => string;
   readonly defaultId?: string;
 }
 
-interface UseStatusFilterReturn {
+export interface UseFilterReturn {
   readonly selectedId: string;
   readonly filterOptions: FilterOption[];
   readonly hasActiveFilter: boolean;
@@ -21,11 +22,11 @@ interface UseStatusFilterReturn {
   readonly clearFilter: () => void;
 }
 
-export function useStatusFilter({
+export function useFilter({
   options,
   t,
   defaultId = "all"
-}: UseStatusFilterProps): UseStatusFilterReturn {
+}: UseFilterProps): UseFilterReturn {
   const [selectedId, setSelectedId] = useState(defaultId);
 
   const filterOptions = useMemo(() =>
@@ -52,3 +53,7 @@ export function useStatusFilter({
     clearFilter
   };
 }
+
+// Backward compatibility aliases
+export const useMediaFilter = useFilter;
+export const useStatusFilter = useFilter;

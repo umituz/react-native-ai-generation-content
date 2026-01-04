@@ -24,6 +24,7 @@ export type {
 // Core Feature Types
 export type {
   ImageToVideoOptions,
+  ImageToVideoGenerateParams,
   ImageToVideoRequest,
   ImageToVideoResult,
   ImageToVideoGenerationState,
@@ -31,5 +32,8 @@ export type {
   ImageToVideoTranslations,
   ImageToVideoInputBuilder,
   ImageToVideoResultExtractor,
+  ImageToVideoFeatureCallbacks,
+  ImageToVideoGenerationStartData,
+  ImageToVideoCreationData,
   ImageToVideoFeatureConfig,
 } from "./image-to-video.types";
