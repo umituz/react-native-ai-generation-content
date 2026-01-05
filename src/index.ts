@@ -150,3 +150,30 @@ export * from "./features/text-to-voice";
 export * from "./features/hd-touch-up";
 export * from "./features/meme-generator";
 export * from "./infrastructure/orchestration";
+
+// Unified AI Feature Screen
+export {
+  AIFeatureScreen,
+  AI_FEATURE_CONFIGS,
+  getAIFeatureConfig,
+  hasAIFeature,
+  getAllAIFeatureIds,
+  getAIFeaturesByMode,
+  createFeatureTranslations,
+  createSingleImageTranslations,
+  createDualImageTranslations,
+  createComparisonTranslations,
+  createPromptTranslations,
+} from "./presentation/screens/ai-feature";
+export type {
+  AIFeatureId,
+  AIFeatureMode,
+  AIFeatureOutputType,
+  AIFeatureCreditType,
+  AIFeatureConfig,
+  AIFeatureScreenProps,
+  SingleImageTranslationKeys,
+  DualImageTranslationKeys,
+  ComparisonTranslationKeys,
+  PromptTranslationKeys,
+} from "./presentation/screens/ai-feature";

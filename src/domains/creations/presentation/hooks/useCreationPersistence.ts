@@ -23,7 +23,7 @@ export interface UseCreationPersistenceConfig {
   /** Credit cost for this feature (passed to onCreditDeduct) */
   readonly creditCost?: number;
   /** Callback to deduct credits on successful processing */
-  readonly onCreditDeduct?: (cost: number) => Promise<void>;
+  readonly onCreditDeduct?: (cost: number) => Promise<void | boolean>;
 }
 
 /**
