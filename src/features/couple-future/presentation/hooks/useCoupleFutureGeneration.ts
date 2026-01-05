@@ -1,9 +1,9 @@
 import { useCallback } from "react";
-import { usePhotoGeneration } from "../../../presentation/hooks/usePhotoGeneration";
+import { usePhotoGeneration } from "../../../../presentation/hooks/usePhotoGeneration";
 import { executeCoupleFuture } from "../../infrastructure/executor";
 import type { CoupleFutureInput } from "../../domain/types";
-import type { PhotoGenerationConfig, PhotoGenerationError } from "../../../presentation/hooks/photo-generation.types";
-import { createCreationsRepository } from "../../../domains/creations/infrastructure/adapters";
+import type { PhotoGenerationConfig, PhotoGenerationError } from "../../../../presentation/hooks/photo-generation.types";
+import { createCreationsRepository } from "../../../../domains/creations/infrastructure/adapters";
 
 export interface UseCoupleFutureGenerationConfig<TInput extends CoupleFutureInput, TResult> {
   userId: string | undefined;
