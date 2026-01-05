@@ -75,7 +75,7 @@ export const MemeGeneratorScreen: React.FC<MemeGeneratorScreenProps> = ({
       aspectRatio: 1,
       width: "100%",
       backgroundColor: tokens.colors.backgroundSecondary,
-      borderRadius: tokens.borderRadius.lg,
+      borderRadius: tokens.radius.lg,
       justifyContent: "center",
       alignItems: "center",
       marginBottom: tokens.spacing.xl,

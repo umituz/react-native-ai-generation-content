@@ -82,7 +82,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
               backgroundColor: disabled
                 ? tokens.colors.surfaceSecondary
                 : tokens.colors.primary,
-              borderRadius: tokens.borderRadius.lg,
+              borderRadius: tokens.radius.lg,
               flex: 1,
             },
           ]}
@@ -108,7 +108,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
               styles.accessory,
               {
                 backgroundColor: tokens.colors.surfaceSecondary,
-                borderRadius: tokens.borderRadius.lg,
+                borderRadius: tokens.radius.lg,
               },
             ]}
           >
