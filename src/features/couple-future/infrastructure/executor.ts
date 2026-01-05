@@ -79,8 +79,19 @@ export async function executeCoupleFuture(
 
     onProgress?.(90);
 
-    const data = result as { images?: Array<{ url: string }> };
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CoupleFuture] Raw result:", JSON.stringify(result, null, 2));
+      console.log("[CoupleFuture] Result keys:", result ? Object.keys(result as object) : "null");
+    }
+
+    const rawResult = result as Record<string, unknown>;
+    const data = (rawResult?.data ?? rawResult) as { images?: Array<{ url: string }> };
     const imageUrl = data?.images?.[0]?.url;
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CoupleFuture] Parsed data:", JSON.stringify(data, null, 2));
+      console.log("[CoupleFuture] Image URL:", imageUrl);
+    }
 
     onProgress?.(100);
 
