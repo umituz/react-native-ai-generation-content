@@ -24,3 +24,4 @@ export { analyzeImageForFace } from "./infrastructure/analyzers/faceAnalyzer";
 export { useFaceDetection } from "./presentation/hooks/useFaceDetection";
 
 export { FaceValidationStatus } from "./presentation/components/FaceValidationStatus";
+export { FaceDetectionToggle } from "./presentation/components/FaceDetectionToggle";
