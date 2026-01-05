@@ -27,8 +27,8 @@ export class CreationsWriter {
             metadata: creation.metadata || {},
             isShared: creation.isShared || false,
             isFavorite: creation.isFavorite || false,
-            status: creation.status,
-            output: creation.output ?? null,
+            ...(creation.status !== undefined && { status: creation.status }),
+            ...(creation.output !== undefined && { output: creation.output }),
             ...(creation.prompt !== undefined && { prompt: creation.prompt }),
         };
 

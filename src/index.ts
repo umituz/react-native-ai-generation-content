@@ -149,6 +149,7 @@ export * from "./features/image-to-video";
 export * from "./features/text-to-voice";
 export * from "./features/hd-touch-up";
 export * from "./features/meme-generator";
+export * from "./features/couple-future";
 export * from "./infrastructure/orchestration";
 
 // Unified AI Feature Screen

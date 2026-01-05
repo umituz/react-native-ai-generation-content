@@ -1,93 +1,12 @@
 /**
  * Default Moderation Rules
  * Built-in rules for content filtering - can be extended via config
+ *
+ * NOTE: Explicit/NSFW content is handled server-side by AI providers (e.g., Fal AI's has_nsfw_concepts)
+ * This file only contains rules for content that AI providers don't automatically detect
  */
 
 import type { ModerationRule } from "../../domain/entities/moderation.types";
-
-const explicitContentRules: ModerationRule[] = [
-  {
-    id: "explicit-001",
-    name: "Sexual Content",
-    description: "Detects explicit sexual content and nudity",
-    contentTypes: ["text", "image"],
-    severity: "critical",
-    violationType: "explicit_content",
-    patterns: [
-      "\\bsex\\b",
-      "\\bsexual\\b",
-      "\\bsexually\\b",
-      "\\bnude\\b",
-      "\\bnudity\\b",
-      "\\bnaked\\b",
-      "\\bnsfw\\b",
-      "\\berotic\\b",
-      "\\bporn\\b",
-      "\\bporno\\b",
-      "\\bpornography\\b",
-      "\\bxxx\\b",
-      "\\badult content\\b",
-      "\\bexplicit\\b",
-      "\\bintercourse\\b",
-      "\\bintimate\\b.*\\brelation\\b",
-      "\\bhaving sex\\b",
-      "\\bmake love\\b",
-      "\\bmaking love\\b",
-      "\\borgasm\\b",
-      "\\bmasturbat\\w*\\b",
-      "\\bsexy\\b",
-      "\\bsensual\\b",
-    ],
-    enabled: true,
-  },
-  {
-    id: "explicit-002",
-    name: "Body Parts Focus",
-    description: "Detects inappropriate body part references",
-    contentTypes: ["text", "image"],
-    severity: "high",
-    violationType: "explicit_content",
-    patterns: [
-      "\\bbreasts?\\b",
-      "\\bboobs?\\b",
-      "\\btits?\\b",
-      "\\bbutt\\b",
-      "\\bass\\b",
-      "\\bbuttocks\\b",
-      "\\bchest\\b.*\\b(exposed|revealing|bare)\\b",
-      "\\bcleavage\\b",
-      "\\bgenitals?\\b",
-      "\\bpenis\\b",
-      "\\bvagina\\b",
-      "\\bgroin\\b",
-    ],
-    enabled: true,
-  },
-  {
-    id: "explicit-003",
-    name: "Vulgar Language",
-    description: "Detects vulgar and profane sexual terms",
-    contentTypes: ["text", "image"],
-    severity: "critical",
-    violationType: "explicit_content",
-    patterns: [
-      "\\bf+u+c+k+\\b",
-      "\\bfuck\\w*\\b",
-      "\\bsh[i1]t\\b",
-      "\\bd[i1]ck\\b",
-      "\\bcock\\b",
-      "\\bpussy\\b",
-      "\\bcunt\\b",
-      "\\bwh[o0]re\\b",
-      "\\bslut\\b",
-      "\\bbitch\\b",
-      "\\bhentai\\b",
-      "\\bhooker\\b",
-      "\\bprostitut\\w*\\b",
-    ],
-    enabled: true,
-  },
-];
 
 const violenceRules: ModerationRule[] = [
   {
@@ -181,7 +100,6 @@ const personalInfoRules: ModerationRule[] = [
 ];
 
 export const defaultModerationRules: ModerationRule[] = [
-  ...explicitContentRules,
   ...violenceRules,
   ...hateSpeechRules,
   ...illegalActivityRules,
