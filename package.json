@@ -46,8 +46,7 @@
     "@umituz/react-native-offline": "latest",
     "@umituz/react-native-tanstack": "latest",
     "@umituz/react-native-timezone": "latest",
-    "@umituz/react-native-uuid": "latest",
-    "@umituz/react-native-video-editor": "latest"
+    "@umituz/react-native-uuid": "latest"
   },
   "peerDependencies": {
     "@react-navigation/native": ">=6.0.0",
@@ -81,7 +80,7 @@
     "@umituz/react-native-tanstack": "latest",
     "@umituz/react-native-timezone": "latest",
     "@umituz/react-native-uuid": "latest",
-    "@umituz/react-native-video-editor": "latest",
+    "@umituz/react-native-video-editor": "^1.0.22",
     "eslint": "^9.0.0",
     "expo-application": "^7.0.8",
     "expo-clipboard": "^8.0.8",

@@ -6,7 +6,7 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import { useResponsive } from "@umituz/react-native-design-system";
-import { VideoPlayer } from "@umituz/react-native-video-editor";
+import { VideoPlayer } from "@umituz/react-native-video-editor/player";
 
 interface DetailVideoProps {
   readonly videoUrl: string;
