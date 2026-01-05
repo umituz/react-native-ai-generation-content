@@ -65,9 +65,21 @@ function defaultExtractImageResult(result: unknown): string | undefined {
     console.log("[ImageExtractor] Data keys:", Object.keys(data));
   }
 
+  // Direct string values
   if (typeof data.image === "string") return data.image;
   if (typeof data.imageUrl === "string") return data.imageUrl;
   if (typeof data.output === "string") return data.output;
+
+  // Object with url property (birefnet, rembg format: data.image.url)
+  const imageObj = data.image as Record<string, unknown> | undefined;
+  if (imageObj && typeof imageObj === "object" && typeof imageObj.url === "string") {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[ImageExtractor] Found data.image.url:", imageObj.url);
+    }
+    return imageObj.url;
+  }
+
+  // Array format (flux, etc: data.images[0].url)
   if (Array.isArray(data.images) && typeof data.images[0]?.url === "string") {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[ImageExtractor] Found images[0].url:", data.images[0].url);
@@ -146,10 +158,25 @@ export async function executeImageFeature(
       requestId: (result as { requestId?: string })?.requestId,
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    // Extract detailed error message from FAL API errors
+    let message = "Processing failed";
+    if (error instanceof Error) {
+      message = error.message;
+    } else if (typeof error === "object" && error !== null) {
+      const errObj = error as Record<string, unknown>;
+      // FAL API error format: {detail: [{msg, type, loc}]} or {message}
+      if (Array.isArray(errObj.detail) && errObj.detail[0]?.msg) {
+        message = String(errObj.detail[0].msg);
+      } else if (errObj.detail) {
+        message = JSON.stringify(errObj.detail);
+      } else if (errObj.message) {
+        message = String(errObj.message);
+      } else if (errObj.msg) {
+        message = String(errObj.msg);
+      }
+    }
     if (__DEV__) {
-       
-      console.error(`[Image:${featureType}] Error:`, message);
+      console.error(`[Image:${featureType}] Error:`, message, error);
     }
     return { success: false, error: message };
   }

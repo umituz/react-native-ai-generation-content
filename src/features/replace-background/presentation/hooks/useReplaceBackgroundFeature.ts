@@ -3,7 +3,7 @@
  * Uses base image with prompt hook for background replacement
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import {
   useImageWithPromptFeature,
   type ImageWithPromptHookReturn,
@@ -47,12 +47,9 @@ export function useReplaceBackgroundFeature(
     setMode(newMode);
   }, []);
 
-  return useMemo(
-    () => ({
-      ...baseHook,
-      mode,
-      setMode: handleSetMode,
-    }),
-    [baseHook, mode, handleSetMode],
-  );
+  return {
+    ...baseHook,
+    mode,
+    setMode: handleSetMode,
+  };
 }

@@ -20,6 +20,10 @@ export interface UseCreationPersistenceConfig {
   readonly type: string;
   /** Collection name in Firestore (defaults to "creations") */
   readonly collectionName?: string;
+  /** Credit cost for this feature (passed to onCreditDeduct) */
+  readonly creditCost?: number;
+  /** Callback to deduct credits on successful processing */
+  readonly onCreditDeduct?: (cost: number) => Promise<void>;
 }
 
 /**
@@ -51,17 +55,19 @@ export interface UseCreationPersistenceReturn {
  * Hook that provides Firestore persistence callbacks for AI features
  *
  * @example
- * // In AnimeSelfieScreen:
- * const persistence = useCreationPersistence({ type: "anime-selfie" });
- * const config = useMemo(() => ({
- *   prepareImage,
- *   ...persistence,
- * }), [persistence]);
+ * const { deductCredit } = useDeductCredit({ userId, onCreditsExhausted: openPaywall });
+ * const persistence = useCreationPersistence({
+ *   type: "anime-selfie",
+ *   creditCost: AI_CREDIT_COST.ANIME_SELFIE,
+ *   onCreditDeduct: async (cost) => {
+ *     for (let i = 0; i < cost; i++) await deductCredit("image");
+ *   },
+ * });
  */
 export function useCreationPersistence(
   config: UseCreationPersistenceConfig,
 ): UseCreationPersistenceReturn {
-  const { type, collectionName = "creations" } = config;
+  const { type, collectionName = "creations", creditCost, onCreditDeduct } = config;
   const { userId } = useAuth();
   const queryClient = useQueryClient();
 
@@ -73,7 +79,7 @@ export function useCreationPersistence(
   const onProcessingStart = useCallback(
     <T extends BaseProcessingStartData>(data: T) => {
       if (__DEV__) {
-        console.log("[useCreationPersistence] onProcessingStart called", { type, userId, data });
+        console.log("[useCreationPersistence] onProcessingStart", { type, userId });
       }
 
       if (!userId) {
@@ -85,10 +91,6 @@ export function useCreationPersistence(
       const cleanMetadata = Object.fromEntries(
         Object.entries(rest).filter(([, v]) => v !== undefined && v !== null),
       );
-
-      if (__DEV__) {
-        console.log("[useCreationPersistence] cleanMetadata", cleanMetadata);
-      }
 
       const creation: Creation = {
         id: creationId,
@@ -114,7 +116,7 @@ export function useCreationPersistence(
   const onProcessingComplete = useCallback(
     <T extends BaseProcessingResult>(result: T) => {
       if (__DEV__) {
-        console.log("[useCreationPersistence] onProcessingComplete called", {
+        console.log("[useCreationPersistence] onProcessingComplete", {
           creationId: result.creationId,
           hasImageUrl: !!result.imageUrl,
           hasVideoUrl: !!result.videoUrl,
@@ -122,7 +124,7 @@ export function useCreationPersistence(
       }
 
       if (!userId || !result.creationId) {
-        if (__DEV__) console.log("[useCreationPersistence] Missing userId or creationId, skipping");
+        if (__DEV__) console.log("[useCreationPersistence] Missing userId or creationId");
         return;
       }
 
@@ -133,36 +135,37 @@ export function useCreationPersistence(
           ? { videoUrl: result.videoUrl }
           : undefined;
 
-      if (__DEV__) {
-        console.log("[useCreationPersistence] Updating document to completed", {
-          creationId: result.creationId,
-          uri: uri.substring(0, 50) + "...",
-        });
-      }
-
       repository.update(userId, result.creationId, {
         uri,
         status: "completed",
         output,
       });
       queryClient.invalidateQueries({ queryKey: ["creations"] });
+
+      // Deduct credits via callback (app provides implementation)
+      if (creditCost && creditCost > 0 && onCreditDeduct) {
+        if (__DEV__) {
+          console.log("[useCreationPersistence] Deducting credits", { cost: creditCost });
+        }
+        onCreditDeduct(creditCost).catch((err) => {
+          if (__DEV__) {
+            console.error("[useCreationPersistence] Credit deduction failed", err);
+          }
+        });
+      }
     },
-    [userId, repository, queryClient],
+    [userId, repository, queryClient, creditCost, onCreditDeduct],
   );
 
   const onError = useCallback(
     (error: string, creationId?: string) => {
       if (__DEV__) {
-        console.log("[useCreationPersistence] onError called", { error, creationId });
+        console.log("[useCreationPersistence] onError", { error, creationId });
       }
 
       if (!userId || !creationId) {
-        if (__DEV__) console.log("[useCreationPersistence] Missing userId or creationId, skipping");
+        if (__DEV__) console.log("[useCreationPersistence] Missing userId or creationId");
         return;
-      }
-
-      if (__DEV__) {
-        console.log("[useCreationPersistence] Updating document to failed", { creationId });
       }
 
       repository.update(userId, creationId, {

@@ -1,15 +1,14 @@
 /**
  * AnimeSelfieFeature Component
  * Self-contained anime selfie feature UI component
- * Uses hook internally, only requires config and translations
+ * Uses centralized SingleImageFeatureLayout for consistent UX
  */
 
-import React, { useCallback, useMemo } from "react";
-import { ScrollView, StyleSheet, Image } from "react-native";
-import { useAppDesignTokens, useResponsive } from "@umituz/react-native-design-system";
+import React, { useMemo } from "react";
+import { Image, StyleSheet } from "react-native";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
-import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
-import { AIGenerationResult } from "../../../../presentation/components/display/AIGenerationResult";
+import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
+import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
 import { useAnimeSelfieFeature } from "../hooks";
 import type {
   AnimeSelfieTranslations,
@@ -18,15 +17,17 @@ import type {
 
 export interface AnimeSelfieFeatureProps {
   config: AnimeSelfieFeatureConfig;
-  translations: AnimeSelfieTranslations;
+  translations: AnimeSelfieTranslations & {
+    modalTitle?: string;
+    modalMessage?: string;
+    modalHint?: string;
+    modalBackgroundHint?: string;
+  };
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
   /** Called before processing starts. Return false to cancel. */
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: {
-    visible: boolean;
-    progress: number;
-  }) => React.ReactNode;
+  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
@@ -37,10 +38,6 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
   onBeforeProcess,
   renderProcessingModal,
 }) => {
-  const tokens = useAppDesignTokens();
-  const { width: screenWidth, horizontalPadding } = useResponsive();
-  const imageSize = screenWidth - horizontalPadding * 2;
-
   const feature = useAnimeSelfieFeature({
     config,
     onSelectImage,
@@ -48,125 +45,55 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
     onBeforeProcess,
   });
 
-  const photoTranslations = useMemo(
+  const modalTranslations = useMemo(
     () => ({
-      tapToUpload: translations.uploadTitle,
-      selectPhoto: translations.uploadSubtitle,
-      change: translations.uploadChange,
-      analyzing: translations.uploadAnalyzing,
+      title: translations.modalTitle || "Processing",
+      message: translations.modalMessage || "AI is transforming your photo...",
+      hint: translations.modalHint || "This may take a moment",
+      backgroundHint: translations.modalBackgroundHint || "Continue in background",
     }),
     [translations],
   );
 
-  const handleProcess = useCallback(() => {
-    void feature.process();
-  }, [feature]);
-
-  const handleSave = useCallback(() => {
-    void feature.save();
-  }, [feature]);
-
-  const handleSelectImage = useCallback(() => {
-    void feature.selectImage();
-  }, [feature]);
-
-  if (feature.processedUrl) {
-    return (
-      <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <AIGenerationResult
-          successText={translations.successText}
-          primaryAction={{
-            label: translations.saveButtonText,
-            onPress: handleSave,
-          }}
-          secondaryAction={{
-            label: translations.tryAnotherText,
-            onPress: feature.reset,
-          }}
-        >
-          <Image
-            source={{ uri: feature.processedUrl }}
-            style={[styles.resultImage, { width: imageSize, height: imageSize }]}
-            resizeMode="contain"
-          />
-        </AIGenerationResult>
-      </ScrollView>
-    );
-  }
-
   return (
-    <>
-      <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <AIGenerationForm
-          onGenerate={handleProcess}
-          isGenerating={feature.isProcessing}
-          progress={feature.progress}
+    <SingleImageFeatureLayout
+      feature={feature}
+      translations={translations}
+      modalTranslations={modalTranslations}
+      renderProcessingModal={renderProcessingModal}
+      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }) => (
+        <PhotoUploadCard
+          imageUri={imageUri}
+          onPress={onSelect}
+          isValidating={isProcessing}
+          disabled={isDisabled}
           translations={{
-            generateButton: translations.processButtonText,
-            generatingButton: translations.processingText,
-            progressTitle: translations.processingText,
+            tapToUpload: translations.uploadTitle,
+            selectPhoto: translations.uploadSubtitle,
+            change: translations.uploadChange,
+            analyzing: translations.uploadAnalyzing,
           }}
-        >
-          <PhotoUploadCard
-            imageUri={feature.imageUri}
-            onPress={handleSelectImage}
-            isValidating={feature.isProcessing}
-            disabled={feature.isProcessing}
-            translations={photoTranslations}
-            config={{
-              aspectRatio: 1,
-              borderRadius: 24,
-              showValidationStatus: false,
-              allowChange: true,
-            }}
-          />
-        </AIGenerationForm>
-      </ScrollView>
-
-      {renderProcessingModal?.({ visible: feature.isProcessing, progress: feature.progress })}
-    </>
+          config={{
+            aspectRatio: 1,
+            borderRadius: 24,
+            showValidationStatus: false,
+            allowChange: true,
+          }}
+        />
+      )}
+      renderResult={({ imageUrl, imageSize }) => (
+        <Image
+          source={{ uri: imageUrl }}
+          style={[styles.resultImage, { width: imageSize, height: imageSize }]}
+          resizeMode="contain"
+        />
+      )}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingVertical: 16,
-  },
-  description: {
-    textAlign: "center",
-    marginHorizontal: 24,
-    marginBottom: 24,
-    lineHeight: 24,
-  },
-  successText: {
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  resultImageContainer: {
-    alignItems: "center",
-    marginHorizontal: 24,
-    marginBottom: 24,
-  },
   resultImage: {
     borderRadius: 16,
-  },
-  resultActions: {
-    marginHorizontal: 24,
-    gap: 12,
-  },
-  buttonContainer: {
-    marginHorizontal: 24,
-    marginTop: 8,
   },
 });

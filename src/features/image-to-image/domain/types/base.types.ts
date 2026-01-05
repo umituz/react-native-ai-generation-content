@@ -77,6 +77,14 @@ export interface BaseImageTranslations {
   beforeLabel?: string;
   afterLabel?: string;
   compareHint?: string;
+  /** Modal title shown during processing */
+  modalTitle?: string;
+  /** Modal message shown during processing */
+  modalMessage?: string;
+  /** Modal hint/tip shown during processing */
+  modalHint?: string;
+  /** "Continue in background" text */
+  modalBackgroundHint?: string;
 }
 
 /**
@@ -95,6 +103,14 @@ export interface BaseDualImageTranslations {
   successText: string;
   saveButtonText: string;
   tryAnotherText: string;
+  /** Modal title shown during processing */
+  modalTitle?: string;
+  /** Modal message shown during processing */
+  modalMessage?: string;
+  /** Modal hint/tip shown during processing */
+  modalHint?: string;
+  /** "Continue in background" text */
+  modalBackgroundHint?: string;
 }
 
 /**

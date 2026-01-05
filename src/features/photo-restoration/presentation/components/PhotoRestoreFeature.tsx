@@ -1,14 +1,13 @@
 /**
  * PhotoRestoreFeature Component
  * Self-contained photo restore feature UI component
- * Uses hook internally, only requires config and translations
+ * Uses centralized SingleImageFeatureLayout for consistent UX
  */
 
-import React, { useCallback, useMemo } from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import React, { useMemo } from "react";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
-import { AIGenerationForm } from "../../../../presentation/components/AIGenerationForm";
+import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
+import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
 import { PhotoRestoreResultView } from "./PhotoRestoreResultView";
 import { usePhotoRestoreFeature } from "../hooks";
 import type {
@@ -17,21 +16,17 @@ import type {
 } from "../../domain/types";
 
 export interface PhotoRestoreFeatureProps {
-  /** Feature configuration with provider-specific settings */
   config: PhotoRestoreFeatureConfig;
-  /** Translations for all UI text */
-  translations: PhotoRestoreTranslations;
-  /** Image picker callback */
+  translations: PhotoRestoreTranslations & {
+    modalTitle?: string;
+    modalMessage?: string;
+    modalHint?: string;
+    modalBackgroundHint?: string;
+  };
   onSelectImage: () => Promise<string | null>;
-  /** Save image callback */
   onSaveImage: (imageUrl: string) => Promise<void>;
-  /** Called before processing starts. Return false to cancel. */
   onBeforeProcess?: () => Promise<boolean>;
-  /** Optional custom processing modal renderer */
-  renderProcessingModal?: (props: {
-    visible: boolean;
-    progress: number;
-  }) => React.ReactNode;
+  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
@@ -42,8 +37,6 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
   onBeforeProcess,
   renderProcessingModal,
 }) => {
-  const tokens = useAppDesignTokens();
-
   const feature = usePhotoRestoreFeature({
     config,
     onSelectImage,
@@ -51,38 +44,46 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
     onBeforeProcess,
   });
 
-  const photoTranslations = useMemo(
+  const modalTranslations = useMemo(
     () => ({
-      tapToUpload: translations.uploadTitle,
-      selectPhoto: translations.uploadSubtitle,
-      change: translations.uploadChange,
-      analyzing: translations.uploadAnalyzing,
+      title: translations.modalTitle || "Processing",
+      message: translations.modalMessage || "AI is restoring your photo...",
+      hint: translations.modalHint || "This may take a moment",
+      backgroundHint: translations.modalBackgroundHint || "Continue in background",
     }),
     [translations],
   );
 
-  const handleProcess = useCallback(() => {
-    void feature.process();
-  }, [feature]);
-
-  const handleSave = useCallback(() => {
-    void feature.save();
-  }, [feature]);
-
-  const handleSelectImage = useCallback(() => {
-    void feature.selectImage();
-  }, [feature]);
-
-  if (feature.processedUrl && feature.imageUri) {
-    return (
-      <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+  return (
+    <SingleImageFeatureLayout
+      feature={feature}
+      translations={translations}
+      modalTranslations={modalTranslations}
+      renderProcessingModal={renderProcessingModal}
+      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }) => (
+        <PhotoUploadCard
+          imageUri={imageUri}
+          onPress={onSelect}
+          isValidating={isProcessing}
+          disabled={isDisabled}
+          translations={{
+            tapToUpload: translations.uploadTitle,
+            selectPhoto: translations.uploadSubtitle,
+            change: translations.uploadChange,
+            analyzing: translations.uploadAnalyzing,
+          }}
+          config={{
+            aspectRatio: 1,
+            borderRadius: 24,
+            showValidationStatus: false,
+            allowChange: true,
+          }}
+        />
+      )}
+      renderCustomResult={({ processedUrl, originalImageUri, onSave, onReset }) => (
         <PhotoRestoreResultView
-          originalUri={feature.imageUri}
-          processedUri={feature.processedUrl}
+          originalUri={originalImageUri}
+          processedUri={processedUrl}
           translations={{
             successText: translations.successText,
             saveButtonText: translations.saveButtonText,
@@ -90,72 +91,10 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
             beforeLabel: translations.beforeLabel,
             afterLabel: translations.afterLabel,
           }}
-          onSave={handleSave}
-          onReset={feature.reset}
+          onSave={onSave}
+          onReset={onReset}
         />
-      </ScrollView>
-    );
-  }
-
-  return (
-    <>
-      <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <AIGenerationForm
-          onGenerate={handleProcess}
-          isGenerating={feature.isProcessing}
-          progress={feature.progress}
-          translations={{
-            generateButton: translations.processButtonText,
-            generatingButton: translations.processingText,
-            progressTitle: translations.processingText,
-          }}
-        >
-          <PhotoUploadCard
-            imageUri={feature.imageUri}
-            onPress={handleSelectImage}
-            isValidating={feature.isProcessing}
-            disabled={feature.isProcessing}
-            translations={photoTranslations}
-            config={{
-              aspectRatio: 1,
-              borderRadius: 24,
-              showValidationStatus: false,
-              allowChange: true,
-            }}
-          />
-        </AIGenerationForm>
-      </ScrollView>
-
-      {renderProcessingModal?.({ visible: feature.isProcessing, progress: feature.progress })}
-    </>
+      )}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingVertical: 16,
-  },
-  description: {
-    textAlign: "center",
-    marginHorizontal: 24,
-    marginBottom: 24,
-    lineHeight: 24,
-  },
-  errorContainer: {
-    marginHorizontal: 24,
-    marginBottom: 16,
-    padding: 16,
-    borderRadius: 12,
-  },
-  buttonContainer: {
-    marginHorizontal: 24,
-    marginTop: 8,
-  },
-});

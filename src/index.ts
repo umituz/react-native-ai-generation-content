@@ -92,6 +92,19 @@ export {
   ASPECT_RATIO_IDS, COMMON_DURATIONS,
 } from "./presentation/components";
 
+export {
+  SingleImageFeatureLayout, SingleImageWithPromptFeatureLayout,
+  DualImageFeatureLayout, DualImageVideoFeatureLayout,
+} from "./presentation/layouts";
+export type {
+  ModalTranslations, BaseLayoutTranslations, PhotoUploadTranslations,
+  SingleImageInputRenderProps, SingleImageWithPromptInputRenderProps,
+  SingleImageWithPromptFeatureState, SingleImageWithPromptFeatureLayoutProps,
+  DualImageInputRenderProps, ResultRenderProps, CustomResultRenderProps,
+  ProcessingModalRenderProps, SingleImageFeatureLayoutProps, DualImageFeatureLayoutProps,
+  DualImageVideoFeatureState, DualImageVideoFeatureLayoutProps,
+} from "./presentation/layouts";
+
 export type {
   GenerationProgressModalProps, GenerationProgressRenderProps, GenerationProgressContentProps,
   GenerationProgressBarProps, PendingJobCardProps, StatusLabels, PendingJobProgressBarProps,
