@@ -29,7 +29,7 @@ export interface AlertMessages {
 }
 
 export interface PhotoGenerationConfig<TInput, TResult, TSaveInput> {
-  generate: (input: TInput) => Promise<TResult>;
+  generate: (input: TInput, onProgress?: (progress: number) => void) => Promise<TResult>;
   save?: (result: TResult, input: TInput) => Promise<TSaveInput>;
   buildMetadata?: (input: TInput) => Record<string, unknown>;
   checkCredits?: () => Promise<boolean>;

@@ -86,7 +86,10 @@ export const usePhotoGeneration = <TInput, TResult, TSaveInput = unknown>(
         setState((prev) => ({ ...prev, progress: 20 }));
 
         // Generate without timeout - let AI provider handle its own timeout
-        const result = await generateFn(input);
+        // Pass progress callback to allow provider to report real progress
+        const result = await generateFn(input, (newProgress) => {
+          setState((prev) => ({ ...prev, progress: newProgress }));
+        });
 
         setState((prev) => ({ ...prev, progress: 60 }));
 
