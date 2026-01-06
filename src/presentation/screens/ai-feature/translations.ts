@@ -49,6 +49,25 @@ export function createPromptTranslations(prefix: string, t: TranslateFunction) {
 }
 
 /**
+ * Create text-input translations (text-to-image, meme-generator)
+ * For pure text-to-image features without image upload
+ */
+export function createTextInputTranslations(prefix: string, t: TranslateFunction) {
+  return {
+    title: t(`${prefix}.title`),
+    description: t(`${prefix}.description`),
+    promptPlaceholder: t(`${prefix}.promptPlaceholder`),
+    processButtonText: t(`${prefix}.processButtonText`),
+    processingText: t(`${prefix}.processingText`),
+    successText: t(`${prefix}.successText`),
+    saveButtonText: t(`${prefix}.saveButtonText`),
+    tryAnotherText: t(`${prefix}.tryAnotherText`),
+    styleLabel: t(`${prefix}.styleLabel`),
+    tipsLabel: t(`${prefix}.tipsLabel`),
+  };
+}
+
+/**
  * Create dual image translations (face-swap, ai-hug, ai-kiss)
  */
 export function createDualImageTranslations(prefix: string, t: TranslateFunction) {
@@ -84,8 +103,9 @@ export function createFeatureTranslations(config: AIFeatureConfig, t: TranslateF
         ? createComparisonTranslations(translationPrefix, t)
         : createSingleImageTranslations(translationPrefix, t);
     case "single-with-prompt":
-    case "text-input":
       return createPromptTranslations(translationPrefix, t);
+    case "text-input":
+      return createTextInputTranslations(translationPrefix, t);
     case "dual":
     case "dual-video":
       return createDualImageTranslations(translationPrefix, t);

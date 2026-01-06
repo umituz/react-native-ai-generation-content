@@ -5,7 +5,7 @@
 
 export { AIFeatureScreen } from "./AIFeatureScreen";
 export { AI_FEATURE_CONFIGS, getAIFeatureConfig, hasAIFeature, getAllAIFeatureIds, getAIFeaturesByMode } from "./registry";
-export { createFeatureTranslations, createSingleImageTranslations, createDualImageTranslations, createComparisonTranslations, createPromptTranslations } from "./translations";
+export { createFeatureTranslations, createSingleImageTranslations, createDualImageTranslations, createComparisonTranslations, createPromptTranslations, createTextInputTranslations } from "./translations";
 export type {
   AIFeatureId,
   AIFeatureMode,
@@ -17,4 +17,5 @@ export type {
   DualImageTranslationKeys,
   ComparisonTranslationKeys,
   PromptTranslationKeys,
+  TextInputTranslationKeys,
 } from "./types";

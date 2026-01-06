@@ -70,6 +70,15 @@ export const AI_FEATURE_CONFIGS: Record<AIFeatureId, AIFeatureConfig> = {
     extraConfig: { featureType: "replace-background" },
   },
 
+  // Text-input features (no image upload)
+  "meme-generator": {
+    id: "meme-generator",
+    mode: "text-input",
+    outputType: "image",
+    creditType: "image",
+    translationPrefix: "meme-generator",
+  },
+
   // Dual image features
   "face-swap": {
     id: "face-swap",

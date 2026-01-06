@@ -92,6 +92,22 @@ export interface DualImageTranslationKeys {
 }
 
 /**
+ * Translation keys structure for text-input features (text-to-image, meme-generator)
+ */
+export interface TextInputTranslationKeys {
+  title: string;
+  description: string;
+  promptPlaceholder: string;
+  processButtonText: string;
+  processingText: string;
+  successText: string;
+  saveButtonText: string;
+  tryAnotherText: string;
+  styleLabel?: string;
+  tipsLabel?: string;
+}
+
+/**
  * Static feature configuration (doesn't change at runtime)
  */
 export interface AIFeatureConfig {
