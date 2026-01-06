@@ -18,12 +18,13 @@ export type AIFeatureId =
   | "replace-background"
   | "face-swap"
   | "ai-hug"
-  | "ai-kiss";
+  | "ai-kiss"
+  | "meme-generator";
 
 /**
  * Image mode for the feature
  */
-export type AIFeatureMode = "single" | "single-with-prompt" | "dual" | "dual-video";
+export type AIFeatureMode = "single" | "single-with-prompt" | "dual" | "dual-video" | "text-input";
 
 /**
  * Output type of the feature

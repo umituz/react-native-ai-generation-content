@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * AI Kiss Feature
  * Provider-agnostic AI kiss video generation feature
  */

@@ -25,6 +25,7 @@ import { ReplaceBackgroundFeature } from "../../../features/replace-background/p
 import { FaceSwapFeature } from "../../../features/face-swap/presentation/components/FaceSwapFeature";
 import { AIHugFeature } from "../../../features/ai-hug/presentation/components/AIHugFeature";
 import { AIKissFeature } from "../../../features/ai-kiss/presentation/components/AIKissFeature";
+import { MemeGeneratorFeature } from "../../../features/meme-generator/presentation/components/MemeGeneratorFeature";
 
 import { createFeatureTranslations } from "./translations";
 import type { AIFeatureScreenProps, AIFeatureId } from "./types";
@@ -45,6 +46,7 @@ const FEATURE_COMPONENTS: Record<AIFeatureId, React.ComponentType<any>> = {
   "face-swap": FaceSwapFeature,
   "ai-hug": AIHugFeature,
   "ai-kiss": AIKissFeature,
+  "meme-generator": MemeGeneratorFeature,
 };
 
 /**
@@ -114,6 +116,12 @@ export const AIFeatureScreen: React.FC<AIFeatureScreenProps> = ({
           ...baseProps,
           onSelectImage,
           onSaveImage: onSaveMedia,
+        };
+      case "text-input":
+        return {
+          ...baseProps,
+          onSaveImage: onSaveMedia,
+          // Text input doesn't need image selection
         };
       case "dual":
         return {

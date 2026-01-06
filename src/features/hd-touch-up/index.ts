@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * HD Touch Up Feature
  * Provider-agnostic HD enhancement feature
  */

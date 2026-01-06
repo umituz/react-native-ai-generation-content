@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * Face Swap Feature
  * Provider-agnostic face swap generation feature
  */

@@ -84,6 +84,7 @@ export function createFeatureTranslations(config: AIFeatureConfig, t: TranslateF
         ? createComparisonTranslations(translationPrefix, t)
         : createSingleImageTranslations(translationPrefix, t);
     case "single-with-prompt":
+    case "text-input":
       return createPromptTranslations(translationPrefix, t);
     case "dual":
     case "dual-video":

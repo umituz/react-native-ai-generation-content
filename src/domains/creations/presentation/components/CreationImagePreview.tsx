@@ -4,7 +4,13 @@
  */
 
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet, Image, ImageErrorEventData, NativeSyntheticEvent } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  type ImageErrorEventData,
+  type NativeSyntheticEvent,
+} from "react-native";
 import {
   useAppDesignTokens,
   AtomicIcon,

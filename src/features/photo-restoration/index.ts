@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * Photo Restoration Feature
  * Provider-agnostic photo restoration feature
  */

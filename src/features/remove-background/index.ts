@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * Remove Background Feature
  * Provider-agnostic background removal feature
  */

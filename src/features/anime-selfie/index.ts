@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * Anime Selfie Feature
  * Provider-agnostic anime selfie generation feature
  */

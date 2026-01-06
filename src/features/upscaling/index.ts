@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * Upscaling Feature
  * Provider-agnostic image upscaling feature
  */

@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * AI Hug Feature
  * Provider-agnostic AI hug video generation feature
  */

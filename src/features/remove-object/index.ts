@@ -1,4 +1,5 @@
 /**
+export * from "./presentation/components";
  * Remove Object Feature
  * Provider-agnostic object removal (inpainting) feature
  */
