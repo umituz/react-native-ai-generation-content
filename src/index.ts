@@ -10,6 +10,7 @@ export type {
   SubscribeOptions, RunOptions, ImageFeatureType, VideoFeatureType, ImageFeatureInputData,
   VideoFeatureInputData, ProviderCapabilities, ProviderProgressInfo, INetworkService,
   ICreditService, IPaywallService, IAuthService, IAnalyticsService, IAppServices, PartialAppServices,
+  IFeatureUtils,
 } from "./domain/interfaces";
 
 export { AIErrorType } from "./domain/entities";

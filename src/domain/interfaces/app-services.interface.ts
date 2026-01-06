@@ -105,6 +105,24 @@ export interface IAnalyticsService {
 }
 
 /**
+ * Feature utils interface (optional)
+ * Provides utility functions for AI features
+ */
+export interface IFeatureUtils {
+  /**
+   * Select image from gallery
+   * @returns Image URI or null if cancelled
+   */
+  selectImage: () => Promise<string | null>;
+
+  /**
+   * Save video to device library
+   * @param uri - Video URI to save
+   */
+  saveVideo: (uri: string) => Promise<void>;
+}
+
+/**
  * Combined app services interface
  * Apps implement this to provide all required services
  */
@@ -114,6 +132,7 @@ export interface IAppServices {
   readonly paywall: IPaywallService;
   readonly auth: IAuthService;
   readonly analytics?: IAnalyticsService;
+  readonly featureUtils?: IFeatureUtils;
 }
 
 /**
