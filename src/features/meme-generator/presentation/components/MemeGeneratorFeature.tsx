@@ -92,21 +92,15 @@ export const MemeGeneratorFeature: React.FC<MemeGeneratorFeatureProps> = ({
   if (state.imageUrl) {
      return (
         <GenerationResultContent
-            imageUrl={state.imageUrl}
+            result={{ imageUrl: state.imageUrl }}
             onSave={handleSave}
-            onTryAgain={reset}
-            resultConfig={{
-                header: {
-                    title: translations.successText || "Your meme is ready!",
-                },
-                actions: {
-                    save: {
-                        label: translations.saveButtonText || "Save to Gallery",
-                    },
-                    tryAgain: {
-                        label: translations.tryAnotherText || "Create Another",
-                    },
-                },
+            onRetry={reset}
+            translations={{
+                share: "Share",
+                sharing: "Sharing...",
+                save: translations.saveButtonText || "Save to Gallery",
+                retry: translations.tryAnotherText || "Create Another",
+                aiGenerated: translations.successText || "Your meme is ready!",
             }}
         />
      );
