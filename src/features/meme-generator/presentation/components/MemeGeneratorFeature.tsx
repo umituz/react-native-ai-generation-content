@@ -1,23 +1,22 @@
 /**
  * MemeGeneratorFeature Component
- * 
+ *
  * Unified Text-to-Image feature component for Meme Generation.
  * Integrates PromptInput, StyleSelector, and Generation logic using useTextToImageFeature.
  */
 
 import React, { useMemo, useCallback } from "react";
-import { View, ScrollView, StyleSheet, Image, KeyboardAvoidingView, Platform } from "react-native";
-import { useAppDesignTokens, AtomicIcon, AtomicCard, AtomicText, AtomicSpinner } from "@umituz/react-native-design-system";
+import { View, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { useAppDesignTokens, AtomicCard, AtomicText } from "@umituz/react-native-design-system";
 import { getAuthService } from "../../../../infrastructure/config";
 import { useTextToImageFeature } from "../../../text-to-image/presentation/hooks/useTextToImageFeature";
 import { PromptInput } from "../../../../presentation/components/PromptInput";
-import { StyleSelector } from "../../../../presentation/components/selectors/StyleSelector";
 import { GenerateButton } from "../../../../presentation/components/buttons/GenerateButton";
 import { GridSelector } from "../../../../presentation/components/selectors/GridSelector";
-import { ResultDisplay } from "../../../../presentation/components/result/ResultDisplay";
+import { GenerationResultContent } from "../../../../presentation/components/result/GenerationResultContent";
 
 // Constants (Using default provided styles if config doesn't override)
-import { DEFAULT_IMAGE_STYLES } from "../../../text-to-image/domain/constants/processing-modes.constants";
+import { DEFAULT_IMAGE_STYLES } from "../../../text-to-image/domain/constants/styles.constants";
 
 export interface MemeGeneratorFeatureProps {
   config: any; // AIFeatureConfig merged with extraConfig
@@ -92,30 +91,38 @@ export const MemeGeneratorFeature: React.FC<MemeGeneratorFeatureProps> = ({
 
   if (state.imageUrl) {
      return (
-        <ResultDisplay 
+        <GenerationResultContent
             imageUrl={state.imageUrl}
             onSave={handleSave}
             onTryAgain={reset}
-            translations={{
-                save: translations.saveButtonText || "Save",
-                tryAgain: translations.tryAnotherText || "Try Another",
-                success: translations.successText || "Meme Generated!"
+            resultConfig={{
+                header: {
+                    title: translations.successText || "Your meme is ready!",
+                },
+                actions: {
+                    save: {
+                        label: translations.saveButtonText || "Save to Gallery",
+                    },
+                    tryAgain: {
+                        label: translations.tryAnotherText || "Create Another",
+                    },
+                },
             }}
         />
      );
   }
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        
+
         {/* Prompt Input */}
         <View style={styles.section}>
             <AtomicText type="labelLarge" style={{color: tokens.colors.textPrimary}}>
-                {translations.promptLabel || "Your Meme Idea"}
+                {translations.description || "Describe your meme idea"}
             </AtomicText>
             <PromptInput
                 value={state.prompt}
@@ -141,9 +148,9 @@ export const MemeGeneratorFeature: React.FC<MemeGeneratorFeatureProps> = ({
         {/* Generate Button */}
         <GenerateButton
             onPress={handleGenerate}
-            isLoading={state.isProcessing}
+            isProcessing={state.isProcessing}
             isDisabled={!isReady}
-            title={translations.processButtonText || "Generate Meme"}
+            text={translations.processButtonText || "Generate Meme"}
         />
 
         {/* Error Display */}
