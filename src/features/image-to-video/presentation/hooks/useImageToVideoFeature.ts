@@ -4,48 +4,33 @@
  */
 
 import { useState, useCallback, useMemo } from "react";
-import { executeImageToVideo } from "../../infrastructure/services";
+import { useGenerationExecution } from "./useGenerationExecution";
+import { validateImageToVideoGeneration } from "./useImageToVideoValidation";
+import { INITIAL_IMAGE_TO_VIDEO_STATE } from "./useImageToVideoFeature.constants";
+import type {
+  UseImageToVideoFeatureProps,
+  UseImageToVideoFeatureReturn,
+} from "./useImageToVideoFeature.types";
 import type {
   ImageToVideoFeatureState,
-  ImageToVideoFeatureConfig,
-  ImageToVideoResult,
-  ImageToVideoFeatureCallbacks,
   ImageToVideoGenerateParams,
+  ImageToVideoResult,
 } from "../../domain/types";
 
 declare const __DEV__: boolean;
-
-export interface UseImageToVideoFeatureProps {
-  config: ImageToVideoFeatureConfig;
-  callbacks?: ImageToVideoFeatureCallbacks;
-  userId: string;
-}
-
-export interface UseImageToVideoFeatureReturn {
-  state: ImageToVideoFeatureState;
-  setImageUri: (uri: string) => void;
-  setMotionPrompt: (prompt: string) => void;
-  generate: (params?: ImageToVideoGenerateParams) => Promise<ImageToVideoResult>;
-  reset: () => void;
-  isReady: boolean;
-  canGenerate: boolean;
-}
-
-const INITIAL_STATE: ImageToVideoFeatureState = {
-  imageUri: null,
-  motionPrompt: "",
-  videoUrl: null,
-  thumbnailUrl: null,
-  isProcessing: false,
-  progress: 0,
-  error: null,
-};
 
 export function useImageToVideoFeature(
   props: UseImageToVideoFeatureProps,
 ): UseImageToVideoFeatureReturn {
   const { config, callbacks, userId } = props;
-  const [state, setState] = useState<ImageToVideoFeatureState>(INITIAL_STATE);
+  const [state, setState] = useState<ImageToVideoFeatureState>(INITIAL_IMAGE_TO_VIDEO_STATE);
+
+  const executeGeneration = useGenerationExecution({
+    userId,
+    config,
+    callbacks,
+    setState,
+  });
 
   const setImageUri = useCallback(
     (uri: string) => {
@@ -59,123 +44,6 @@ export function useImageToVideoFeature(
     setState((prev) => ({ ...prev, motionPrompt: prompt }));
   }, []);
 
-  const executeGeneration = useCallback(
-    async (
-      imageUri: string,
-      motionPrompt: string,
-      options?: Omit<ImageToVideoGenerateParams, "imageUri" | "motionPrompt">,
-    ): Promise<ImageToVideoResult> => {
-      const creationId = `image-to-video_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-
-      setState((prev) => ({
-        ...prev,
-        imageUri,
-        isProcessing: true,
-        progress: 0,
-        error: null,
-      }));
-
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-         
-        console.log("[ImageToVideoFeature] Starting generation, creationId:", creationId);
-      }
-
-      config.onProcessingStart?.();
-
-      if (callbacks?.onGenerationStart) {
-        callbacks.onGenerationStart({
-          creationId,
-          type: "image-to-video",
-          imageUri,
-          metadata: options as Record<string, unknown> | undefined,
-        }).catch((err) => {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-             
-            console.warn("[ImageToVideoFeature] onGenerationStart failed:", err);
-          }
-        });
-      }
-
-      try {
-        const imageBase64 = await config.prepareImage(imageUri);
-
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-           
-          console.log("[ImageToVideoFeature] Image prepared, calling executeImageToVideo");
-        }
-
-        const result = await executeImageToVideo(
-          {
-            imageUri,
-            imageBase64,
-            userId,
-            motionPrompt: motionPrompt || undefined,
-            options,
-          },
-          {
-            model: config.model,
-            buildInput: config.buildInput,
-            extractResult: config.extractResult,
-            onProgress: (progress) => {
-              setState((prev) => ({ ...prev, progress }));
-              callbacks?.onProgress?.(progress);
-            },
-          },
-        );
-
-        if (result.success && result.videoUrl) {
-          setState((prev) => ({
-            ...prev,
-            videoUrl: result.videoUrl ?? null,
-            thumbnailUrl: result.thumbnailUrl ?? null,
-            isProcessing: false,
-            progress: 100,
-          }));
-
-          if (callbacks?.onCreditDeduct && config.creditCost) {
-            await callbacks.onCreditDeduct(config.creditCost);
-          }
-
-          if (callbacks?.onCreationSave) {
-            await callbacks.onCreationSave({
-              creationId,
-              type: "image-to-video",
-              videoUrl: result.videoUrl,
-              thumbnailUrl: result.thumbnailUrl,
-              imageUri,
-              metadata: options as Record<string, unknown> | undefined,
-            });
-          }
-
-          callbacks?.onGenerate?.(result);
-        } else {
-          const error = result.error || "Generation failed";
-          setState((prev) => ({ ...prev, isProcessing: false, error }));
-          config.onError?.(error);
-          callbacks?.onError?.(error);
-        }
-
-        config.onProcessingComplete?.(result);
-        return result;
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-           
-          console.error("[ImageToVideoFeature] Generation error:", errorMessage);
-        }
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: errorMessage,
-        }));
-        config.onError?.(errorMessage);
-        callbacks?.onError?.(errorMessage);
-        return { success: false, error: errorMessage };
-      }
-    },
-    [userId, config, callbacks],
-  );
-
   const generate = useCallback(
     async (params?: ImageToVideoGenerateParams): Promise<ImageToVideoResult> => {
       const { imageUri: paramImageUri, motionPrompt: paramMotionPrompt, ...options } = params || {};
@@ -183,43 +51,21 @@ export function useImageToVideoFeature(
       const effectiveMotionPrompt = paramMotionPrompt ?? state.motionPrompt;
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-         
         console.log("[ImageToVideoFeature] generate called, hasImage:", !!effectiveImageUri);
-      }
-
-      if (!effectiveImageUri) {
-        const error = "Image is required";
-        setState((prev) => ({ ...prev, error }));
-        callbacks?.onError?.(error);
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-           
-          console.log("[ImageToVideoFeature] Generate failed: Image is required");
-        }
-        return { success: false, error };
       }
 
       if (paramImageUri) {
         setState((prev) => ({ ...prev, imageUri: paramImageUri }));
       }
 
-      if (callbacks?.onAuthCheck && !callbacks.onAuthCheck()) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-           
-          console.log("[ImageToVideoFeature] Generate failed: Authentication required");
-        }
-        return { success: false, error: "Authentication required" };
-      }
+      const validation = await validateImageToVideoGeneration(
+        effectiveImageUri,
+        callbacks,
+        config.creditCost,
+      );
 
-      if (callbacks?.onCreditCheck && config.creditCost) {
-        const hasCredits = await callbacks.onCreditCheck(config.creditCost);
-        if (!hasCredits) {
-          callbacks?.onShowPaywall?.(config.creditCost);
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-             
-            console.log("[ImageToVideoFeature] Generate failed: Insufficient credits");
-          }
-          return { success: false, error: "Insufficient credits" };
-        }
+      if (!validation.shouldProceed) {
+        return validation;
       }
 
       return executeGeneration(effectiveImageUri, effectiveMotionPrompt, options);
@@ -228,7 +74,7 @@ export function useImageToVideoFeature(
   );
 
   const reset = useCallback(() => {
-    setState(INITIAL_STATE);
+    setState(INITIAL_IMAGE_TO_VIDEO_STATE);
   }, []);
 
   const isReady = useMemo(
@@ -243,3 +89,5 @@ export function useImageToVideoFeature(
 
   return { state, setImageUri, setMotionPrompt, generate, reset, isReady, canGenerate };
 }
+
+export type { UseImageToVideoFeatureProps, UseImageToVideoFeatureReturn } from "./useImageToVideoFeature.types";
