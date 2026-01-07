@@ -17,10 +17,20 @@ import { GenerationResultContent } from "../../../../presentation/components/res
 
 // Constants (Using default provided styles if config doesn't override)
 import { DEFAULT_IMAGE_STYLES } from "../../../text-to-image/domain/constants/styles.constants";
+import type { TextToImageFeatureConfig } from "../../../text-to-image/domain/types";
 
 export interface MemeGeneratorFeatureProps {
-  config: any; // AIFeatureConfig merged with extraConfig
-  translations: any;
+  config: TextToImageFeatureConfig & {
+    styles?: Array<{
+        id: string;
+        name: string;
+        emoji?: string;
+        icon?: string;
+        description?: string;
+    }>;
+    [key: string]: unknown;
+  };
+  translations: Record<string, string>;
   onSaveImage: (url: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
 }
@@ -36,10 +46,16 @@ export const MemeGeneratorFeature: React.FC<MemeGeneratorFeatureProps> = ({
   const userId = authService.getUserId() || "anonymous";
 
   // Config can override styles, or use defaults
-  const stylesList = config.styles || DEFAULT_IMAGE_STYLES || [];
+  const stylesList = config.styles || DEFAULT_IMAGE_STYLES;
   
   // Transform styles for GridSelector
-  const styleOptions = useMemo(() => stylesList.map((s: any) => ({
+  const styleOptions = useMemo(() => stylesList.map((s: { 
+    id: string; 
+    name: string; 
+    emoji?: string; 
+    icon?: string; 
+    description?: string; 
+  }) => ({
       value: s.id,
       label: s.name,
       emoji: s.emoji || s.icon, // Handle different formats
@@ -48,10 +64,8 @@ export const MemeGeneratorFeature: React.FC<MemeGeneratorFeatureProps> = ({
 
   const { state, setPrompt, generate, reset, isReady } = useTextToImageFeature({
     config: {
+        ...config,
         model: config.model || "fal-ai/nano-banana-edit", 
-        buildInput: config.buildInput,
-        extractResult: config.extractResult,
-        ...config
     },
     userId,
   });

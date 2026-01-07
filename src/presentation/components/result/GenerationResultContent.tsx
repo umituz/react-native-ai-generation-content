@@ -6,6 +6,7 @@
 import * as React from "react";
 import { useMemo } from "react";
 import {
+  View,
   ScrollView,
   StyleSheet,
   Dimensions,
@@ -14,7 +15,6 @@ import {
   type DimensionValue,
 } from "react-native";
 import {
-  Animated,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import { ResultHeader } from "./ResultHeader";
@@ -93,7 +93,7 @@ export const GenerationResultContent: React.FC<
   }, [tokens, cfg, width]);
 
   return (
-    <Animated.View style={[styles.container, modalStyle]}>
+    <View style={[styles.container, modalStyle]}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -123,6 +123,6 @@ export const GenerationResultContent: React.FC<
           config={cfg.actions}
         />
       </ScrollView>
-    </Animated.View>
+    </View>
   );
 };

@@ -3,19 +3,19 @@
  * Video player with thumbnail and play controls for creation detail view
  */
 
-import React, { useMemo, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useMemo } from "react";
+import { View } from "react-native";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { useResponsive } from "@umituz/react-native-design-system";
 
 interface DetailVideoProps {
   readonly videoUrl: string;
-  readonly thumbnailUrl?: string;
+  readonly _thumbnailUrl?: string;
 }
 
 export const DetailVideo: React.FC<DetailVideoProps> = ({
   videoUrl,
-  thumbnailUrl,
+  _thumbnailUrl,
 }) => {
   const { width, horizontalPadding, spacingMultiplier } = useResponsive();
   const videoWidth = width - (horizontalPadding * 2);

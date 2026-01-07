@@ -4,11 +4,12 @@ import { executeCoupleFuture } from "../../infrastructure/executor";
 import type { CoupleFutureInput } from "../../domain/types";
 import type { PhotoGenerationConfig, PhotoGenerationError } from "../../../../presentation/hooks/photo-generation.types";
 import { createCreationsRepository } from "../../../../domains/creations/infrastructure/adapters";
+import type { Creation } from "../../../../domains/creations/domain/entities/Creation";
 
 export interface UseCoupleFutureGenerationConfig<TInput extends CoupleFutureInput, TResult> {
   userId: string | undefined;
   processResult: (imageUrl: string, input: TInput) => Promise<TResult> | TResult;
-  buildCreation?: (result: TResult, input: TInput) => any; // Type 'Creation' if known, otherwise any
+  buildCreation?: (result: TResult, input: TInput) => Creation | null;
   deductCredits?: () => Promise<void>;
   onSuccess?: (result: TResult) => void;
   onError?: (error: string) => void;

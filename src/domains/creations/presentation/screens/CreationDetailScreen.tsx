@@ -89,7 +89,7 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
                 showsVerticalScrollIndicator={false}
             >
                 {isVideo ? (
-                    <DetailVideo videoUrl={videoUrl} thumbnailUrl={thumbnailUrl} />
+                    <DetailVideo videoUrl={videoUrl} _thumbnailUrl={thumbnailUrl} />
                 ) : (
                     <DetailImage uri={creation.uri} onPress={handleImagePress} />
                 )}
