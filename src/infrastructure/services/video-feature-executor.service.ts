@@ -6,93 +6,15 @@
 
 import { providerRegistry } from "./provider-registry.service";
 import { cleanBase64 } from "../utils";
+import { defaultExtractVideoResult } from "../utils/video-result-extractor.util";
 import type { VideoFeatureType, VideoFeatureInputData } from "../../domain/interfaces";
+import type {
+  ExecuteVideoFeatureOptions,
+  VideoFeatureResult,
+  VideoFeatureRequest,
+} from "./video-feature-executor.types";
 
 declare const __DEV__: boolean;
-
-/**
- * Result extractor function type
- */
-export type VideoResultExtractor = (result: unknown) => string | undefined;
-
-/**
- * Execution options
- */
-export interface ExecuteVideoFeatureOptions {
-  extractResult?: VideoResultExtractor;
-  onProgress?: (progress: number) => void;
-}
-
-/**
- * Execution result
- */
-export interface VideoFeatureResult {
-  success: boolean;
-  videoUrl?: string;
-  error?: string;
-  requestId?: string;
-}
-
-/**
- * Request data for video features
- */
-export interface VideoFeatureRequest {
-  sourceImageBase64: string;
-  targetImageBase64: string;
-  prompt?: string;
-  options?: Record<string, unknown>;
-}
-
-/**
- * Default result extractor - handles common response formats
- * Supports FAL data wrapper and nested object formats
- */
-function defaultExtractVideoResult(result: unknown): string | undefined {
-  if (typeof result !== "object" || result === null) return undefined;
-
-  const r = result as Record<string, unknown>;
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[VideoExtractor] Result keys:", Object.keys(r));
-  }
-
-  // Handle fal.ai data wrapper
-  const data = (r.data as Record<string, unknown>) ?? r;
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[VideoExtractor] Data keys:", Object.keys(data));
-  }
-
-  // Direct string values
-  if (typeof data.video === "string") return data.video;
-  if (typeof data.videoUrl === "string") return data.videoUrl;
-  if (typeof data.video_url === "string") return data.video_url;
-  if (typeof data.output === "string") return data.output;
-  if (typeof data.url === "string") return data.url;
-
-  // Object with url property (e.g., { video: { url: "..." } })
-  const videoObj = data.video as Record<string, unknown> | undefined;
-  if (videoObj && typeof videoObj === "object" && typeof videoObj.url === "string") {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[VideoExtractor] Found data.video.url:", videoObj.url);
-    }
-    return videoObj.url;
-  }
-
-  // Array format (e.g., { videos: [{ url: "..." }] })
-  if (Array.isArray(data.videos) && typeof data.videos[0]?.url === "string") {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[VideoExtractor] Found videos[0].url:", data.videos[0].url);
-    }
-    return data.videos[0].url;
-  }
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[VideoExtractor] No video URL found in result");
-  }
-
-  return undefined;
-}
 
 /**
  * Execute any video feature using the active provider
@@ -173,24 +95,33 @@ export async function executeVideoFeature(
       requestId: (result as { requestId?: string })?.requestId,
     };
   } catch (error) {
-    // Extract detailed error message from FAL API errors
-    let message = "Processing failed";
-    if (error instanceof Error) {
-      message = error.message;
-    } else if (typeof error === "object" && error !== null) {
-      const errObj = error as Record<string, unknown>;
-      if (errObj.detail) {
-        message = JSON.stringify(errObj.detail);
-      } else if (errObj.message) {
-        message = String(errObj.message);
-      }
-    }
-
-    if (__DEV__) {
-      console.error(`[Video:${featureType}] Error:`, message, error);
-    }
+    const message = extractErrorMessage(error, featureType);
     return { success: false, error: message };
   }
+}
+
+/**
+ * Extract error message from various error formats
+ */
+function extractErrorMessage(error: unknown, featureType: VideoFeatureType): string {
+  let message = "Processing failed";
+
+  if (error instanceof Error) {
+    message = error.message;
+  } else if (typeof error === "object" && error !== null) {
+    const errObj = error as Record<string, unknown>;
+    if (errObj.detail) {
+      message = JSON.stringify(errObj.detail);
+    } else if (errObj.message) {
+      message = String(errObj.message);
+    }
+  }
+
+  if (__DEV__) {
+    console.error(`[Video:${featureType}] Error:`, message, error);
+  }
+
+  return message;
 }
 
 /**
@@ -200,3 +131,9 @@ export function hasVideoFeatureSupport(): boolean {
   const provider = providerRegistry.getActiveProvider();
   return provider !== null && provider.isInitialized();
 }
+
+export type {
+  ExecuteVideoFeatureOptions,
+  VideoFeatureResult,
+  VideoFeatureRequest,
+} from "./video-feature-executor.types";

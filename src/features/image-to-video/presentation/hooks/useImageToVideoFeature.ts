@@ -68,7 +68,11 @@ export function useImageToVideoFeature(
         return validation;
       }
 
-      return executeGeneration(effectiveImageUri, effectiveMotionPrompt, options);
+      return executeGeneration(
+        effectiveImageUri!,
+        effectiveMotionPrompt,
+        options
+      );
     },
     [state.imageUri, state.motionPrompt, callbacks, config.creditCost, executeGeneration],
   );

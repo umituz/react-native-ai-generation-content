@@ -10,6 +10,7 @@ import {
   type ProgressStageConfig,
 } from "../../domain/entities";
 import type { AIJobStatusType } from "../../domain/interfaces/ai-provider.interface";
+import type { JobStatus } from "../../domain/interfaces";
 
 export interface ProgressOptions {
   status: GenerationStatus;
@@ -125,4 +126,29 @@ export function getProgressFromJobStatus(
 ): number {
   const generationStatus = mapJobStatusToGenerationStatus(jobStatus);
   return getProgressForStatus({ status: generationStatus, stages });
+}
+
+/**
+ * Calculate progress percentage from job status and attempt number
+ * Used by job poller for granular progress reporting during polling
+ */
+export function calculateProgressFromJobStatus(
+  status: JobStatus,
+  attempt: number,
+  maxAttempts: number,
+): number {
+  const statusString = String(status.status).toUpperCase();
+
+  switch (statusString) {
+    case "IN_QUEUE":
+      return 30 + Math.min(attempt * 2, 10);
+    case "IN_PROGRESS":
+      return 50 + Math.min(attempt * 3, 30);
+    case "COMPLETED":
+      return 90;
+    case "FAILED":
+      return 0;
+    default:
+      return 20 + Math.min((attempt / maxAttempts) * 30, 30);
+  }
 }

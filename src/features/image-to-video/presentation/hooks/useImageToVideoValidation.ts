@@ -2,7 +2,7 @@
  * Image-to-Video Validation Utilities
  */
 
-import type { ImageToVideoFeatureCallbacks, ImageToVideoGenerateParams, ImageToVideoResult } from "../../domain/types";
+import type { ImageToVideoFeatureCallbacks, ImageToVideoResult } from "../../domain/types";
 
 declare const __DEV__: boolean;
 

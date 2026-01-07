@@ -10,6 +10,7 @@ import type {
   ImageToVideoFeatureCallbacks,
   ImageToVideoResult,
   ImageToVideoGenerateParams,
+  ImageToVideoFeatureState,
 } from "../../domain/types";
 
 declare const __DEV__: boolean;
@@ -18,7 +19,7 @@ interface UseGenerationExecutionParams {
   userId: string;
   config: ImageToVideoFeatureConfig;
   callbacks?: ImageToVideoFeatureCallbacks;
-  setState: React.Dispatch<React.SetStateAction<any>>;
+  setState: React.Dispatch<React.SetStateAction<ImageToVideoFeatureState>>;
 }
 
 export function useGenerationExecution({
@@ -35,7 +36,7 @@ export function useGenerationExecution({
     ): Promise<ImageToVideoResult> => {
       const creationId = `image-to-video_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
-      setState((prev: any) => ({
+      setState((prev) => ({
         ...prev,
         imageUri,
         isProcessing: true,
@@ -82,14 +83,14 @@ export function useGenerationExecution({
             buildInput: config.buildInput,
             extractResult: config.extractResult,
             onProgress: (progress) => {
-              setState((prev: any) => ({ ...prev, progress }));
+              setState((prev) => ({ ...prev, progress }));
               callbacks?.onProgress?.(progress);
             },
           },
         );
 
         if (result.success && result.videoUrl) {
-          setState((prev: any) => ({
+          setState((prev) => ({
             ...prev,
             videoUrl: result.videoUrl ?? null,
             thumbnailUrl: result.thumbnailUrl ?? null,
@@ -115,7 +116,7 @@ export function useGenerationExecution({
           callbacks?.onGenerate?.(result);
         } else {
           const error = result.error || "Generation failed";
-          setState((prev: any) => ({ ...prev, isProcessing: false, error }));
+          setState((prev) => ({ ...prev, isProcessing: false, error }));
           config.onError?.(error);
           callbacks?.onError?.(error);
         }
@@ -127,7 +128,7 @@ export function useGenerationExecution({
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.error("[ImageToVideoFeature] Generation error:", errorMessage);
         }
-        setState((prev: any) => ({
+        setState((prev) => ({
           ...prev,
           isProcessing: false,
           error: errorMessage,
