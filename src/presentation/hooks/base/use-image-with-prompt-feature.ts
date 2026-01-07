@@ -13,6 +13,7 @@ import type {
   OnSelectImageCallback,
   OnSaveCallback,
 } from "./types";
+import { createFeatureStateHandlers, executeProcess, executeSave } from "./utils/feature-state.factory";
 
 /**
  * Request passed to processRequest callback
@@ -57,109 +58,105 @@ export interface UseImageWithPromptFeatureReturn
   readonly save: () => Promise<void>;
 }
 
+const initialState: ImageWithPromptFeatureState = {
+  imageUri: null,
+  prompt: "",
+  processedUrl: null,
+  isProcessing: false,
+  progress: 0,
+  error: null,
+};
+
 export function useImageWithPromptFeature(
-  config: UseImageWithPromptFeatureConfig
+  config: UseImageWithPromptFeatureConfig,
 ): UseImageWithPromptFeatureReturn {
-  const [imageUri, setImageUri] = useState<string | null>(null);
-  const [prompt, setPrompt] = useState<string>("");
-  const [processedUrl, setProcessedUrl] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<ImageWithPromptFeatureState>(initialState);
+
+  const { reset, clearError } = createFeatureStateHandlers({
+    setState,
+    initialState,
+  });
 
   const selectImage = useCallback(async (): Promise<void> => {
     try {
       const uri = await config.onSelectImage();
       if (uri) {
-        setImageUri(uri);
-        setError(null);
-        setProcessedUrl(null);
+        setState((prev) => ({
+          ...prev,
+          imageUri: uri,
+          error: null,
+          processedUrl: null,
+        }));
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "error.selectImage";
-      setError(message);
+      setState((prev) => ({ ...prev, error: message }));
       config.onError?.(message);
     }
   }, [config]);
 
+  const setPrompt = useCallback((prompt: string) => {
+    setState((prev) => ({ ...prev, prompt }));
+  }, []);
+
   const process = useCallback(async (): Promise<void> => {
-    if (!imageUri) {
+    if (!state.imageUri) {
       const message = "error.noImage";
-      setError(message);
+      setState((prev) => ({ ...prev, error: message }));
       config.onError?.(message);
       return;
     }
 
-    if (config.requirePrompt && !prompt.trim()) {
+    if (config.requirePrompt && !state.prompt.trim()) {
       const message = "error.noPrompt";
-      setError(message);
+      setState((prev) => ({ ...prev, error: message }));
       config.onError?.(message);
       return;
     }
 
-    setIsProcessing(true);
-    setProgress(0);
-    setError(null);
+    const result = await executeProcess({
+      canProcess: () => {
+        if (!state.imageUri) return false;
+        if (config.requirePrompt) return !!state.prompt.trim();
+        return true;
+      },
+      setError: (error) => setState((prev) => ({ ...prev, error })),
+      setProcessing: (isProcessing) => setState((prev) => ({ ...prev, isProcessing })),
+      onError: config.onError,
+      processFn: () =>
+        config.processRequest({
+          imageUri: state.imageUri!,
+          prompt: state.prompt.trim(),
+          onProgress: (progress) => setState((prev) => ({ ...prev, progress })),
+        }),
+      onSuccess: (result) => {
+        if (result.outputUrl) {
+          setState((prev) => ({ ...prev, processedUrl: result.outputUrl ?? null }));
+          config.onSuccess?.(result.outputUrl);
+        } else {
+          const message = result.error || "error.processing";
+          setState((prev) => ({ ...prev, error: message }));
+          config.onError?.(message);
+        }
+      },
+    });
 
-    try {
-      const result = await config.processRequest({
-        imageUri,
-        prompt: prompt.trim(),
-        onProgress: setProgress,
-      });
-
-      if (result.success && result.outputUrl) {
-        setProcessedUrl(result.outputUrl);
-        config.onSuccess?.(result.outputUrl);
-      } else {
-        const message = result.error || "error.processing";
-        setError(message);
-        config.onError?.(message);
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "error.processing";
-      setError(message);
-      config.onError?.(message);
-    } finally {
-      setIsProcessing(false);
-      setProgress(0);
+    if (!result) {
+      setState((prev) => ({ ...prev, progress: 0 }));
     }
-  }, [imageUri, prompt, config]);
+  }, [state.imageUri, state.prompt, config]);
 
   const save = useCallback(async (): Promise<void> => {
-    if (!processedUrl || !config.onSave) {
-      return;
-    }
-
-    try {
-      await config.onSave(processedUrl);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "error.save";
-      setError(message);
-      config.onError?.(message);
-    }
-  }, [processedUrl, config]);
-
-  const reset = useCallback((): void => {
-    setImageUri(null);
-    setPrompt("");
-    setProcessedUrl(null);
-    setIsProcessing(false);
-    setProgress(0);
-    setError(null);
-  }, []);
-
-  const clearError = useCallback((): void => {
-    setError(null);
-  }, []);
+    await executeSave({
+      processedUrl: state.processedUrl,
+      onSave: config.onSave,
+      setError: (error) => setState((prev) => ({ ...prev, error })),
+      onError: config.onError,
+    });
+  }, [state.processedUrl, config]);
 
   return {
-    imageUri,
-    prompt,
-    processedUrl,
-    isProcessing,
-    progress,
-    error,
+    ...state,
     selectImage,
     setPrompt,
     process,

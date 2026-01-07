@@ -8,7 +8,11 @@ import React, { useMemo } from "react";
 import { Image, StyleSheet } from "react-native";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
+import type {
+  ProcessingModalRenderProps,
+  SingleImageInputRenderProps,
+  ResultRenderProps,
+} from "../../../../presentation/layouts";
 import { useAnimeSelfieFeature } from "../hooks";
 import type {
   AnimeSelfieTranslations,
@@ -61,7 +65,7 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
       translations={translations}
       modalTranslations={modalTranslations}
       renderProcessingModal={renderProcessingModal}
-      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }) => (
+      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}
           onPress={onSelect}
@@ -81,7 +85,7 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
           }}
         />
       )}
-      renderResult={({ imageUrl, imageSize }) => (
+      renderResult={({ imageUrl, imageSize }: ResultRenderProps) => (
         <Image
           source={{ uri: imageUrl }}
           style={[styles.resultImage, { width: imageSize, height: imageSize }]}

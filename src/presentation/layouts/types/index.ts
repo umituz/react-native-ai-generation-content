@@ -1,6 +1,6 @@
 /**
  * Feature Layout Types
- * Shared types for SingleImageFeatureLayout and DualImageFeatureLayout
+ * Central index for all layout types
  */
 
 // Re-export all partial types
@@ -8,22 +8,28 @@ export type {
   ModalTranslations,
   BaseLayoutTranslations,
   PhotoUploadTranslations,
+} from "./translations";
+
+export type {
   SingleImageInputRenderProps,
   DualImageInputRenderProps,
   SingleImageWithPromptInputRenderProps,
+} from "./input-props";
+
+export type {
   ResultRenderProps,
   ProcessingModalRenderProps,
   CustomResultRenderProps,
+} from "./result-props";
+
+export type {
   DualImageVideoFeatureState,
   SingleImageWithPromptFeatureState,
+} from "./feature-states";
+
+export type {
   SingleImageFeatureLayoutProps,
   DualImageFeatureLayoutProps,
   DualImageVideoFeatureLayoutProps,
   SingleImageWithPromptFeatureLayoutProps,
-} from "./types";
-
-// Export layout components
-export { SingleImageFeatureLayout } from "./SingleImageFeatureLayout";
-export { SingleImageWithPromptFeatureLayout } from "./SingleImageWithPromptFeatureLayout";
-export { DualImageFeatureLayout } from "./DualImageFeatureLayout";
-export { DualImageVideoFeatureLayout } from "./DualImageVideoFeatureLayout";
+} from "./layout-props";

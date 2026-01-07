@@ -8,7 +8,7 @@ import React, { useMemo } from "react";
 import { Image, StyleSheet } from "react-native";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
+import type { ProcessingModalRenderProps, SingleImageInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
 import { useRemoveBackgroundFeature } from "../hooks";
 import type {
   RemoveBackgroundTranslations,
@@ -60,7 +60,7 @@ export const RemoveBackgroundFeature: React.FC<RemoveBackgroundFeatureProps> = (
       translations={translations}
       modalTranslations={modalTranslations}
       renderProcessingModal={renderProcessingModal}
-      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }) => (
+      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}
           onPress={onSelect}
@@ -80,7 +80,7 @@ export const RemoveBackgroundFeature: React.FC<RemoveBackgroundFeatureProps> = (
           }}
         />
       )}
-      renderResult={({ imageUrl, imageSize }) => (
+      renderResult={({ imageUrl, imageSize }: ResultRenderProps) => (
         <Image
           source={{ uri: imageUrl }}
           style={[styles.resultImage, { width: imageSize, height: imageSize }]}

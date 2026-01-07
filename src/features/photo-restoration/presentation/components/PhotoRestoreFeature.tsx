@@ -7,7 +7,11 @@
 import React, { useMemo } from "react";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
+import type {
+  ProcessingModalRenderProps,
+  SingleImageInputRenderProps,
+  CustomResultRenderProps,
+} from "../../../../presentation/layouts";
 import { PhotoRestoreResultView } from "./PhotoRestoreResultView";
 import { usePhotoRestoreFeature } from "../hooks";
 import type {
@@ -60,7 +64,7 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
       translations={translations}
       modalTranslations={modalTranslations}
       renderProcessingModal={renderProcessingModal}
-      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }) => (
+      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}
           onPress={onSelect}
@@ -80,7 +84,7 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
           }}
         />
       )}
-      renderCustomResult={({ processedUrl, originalImageUri, onSave, onReset }) => (
+      renderCustomResult={({ processedUrl, originalImageUri, onSave, onReset }: CustomResultRenderProps) => (
         <PhotoRestoreResultView
           originalUri={originalImageUri}
           processedUri={processedUrl}

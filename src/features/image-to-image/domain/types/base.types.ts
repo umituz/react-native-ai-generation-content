@@ -5,229 +5,44 @@
 
 import type { ImageFeatureType } from "../../../../domain/interfaces";
 
-/**
- * Image processing categories
- */
-export type ImageProcessingCategory =
-  | "enhancement"
-  | "editing"
-  | "transformation"
-  | "composition";
+// Re-export all partial types
+export type {
+  BaseSingleImageState,
+  BaseImageWithPromptState,
+  BaseDualImageState,
+} from "./partials/state.types";
 
-/**
- * Input mode for image processing
- */
-export type ImageInputMode = "single" | "single-with-prompt" | "dual";
+export type {
+  BaseImageResult,
+  BaseImageResultWithCreationId,
+  ImageResultExtractor,
+  SingleImageProcessingStartData,
+  DualImageProcessingStartData,
+} from "./partials/result.types";
 
-/**
- * Base result for all image processing features
- */
-export interface BaseImageResult {
-  success: boolean;
-  imageUrl?: string;
-  imageBase64?: string;
-  error?: string;
-  requestId?: string;
-}
+export type {
+  BaseImageTranslations,
+  BaseDualImageTranslations,
+} from "./partials/translation.types";
 
-/**
- * Base state for single image features
- */
-export interface BaseSingleImageState {
-  imageUri: string | null;
-  processedUrl: string | null;
-  isProcessing: boolean;
-  progress: number;
-  error: string | null;
-}
+export type {
+  BaseImageConfig,
+  SingleImageConfig,
+  DualImageConfig,
+} from "./partials/config.types";
 
-/**
- * Base state for single image + prompt features
- */
-export interface BaseImageWithPromptState extends BaseSingleImageState {
-  prompt: string;
-}
+export type {
+  BaseSingleImageHookProps,
+  BaseDualImageHookProps,
+  BaseSingleImageHookReturn,
+  BaseDualImageHookReturn,
+} from "./partials/hook.types";
 
-/**
- * Base state for dual image features
- */
-export interface BaseDualImageState {
-  sourceImageUri: string | null;
-  targetImageUri: string | null;
-  processedUrl: string | null;
-  isProcessing: boolean;
-  progress: number;
-  error: string | null;
-}
+export type {
+  ImageProcessingCategory,
+  ImageInputMode,
+  ImageFeatureMetadata,
+} from "./partials/metadata.types";
 
-/**
- * Base translations for image features
- */
-export interface BaseImageTranslations {
-  uploadTitle: string;
-  uploadSubtitle: string;
-  uploadChange: string;
-  uploadAnalyzing: string;
-  description: string;
-  processingText: string;
-  processButtonText: string;
-  successText: string;
-  saveButtonText: string;
-  tryAnotherText: string;
-  beforeLabel?: string;
-  afterLabel?: string;
-  compareHint?: string;
-  /** Modal title shown during processing */
-  modalTitle?: string;
-  /** Modal message shown during processing */
-  modalMessage?: string;
-  /** Modal hint/tip shown during processing */
-  modalHint?: string;
-  /** "Continue in background" text */
-  modalBackgroundHint?: string;
-}
-
-/**
- * Base translations for dual image features
- */
-export interface BaseDualImageTranslations {
-  sourceUploadTitle: string;
-  sourceUploadSubtitle: string;
-  targetUploadTitle: string;
-  targetUploadSubtitle: string;
-  uploadChange: string;
-  uploadAnalyzing: string;
-  description: string;
-  processingText: string;
-  processButtonText: string;
-  successText: string;
-  saveButtonText: string;
-  tryAnotherText: string;
-  /** Modal title shown during processing */
-  modalTitle?: string;
-  /** Modal message shown during processing */
-  modalMessage?: string;
-  /** Modal hint/tip shown during processing */
-  modalHint?: string;
-  /** "Continue in background" text */
-  modalBackgroundHint?: string;
-}
-
-/**
- * Result extractor function type
- */
-export type ImageResultExtractor = (result: unknown) => string | undefined;
-
-/**
- * Single image processing start data
- */
-export interface SingleImageProcessingStartData {
-  creationId: string;
-  imageUri: string;
-}
-
-/**
- * Dual image processing start data
- */
-export interface DualImageProcessingStartData {
-  creationId: string;
-  sourceImageUri: string;
-  targetImageUri: string;
-}
-
-/**
- * Base result with optional creationId for persistence
- */
-export interface BaseImageResultWithCreationId extends BaseImageResult {
-  creationId?: string;
-}
-
-/**
- * Base config for all image features
- */
-export interface BaseImageConfig<TResult extends BaseImageResult = BaseImageResult> {
-  featureType: ImageFeatureType;
-  creditCost?: number;
-  extractResult?: ImageResultExtractor;
-  prepareImage: (imageUri: string) => Promise<string>;
-  onProcessingStart?: (data: { creationId: string; [key: string]: unknown }) => void;
-  onProcessingComplete?: (result: TResult) => void;
-  onError?: (error: string, creationId?: string) => void;
-}
-
-/**
- * Config for single image features
- */
-export interface SingleImageConfig<TResult extends BaseImageResult = BaseImageResult>
-  extends BaseImageConfig<TResult> {
-  onImageSelect?: (uri: string) => void;
-}
-
-/**
- * Config for dual image features
- */
-export interface DualImageConfig<TResult extends BaseImageResult = BaseImageResult>
-  extends BaseImageConfig<TResult> {
-  onSourceImageSelect?: (uri: string) => void;
-  onTargetImageSelect?: (uri: string) => void;
-}
-
-/**
- * Base hook props for single image features
- */
-export interface BaseSingleImageHookProps<
-  TConfig extends SingleImageConfig = SingleImageConfig,
-> {
-  config: TConfig;
-  onSelectImage: () => Promise<string | null>;
-  onSaveImage: (imageUrl: string) => Promise<void>;
-  /** Called before processing starts. Return false to cancel. */
-  onBeforeProcess?: () => Promise<boolean>;
-}
-
-/**
- * Base hook props for dual image features
- */
-export interface BaseDualImageHookProps<
-  TConfig extends DualImageConfig = DualImageConfig,
-> {
-  config: TConfig;
-  onSelectSourceImage: () => Promise<string | null>;
-  onSelectTargetImage: () => Promise<string | null>;
-  onSaveImage: (imageUrl: string) => Promise<void>;
-  /** Called before processing starts. Return false to cancel. */
-  onBeforeProcess?: () => Promise<boolean>;
-}
-
-/**
- * Base hook return for single image features
- */
-export interface BaseSingleImageHookReturn extends BaseSingleImageState {
-  selectImage: () => Promise<void>;
-  process: () => Promise<void>;
-  save: () => Promise<void>;
-  reset: () => void;
-}
-
-/**
- * Base hook return for dual image features
- */
-export interface BaseDualImageHookReturn extends BaseDualImageState {
-  selectSourceImage: () => Promise<void>;
-  selectTargetImage: () => Promise<void>;
-  process: () => Promise<void>;
-  save: () => Promise<void>;
-  reset: () => void;
-}
-
-/**
- * Feature metadata for categorization
- */
-export interface ImageFeatureMetadata {
-  name: string;
-  category: ImageProcessingCategory;
-  inputMode: ImageInputMode;
-  featureType: ImageFeatureType;
-  requiresPrompt?: boolean;
-  requiresMask?: boolean;
-}
+// Legacy re-exports for backward compatibility
+export type { ImageFeatureType };

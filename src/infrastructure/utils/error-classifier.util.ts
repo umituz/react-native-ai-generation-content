@@ -4,47 +4,17 @@
  */
 
 import { AIErrorType, type AIErrorInfo } from "../../domain/entities";
+import {
+  NETWORK_ERROR_PATTERNS,
+  RATE_LIMIT_PATTERNS,
+  AUTH_ERROR_PATTERNS,
+  CONTENT_POLICY_PATTERNS,
+  SERVER_ERROR_PATTERNS,
+} from "./error-patterns.constants";
 
 declare const __DEV__: boolean;
 
-const NETWORK_ERROR_PATTERNS = [
-  "network",
-  "timeout",
-  "socket",
-  "econnrefused",
-  "enotfound",
-  "fetch failed",
-  "connection",
-];
-
-const RATE_LIMIT_PATTERNS = ["rate limit", "too many requests", "429"];
-
-const AUTH_ERROR_PATTERNS = [
-  "unauthorized",
-  "authentication",
-  "invalid api key",
-  "401",
-  "403",
-];
-
-const CONTENT_POLICY_PATTERNS = [
-  "content policy",
-  "safety",
-  "moderation",
-  "inappropriate",
-  "blocked",
-];
-
-const SERVER_ERROR_PATTERNS = [
-  "internal server error",
-  "500",
-  "502",
-  "503",
-  "504",
-  "service unavailable",
-];
-
-function matchesPatterns(message: string, patterns: string[]): boolean {
+function matchesPatterns(message: string, patterns: readonly string[]): boolean {
   const lowerMessage = message.toLowerCase();
   return patterns.some((pattern) => lowerMessage.includes(pattern));
 }
@@ -64,7 +34,6 @@ function getStatusCode(error: unknown): number | undefined {
 
 function logClassification(info: AIErrorInfo): AIErrorInfo {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
     console.log("[ErrorClassifier] Classified as:", {
       type: info.type,
       messageKey: info.messageKey,
@@ -79,7 +48,6 @@ export function classifyError(error: unknown): AIErrorInfo {
   const statusCode = getStatusCode(error);
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
     console.log("[ErrorClassifier] Classifying error:", {
       message: message.slice(0, 100),
       statusCode,

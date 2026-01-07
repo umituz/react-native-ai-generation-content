@@ -8,7 +8,11 @@ import React, { useMemo } from "react";
 import { View, Image, StyleSheet } from "react-native";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { DualImageFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
+import type {
+  ProcessingModalRenderProps,
+  DualImageInputRenderProps,
+  ResultRenderProps,
+} from "../../../../presentation/layouts";
 import { useFaceSwapFeature } from "../hooks";
 import type {
   FaceSwapTranslations,
@@ -63,7 +67,7 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
       translations={translations}
       modalTranslations={modalTranslations}
       renderProcessingModal={renderProcessingModal}
-      renderInput={({ sourceImageUri, targetImageUri, onSelectSource, onSelectTarget, isDisabled }) => (
+      renderInput={({ sourceImageUri, targetImageUri, onSelectSource, onSelectTarget, isDisabled }: DualImageInputRenderProps) => (
         <View style={styles.pickerContainer}>
           <DualImagePicker
             sourceImageUri={sourceImageUri}
@@ -77,7 +81,7 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
           />
         </View>
       )}
-      renderResult={({ imageUrl, imageSize }) => (
+      renderResult={({ imageUrl, imageSize }: ResultRenderProps) => (
         <Image
           source={{ uri: imageUrl }}
           style={[styles.resultImage, { width: imageSize, height: imageSize }]}

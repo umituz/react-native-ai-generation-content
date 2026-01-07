@@ -13,6 +13,7 @@ import type {
   OnSelectImageCallback,
   OnSaveCallback,
 } from "./types";
+import { createFeatureStateHandlers, executeProcess, executeSave } from "./utils/feature-state.factory";
 
 /**
  * Request passed to processRequest callback
@@ -30,7 +31,7 @@ export interface UseDualImageFeatureConfig {
   readonly onSelectFirstImage: OnSelectImageCallback;
   readonly onSelectSecondImage: OnSelectImageCallback;
   readonly processRequest: (
-    request: DualImageProcessRequest
+    request: DualImageProcessRequest,
   ) => Promise<FeatureProcessResult>;
   readonly onSave?: OnSaveCallback;
   readonly onError?: (error: string) => void;
@@ -57,27 +58,39 @@ export interface UseDualImageFeatureReturn
   readonly save: () => Promise<void>;
 }
 
+const initialState: DualImageFeatureState = {
+  firstImageUri: null,
+  secondImageUri: null,
+  processedUrl: null,
+  isProcessing: false,
+  progress: 0,
+  error: null,
+};
+
 export function useDualImageFeature(
-  config: UseDualImageFeatureConfig
+  config: UseDualImageFeatureConfig,
 ): UseDualImageFeatureReturn {
-  const [firstImageUri, setFirstImageUri] = useState<string | null>(null);
-  const [secondImageUri, setSecondImageUri] = useState<string | null>(null);
-  const [processedUrl, setProcessedUrl] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<DualImageFeatureState>(initialState);
+
+  const { reset, clearError } = createFeatureStateHandlers({
+    setState,
+    initialState,
+  });
 
   const selectFirstImage = useCallback(async (): Promise<void> => {
     try {
       const uri = await config.onSelectFirstImage();
       if (uri) {
-        setFirstImageUri(uri);
-        setError(null);
-        setProcessedUrl(null);
+        setState((prev) => ({
+          ...prev,
+          firstImageUri: uri,
+          error: null,
+          processedUrl: null,
+        }));
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "error.selectImage";
-      setError(message);
+      setState((prev) => ({ ...prev, error: message }));
       config.onError?.(message);
     }
   }, [config]);
@@ -86,88 +99,67 @@ export function useDualImageFeature(
     try {
       const uri = await config.onSelectSecondImage();
       if (uri) {
-        setSecondImageUri(uri);
-        setError(null);
-        setProcessedUrl(null);
+        setState((prev) => ({
+          ...prev,
+          secondImageUri: uri,
+          error: null,
+          processedUrl: null,
+        }));
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "error.selectImage";
-      setError(message);
+      setState((prev) => ({ ...prev, error: message }));
       config.onError?.(message);
     }
   }, [config]);
 
   const process = useCallback(async (): Promise<void> => {
-    if (!firstImageUri || !secondImageUri) {
+    if (!state.firstImageUri || !state.secondImageUri) {
       const message = "error.noImages";
-      setError(message);
+      setState((prev) => ({ ...prev, error: message }));
       config.onError?.(message);
       return;
     }
 
-    setIsProcessing(true);
-    setProgress(0);
-    setError(null);
+    const result = await executeProcess({
+      canProcess: () => !!state.firstImageUri && !!state.secondImageUri,
+      setError: (error) => setState((prev) => ({ ...prev, error })),
+      setProcessing: (isProcessing) => setState((prev) => ({ ...prev, isProcessing })),
+      onError: config.onError,
+      processFn: () =>
+        config.processRequest({
+          firstImageUri: state.firstImageUri!,
+          secondImageUri: state.secondImageUri!,
+          onProgress: (progress) => setState((prev) => ({ ...prev, progress })),
+        }),
+      onSuccess: (result) => {
+        if (result.outputUrl) {
+          setState((prev) => ({ ...prev, processedUrl: result.outputUrl ?? null }));
+          config.onSuccess?.(result.outputUrl);
+        } else {
+          const message = result.error || "error.processing";
+          setState((prev) => ({ ...prev, error: message }));
+          config.onError?.(message);
+        }
+      },
+    });
 
-    try {
-      const result = await config.processRequest({
-        firstImageUri,
-        secondImageUri,
-        onProgress: setProgress,
-      });
-
-      if (result.success && result.outputUrl) {
-        setProcessedUrl(result.outputUrl);
-        config.onSuccess?.(result.outputUrl);
-      } else {
-        const message = result.error || "error.processing";
-        setError(message);
-        config.onError?.(message);
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "error.processing";
-      setError(message);
-      config.onError?.(message);
-    } finally {
-      setIsProcessing(false);
-      setProgress(0);
+    if (!result) {
+      setState((prev) => ({ ...prev, progress: 0 }));
     }
-  }, [firstImageUri, secondImageUri, config]);
+  }, [state.firstImageUri, state.secondImageUri, config]);
 
   const save = useCallback(async (): Promise<void> => {
-    if (!processedUrl || !config.onSave) {
-      return;
-    }
-
-    try {
-      await config.onSave(processedUrl);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "error.save";
-      setError(message);
-      config.onError?.(message);
-    }
-  }, [processedUrl, config]);
-
-  const reset = useCallback((): void => {
-    setFirstImageUri(null);
-    setSecondImageUri(null);
-    setProcessedUrl(null);
-    setIsProcessing(false);
-    setProgress(0);
-    setError(null);
-  }, []);
-
-  const clearError = useCallback((): void => {
-    setError(null);
-  }, []);
+    await executeSave({
+      processedUrl: state.processedUrl,
+      onSave: config.onSave,
+      setError: (error) => setState((prev) => ({ ...prev, error })),
+      onError: config.onError,
+    });
+  }, [state.processedUrl, config]);
 
   return {
-    firstImageUri,
-    secondImageUri,
-    processedUrl,
-    isProcessing,
-    progress,
-    error,
+    ...state,
     selectFirstImage,
     selectSecondImage,
     process,

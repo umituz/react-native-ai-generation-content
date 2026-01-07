@@ -8,7 +8,7 @@ import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { DualImageVideoFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
+import type { ProcessingModalRenderProps, DualImageInputRenderProps } from "../../../../presentation/layouts";
 import { useAIHugFeature } from "../hooks";
 import type {
   AIHugTranslations,
@@ -63,7 +63,7 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
       translations={translations}
       modalTranslations={modalTranslations}
       renderProcessingModal={renderProcessingModal}
-      renderInput={({ sourceImageUri, targetImageUri, onSelectSource, onSelectTarget, isDisabled }) => (
+      renderInput={({ sourceImageUri, targetImageUri, onSelectSource, onSelectTarget, isDisabled }: DualImageInputRenderProps) => (
         <View style={styles.pickerContainer}>
           <DualImagePicker
             sourceImageUri={sourceImageUri}

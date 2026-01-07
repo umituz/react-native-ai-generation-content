@@ -7,7 +7,11 @@
 import React, { useMemo } from "react";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
+import type {
+  ProcessingModalRenderProps,
+  SingleImageInputRenderProps,
+  CustomResultRenderProps,
+} from "../../../../presentation/layouts";
 import { UpscaleResultView } from "./UpscaleResultView";
 import { useUpscaleFeature } from "../hooks";
 import type {
@@ -61,7 +65,7 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
       modalTranslations={modalTranslations}
       description={translations.description}
       renderProcessingModal={renderProcessingModal}
-      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }) => (
+      renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}
           onPress={onSelect}
@@ -81,7 +85,7 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
           }}
         />
       )}
-      renderCustomResult={({ processedUrl, originalImageUri, onSave, onReset }) => (
+      renderCustomResult={({ processedUrl, originalImageUri, onSave, onReset }: CustomResultRenderProps) => (
         <UpscaleResultView
           originalUri={originalImageUri}
           processedUri={processedUrl}

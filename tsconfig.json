@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "lib": ["ESNext"],
     "jsx": "react-native",
     "strict": true,
@@ -20,6 +20,7 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
       "@ai-generation/prompts": ["./src/domains/prompts"],

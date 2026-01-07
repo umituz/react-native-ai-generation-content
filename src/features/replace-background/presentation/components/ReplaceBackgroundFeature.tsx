@@ -9,7 +9,11 @@ import { View, Image, StyleSheet } from "react-native";
 import { AtomicInput } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageWithPromptFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
+import type {
+  ProcessingModalRenderProps,
+  SingleImageWithPromptInputRenderProps,
+  ResultRenderProps,
+} from "../../../../presentation/layouts";
 import { useReplaceBackgroundFeature } from "../hooks";
 import type {
   ReplaceBackgroundTranslations,
@@ -61,7 +65,7 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
       translations={translations}
       modalTranslations={modalTranslations}
       renderProcessingModal={renderProcessingModal}
-      renderInput={({ imageUri, onSelect, isDisabled, isProcessing, prompt, onPromptChange }) => (
+      renderInput={({ imageUri, onSelect, isDisabled, isProcessing, prompt, onPromptChange }: SingleImageWithPromptInputRenderProps) => (
         <>
           <PhotoUploadCard
             imageUri={imageUri}
@@ -94,7 +98,7 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
           </View>
         </>
       )}
-      renderResult={({ imageUrl, imageSize }) => (
+      renderResult={({ imageUrl, imageSize }: ResultRenderProps) => (
         <Image
           source={{ uri: imageUrl }}
           style={[styles.resultImage, { width: imageSize, height: imageSize }]}

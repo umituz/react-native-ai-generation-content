@@ -12,7 +12,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageWithPromptFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps } from "../../../../presentation/layouts";
+import type { ProcessingModalRenderProps, SingleImageWithPromptInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
 import { useRemoveObjectFeature } from "../hooks";
 import type {
   RemoveObjectTranslations,
@@ -66,7 +66,7 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
       translations={translations}
       modalTranslations={modalTranslations}
       renderProcessingModal={renderProcessingModal}
-      renderInput={({ imageUri, onSelect, isDisabled, isProcessing, prompt, onPromptChange }) => (
+      renderInput={({ imageUri, onSelect, isDisabled, isProcessing, prompt, onPromptChange }: SingleImageWithPromptInputRenderProps) => (
         <>
           <PhotoUploadCard
             imageUri={imageUri}
@@ -120,7 +120,7 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
           </View>
         </>
       )}
-      renderResult={({ imageUrl, imageSize }) => (
+      renderResult={({ imageUrl, imageSize }: ResultRenderProps) => (
         <Image
           source={{ uri: imageUrl }}
           style={[styles.resultImage, { width: imageSize, height: imageSize }]}
