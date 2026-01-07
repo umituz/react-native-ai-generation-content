@@ -79,7 +79,7 @@ export async function executeProcess<TResult>({
   processFn,
   onSuccess,
   onProgress,
-}: ProcessHandlerParams<TData, TResult>): Promise<TResult | null> {
+}: ProcessHandlerParams<TResult>): Promise<TResult | null> {
   if (!canProcess()) {
     return null;
   }

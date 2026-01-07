@@ -121,10 +121,10 @@ export function useDualImageFeature(
       return;
     }
 
-    const result = await executeProcess({
+    const result = await executeProcess<FeatureProcessResult>({
       canProcess: () => !!state.firstImageUri && !!state.secondImageUri,
-      setError: (error) => setState((prev) => ({ ...prev, error })),
-      setProcessing: (isProcessing) => setState((prev) => ({ ...prev, isProcessing })),
+      setError: (error: string | null) => setState((prev) => ({ ...prev, error })),
+      setProcessing: (isProcessing: boolean) => setState((prev) => ({ ...prev, isProcessing })),
       onError: config.onError,
       processFn: () =>
         config.processRequest({
@@ -132,7 +132,7 @@ export function useDualImageFeature(
           secondImageUri: state.secondImageUri!,
           onProgress: (progress) => setState((prev) => ({ ...prev, progress })),
         }),
-      onSuccess: (result) => {
+      onSuccess: (result: FeatureProcessResult) => {
         if (result.outputUrl) {
           setState((prev) => ({ ...prev, processedUrl: result.outputUrl ?? null }));
           config.onSuccess?.(result.outputUrl);

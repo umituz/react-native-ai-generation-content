@@ -114,14 +114,14 @@ export function useImageWithPromptFeature(
       return;
     }
 
-    const result = await executeProcess({
+    const result = await executeProcess<FeatureProcessResult>({
       canProcess: () => {
         if (!state.imageUri) return false;
         if (config.requirePrompt) return !!state.prompt.trim();
         return true;
       },
-      setError: (error) => setState((prev) => ({ ...prev, error })),
-      setProcessing: (isProcessing) => setState((prev) => ({ ...prev, isProcessing })),
+      setError: (error: string | null) => setState((prev) => ({ ...prev, error })),
+      setProcessing: (isProcessing: boolean) => setState((prev) => ({ ...prev, isProcessing })),
       onError: config.onError,
       processFn: () =>
         config.processRequest({
@@ -129,7 +129,7 @@ export function useImageWithPromptFeature(
           prompt: state.prompt.trim(),
           onProgress: (progress) => setState((prev) => ({ ...prev, progress })),
         }),
-      onSuccess: (result) => {
+      onSuccess: (result: FeatureProcessResult) => {
         if (result.outputUrl) {
           setState((prev) => ({ ...prev, processedUrl: result.outputUrl ?? null }));
           config.onSuccess?.(result.outputUrl);
