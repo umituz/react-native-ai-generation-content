@@ -3,8 +3,6 @@
  * Result section render props for feature layouts
  */
 
-import type { ReactNode } from "react";
-
 /**
  * Result render props
  */

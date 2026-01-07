@@ -61,7 +61,7 @@ export function createErrorHandler({
 /**
  * Creates process handler with common logic
  */
-export interface ProcessHandlerParams<TData, TResult> {
+export interface ProcessHandlerParams<TResult> {
   canProcess: () => boolean;
   setError: (error: string | null) => void;
   setProcessing: (processing: boolean) => void;
@@ -71,7 +71,7 @@ export interface ProcessHandlerParams<TData, TResult> {
   onProgress?: (progress: number) => void;
 }
 
-export async function executeProcess<TData, TResult>({
+export async function executeProcess<TResult>({
   canProcess,
   setError,
   setProcessing,

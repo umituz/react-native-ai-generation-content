@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import type {
   BaseSingleImageHookReturn,
   BaseDualImageHookReturn,
-} from "../../../../../features/image-to-image/domain/types";
+} from "@features/image-to-image/domain/types";
 import type {
   ModalTranslations,
   BaseLayoutTranslations,
