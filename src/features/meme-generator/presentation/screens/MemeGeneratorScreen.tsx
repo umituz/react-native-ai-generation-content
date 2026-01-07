@@ -102,7 +102,6 @@ export const MemeGeneratorScreen: React.FC<MemeGeneratorScreenProps> = ({
         />
       }
       scrollable={true}
-      responsiveEnabled={false}
       contentContainerStyle={{ paddingHorizontal: 0 }}
       keyboardAvoiding={true}
     >

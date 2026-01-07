@@ -41,7 +41,7 @@ export {
 
 export type {
   OrchestratorConfig, PollJobOptions, PollJobResult, WrapperConfig, ImageResultExtractor,
-  ExecuteImageFeatureOptions, ImageFeatureResult, ImageFeatureRequest, VideoResultExtractor,
+  ExecuteImageFeatureOptions, ImageFeatureResult, ImageFeatureRequest,
   ExecuteVideoFeatureOptions, VideoFeatureResult, VideoFeatureRequest,
 } from "./infrastructure/services";
 

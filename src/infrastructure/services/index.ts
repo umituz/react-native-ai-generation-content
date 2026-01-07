@@ -27,7 +27,6 @@ export {
   hasVideoFeatureSupport,
 } from "./video-feature-executor.service";
 export type {
-  VideoResultExtractor,
   ExecuteVideoFeatureOptions,
   VideoFeatureResult,
   VideoFeatureRequest,
