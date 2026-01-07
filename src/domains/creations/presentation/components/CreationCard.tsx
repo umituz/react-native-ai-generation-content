@@ -4,69 +4,20 @@
  */
 
 import React, { useMemo, useCallback } from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import { CreationPreview } from "./CreationPreview";
 import { CreationBadges } from "./CreationBadges";
-import { CreationActions, type CreationAction } from "./CreationActions";
-import type { CreationStatus, CreationTypeId } from "../../domain/types";
-import type { CreationOutput } from "../../domain/utils";
+import { CreationActions } from "./CreationActions";
+import { CreationCardMeta } from "./CreationCardMeta";
+import { useCreationCardActions } from "./useCreationCardActions";
+import { useCreationDateFormatter } from "./CreationCard.utils";
+import type { CreationCardProps } from "./CreationCard.types";
+import type { CreationTypeId } from "../../domain/types";
 import { getPreviewUrl, getCreationTitle } from "../../domain/utils";
-
-/**
- * Creation data interface for the card
- * Flexible to support both package and app Creation types
- */
-export interface CreationCardData {
-  id: string;
-  type: CreationTypeId | string;
-  status?: CreationStatus;
-  prompt?: string;
-  /** Output object for app-style creations */
-  output?: CreationOutput;
-  /** URI for package-style creations */
-  uri?: string;
-  provider?: string;
-  createdAt: Date | number;
-}
-
-/**
- * Action callbacks interface
- */
-export interface CreationCardCallbacks {
-  onPress?: (creation: CreationCardData) => void;
-  onDownload?: (creation: CreationCardData) => Promise<void>;
-  onShare?: (creation: CreationCardData) => Promise<void>;
-  onDelete?: (creation: CreationCardData) => void;
-  onFavorite?: (creation: CreationCardData) => void;
-  onPostToFeed?: (creation: CreationCardData) => void;
-}
-
-interface CreationCardProps {
-  /** Creation data */
-  readonly creation: CreationCardData;
-  /** Action callbacks */
-  readonly callbacks?: CreationCardCallbacks;
-  /** Show badges overlay */
-  readonly showBadges?: boolean;
-  /** Show action buttons */
-  readonly showActions?: boolean;
-  /** Custom status text (for i18n) */
-  readonly statusText?: string;
-  /** Custom type text (for i18n) */
-  readonly typeText?: string;
-  /** Date formatter function */
-  readonly formatDate?: (date: Date) => string;
-  /** Is sharing in progress */
-  readonly isSharing?: boolean;
-  /** Is download available */
-  readonly isDownloadAvailable?: boolean;
-  /** Can post to feed */
-  readonly canPostToFeed?: boolean;
-}
 
 export function CreationCard({
   creation,
@@ -81,77 +32,17 @@ export function CreationCard({
   canPostToFeed = false,
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
-  // Support both output object and direct uri
-  // Prefer getPreviewUrl (which returns thumbnailUrl first) over direct uri
+
   const previewUrl = getPreviewUrl(creation.output) || creation.uri;
   const title = getCreationTitle(creation.prompt, creation.type as CreationTypeId);
-
-  // Format date
-  const formattedDate = useMemo(() => {
-    const date = creation.createdAt instanceof Date
-      ? creation.createdAt
-      : new Date(creation.createdAt);
-
-    if (formatDate) {
-      return formatDate(date);
-    }
-
-    return date.toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  }, [creation.createdAt, formatDate]);
-
-  // Build actions array
-  const actions = useMemo<CreationAction[]>(() => {
-    const result: CreationAction[] = [];
-
-    if (callbacks.onDownload && isDownloadAvailable && creation.output) {
-      result.push({
-        id: "download",
-        icon: "Download",
-        onPress: () => callbacks.onDownload?.(creation),
-      });
-    }
-
-    if (callbacks.onShare) {
-      result.push({
-        id: "share",
-        icon: "share-social",
-        loading: isSharing,
-        onPress: () => callbacks.onShare?.(creation),
-      });
-    }
-
-    if (callbacks.onFavorite) {
-      result.push({
-        id: "favorite",
-        icon: "heart-outline",
-        onPress: () => callbacks.onFavorite?.(creation),
-      });
-    }
-
-    if (callbacks.onDelete) {
-      result.push({
-        id: "delete",
-        icon: "trash",
-        color: "error",
-        onPress: () => callbacks.onDelete?.(creation),
-      });
-    }
-
-    if (callbacks.onPostToFeed && canPostToFeed) {
-      result.push({
-        id: "post",
-        icon: "Send",
-        filled: true,
-        onPress: () => callbacks.onPostToFeed?.(creation),
-      });
-    }
-
-    return result;
-  }, [callbacks, creation, isSharing, isDownloadAvailable, canPostToFeed]);
+  const formattedDate = useCreationDateFormatter(creation.createdAt, formatDate);
+  const actions = useCreationCardActions({
+    callbacks,
+    creation,
+    isSharing,
+    isDownloadAvailable,
+    canPostToFeed,
+  });
 
   const handlePress = useCallback(() => {
     callbacks.onPress?.(creation);
@@ -184,17 +75,6 @@ export function CreationCard({
         },
         title: {
           fontWeight: "600",
-        },
-        meta: {
-          flexDirection: "row",
-          alignItems: "center",
-        },
-        metaText: {
-          fontSize: 12,
-          color: tokens.colors.textSecondary,
-        },
-        metaDot: {
-          marginHorizontal: 4,
         },
       }),
     [tokens]
@@ -236,16 +116,10 @@ export function CreationCard({
           )}
         </View>
 
-        <View style={styles.meta}>
-          <Text style={styles.metaText}>{formattedDate}</Text>
-          {creation.provider && (
-            <>
-              <Text style={[styles.metaText, styles.metaDot]}>•</Text>
-              <Text style={styles.metaText}>{creation.provider}</Text>
-            </>
-          )}
-        </View>
+        <CreationCardMeta formattedDate={formattedDate} provider={creation.provider} />
       </View>
     </TouchableOpacity>
   );
 }
+
+export type { CreationCardProps, CreationCardData, CreationCardCallbacks } from "./CreationCard.types";

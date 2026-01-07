@@ -10,35 +10,7 @@ import {
   AtomicText,
   AtomicIcon,
 } from "@umituz/react-native-design-system";
-
-/**
- * Filter button configuration
- */
-export interface FilterButton {
-  /** Unique filter identifier */
-  id: string;
-  /** Display label */
-  label: string;
-  /** Icon name */
-  icon?: string;
-  /** Is this filter active */
-  active: boolean;
-  /** Handler when pressed */
-  onPress: () => void;
-}
-
-interface CreationsFilterBarProps {
-  /** Array of filter buttons */
-  readonly filters: FilterButton[];
-  /** Show clear button when any filter is active */
-  readonly showClearButton?: boolean;
-  /** Clear button label */
-  readonly clearLabel?: string;
-  /** Clear all filters handler */
-  readonly onClear?: () => void;
-  /** Has any active filters (for showing clear button) */
-  readonly hasActiveFilters?: boolean;
-}
+import type { CreationsFilterBarProps } from "./CreationsFilterBar.types";
 
 export function CreationsFilterBar({
   filters,
@@ -160,95 +132,8 @@ export function CreationsFilterBar({
   );
 }
 
-/**
- * Helper to create filter buttons from filter state
- */
-export function createMediaFilterButtons(
-  activeFilter: string,
-  onSelect: (filter: string) => void,
-  labels: { all: string; images: string; videos: string; voice: string }
-): FilterButton[] {
-  return [
-    {
-      id: "all",
-      label: labels.all,
-      icon: "grid",
-      active: activeFilter === "all",
-      onPress: () => onSelect("all"),
-    },
-    {
-      id: "image",
-      label: labels.images,
-      icon: "image",
-      active: activeFilter === "image",
-      onPress: () => onSelect("image"),
-    },
-    {
-      id: "video",
-      label: labels.videos,
-      icon: "film",
-      active: activeFilter === "video",
-      onPress: () => onSelect("video"),
-    },
-    {
-      id: "voice",
-      label: labels.voice,
-      icon: "mic",
-      active: activeFilter === "voice",
-      onPress: () => onSelect("voice"),
-    },
-  ];
-}
-
-/**
- * Helper to create status filter buttons
- */
-export function createStatusFilterButtons(
-  activeFilter: string,
-  onSelect: (filter: string) => void,
-  labels: {
-    all: string;
-    completed: string;
-    pending: string;
-    processing: string;
-    failed: string;
-  }
-): FilterButton[] {
-  return [
-    {
-      id: "all",
-      label: labels.all,
-      icon: "options",
-      active: activeFilter === "all",
-      onPress: () => onSelect("all"),
-    },
-    {
-      id: "completed",
-      label: labels.completed,
-      icon: "checkmark-circle",
-      active: activeFilter === "completed",
-      onPress: () => onSelect("completed"),
-    },
-    {
-      id: "processing",
-      label: labels.processing,
-      icon: "refresh",
-      active: activeFilter === "processing",
-      onPress: () => onSelect("processing"),
-    },
-    {
-      id: "pending",
-      label: labels.pending,
-      icon: "time",
-      active: activeFilter === "pending",
-      onPress: () => onSelect("pending"),
-    },
-    {
-      id: "failed",
-      label: labels.failed,
-      icon: "close-circle",
-      active: activeFilter === "failed",
-      onPress: () => onSelect("failed"),
-    },
-  ];
-}
+export type { FilterButton, CreationsFilterBarProps } from "./CreationsFilterBar.types";
+export {
+  createMediaFilterButtons,
+  createStatusFilterButtons,
+} from "./CreationsFilterBar.helpers";

@@ -42,9 +42,9 @@ interface CreationActionsProps {
 }
 
 const SIZES = {
-  sm: { button: 28, icon: "xs" as const },
-  md: { button: 36, icon: "sm" as const },
-  lg: { button: 44, icon: "md" as const },
+  sm: { button: 36, icon: "sm" as const },
+  md: { button: 44, icon: "md" as const },
+  lg: { button: 52, icon: "lg" as const },
 };
 
 export function CreationActions({
@@ -100,6 +100,7 @@ export function CreationActions({
           onPress={action.onPress}
           disabled={action.disabled || action.loading}
           activeOpacity={0.7}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           {action.loading ? (
             <AtomicSpinner
