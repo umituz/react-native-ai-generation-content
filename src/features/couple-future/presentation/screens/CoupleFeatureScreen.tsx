@@ -44,10 +44,25 @@ export const CoupleFeatureScreen: React.FC<CoupleFeatureScreenProps> = ({
   const tokens = useAppDesignTokens();
   const config = COUPLE_FEATURE_CONFIGS[featureId];
 
-  if (!config) return null;
+  if (__DEV__) {
+    console.log("[CoupleFeatureScreen] Render:", {
+      featureId,
+      hasConfig: !!config,
+      hasComponent: !!FeatureComponentMap[featureId],
+      selectionKeys: Object.keys(selection),
+    });
+  }
+
+  if (!config) {
+    if (__DEV__) console.log("[CoupleFeatureScreen] No config for:", featureId);
+    return null;
+  }
 
   const FeatureComponent = FeatureComponentMap[featureId];
-  if (!FeatureComponent) return null;
+  if (!FeatureComponent) {
+    if (__DEV__) console.log("[CoupleFeatureScreen] No component for:", featureId);
+    return null;
+  }
 
   const selectorProps = {
     selection,
