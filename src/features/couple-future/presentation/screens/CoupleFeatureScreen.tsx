@@ -1,13 +1,15 @@
 /**
  * Couple Feature Screen
- * Generic screen for couple feature selection
+ * Generic screen for couple feature selection with NavigationHeader pattern
  */
 
 import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import {
-  AtomicButton,
   AtomicText,
+  AtomicIcon,
+  NavigationHeader,
+  ScreenLayout,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import type { CoupleFeatureId, CoupleFeatureSelection } from "../../domain/types";
@@ -49,20 +51,13 @@ export const CoupleFeatureScreen: React.FC<CoupleFeatureScreenProps> = ({
       featureId,
       hasConfig: !!config,
       hasComponent: !!FeatureComponentMap[featureId],
-      selectionKeys: Object.keys(selection),
     });
   }
 
-  if (!config) {
-    if (__DEV__) console.log("[CoupleFeatureScreen] No config for:", featureId);
-    return null;
-  }
+  if (!config) return null;
 
   const FeatureComponent = FeatureComponentMap[featureId];
-  if (!FeatureComponent) {
-    if (__DEV__) console.log("[CoupleFeatureScreen] No component for:", featureId);
-    return null;
-  }
+  if (!FeatureComponent) return null;
 
   const selectorProps = {
     selection,
@@ -72,69 +67,47 @@ export const CoupleFeatureScreen: React.FC<CoupleFeatureScreenProps> = ({
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: tokens.colors.backgroundPrimary },
-      ]}
-    >
-      <View style={styles.header}>
-        <AtomicText
-          type="headlineMedium"
-          style={{ color: tokens.colors.textPrimary }}
-        >
-          {t(`${config.translationPrefix}.title`)}
-        </AtomicText>
-      </View>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <FeatureComponent {...selectorProps} />
-      </ScrollView>
-
-      <View
-        style={[
-          styles.footer,
-          { borderTopColor: tokens.colors.borderLight },
-        ]}
+    <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
+      <NavigationHeader
+        title={t(`${config.translationPrefix}.title`)}
+        onBackPress={onBack}
+        rightElement={
+          <TouchableOpacity
+            onPress={onContinue}
+            activeOpacity={0.7}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              backgroundColor: tokens.colors.primary,
+              paddingHorizontal: tokens.spacing.md,
+              paddingVertical: tokens.spacing.xs,
+              borderRadius: tokens.borders.radius.full,
+            }}
+          >
+            <AtomicText
+              type="bodyMedium"
+              style={{ fontWeight: "800", color: tokens.colors.onPrimary, marginRight: 4 }}
+            >
+              {t("common.continue")}
+            </AtomicText>
+            <AtomicIcon name="arrow-forward" size="sm" color="onPrimary" />
+          </TouchableOpacity>
+        }
+      />
+      <ScreenLayout
+        edges={["left", "right"]}
+        backgroundColor="transparent"
+        scrollable={true}
+        contentContainerStyle={styles.scrollContent}
+        hideScrollIndicator={true}
       >
-        <AtomicButton
-          title={t("common.back")}
-          onPress={onBack}
-          variant="secondary"
-          style={styles.backButton}
-        />
-        <AtomicButton
-          title={t("common.continue")}
-          onPress={onContinue}
-          variant="primary"
-          style={styles.continueButton}
-        />
-      </View>
+        <FeatureComponent {...selectorProps} />
+      </ScreenLayout>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    padding: 16,
-    paddingTop: 20,
-  },
-  content: {
-    flex: 1,
-  },
-  footer: {
-    flexDirection: "row",
-    padding: 16,
-    borderTopWidth: 1,
-    gap: 12,
-  },
-  backButton: {
-    flex: 1,
-  },
-  continueButton: {
-    flex: 2,
-  },
+  container: { flex: 1 },
+  scrollContent: { paddingBottom: 24 },
 });
