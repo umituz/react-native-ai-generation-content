@@ -6,6 +6,7 @@ import type { Creation } from '../../domain/entities/Creation';
 import type { CreationsConfig } from '../../domain/value-objects/CreationsConfig';
 import { hasVideoContent, getPreviewUrl } from '../../domain/utils';
 import { DetailHeader } from '../components/CreationDetail/DetailHeader';
+import { DetailInfo } from '../components/CreationDetail/DetailInfo';
 import { DetailImage } from '../components/CreationDetail/DetailImage';
 import { DetailVideo } from '../components/CreationDetail/DetailVideo';
 import { DetailStory } from '../components/CreationDetail/DetailStory';
@@ -78,15 +79,11 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
     return (
         <View style={[styles.container, { backgroundColor: tokens.colors.background }]}>
             <View style={{ paddingTop: insets.top }}>
-                <DetailHeader
-                    title={title}
-                    date={date}
-                    onClose={onClose}
-                />
+                <DetailHeader onClose={onClose} />
             </View>
             <ScrollView
                 style={styles.scrollView}
-                contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 32 }]}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
                 showsVerticalScrollIndicator={false}
             >
                 {isVideo ? (
@@ -94,6 +91,8 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
                 ) : (
                     <DetailImage uri={creation.uri} onPress={handleImagePress} />
                 )}
+
+                <DetailInfo title={title} date={date} />
 
                 {story ? (
                     <DetailStory story={story} />
@@ -129,6 +128,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingTop: 8,
+        paddingTop: 4,
     },
 });

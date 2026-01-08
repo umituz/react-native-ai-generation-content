@@ -39,7 +39,8 @@ export const DetailImage: React.FC<DetailImageProps> = ({ uri, onPress }) => {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: HORIZONTAL_PADDING,
-        marginVertical: 16,
+        marginTop: 8,
+        marginBottom: 12,
     },
     frame: {
         borderRadius: 16,
