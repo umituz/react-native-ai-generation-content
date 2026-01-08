@@ -43,3 +43,20 @@ export const COUPLE_FUTURE_DEFAULTS = {
   outputFormat: "jpeg" as NanoBananaOutputFormat,
   timeoutMs: 300000,
 };
+
+export type CoupleFeatureId =
+  | "romantic-mood"
+  | "art-style"
+  | "artist-style"
+  | "wardrobe";
+
+export interface CoupleFeatureSelection {
+  romanticMoods?: string[];
+  romanticIntensity?: number;
+  artStyle?: string | null;
+  artStyleIntensity?: number;
+  artist?: string | null;
+  artistIntensity?: number;
+  wardrobeStyle?: string | null;
+  wardrobeIntensity?: number;
+}
