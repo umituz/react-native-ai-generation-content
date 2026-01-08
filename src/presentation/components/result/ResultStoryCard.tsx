@@ -43,7 +43,7 @@ export const ResultStoryCard: React.FC<ResultStoryCardProps> = ({
         ...base,
         backgroundColor: tokens.colors.primaryContainer,
       };
-
+    }
 
     return {
       ...base,
