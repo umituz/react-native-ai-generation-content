@@ -43,12 +43,7 @@ export const ResultStoryCard: React.FC<ResultStoryCardProps> = ({
         ...base,
         backgroundColor: tokens.colors.primaryContainer,
       };
-    } else if (cfg.borderStyle === "gradient") {
-      return {
-        ...base,
-        backgroundColor: tokens.colors.primaryContainer,
-      };
-    }
+
 
     return {
       ...base,

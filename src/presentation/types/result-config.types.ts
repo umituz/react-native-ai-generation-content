@@ -34,7 +34,7 @@ export interface ResultImageConfig {
   borderRadius?: number;
   showBadge?: boolean;
   badgePosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
-  badgeStyle?: "dark" | "light" | "gradient";
+  badgeStyle?: "dark" | "light";
   badgeIcon?: string;
   spacing?: {
     marginBottom?: number;
@@ -59,7 +59,7 @@ export interface ResultStoryConfig {
     | "700"
     | "800"
     | "900";
-  borderStyle?: "outline" | "filled" | "gradient";
+  borderStyle?: "outline" | "filled";
   spacing?: {
     marginBottom?: number;
     paddingHorizontal?: number;
@@ -149,7 +149,7 @@ export const DEFAULT_RESULT_CONFIG: ResultConfig = {
     fontSize: 14,
     fontStyle: "italic",
     fontWeight: "500",
-    borderStyle: "gradient",
+    borderStyle: "filled",
     spacing: {
       marginBottom: 20,
       paddingHorizontal: 20,
