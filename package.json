@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-ai-generation-content",
-  "version": "1.17.229",
+  "version": "1.17.230",
   "description": "Provider-agnostic AI generation orchestration for React Native",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -51,7 +51,6 @@
     "@react-navigation/native": ">=6.0.0",
     "@tanstack/react-query": ">=5.0.0",
     "@umituz/react-native-video-editor": ">=1.0.0",
-
     "firebase": ">=10.0.0",
     "react": ">=18.0.0",
     "react-native": ">=0.74.0",
@@ -88,7 +87,6 @@
     "expo-file-system": "^19.0.21",
     "expo-haptics": "^15.0.8",
     "expo-image": "^3.0.11",
-
     "expo-localization": "^17.0.8",
     "expo-network": "^8.0.8",
     "expo-sharing": "^14.0.8",
