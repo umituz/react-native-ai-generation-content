@@ -11,7 +11,7 @@ import type { ResultImageCardProps } from "../types/result-preview.types";
 export const ResultImageCard: React.FC<ResultImageCardProps> = ({
   imageUrl,
   style,
-  rounded = true,
+  rounded = false,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -21,7 +21,7 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
         container: {
           width: "100%",
           aspectRatio: 3 / 4,
-          borderRadius: rounded ? tokens.borders.radius.xl : 0,
+          borderRadius: rounded ? tokens.borders.radius.xl : tokens.borders.radius.lg,
           overflow: "hidden",
           backgroundColor: tokens.colors.backgroundSecondary,
         },

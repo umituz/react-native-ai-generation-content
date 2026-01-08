@@ -4,9 +4,10 @@
  */
 
 import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import {
-  AtomicButton,
+  AtomicIcon,
+  AtomicText,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import type { ResultActionBarProps } from "../types/result-preview.types";
@@ -19,9 +20,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
   onTryAgain,
   onRate,
   saveButtonText,
-  saveButtonLoadingText,
   shareButtonText,
-  shareButtonLoadingText,
   tryAgainButtonText,
   rateButtonText,
 }) => {
@@ -32,17 +31,37 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
       StyleSheet.create({
         container: {
           marginTop: tokens.spacing.xl,
-          gap: tokens.spacing.md,
+          paddingHorizontal: tokens.spacing.md,
         },
-        buttonRow: {
+        gridContainer: {
           flexDirection: "row",
+          justifyContent: "space-between",
           gap: tokens.spacing.md,
         },
-        button: {
+        actionButton: {
           flex: 1,
+          alignItems: "center",
+          gap: tokens.spacing.sm,
         },
-        fullWidthButton: {
-          width: "100%",
+        iconContainer: {
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        iconContainerSecondary: {
+          backgroundColor: tokens.colors.backgroundSecondary,
+          borderWidth: 1,
+          borderColor: tokens.colors.borderPrimary,
+        },
+        iconContainerPrimary: {
+          backgroundColor: tokens.colors.primary,
+        },
+        label: {
+          fontSize: 12,
+          fontWeight: "500",
+          color: tokens.colors.textSecondary,
         },
       }),
     [tokens],
@@ -50,40 +69,51 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonRow}>
-        <AtomicButton
-          title={isSaving ? saveButtonLoadingText : saveButtonText}
+      <View style={styles.gridContainer}>
+        <TouchableOpacity
+          style={styles.actionButton}
           onPress={onDownload}
           disabled={isSaving}
-          variant="outline"
-          icon="download"
-          style={styles.button}
-        />
-        <AtomicButton
-          title={isSharing ? shareButtonLoadingText : shareButtonText}
+        >
+          <View style={[styles.iconContainer, styles.iconContainerSecondary]}>
+            {isSaving ? (
+              <ActivityIndicator color={tokens.colors.primary} />
+            ) : (
+              <AtomicIcon name="download" size="md" color="textPrimary" />
+            )}
+          </View>
+          <AtomicText style={styles.label}>{saveButtonText}</AtomicText>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.actionButton}
           onPress={onShare}
           disabled={isSharing}
-          variant="primary"
-          icon="share-social"
-          style={styles.button}
-        />
-      </View>
-      <View style={styles.buttonRow}>
-        <AtomicButton
-          title={tryAgainButtonText}
-          onPress={onTryAgain}
-          variant="outline"
-          icon="refresh"
-          style={styles.button}
-        />
+        >
+          <View style={[styles.iconContainer, styles.iconContainerPrimary]}>
+            {isSharing ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <AtomicIcon name="share" size="md" color="white" />
+            )}
+          </View>
+          <AtomicText style={styles.label}>{shareButtonText}</AtomicText>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.actionButton} onPress={onTryAgain}>
+          <View style={[styles.iconContainer, styles.iconContainerSecondary]}>
+            <AtomicIcon name="refresh-cw" size="md" color="textPrimary" />
+          </View>
+          <AtomicText style={styles.label}>{tryAgainButtonText}</AtomicText>
+        </TouchableOpacity>
+
         {onRate && rateButtonText && (
-          <AtomicButton
-            title={rateButtonText}
-            onPress={onRate}
-            variant="primary"
-            icon="star"
-            style={styles.button}
-          />
+          <TouchableOpacity style={styles.actionButton} onPress={onRate}>
+            <View style={[styles.iconContainer, styles.iconContainerSecondary]}>
+              <AtomicIcon name="thumbs-up" size="md" color="textPrimary" />
+            </View>
+            <AtomicText style={styles.label}>{rateButtonText}</AtomicText>
+          </TouchableOpacity>
         )}
       </View>
     </View>
