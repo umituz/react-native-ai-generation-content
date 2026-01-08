@@ -6,21 +6,36 @@ import { AtomicText, AtomicIcon, useAppDesignTokens, type DesignTokens } from "@
 interface DetailActionsProps {
     readonly onShare: () => void;
     readonly onDelete: () => void;
+    readonly onViewResult?: () => void;
     readonly shareLabel: string;
     readonly deleteLabel: string;
+    readonly viewResultLabel?: string;
 }
 
 export const DetailActions: React.FC<DetailActionsProps> = ({
     onShare,
     onDelete,
+    onViewResult,
     shareLabel,
-    deleteLabel
+    deleteLabel,
+    viewResultLabel
 }) => {
     const tokens = useAppDesignTokens();
     const styles = useStyles(tokens);
 
     return (
         <View style={styles.container}>
+            {onViewResult && viewResultLabel && (
+                <TouchableOpacity
+                    style={[styles.button, styles.viewResultButton]}
+                    onPress={onViewResult}
+                    activeOpacity={0.7}
+                >
+                    <AtomicIcon name="eye-outline" size="sm" color="onPrimary" />
+                    <AtomicText style={styles.buttonText}>{viewResultLabel}</AtomicText>
+                </TouchableOpacity>
+            )}
+
             <TouchableOpacity
                 style={[styles.button, styles.shareButton]}
                 onPress={onShare}
@@ -48,6 +63,7 @@ const useStyles = (tokens: DesignTokens) => StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'center',
+        flexWrap: 'wrap',
         gap: tokens.spacing.md,
         paddingHorizontal: tokens.spacing.lg,
         marginBottom: tokens.spacing.xxl,
@@ -57,10 +73,13 @@ const useStyles = (tokens: DesignTokens) => StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 12,
-        paddingHorizontal: 24,
+        paddingHorizontal: 20,
         borderRadius: 16,
         gap: 8,
-        minWidth: 120,
+        minWidth: 110,
+    },
+    viewResultButton: {
+        backgroundColor: tokens.colors.primary,
     },
     shareButton: {
         backgroundColor: tokens.colors.primary,

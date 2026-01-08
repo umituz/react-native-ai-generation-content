@@ -21,6 +21,7 @@ interface CreationDetailScreenProps {
     readonly onClose: () => void;
     readonly onShare: (creation: Creation) => void;
     readonly onDelete: (creation: Creation) => void;
+    readonly onViewResult?: (creation: Creation) => void;
     readonly t: (key: string) => string;
 }
 
@@ -37,6 +38,7 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
     onClose,
     onShare,
     onDelete,
+    onViewResult,
     t
 }) => {
     const tokens = useAppDesignTokens();
@@ -100,8 +102,10 @@ export const CreationDetailScreen: React.FC<CreationDetailScreenProps> = ({
                 <DetailActions
                     onShare={() => onShare(creation)}
                     onDelete={() => onDelete(creation)}
+                    onViewResult={onViewResult ? () => onViewResult(creation) : undefined}
                     shareLabel={t("result.shareButton")}
                     deleteLabel={t("common.delete")}
+                    viewResultLabel={onViewResult ? t("result.viewResult") : undefined}
                 />
             </ScrollView>
 
