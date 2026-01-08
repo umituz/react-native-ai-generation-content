@@ -4,7 +4,7 @@
  */
 
 import React, { useMemo } from "react";
-import { StyleSheet, View, ViewStyle } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { AtomicImage, useAppDesignTokens } from "@umituz/react-native-design-system";
 import type { ResultImageCardProps } from "../types/result-preview.types";
 
@@ -20,8 +20,8 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
       StyleSheet.create({
         container: {
           width: "100%",
-          aspectRatio: 1,
-          borderRadius: rounded ? tokens.borders.radius.md : 0,
+          aspectRatio: 3 / 4,
+          borderRadius: rounded ? tokens.borders.radius.xl : 0,
           overflow: "hidden",
           backgroundColor: tokens.colors.backgroundSecondary,
         },

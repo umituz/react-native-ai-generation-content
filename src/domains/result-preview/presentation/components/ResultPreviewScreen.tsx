@@ -13,6 +13,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { ResultImageCard } from "./ResultImageCard";
 import { ResultActionBar } from "./ResultActionBar";
+import { RecentCreationsSection } from "./RecentCreationsSection";
 import type { ResultPreviewScreenProps } from "../types/result-preview.types";
 
 export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
@@ -24,6 +25,9 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   onTryAgain,
   onNavigateBack,
   onRate,
+  recentCreations,
+  onViewAll,
+  onCreationPress,
   translations,
   style,
 }) => {
@@ -98,6 +102,15 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
             rateButtonText={translations.rateButton}
           />
         </View>
+        {recentCreations && recentCreations.length > 0 && translations.recentCreations && translations.viewAll && (
+          <RecentCreationsSection
+            recentCreations={recentCreations}
+            onViewAll={onViewAll}
+            onCreationPress={onCreationPress}
+            title={translations.recentCreations}
+            viewAllLabel={translations.viewAll}
+          />
+        )}
       </View>
     </ScreenLayout>
   );

@@ -80,6 +80,17 @@ export interface ResultActionBarProps {
 }
 
 /**
+ * Recent creation item
+ */
+export interface RecentCreation {
+  readonly id: string;
+  readonly imageUrl: string;
+  readonly title: string;
+  readonly date: string;
+  readonly isFavorite?: boolean;
+}
+
+/**
  * Result preview screen props
  */
 export interface ResultPreviewScreenProps {
@@ -94,6 +105,12 @@ export interface ResultPreviewScreenProps {
   onTryAgain: () => void;
   onNavigateBack: () => void;
   onRate?: () => void;
+  /** Recent creations to display */
+  recentCreations?: readonly RecentCreation[];
+  /** Navigate to all creations */
+  onViewAll?: () => void;
+  /** View a specific creation */
+  onCreationPress?: (creation: RecentCreation) => void;
   /** Translations */
   translations: ResultPreviewTranslations;
   /** Optional custom style */
@@ -118,8 +135,12 @@ export interface ResultPreviewTranslations {
   sharing: string;
   /** Try again button */
   tryAnother: string;
-  /** Rate button (optional) */
+  /** Rate button */
   rateButton?: string;
+  /** Recent creations section title */
+  recentCreations?: string;
+  /** View all button */
+  viewAll?: string;
 }
 
 /**

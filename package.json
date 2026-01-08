@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-ai-generation-content",
-  "version": "1.17.242",
+  "version": "1.17.243",
   "description": "Provider-agnostic AI generation orchestration for React Native with result preview components",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@umituz/react-native-auth": "latest",
-    "@umituz/react-native-design-system": "latest",
     "@umituz/react-native-filesystem": "latest",
     "@umituz/react-native-firebase": "latest",
     "@umituz/react-native-tanstack": "latest"
@@ -63,7 +62,7 @@
     "@types/react": "~19.1.10",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
-    "@umituz/react-native-design-system": "latest",
+    "@umituz/react-native-design-system": "^2.6.126",
     "@umituz/react-native-filesystem": "latest",
     "@umituz/react-native-firebase": "latest",
     "@umituz/react-native-haptics": "latest",
@@ -80,6 +79,7 @@
     "expo-haptics": "^15.0.8",
     "expo-image": "^3.0.11",
     "expo-localization": "^17.0.8",
+    "expo-media-library": "^18.2.1",
     "expo-network": "^8.0.8",
     "expo-sharing": "^14.0.8",
     "expo-video": "^3.0.15",
