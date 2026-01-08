@@ -28,6 +28,8 @@ export type {
   ArtistStyleSelectorProps,
   WardrobeSelectorProps,
 } from "./presentation/components";
+export { CoupleFeatureScreen } from "./presentation/screens/CoupleFeatureScreen";
+export type { CoupleFeatureScreenProps } from "./presentation/screens/CoupleFeatureScreen";
 export {
   COUPLE_FEATURE_CONFIGS,
   ROMANTIC_MOOD_OPTIONS,

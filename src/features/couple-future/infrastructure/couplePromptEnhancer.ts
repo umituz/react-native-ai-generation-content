@@ -31,6 +31,13 @@ const ARTIST_STYLE_DESCRIPTIONS: Record<string, string> = {
   daVinci: "Leonardo da Vinci's renaissance mastery with subtle sfumato and perfect proportion",
 };
 
+const WARDROBE_STYLE_DESCRIPTIONS: Record<string, string> = {
+  casual: "casual comfortable outfit with relaxed fit",
+  formal: "elegant formal attire with sophisticated style",
+  sporty: "athletic sporty wear with dynamic energy",
+  elegant: "refined elegant clothing with graceful details",
+};
+
 const getIntensityLabel = (intensity: number): string => {
   if (intensity >= 75) return "strong";
   if (intensity >= 50) return "moderate";
@@ -77,6 +84,15 @@ export const enhanceCouplePrompt = (
       const intensity = selections.artistIntensity || 70;
       const label = getArtistIntensityLabel(intensity);
       enhanced += `. Create in ${label} ${artistDescription}`;
+    }
+  }
+
+  if (selections.wardrobeStyle) {
+    const wardrobeDescription = WARDROBE_STYLE_DESCRIPTIONS[selections.wardrobeStyle];
+    if (wardrobeDescription) {
+      const intensity = selections.wardrobeIntensity || 70;
+      const label = getIntensityLabel(intensity);
+      enhanced += `. Dress them in ${label} ${wardrobeDescription}`;
     }
   }
 
