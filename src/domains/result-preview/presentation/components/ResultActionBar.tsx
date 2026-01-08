@@ -1,6 +1,6 @@
 /**
  * ResultActionBar Component
- * Action buttons for save, share, and try again
+ * Action buttons for save, share, retry, and rate
  */
 
 import React, { useMemo } from "react";
@@ -17,11 +17,13 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
   onDownload,
   onShare,
   onTryAgain,
+  onRate,
   saveButtonText,
   saveButtonLoadingText,
   shareButtonText,
   shareButtonLoadingText,
   tryAgainButtonText,
+  rateButtonText,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -29,15 +31,18 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
     () =>
       StyleSheet.create({
         container: {
+          marginTop: tokens.spacing.xl,
+          gap: tokens.spacing.md,
+        },
+        buttonRow: {
           flexDirection: "row",
           gap: tokens.spacing.md,
-          marginBottom: tokens.spacing.lg,
         },
         button: {
           flex: 1,
         },
-        tryAgainButton: {
-          marginTop: tokens.spacing.md,
+        fullWidthButton: {
+          width: "100%",
         },
       }),
     [tokens],
@@ -45,30 +50,42 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
 
   return (
     <View style={styles.container}>
-      <AtomicButton
-        title={isSaving ? saveButtonLoadingText : saveButtonText}
-        onPress={onDownload}
-        disabled={isSaving}
-        variant="secondary"
-        icon="download"
-        style={styles.button}
-      />
-      <AtomicButton
-        title={isSharing ? shareButtonLoadingText : shareButtonText}
-        onPress={onShare}
-        disabled={isSharing}
-        variant="primary"
-        icon="share-social"
-        style={styles.button}
-      />
-      <AtomicButton
-        title={tryAgainButtonText}
-        onPress={onTryAgain}
-        variant="text"
-        icon="refresh"
-        fullWidth
-        style={styles.tryAgainButton}
-      />
+      <View style={styles.buttonRow}>
+        <AtomicButton
+          title={isSaving ? saveButtonLoadingText : saveButtonText}
+          onPress={onDownload}
+          disabled={isSaving}
+          variant="outline"
+          icon="download"
+          style={styles.button}
+        />
+        <AtomicButton
+          title={isSharing ? shareButtonLoadingText : shareButtonText}
+          onPress={onShare}
+          disabled={isSharing}
+          variant="primary"
+          icon="share-social"
+          style={styles.button}
+        />
+      </View>
+      <View style={styles.buttonRow}>
+        <AtomicButton
+          title={tryAgainButtonText}
+          onPress={onTryAgain}
+          variant="outline"
+          icon="refresh"
+          style={styles.button}
+        />
+        {onRate && rateButtonText && (
+          <AtomicButton
+            title={rateButtonText}
+            onPress={onRate}
+            variant="primary"
+            icon="star"
+            style={styles.button}
+          />
+        )}
+      </View>
     </View>
   );
 };

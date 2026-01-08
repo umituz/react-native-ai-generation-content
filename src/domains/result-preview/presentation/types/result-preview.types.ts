@@ -63,6 +63,8 @@ export interface ResultActionBarProps {
   onShare: () => void;
   /** Try again callback */
   onTryAgain: () => void;
+  /** Rate callback (optional) */
+  onRate?: () => void;
   /** Save button text */
   saveButtonText: string;
   /** Save button text when loading */
@@ -73,6 +75,8 @@ export interface ResultActionBarProps {
   shareButtonLoadingText: string;
   /** Try again button text */
   tryAgainButtonText: string;
+  /** Rate button text (optional) */
+  rateButtonText?: string;
 }
 
 /**
@@ -89,6 +93,7 @@ export interface ResultPreviewScreenProps {
   onShare: () => void;
   onTryAgain: () => void;
   onNavigateBack: () => void;
+  onRate?: () => void;
   /** Translations */
   translations: ResultPreviewTranslations;
   /** Optional custom style */
@@ -113,6 +118,8 @@ export interface ResultPreviewTranslations {
   sharing: string;
   /** Try again button */
   tryAnother: string;
+  /** Rate button (optional) */
+  rateButton?: string;
 }
 
 /**

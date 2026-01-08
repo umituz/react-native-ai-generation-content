@@ -23,6 +23,7 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   onShare,
   onTryAgain,
   onNavigateBack,
+  onRate,
   translations,
   style,
 }) => {
@@ -88,11 +89,13 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
             onDownload={onDownload}
             onShare={onShare}
             onTryAgain={onTryAgain}
+            onRate={onRate}
             saveButtonText={translations.saveButton}
             saveButtonLoadingText={translations.saving}
             shareButtonText={translations.shareButton}
             shareButtonLoadingText={translations.sharing}
             tryAgainButtonText={translations.tryAnother}
+            rateButtonText={translations.rateButton}
           />
         </View>
       </View>

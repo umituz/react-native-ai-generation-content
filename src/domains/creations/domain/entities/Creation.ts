@@ -30,6 +30,8 @@ export interface Creation {
   readonly createdAt: Date;
   readonly isShared: boolean;
   readonly isFavorite: boolean;
+  readonly rating?: number;
+  readonly ratedAt?: Date;
   // Extended fields for job-based creations
   readonly status?: CreationStatus;
   readonly output?: CreationOutput;
@@ -49,6 +51,8 @@ export interface CreationDocument {
   readonly output?: CreationOutput | null;
   readonly isShared: boolean;
   readonly isFavorite?: boolean;
+  readonly rating?: number;
+  readonly ratedAt?: FirebaseTimestamp | Date;
   readonly createdAt: FirebaseTimestamp | Date;
   readonly completedAt?: FirebaseTimestamp | Date;
 }
@@ -78,6 +82,13 @@ export function mapDocumentToCreation(
               data.uri ||
               "";
 
+  let ratedAtDate: Date | undefined;
+  if (data.ratedAt instanceof Date) {
+    ratedAtDate = data.ratedAt;
+  } else if (data.ratedAt && typeof data.ratedAt === "object" && "toDate" in data.ratedAt && typeof data.ratedAt.toDate === "function") {
+    ratedAtDate = data.ratedAt.toDate();
+  }
+
   return {
     id,
     uri,
@@ -88,6 +99,8 @@ export function mapDocumentToCreation(
     createdAt: creationDate,
     isShared: data.isShared ?? false,
     isFavorite: data.isFavorite ?? false,
+    rating: data.rating,
+    ratedAt: ratedAtDate,
     status: data.status as CreationStatus | undefined,
     output: data.output ?? undefined,
   };
