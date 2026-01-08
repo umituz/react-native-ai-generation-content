@@ -53,7 +53,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
         iconContainerSecondary: {
           backgroundColor: tokens.colors.backgroundSecondary,
           borderWidth: 1,
-          borderColor: tokens.colors.borderPrimary,
+          borderColor: tokens.colors.border,
         },
         iconContainerPrimary: {
           backgroundColor: tokens.colors.primary,
@@ -94,7 +94,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
             {isSharing ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <AtomicIcon name="share" size="md" color="white" />
+              <AtomicIcon name="share" size="md" color="onPrimary" />
             )}
           </View>
           <AtomicText style={styles.label}>{shareButtonText}</AtomicText>
@@ -102,7 +102,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
 
         <TouchableOpacity style={styles.actionButton} onPress={onTryAgain}>
           <View style={[styles.iconContainer, styles.iconContainerSecondary]}>
-            <AtomicIcon name="refresh-cw" size="md" color="textPrimary" />
+            <AtomicIcon name="refresh" size="md" color="textPrimary" />
           </View>
           <AtomicText style={styles.label}>{tryAgainButtonText}</AtomicText>
         </TouchableOpacity>
