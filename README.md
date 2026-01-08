@@ -2,24 +2,54 @@
 
 > Provider-agnostic AI generation orchestration for React Native
 
-A comprehensive React Native library for AI-powered content generation, supporting multiple providers and offering a wide range of AI features including image generation, video creation, text-to-speech, face swap, and much more.
+Comprehensive React Native library for AI-powered content generation. Support multiple providers with 25+ AI features including image generation, video creation, text-to-speech, face swap, and more.
 
-## 🚀 Features
+## 🎯 Library Purpose
 
-- **🎨 Text to Image**: Generate stunning images from text descriptions
-- **🎬 Text to Video**: Create videos from text prompts
-- **🎤 Text to Voice**: Convert text to natural-sounding speech
-- **🔄 Face Swap**: Swap faces between images with AI
-- **🖼️ Style Transfer**: Apply artistic styles to photos
-- **✨ Photo Restoration**: Restore and enhance old photos
-- **🔍 Upscaling**: Increase image resolution while maintaining quality
-- **🎭 AI Hug & Kiss**: Generate creative AI-powered interactions
-- **🌅 Background Removal/Replacement**: Remove or replace image backgrounds
-- **🎪 Anime Selfie**: Convert photos to anime style
-- **📝 Image Captioning**: Generate descriptive captions for images
-- **🎵 Audio Generation**: Create audio content with AI
-- **📜 Script Generator**: Generate scripts for videos and podcasts
-- **🔮 Future Prediction**: See yourself in future scenarios
+Provider-agnostic AI generation orchestration layer. Focus on business logic and user experience while handling multiple AI providers seamlessly. Clean architecture with domain-driven design for maintainable, scalable AI features.
+
+---
+
+## 📋 Feature Overview
+
+### Image Generation
+- **Text to Image**: Generate images from descriptions
+- **Image to Image**: Transform images with prompts
+- **Style Transfer**: Apply artistic styles
+- **Photo Restoration**: Restore old photos
+- **Upscaling**: Increase resolution
+- **HD Touch Up**: Enhance quality
+
+### Face & Person Features
+- **Face Swap**: Swap faces between images
+- **AI Hug**: Generate hug images (2 people)
+- **AI Kiss**: Generate kiss images (2 people)
+- **Couple Future**: Future predictions for couples
+- **Future Prediction**: Individual future scenarios
+
+### Video & Animation
+- **Text to Video**: Generate videos from text
+- **Image to Video**: Convert images to video
+
+### Background & Editing
+- **Remove Background**: Remove image backgrounds
+- **Replace Background**: Replace with new background
+- **Inpainting**: Fill masked areas
+- **Remove Object**: Remove unwanted objects
+- **Colorization**: Add color to B&W photos
+
+### Creative & Audio
+- **Meme Generator**: Create memes with text
+- **Sketch to Image**: Convert sketches to images
+- **Anime Selfie**: Anime style conversion
+- **Audio Generation**: Generate audio content
+- **Text to Voice**: Text-to-speech synthesis
+- **Script Generator**: Generate content scripts
+
+### Analysis
+- **Image Captioning**: Generate image descriptions
+
+---
 
 ## 📦 Installation
 
@@ -27,320 +57,265 @@ A comprehensive React Native library for AI-powered content generation, supporti
 npm install @umituz/react-native-ai-generation-content
 ```
 
-or
+## 🚀 Quick Start
 
-```bash
-yarn add @umituz/react-native-ai-generation-content
-```
+### Configuration
 
-## 🏁 Quick Start
-
-### 1. Configure App Services
-
-```tsx
+```typescript
 import { configureAppServices } from '@umituz/react-native-ai-generation-content';
 
-// Configure required services
 configureAppServices({
   networkService: {
     baseUrl: 'https://your-api.com',
     apiKey: 'your-api-key',
   },
   creditService: {
-    checkCredits: async (userId, cost) => {
-      // Check if user has enough credits
-      return true;
-    },
-    deductCredits: async (userId, cost) => {
-      // Deduct credits from user
-    },
+    checkCredits: async (userId, cost) => true,
+    deductCredits: async (userId, cost) => {},
   },
   paywallService: {
-    showPaywall: async () => {
-      // Show paywall if needed
-      return true;
-    },
+    showPaywall: async () => true,
   },
 });
 ```
 
-### 2. Use a Feature Hook
+### Basic Usage
 
-```tsx
+```typescript
 import { useTextToImageFeature } from '@umituz/react-native-ai-generation-content';
 
-function TextToImageScreen() {
-  const feature = useTextToImageFeature({
-    config: {
-      model: 'imagen-3',
-      onProcessingComplete: (result) => {
-        console.log('Image generated:', result.imageUrl);
-      },
+const feature = useTextToImageFeature({
+  config: {
+    model: 'imagen-3',
+    onProcessingComplete: (result) => {
+      console.log('Generated:', result.imageUrl);
     },
-    userId: 'user-123',
-  });
-
-  return (
-    <View>
-      <TextInput
-        placeholder="Describe the image you want..."
-        onChangeText={feature.setPrompt}
-        value={feature.state.prompt}
-      />
-
-      <Button
-        title="Generate Image"
-        onPress={() => feature.generate()}
-        disabled={!feature.isReady}
-      />
-
-      {feature.state.isProcessing && (
-        <Text>Generating... {feature.state.progress}%</Text>
-      )}
-
-      {feature.state.imageUrl && (
-        <Image source={{ uri: feature.state.imageUrl }} />
-      )}
-    </View>
-  );
-}
-```
-
-### 3. Or Use the Unified AI Feature Screen
-
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
-
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="text-to-image"
-      userId="user-123"
-    />
-  );
-}
-```
-
-## 📚 Available Features
-
-### Text Generation
-- [Text to Image](./src/features/text-to-image/README.md)
-- [Text to Video](./src/features/text-to-video/README.md)
-- [Text to Voice](./src/features/text-to-voice/README.md)
-
-### Image Processing
-- [Face Swap](./src/features/face-swap/README.md)
-- [Photo Restoration](./src/features/photo-restoration/README.md)
-- [Upscaling](./src/features/upscaling/README.md)
-- [Style Transfer](./src/features/style-transfer/README.md)
-- [HD Touch Up](./src/features/hd-touch-up/README.md)
-- [Colorization](./src/features/colorization/README.md)
-- [Image to Image](./src/features/image-to-image/README.md)
-
-### Background & Object Manipulation
-- [Remove Background](./src/features/remove-background/README.md)
-- [Replace Background](./src/features/replace-background/README.md)
-- [Remove Object](./src/features/remove-object/README.md)
-- [Inpainting](./src/features/inpainting/README.md)
-
-### Special Effects
-- [AI Hug](./src/features/ai-hug/README.md)
-- [AI Kiss](./src/features/ai-kiss/README.md)
-- [Anime Selfie](./src/features/anime-selfie/README.md)
-- [Meme Generator](./src/features/meme-generator/README.md)
-- [Couple Future](./src/features/couple-future/README.md)
-- [Future Prediction](./src/features/future-prediction/README.md)
-- [Sketch to Image](./src/features/sketch-to-image/README.md)
-
-### Video & Audio
-- [Image to Video](./src/features/image-to-video/README.md)
-- [Audio Generation](./src/features/audio-generation/README.md)
-
-### Content & Scripting
-- [Image Captioning](./src/features/image-captioning/README.md)
-- [Script Generator](./src/features/script-generator/README.md)
-
-## 🏗️ Architecture
-
-### Domain-Driven Design
-
-The library follows clean architecture principles with clear separation of concerns:
-
-```
-src/
-├── domain/              # Core business logic and types
-├── infrastructure/      # External services and implementations
-├── presentation/        # UI components and hooks
-├── domains/             # Domain-specific modules
-│   ├── prompts/        # AI prompt management
-│   ├── content-moderation/  # Content moderation
-│   ├── creations/      # AI-generated content gallery
-│   └── face-detection/ # Face detection API
-└── features/           # Individual AI features
-```
-
-### Core Modules
-
-- **Prompts Domain**: AI prompt management and generation
-- **Content Moderation**: Content safety and filtering
-- **Creations**: Gallery for managing AI-generated content
-- **Face Detection**: Face detection and analysis
-
-## 🎨 UI Components
-
-The library provides ready-to-use components:
-
-```tsx
-import {
-  GenerationProgressModal,
-  DualImagePicker,
-  PromptInput,
-  ResultDisplay,
-  StyleSelector,
-  AspectRatioSelector,
-  AIGenerationForm,
-} from '@umituz/react-native-ai-generation-content';
-```
-
-## 🔧 Configuration
-
-### Provider Configuration
-
-```tsx
-import { providerRegistry } from '@umituz/react-native-ai-generation-content';
-
-// Register a custom provider
-providerRegistry.registerProvider({
-  id: 'my-provider',
-  name: 'My AI Provider',
-  capabilities: {
-    textToImage: true,
-    textToVideo: false,
-    // ...
-  },
-  execute: async (request) => {
-    // Provider-specific implementation
-  },
-});
-```
-
-### Middleware
-
-```tsx
-import {
-  createCreditCheckMiddleware,
-  createHistoryTrackingMiddleware,
-} from '@umituz/react-native-ai-generation-content';
-
-// Add credit check middleware
-const creditMiddleware = createCreditCheckMiddleware({
-  creditCost: 1,
-  paywallThreshold: 5,
-});
-
-// Add history tracking middleware
-const historyMiddleware = createHistoryTrackingMiddleware({
-  maxHistorySize: 100,
-});
-```
-
-## 📖 Examples
-
-### Face Swap
-
-```tsx
-import { useFaceSwapFeature } from '@umituz/react-native-ai-generation-content';
-
-const feature = useFaceSwapFeature({
-  config: {
-    enhanceFace: true,
-    matchSkinTone: true,
-  },
-  onSelectSourceImage: async () => { /* ... */ },
-  onSelectTargetImage: async () => { /* ... */ },
-  onSaveImage: async (url) => { /* ... */ },
-});
-
-await feature.process();
-```
-
-### Photo Restoration
-
-```tsx
-import { usePhotoRestoreFeature } from '@umituz/react-native-ai-generation-content';
-
-const feature = usePhotoRestoreFeature({
-  config: {
-    restorationType: 'auto',
-  },
-  onSelectPhoto: async () => { /* ... */ },
-  onSaveResult: async (url) => { /* ... */ },
-});
-
-await feature.process();
-```
-
-### Text to Video
-
-```tsx
-import { useTextToVideoFeature } from '@umituz/react-native-ai-generation-content';
-
-const feature = useTextToVideoFeature({
-  config: {
-    model: 'veo-3',
   },
   userId: 'user-123',
 });
 
-await feature.generate({
-  duration: 5,
-  aspectRatio: '16:9',
-});
+// Use feature.state, feature.generate(), etc.
 ```
-
-## 🧪 Testing
-
-```tsx
-import { renderHook, waitFor } from '@testing-library/react-native';
-import { useTextToImageFeature } from '@umituz/react-native-ai-generation-content';
-
-test('generates image from prompt', async () => {
-  const { result } = renderHook(() =>
-    useTextToImageFeature({
-      config: {},
-      userId: 'test-user',
-    })
-  );
-
-  await act(async () => {
-    await result.current.generate({ prompt: 'Test prompt' });
-  });
-
-  await waitFor(() => {
-    expect(result.current.state.imageUrl).toBeTruthy();
-  });
-});
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
-
-## 📄 License
-
-MIT © [Umit Uz]
-
-## 🔗 Links
-
-- [Documentation](./docs)
-- [Examples](./examples)
-- [Changelog](./CHANGELOG.md)
-- [Report Issues](https://github.com/umituz/react-native-ai-generation-content/issues)
-
-## ⭐ Star Us
-
-If you find this library helpful, please consider giving it a star on GitHub!
 
 ---
 
-Made with ❤️ by [Umit Uz]
+## ⚠️ Critical Rules
+
+### MUST FOLLOW
+
+1. **Configuration**
+   - MUST configure app services before using features
+   - MUST provide valid userId for tracking
+   - MUST implement credit checking
+   - MUST handle errors properly
+
+2. **State Management**
+   - MUST check isReady before enabling actions
+   - MUST handle isProcessing state
+   - MUST display progress to users
+   - MUST implement error handling
+
+3. **Performance**
+   - MUST implement debouncing (300ms)
+   - MUST cache results locally
+   - MUST handle large files properly
+   - MUST NOT block main thread
+
+4. **Privacy & Ethics**
+   - MUST obtain consent for person-based features
+   - MUST implement content moderation
+   - MUST comply with regulations
+   - MUST provide clear usage terms
+
+---
+
+## 🚫 Prohibitions
+
+### MUST AVOID
+
+❌ **NEVER**:
+- Skip configuration
+- Use without userId
+- Ignore error handling
+- Process without user action
+- Violate privacy/consent
+- Block main thread
+- Hardcode API keys
+
+---
+
+## 🤖 AI Agent Directions
+
+When implementing with AI code generation:
+
+```
+REQUIREMENTS:
+1. Import from @umituz/react-native-ai-generation-content
+2. Configure app services first
+3. Use feature-specific hooks
+4. Implement proper state management
+5. Handle errors gracefully
+6. Show progress to users
+7. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST configure before using features
+- MUST provide valid userId
+- MUST check isReady before actions
+- MUST handle isProcessing state
+- MUST implement error handling
+- MUST respect user privacy
+
+FEATURE HOOKS:
+- useTextToImageFeature: Image generation
+- useFaceSwapFeature: Face swapping
+- useTextToVoiceFeature: Text-to-speech
+- useAIHugFeature: AI hug generation
+- And 21+ more features
+
+STRICTLY FORBIDDEN:
+- No skipping configuration
+- No missing userId
+- No ignoring errors
+- No auto-processing
+- No privacy violations
+- No blocked UI
+- No hardcoded credentials
+```
+
+---
+
+## 📚 Documentation Structure
+
+```
+@umituz/react-native-ai-generation-content/
+├── src/
+│   ├── features/           # 25 AI features (each with README)
+│   │   ├── text-to-image/
+│   │   ├── face-swap/
+│   │   ├── ai-hug/
+│   │   └── ...
+│   ├── domains/           # Shared domains
+│   │   ├── content-moderation/
+│   │   ├── prompts/
+│   │   ├── creations/
+│   │   └── face-detection/
+│   └── features/shared/   # Shared functionality
+├── docs/                  # Additional documentation
+├── ARCHITECTURE.md        # Architecture details
+├── FAQ.md                # Common questions
+└── MIGRATION_GUIDE.md    # Migration guide
+```
+
+### Feature Documentation
+
+Each feature has comprehensive documentation:
+- **Import paths** (only code in README)
+- **Usage strategy** (when to use/not use)
+- **Critical rules** (MUST follow)
+- **Prohibitions** (MUST avoid)
+- **AI agent directions** (prompt templates)
+- **Configuration strategy**
+- **State management**
+- **Best practices**
+- **Common pitfalls**
+
+**Example**: See `src/features/text-to-image/README.md`
+
+---
+
+## 🎨 Architecture
+
+### Clean Architecture
+
+```
+┌─────────────────────────────┐
+│   Presentation Layer        │
+│   (Components, Hooks)        │
+└─────────────────────────────┘
+              ↓
+┌─────────────────────────────┐
+│      Domain Layer           │
+│   (Types, Interfaces)       │
+└─────────────────────────────┘
+              ↓
+┌─────────────────────────────┐
+│   Infrastructure Layer      │
+│  (Services, Repositories)    │
+└─────────────────────────────┘
+```
+
+### Key Principles
+
+- **Separation of Concerns**: Each layer has specific responsibility
+- **Dependency Inversion**: Depend on abstractions, not implementations
+- **Provider Agnostic**: Support multiple AI providers
+- **Type Safety**: Comprehensive TypeScript types
+- **Testability**: Clean, testable code
+
+---
+
+## 🔐 Security & Privacy
+
+### API Keys
+- Never store in code
+- Use environment variables
+- Implement rotation
+
+### Content Moderation
+- Enable for user-generated content
+- Configure rules appropriately
+- Monitor for violations
+
+### User Data
+- Anonymize analytics
+- Secure storage
+- GDPR/CCPA compliance
+
+---
+
+## 📈 Performance
+
+### Optimization
+- Lazy load features
+- Cache results
+- Optimize images
+- Background processing
+
+### Best Practices
+- Implement debouncing
+- Use pagination
+- Compress uploads
+- Monitor performance
+
+---
+
+## 🤝 Contributing
+
+Contributions welcome! Please:
+- Follow code style
+- Add tests
+- Update docs
+- Submit PR
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
+## 📄 License
+
+MIT
+
+---
+
+## 📞 Support
+
+- **Issues**: GitHub Issues
+- **Docs**: `/docs` folder
+- **FAQ**: [FAQ.md](FAQ.md)
+- **Migration**: [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)
+
+---
+
+**Version**: 2.0.0 (Strategy-based Documentation)
+**Last Updated**: 2025-01-08

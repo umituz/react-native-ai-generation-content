@@ -1,296 +1,393 @@
-# Sketch to Image
+# Sketch to Image Feature
 
 Convert hand-drawn sketches and doodles into realistic images using AI.
 
-## Features
+## 📍 Import Path
 
-- Transform rough sketches into detailed images
-- Support for various sketch styles
-- Multiple output styles (realistic, artistic, etc.)
-- Automatic detail enhancement
-- Color and texture generation
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useSketchToImageFeature } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+```
 
-function SketchToImageScreen() {
-  const [sketch, setSketch] = useState<string | null>(null);
+**Location**: `src/features/sketch-to-image/`
 
-  const feature = useSketchToImageFeature({
-    config: {
-      outputStyle: 'realistic',
-      prompt: 'A beautiful landscape',
-      onProcessingStart: () => console.log('Converting sketch...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectSketch: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setSketch(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSaveResult: async (imageUrl) => {
-      await saveToGallery(imageUrl);
-    },
-  });
+## 🎯 Feature Purpose
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={sketch}
-        onSelectImage={feature.selectSketch}
-        title="Upload Your Sketch"
-      />
+Transform rough sketches into detailed, realistic images using AI. Supports multiple output styles including realistic, artistic, anime, and 3D render. Automatically adds color, details, and textures to bring drawings to life.
 
-      <OutputStyleSelector
-        selectedStyle={feature.state.outputStyle}
-        onSelectStyle={feature.setOutputStyle}
-      />
+---
 
-      <PromptInput
-        prompt={feature.state.prompt}
-        onChangePrompt={feature.setPrompt}
-        placeholder="Describe what you drew..."
-      />
+## 📋 Usage Strategy
 
-      <Button
-        title="Convert to Image"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+### When to Use This Feature
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+✅ **Use Cases:**
+- Creating concept art from sketches
+- Turning doodles into illustrations
+- Transforming storyboard sketches
+- Converting design sketches to mockups
+- Quick prototyping and ideation
 
-      {feature.state.result && (
-        <ResultDisplay
-          originalImage={sketch}
-          resultImage={feature.state.result.imageUrl}
-          onSave={() => feature.saveResult()}
-        />
-      )}
-    </View>
-  );
+❌ **When NOT to Use:**
+- Generating images from text only (use Text to Image)
+- Applying artistic styles to photos (use Style Transfer)
+- Image-to-image transformation (use Image to Image)
+- Creating detailed artwork from scratch
+
+### Implementation Strategy
+
+1. **Select or draw sketch** to convert
+2. **Choose output style** (realistic, artistic, anime, 3D)
+3. **Add prompt** (optional) describing the sketch
+4. **Configure options** (add color, add details)
+5. **Generate image** with progress tracking
+6. **Preview result** and offer regeneration
+7. **Save or share** final image
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Sketch Requirements
+- **MUST** provide ONE sketch image
+- **MUST** use clear, readable sketches
+- **MUST** have visible line work
+- **MUST NOT** exceed file size limits (10MB max)
+- **MUST** be in a common image format
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `outputStyle` (realistic, artistic, anime, 3D)
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectSketch` callback
+- **MUST** provide optional prompt input
+
+### 3. State Management
+- **MUST** check `isReady` before enabling generate button
+- **MUST** display progress during generation
+- **MUST** handle long processing times
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache results locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** generate multiple images simultaneously
+
+### 5. Content Quality
+- **MUST** provide sketch-to-result comparison
+- **MUST** allow style adjustment
+- **MUST** handle various sketch types
+- **MUST** support descriptive prompts
+- **MUST** offer regeneration with different settings
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Sketches**
+   - Always validate sketch is selected
+   - Never call process() without sketch
+
+2. **No Auto-Processing**
+   - Never start conversion without user action
+   - Always require explicit "Convert" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore conversion failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store both sketch and result simultaneously
+   - Clean up temporary images
+   - Implement proper image disposal
+
+6. **No Blocked UI**
+   - Never block main thread with image processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Poor Sketch Quality**
+   - Never use unreadable or extremely messy sketches
+   - Always provide guidance on sketch quality
+   - Show examples of good sketches
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing a sketch to image feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useSketchToImageFeature hook
+3. Select output style (realistic, artistic, anime, 3d)
+4. Implement sketch selection/upload UI
+5. Add optional prompt input for description
+6. Configure options (addColor, addDetails)
+7. Validate sketch before conversion
+8. Show sketch-to-result comparison
+9. Handle long processing times with progress
+10. Implement proper error handling
+11. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate sketch before calling convert()
+- MUST show sketch-to-result comparison
+- MUST handle output style selection
+- MUST handle prompt input
+- MUST implement debouncing (300ms)
+- MUST allow regeneration with different settings
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set outputStyle: 'realistic' | 'artistic' | 'anime' | '3d'
+- Set prompt: string (optional description)
+- Set addColor: boolean (add color to sketch)
+- Set addDetails: boolean (enhance with details)
+- Implement onSelectSketch callback
+- Implement onSaveResult callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+OUTPUT STYLES:
+- realistic: Photorealistic output
+- artistic: Artistic interpretation
+- anime: Anime/manga style
+- 3d: 3D rendered look
+
+OPTIONS:
+- addColor: Add color to sketch (default: true)
+- addDetails: Enhance with details (default: true)
+- prompt: Optional description of sketch content
+
+STRICTLY FORBIDDEN:
+- No missing sketch validation
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No poor sketch quality acceptance
+
+QUALITY CHECKLIST:
+- [ ] Sketch selection/upload implemented
+- [ ] Output style selector added
+- [ ] Prompt input included
+- [ ] Validation before convert()
+- [ ] Sketch-to-result comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Download/share functionality
+- [ ] Regeneration with different styles
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Sketch selection implemented
+- [ ] Output style selector added
+- [ ] Prompt input implemented
+- [ ] Validation before convert()
+- [ ] Sketch-to-result comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Download/share buttons
+- [ ] Regeneration option
+- [ ] Cleanup on unmount
+- [ ] Original sketch preserved
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  outputStyle: 'realistic' | 'artistic' | 'anime' | '3d'
+  onSelectSketch: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Output Styles**
+   - Realistic: Photorealistic output (recommended for concept art)
+   - Artistic: Artistic interpretation (creative projects)
+   - Anime: Anime/manga style (illustrations)
+   - 3D: 3D rendered look (product mockups)
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="sketch-to-image"
-      userId="user-123"
-    />
-  );
+2. **Options**
+   - addColor: Add color to sketch (default: true)
+   - addDetails: Enhance with AI-generated details (default: true)
+
+3. **Sketch Quality**
+   - Clear, readable line work
+   - Visible shapes and forms
+   - Good contrast
+   - Max size: 10MB
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Sketch selected and validated
+- Check before enabling generate button
+
+**isProcessing**: boolean
+- Conversion in progress
+- Show loading/progress indicator
+- Disable generate button
+
+**progress**: number (0-100)
+- Conversion progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if conversion failed
+- Display to user with clear message
+
+**result**: {
+  imageUrl: string
+  sketchImageUrl?: string
+  outputStyle?: string
+  prompt?: string
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface SketchToImageFeatureConfig {
-  outputStyle?: 'realistic' | 'artistic' | 'anime' | '3d';
-  prompt?: string; // Description of the sketch
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: SketchToImageResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Sketch Creation
 
-### Generation Options
+1. **Sketch Quality**
+   - Good: Clear lines, readable shapes
+   - Bad: Extremely messy, unreadable
 
-```tsx
-interface SketchToImageOptions {
-  sketch: string; // Base64 sketch image
-  outputStyle: 'realistic' | 'artistic' | 'anime' | '3d';
-  prompt?: string; // Optional description
-  addColor?: boolean; // Add color to sketch (default: true)
-  addDetails?: boolean; // Enhance with details (default: true)
-}
-```
+2. **Style Selection**
+   - Match style to use case
+   - Consider final application
+   - Test different styles
 
-## Output Styles
+3. **Prompt Writing**
+   - Be descriptive about content
+   - Include important details
+   - Mention style preferences
 
-### Realistic
+### User Experience
 
-Photorealistic output:
+1. **Sketch Upload**
+   - Support multiple upload methods
+   - Allow camera capture
+   - Provide sketch guidelines
 
-```tsx
-const result = await feature.process({
-  outputStyle: 'realistic',
-  addColor: true,
-  addDetails: true,
-});
-```
+2. **Preview**
+   - Show sketch preview before conversion
+   - Compare different output styles
+   - Display prompt examples
 
-### Artistic
+---
 
-Artistic interpretation:
+## 🐛 Common Pitfalls
 
-```tsx
-const result = await feature.process({
-  outputStyle: 'artistic',
-});
-```
+### Quality Issues
 
-### Anime
+❌ **Problem**: Poor conversion results
+✅ **Solution**: Use clearer sketch, try different style, add descriptive prompt
 
-Anime/manga style:
+### Style Issues
 
-```tsx
-const result = await feature.process({
-  outputStyle: 'anime',
-});
-```
+❌ **Problem**: Output doesn't match expectations
+✅ **Solution**: Try different output style, improve prompt
 
-### 3D Render
+### Content Issues
 
-3D rendered look:
+❌ **Problem**: AI misinterprets sketch
+✅ **Solution**: Add descriptive prompt, use clearer sketch
 
-```tsx
-const result = await feature.process({
-  outputStyle: '3d',
-});
-```
+---
 
-## Usage Flow
+## 📦 Related Components
 
-1. Select **Sketch** - Upload or draw a sketch
-2. Choose **Output Style** - Select the desired output style
-3. Add **Prompt** (optional) - Describe what you drew
-4. Tap **Convert** - Start the conversion
-5. View **Result** - See the generated image
-6. Save or Share - Save or share the result
+Use these components from the library:
 
-## Component Examples
+- **PhotoUploadCard**: Upload sketch interface
+- **OutputStyleSelector**: Choose output style
+- **PromptInput**: Enter sketch description
+- **ResultDisplay**: Sketch-to-result comparison
+- **ProgressBar**: Progress display
 
-### Output Style Selector
+Located at: `src/presentation/components/`
 
-```tsx
-import { StylePresetsGrid } from '@umituz/react-native-ai-generation-content';
+---
 
-const styles = [
-  { id: 'realistic', name: 'Realistic', preview: '...' },
-  { id: 'artistic', name: 'Artistic', preview: '...' },
-  { id: 'anime', name: 'Anime', preview: '...' },
-  { id: '3d', name: '3D Render', preview: '...' },
-];
+## 🔄 Migration Strategy
 
-<StylePresetsGrid
-  styles={styles}
-  selectedStyle={selectedStyle}
-  onSelectStyle={setSelectedStyle}
-/>
-```
+If migrating from previous implementation:
 
-### Prompt Input
+1. **Update imports** to new path
+2. **Add output style selector**
+3. **Implement prompt input**
+4. **Update state handling** for new structure
+5. **Add sketch-to-result comparison**
+6. **Test all output styles**
 
-```tsx
-import { TextInput } from 'react-native';
+---
 
-<TextInput
-  placeholder="Describe what you drew..."
-  value={prompt}
-  onChangeText={setPrompt}
-  multiline
-  numberOfLines={3}
-/>
-```
+## 📚 Additional Resources
 
-### Before/After Comparison
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/sketch-to-image/`
+- Architecture: `/ARCHITECTURE.md`
 
-```tsx
-import { ResultDisplay } from '@umituz/react-native-ai-generation-content';
+---
 
-{feature.state.result && sketch && (
-  <ResultDisplay
-    originalImage={sketch}
-    resultImage={feature.state.result.imageUrl}
-    onSave={() => feature.saveResult()}
-    onShare={() => shareImage(feature.state.result.imageUrl)}
-  />
-)}
-```
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-## Use Cases
+---
 
-### Concept Art
+## 📝 Changelog
 
-```tsx
-// Convert rough sketches to detailed concept art
-const result = await feature.process({
-  outputStyle: 'realistic',
-  prompt: 'Futuristic cityscape',
-});
-```
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-### Illustration
-
-```tsx
-// Turn doodles into illustrations
-const result = await feature.process({
-  outputStyle: 'artistic',
-});
-```
-
-### Storyboarding
-
-```tsx
-// Transform storyboard sketches
-const result = await feature.process({
-  outputStyle: 'realistic',
-  prompt: 'Action scene with characters',
-});
-```
-
-### Design Mockups
-
-```tsx
-// Convert design sketches to realistic mockups
-const result = await feature.process({
-  outputStyle: 'realistic',
-  addDetails: true,
-});
-```
-
-## Best Practices
-
-1. **Clear Sketches**: Use clear, readable sketches
-2. **Descriptive Prompts**: Provide detailed descriptions
-3. **Style Selection**: Match style to your use case
-4. **Multiple Iterations**: Try different styles and prompts
-5. **Sketch Quality**: Better sketches produce better results
-
-## Related Features
-
-- [Text to Image](../text-to-image) - Generate images from text
-- [Image to Image](../image-to-image) - Transform images with AI
-- [Style Transfer](../style-transfer) - Apply artistic styles
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

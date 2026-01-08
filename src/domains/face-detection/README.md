@@ -2,86 +2,215 @@
 
 Face detection and analysis system for AI features.
 
-## Overview
+## 📍 Import Path
 
-The Face Detection domain provides comprehensive face detection and analysis capabilities. It's used by various AI features like face swap, AI hug, AI kiss, and more to detect, analyze, and process faces in images.
-
-## Features
-
-- **Face Detection**: Detect faces in images
-- **Face Analysis**: Analyze facial features and attributes
-- **Multiple Faces**: Support for multiple faces in one image
-- **Face Metrics**: Extract facial measurements and landmarks
-- **Face Matching**: Compare and match faces
-- **Bounding Boxes**: Get face bounding boxes for cropping
-- **Landmarks**: Extract facial landmark points
-
-## Installation
-
-This domain is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
+```typescript
+import {
+  detectFaces,
+  analyzeFace,
+  compareFaces,
+  cropFace,
+  checkFaceQuality,
+  findMatchingFace
+} from '@umituz/react-native-ai-generation-content';
 ```
 
-## Basic Usage
+**Location**: `src/domains/face-detection/`
 
-### Detecting Faces
+## 🎯 Domain Purpose
 
-```tsx
-import { detectFaces } from '@umituz/react-native-ai-generation-content';
+Comprehensive face detection and analysis capabilities for AI features. Detect faces in images, analyze facial features and attributes, support multiple faces, extract facial measurements and landmarks, and enable face matching for various AI generation features.
 
-const result = await detectFaces({
-  imageBase64: 'base64...',
-});
+---
 
-if (result.faces.length > 0) {
-  console.log(`Found ${result.faces.length} face(s)`);
+## 📋 Usage Strategy
 
-  result.faces.forEach(face => {
-    console.log('Face bounding box:', face.boundingBox);
-    console.log('Confidence:', face.confidence);
-  });
-} else {
-  console.log('No faces detected');
-}
+### When to Use This Domain
+
+✅ **Use Cases:**
+- Preparing images for face swap
+- Validating photos for AI features
+- Detecting multiple faces in group photos
+- Quality checking before processing
+- Face matching and verification
+
+❌ **When NOT to Use:**
+- Real-time video processing (use specialized tools)
+- Surveillance or tracking (ethical concerns)
+- Biometric authentication (use security libraries)
+- Age verification for legal purposes
+
+### Implementation Strategy
+
+1. **Detect faces** before AI generation
+2. **Validate quality** of detected faces
+3. **Handle multiple faces** appropriately
+4. **Extract landmarks** for processing
+5. **Compare faces** when needed
+6. **Crop faces** for focused processing
+7. **Provide feedback** on detection results
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Detection Requirements
+- **MUST** detect faces before processing
+- **MUST** handle no-face scenarios
+- **MUST** support multiple faces
+- **MUST** return confidence scores
+- **MUST** provide bounding boxes
+
+### 2. Quality Validation
+- **MUST** check face quality before use
+- **MUST** provide quality feedback
+- **MUST** handle poor quality gracefully
+- **MUST** guide users to better photos
+- **MUST** validate clarity and visibility
+
+### 3. Multiple Face Handling
+- **MUST** detect all faces in image
+- **MUST** allow face selection
+- **MUST** provide face indexing
+- **MUST** handle face ordering
+- **MUST** support group photos
+
+### 4. Performance
+- **MUST** optimize detection speed
+- **MUST** cache detection results
+- **MUST** handle large images
+- **MUST NOT** block main thread
+- **MUST** implement efficient algorithms
+
+### 5. User Experience
+- **MUST** provide clear feedback
+- **MUST** explain detection failures
+- **MUST** guide users to better photos
+- **MUST** show detected faces
+- **MUST** allow face selection
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Skipping Detection**
+   - Always detect before processing
+   - Never assume face presence
+   - Validate detection results
+
+2. **No Poor Quality Processing**
+   - Always check quality first
+   - Never process poor quality faces
+   - Guide users to better photos
+
+3. **No Missing Feedback**
+   - Always explain detection results
+   - Never silently fail
+   - Provide actionable guidance
+
+4. **No Privacy Violations**
+   - Never store faces without consent
+   - Always handle data properly
+   - Comply with regulations
+
+5. **No Biased Detection**
+   - Ensure fair detection across demographics
+   - Test for bias regularly
+   - Use diverse training data
+
+6. **No Missing Context**
+   - Always explain what was detected
+   - Show face locations
+   - Provide confidence scores
+
+7. **No Blocking UI**
+   - Never block on detection
+   - Show progress indicators
+   - Allow cancellation
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing face detection using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import face detection functions
+2. Detect faces before AI generation
+3. Validate face quality
+4. Handle multiple faces
+5. Extract landmarks for processing
+6. Provide clear user feedback
+7. Handle no-face scenarios
+8. Optimize for performance
+
+CRITICAL RULES:
+- MUST detect before processing
+- MUST validate face quality
+- MUST handle multiple faces
+- MUST provide clear feedback
+- MUST guide users to better photos
+- MUST handle no-face scenarios
+
+DETECTION FUNCTIONS:
+- detectFaces: Detect all faces in image
+- analyzeFace: Analyze facial features
+- compareFaces: Compare two faces
+- cropFace: Crop face from image
+- checkFaceQuality: Validate face quality
+- findMatchingFace: Find face in group photo
+
+FACE DATA:
+- boundingBox: Face location and size
+- confidence: Detection confidence (0-1)
+- landmarks: Facial feature points
+- gender: Detected gender
+- age: Estimated age range
+- emotions: Emotion probabilities
+
+QUALITY METRICS:
+- brightness: Image brightness
+- sharpness: Face clarity
+- overall: 'good' | 'fair' | 'poor'
+
+STRICTLY FORBIDDEN:
+- No skipping detection
+- No poor quality processing
+- No missing feedback
+- No privacy violations
+- No biased detection
+- No missing context
+- No blocking UI
+
+QUALITY CHECKLIST:
+- [ ] Face detection implemented
+- [ ] Quality validation added
+- [ ] Multiple faces handled
+- [ ] Clear feedback provided
+- [ ] No-face scenarios handled
+- [ ] Performance optimized
+- [ ] Privacy protected
+- [ ] Bias tested
+- [ ] User guidance provided
+- [ ] Error handling complete
 ```
 
-### Analyzing Faces
+---
 
-```tsx
-import { analyzeFace } from '@umituz/react-native-ai-generation-content';
+## 🛠️ Configuration Strategy
 
-const analysis = await analyzeFace({
-  imageBase64: 'base64...',
-  faceIndex: 0, // Analyze first detected face
-});
+### Detection Result
 
-console.log('Gender:', analysis.gender);
-console.log('Age:', analysis.age);
-console.log('Emotions:', analysis.emotions);
-console.log('Landmarks:', analysis.landmarks);
-```
-
-### Comparing Faces
-
-```tsx
-import { compareFaces } from '@umituz/react-native-ai-generation-content';
-
-const similarity = await compareFaces({
-  image1Base64: 'base64...',
-  image2Base64: 'base64...',
-});
-
-console.log('Similarity score:', similarity.score);
-console.log('Is same person:', similarity.isSamePerson);
-```
-
-## Data Models
-
-### FaceDetectionResult
-
-```tsx
+```typescript
 interface FaceDetectionResult {
   faces: DetectedFace[];
   imageWidth: number;
@@ -97,44 +226,11 @@ interface DetectedFace {
 }
 ```
 
-### BoundingBox
+### Face Analysis
 
-```tsx
-interface BoundingBox {
-  x: number; // Top-left X coordinate
-  y: number; // Top-left Y coordinate
-  width: number;
-  height: number;
-}
-```
-
-### FacialLandmarks
-
-```tsx
-interface FacialLandmarks {
-  leftEye: Point;
-  rightEye: Point;
-  nose: Point;
-  mouth: Point;
-  leftEar: Point;
-  rightEar: Point;
-  chin: Point;
-  // Additional landmarks
-  allPoints: Point[];
-}
-
-interface Point {
-  x: number;
-  y: number;
-}
-```
-
-### FaceAnalysis
-
-```tsx
+```typescript
 interface FaceAnalysis {
   gender: 'male' | 'female' | 'unknown';
-  genderConfidence: number;
   age: {
     min: number;
     max: number;
@@ -157,239 +253,64 @@ interface FaceAnalysis {
 }
 ```
 
-### FaceComparison
+---
 
-```tsx
-interface FaceComparison {
-  score: number; // 0-1 similarity score
-  isSamePerson: boolean;
-  confidence: number;
-  matchDetails: {
-    eyeDistance: number;
-    faceShape: number;
-    featureSimilarity: number;
-  };
-}
-```
+## 📊 Core Functions
 
-## Hooks
+### Detection
+- `detectFaces()` - Find all faces
+- `analyzeFace()` - Analyze single face
+- `checkFaceQuality()` - Validate quality
 
-### useFaceDetection
+### Processing
+- `cropFace()` - Extract face
+- `findMatchingFace()` - Match in group
+- `compareFaces()` - Compare two faces
 
-```tsx
-import { useFaceDetection } from '@umituz/react-native-ai-generation-content';
+### Components
+- `FaceDetectionOverlay` - Visual overlay
+- `FaceAnalysisDisplay` - Analysis results
 
-function FaceDetectionComponent() {
-  const { detectFaces, detecting, result, error } = useFaceDetection();
+---
 
-  const handleDetect = async (imageBase64: string) => {
-    await detectFaces({ imageBase64 });
-  };
+## 🎨 Best Practices
 
-  return (
-    <View>
-      {result && (
-        <Text>Detected {result.faces.length} face(s)</Text>
-      )}
-      {error && <Text>Error: {error}</Text>}
-    </View>
-  );
-}
-```
+### Image Quality
+- Use high-quality, well-lit photos
+- Ensure faces are clearly visible
+- Forward-facing photos work best
+- Avoid extreme angles
 
-### useFaceAnalysis
+### User Feedback
+- Explain why detection failed
+- Guide to better photos
+- Show what was detected
+- Provide confidence scores
 
-```tsx
-import { useFaceAnalysis } from '@umituz/react-native-ai-generation-content';
+### Performance
+- Cache detection results
+- Optimize image sizes
+- Implement lazy loading
+- Background processing
 
-function FaceAnalysisComponent() {
-  const { analyzeFace, analyzing, analysis, error } = useFaceAnalysis();
+---
 
-  const handleAnalyze = async (imageBase64: string) => {
-    await analyzeFace({ imageBase64 });
-  };
+## 🐛 Common Pitfalls
 
-  return (
-    <View>
-      {analysis && (
-        <View>
-          <Text>Gender: {analysis.gender}</Text>
-          <Text>Age: ~{analysis.age.estimated}</Text>
-          <Text>Emotion: {analysis.dominantEmotion}</Text>
-        </View>
-      )}
-    </View>
-  );
-}
-```
+❌ **No face detected**: Guide user to better photo
+❌ **Poor quality**: Check quality first
+❌ **Multiple faces**: Allow face selection
+❌ **Slow detection**: Optimize, cache results
 
-## Advanced Usage
+---
 
-### Face Cropping
-
-```tsx
-import { cropFace } from '@umituz/react-native-ai-generation-content';
-
-// Crop face from image
-const croppedImage = await cropFace({
-  imageBase64: 'base64...',
-  faceIndex: 0,
-  padding: 20, // Add padding around face
-});
-
-// Result: Base64 of cropped face image
-```
-
-### Face Quality Check
-
-```tsx
-import { checkFaceQuality } from '@umituz/react-native-ai-generation-content';
-
-const quality = await checkFaceQuality({
-  imageBase64: 'base64...',
-  faceIndex: 0,
-});
-
-if (quality.overall === 'good') {
-  console.log('Good quality face for processing');
-} else {
-  console.log('Face quality issues:', quality.issues);
-}
-```
-
-### Multiple Face Processing
-
-```tsx
-import { detectFaces, cropFace } from '@umituz/react-native-ai-generation-content';
-
-const result = await detectFaces({ imageBase64: 'base64...' });
-
-// Process all detected faces
-const croppedFaces = await Promise.all(
-  result.faces.map(async (face, index) => {
-    return await cropFace({
-      imageBase64: 'base64...',
-      faceIndex: index,
-      padding: 20,
-    });
-  })
-);
-```
-
-### Face Matching
-
-```tsx
-import { findMatchingFace } from '@umituz/react-native-ai-generation-content';
-
-// Find a specific face in a group photo
-const match = await findMatchingFace({
-  targetImageBase64: 'base64...', // Face to find
-  sourceImageBase64: 'base64...', // Group photo
-});
-
-if (match.found) {
-  console.log('Found face at index:', match.faceIndex);
-  console.log('Similarity:', match.similarity);
-}
-```
-
-## Component Examples
-
-### Face Detection Overlay
-
-```tsx
-import { FaceDetectionOverlay } from '@umituz/react-native-ai-generation-content';
-
-<FaceDetectionOverlay
-  imageUri={imageUri}
-  faces={detectedFaces}
-  showLandmarks
-  showBoundingBoxes
-  boundingBoxColor="#00FF00"
-  landmarkColor="#FF0000"
-/>
-```
-
-### Face Analysis Display
-
-```tsx
-import { FaceAnalysisDisplay } from '@umituz/react-native-ai-generation-content';
-
-<FaceAnalysisDisplay
-  analysis={faceAnalysis}
-  showEmotions
-  showAge
-  showGender
-  showLandmarks
-/>
-```
-
-## Use Cases
-
-### Face Swap Preparation
-
-```tsx
-// Detect faces before face swap
-const result = await detectFaces({
-  imageBase64: sourceImage,
-});
-
-if (result.faces.length === 0) {
-  Alert.alert('No Face Detected', 'Please choose a photo with a clear face');
-} else if (result.faces.length > 1) {
-  // Ask user to select which face to use
-  showFaceSelection(result.faces);
-}
-```
-
-### Quality Validation
-
-```tsx
-// Check face quality before processing
-const quality = await checkFaceQuality({
-  imageBase64: image,
-});
-
-if (quality.overall === 'poor') {
-  Alert.alert(
-    'Poor Photo Quality',
-    'Please use a clearer, well-lit photo for best results',
-    [{ text: 'OK' }]
-  );
-  return;
-}
-```
-
-### Face Verification
-
-```tsx
-// Verify if two photos show the same person
-const comparison = await compareFaces({
-  image1Base64: photo1,
-  image2Base64: photo2,
-});
-
-if (comparison.isSamePerson) {
-  console.log('Same person detected');
-} else {
-  console.log('Different people');
-}
-```
-
-## Best Practices
-
-1. **Image Quality**: Use high-quality, well-lit photos
-2. **Face Visibility**: Ensure faces are clearly visible
-3. **Frontal Faces**: Forward-facing photos work best
-4. **Single Face**: Features work best with single clear faces
-5. **Error Handling**: Always handle cases where no face is detected
-
-## Related Features
+## 📚 Related Features
 
 - [Face Swap](../../features/face-swap) - Swap faces between images
 - [AI Hug](../../features/ai-hug) - Generate AI hug images
 - [AI Kiss](../../features/ai-kiss) - Generate AI kiss images
 
-## License
+---
 
-MIT
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)

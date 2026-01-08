@@ -1,245 +1,412 @@
-# Text to Video
+# Text to Video Feature
 
 Generate videos from text descriptions using AI.
 
-## Features
+## 📍 Import Path
 
-- Create videos from natural language descriptions
-- Support for various video durations
-- Multiple aspect ratios (16:9, 9:16, 1:1)
-- Style presets for different video styles
-- Progress tracking during generation
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useTextToVideoFeature } from '@umituz/react-native-ai-generation-content';
+```
 
-function TextToVideoScreen() {
-  const feature = useTextToVideoFeature({
-    config: {
-      model: 'veo-3',
-      onPromptChange: (prompt) => console.log('Prompt changed:', prompt),
-      onProcessingStart: () => console.log('Starting generation...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    userId: 'user-123',
-  });
+**Location**: `src/features/text-to-video/`
 
-  return (
-    <View>
-      <PromptInput
-        prompt={feature.state.prompt}
-        onChangePrompt={feature.setPrompt}
-        placeholder="Describe the video you want to create..."
-      />
+## 🎯 Feature Purpose
 
-      <DurationSelector
-        selectedDuration={feature.state.duration}
-        onSelectDuration={feature.setDuration}
-      />
+Generate AI-powered videos from natural language text descriptions. Supports various durations, aspect ratios, and cinematic styles.
 
-      <AspectRatioSelector
-        selectedAspectRatio={feature.state.aspectRatio}
-        onSelectAspectRatio={feature.setAspectRatio}
-      />
+---
 
-      <Button
-        title="Generate Video"
-        onPress={() => feature.generate()}
-        disabled={!feature.isReady}
-      />
+## 📋 Usage Strategy
 
-      {feature.state.isProcessing && (
-        <View>
-          <Text>Progress: {feature.state.progress}%</Text>
-          <ProgressBar progress={feature.state.progress} />
-        </View>
-      )}
+### When to Use This Feature
 
-      {feature.state.result && (
-        <Video source={{ uri: feature.state.result.videoUrl }} />
-      )}
-    </View>
-  );
+✅ **Use Cases:**
+- Creating marketing videos
+- Generating social media content
+- Producing promotional materials
+- Creating concept videos
+- Video prototyping and storyboarding
+
+❌ **When NOT to Use:**
+- Simple image generation (use Text to Image)
+- Video editing of existing footage (use video editing software)
+- Adding text overlays to video (use video editing tools)
+- Animated text videos (use animation software)
+
+### Implementation Strategy
+
+1. **Input text description** of desired video
+2. **Select duration** and aspect ratio
+3. **Choose cinematic style** (optional)
+4. **Generate video** with progress tracking
+5. **Preview result** and offer regeneration
+6. **Download or share** final video
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Prompt Requirements
+- **MUST** use descriptive, specific prompts
+- **MUST** include subject, action, and scene details
+- **MUST** specify camera movements if important
+- **MUST** use English for best results
+- **MUST NOT** exceed character limits (check model limits)
+- **MUST NOT** include copyrighted characters or brands
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** implement `onError` callback
+- **MUST** handle `isProcessing` state to prevent duplicate requests
+- **MUST** validate prompts before generation
+- **MUST NOT** call `generate()` when `isReady` is false
+
+### 3. State Management
+- **MUST** check `isReady` before enabling generate button
+- **MUST** handle `isProcessing` state with loading indicators
+- **MUST** display `error` state to users
+- **MUST** handle `result.videoUrl` existence check
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement debouncing for prompt inputs (>500ms)
+- **MUST** limit concurrent requests (max 1 per user)
+- **MUST** cache generated videos locally
+- **MUST** implement retry logic (max 3 attempts)
+- **MUST NOT** generate multiple videos simultaneously
+
+### 5. Content Safety
+- **MUST** validate and sanitize user prompts
+- **MUST** implement content moderation
+- **MUST** check for inappropriate content
+- **MUST** store userId securely
+- **MUST NOT** expose API keys in client code
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Empty Prompts**
+   - Always validate prompt has meaningful content
+   - Minimum 20 characters recommended for video generation
+
+2. **No Concurrent Generation**
+   - Never call `generate()` while `isProcessing === true`
+   - Always disable generate button during processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore error states
+   - Always implement error boundaries
+
+5. **No Memory Leaks**
+   - Never forget cleanup on unmount
+   - Always cancel pending requests
+
+6. **No Excessive Re-renders**
+   - Never pass new config objects on each render
+   - Always memoize configuration objects
+
+7. **No Blocked Main Thread**
+   - Never perform heavy operations in render
+   - Use background tasks for video processing
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing a text-to-video generation feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useTextToVideoFeature hook
+3. Implement all state handlers (loading, success, error)
+4. Add debouncing for prompt input (500ms minimum)
+5. Validate prompts before generation
+6. Handle isReady and isProcessing states correctly
+7. Implement proper error handling with user feedback
+8. Add loading indicators during generation
+9. Display results safely with null checks
+10. Implement cleanup on unmount
+
+CRITICAL RULES:
+- NEVER call generate() when isProcessing is true
+- ALWAYS validate prompt before calling generate()
+- MUST handle error state with user-friendly message
+- MUST disable generate button during processing
+- MUST implement debouncing (500ms minimum)
+- MUST validate for copyrighted content
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set model (default: 'veo-3')
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+GENERATION OPTIONS:
+- duration: 4 | 8 | 16 (seconds)
+- aspectRatio: '16:9' | '9:16' | '1:1'
+- style: 'cinematic' | 'anime' | '3d' | 'artistic'
+
+STRICTLY FORBIDDEN:
+- No empty prompts
+- No concurrent generation calls
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No copyright violations
+
+QUALITY CHECKLIST:
+- [ ] Feature imported from correct path
+- [ ] Hook initialized with proper config
+- [ ] All state handlers implemented
+- [ ] Debouncing added to input
+- [ ] Validation before generate()
+- [ ] Loading indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Button disabled when processing
+- [ ] Cleanup on unmount
+- [ ] Null checks on result
+- [ ] Retry logic implemented
+- [ ] Video caching configured
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Hook initialized with proper config
+- [ ] All state handlers implemented
+- [ ] Debouncing added to input
+- [ ] Validation before generate()
+- [ ] Loading indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Button disabled when processing
+- [ ] Cleanup on unmount
+- [ ] Null checks on result
+- [ ] Retry logic implemented
+- [ ] Video caching configured
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string  // User identifier for tracking
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Model Selection**
+   - Default: `veo-3`
+   - Fastest: `veo-2`
+   - Highest quality: `veo-3`
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="text-to-video"
-      userId="user-123"
-    />
-  );
+2. **Generation Options**
+   - Duration: 4s (standard), 8s (long), 16s (extended)
+   - Aspect Ratio: 16:9 (landscape), 9:16 (portrait), 1:1 (square)
+   - Style: Choose based on use case
+
+3. **Performance Settings**
+   - Enable video caching
+   - Set reasonable timeouts (video generation can take 2-5 minutes)
+   - Implement retry with backoff
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Feature initialized and ready to use
+- Check before enabling generate button
+
+**isProcessing**: boolean
+- Video generation in progress
+- Show loading indicator
+- Disable generate button
+
+**progress**: number (0-100)
+- Generation progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if generation failed
+- Display to user with clear message
+
+**result**: {
+  videoUrl: string
+  thumbnailUrl?: string
+  duration?: number
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🔐 Security Considerations
 
-```tsx
-interface TextToVideoFeatureConfig {
-  model?: string; // AI model to use (default: 'veo-3')
-  defaultDuration?: number; // Default video duration in seconds
-  defaultAspectRatio?: '16:9' | '9:16' | '1:1';
-  onPromptChange?: (prompt: string) => void;
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: TextToVideoResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Content Moderation
 
-### Generation Options
+- **MUST** implement prompt content filtering
+- **MUST** check for inappropriate content
+- **MUST** block harmful or illegal prompts
+- **MUST** check for copyright violations
+- **MUST** log moderation actions
 
-```tsx
-interface TextToVideoOptions {
-  duration: number; // Video duration in seconds
-  aspectRatio: '16:9' | '9:16' | '1:1';
-  style?: 'realistic' | 'cinematic' | 'anime' | '3d';
-  negativePrompt?: string;
-}
-```
+### API Security
 
-## Usage Flow
+- **MUST** use environment variables for API keys
+- **MUST** implement rate limiting
+- **MUST** validate all user inputs
+- **MUST** use HTTPS for all API calls
 
-1. Enter **Prompt** - Describe the video you want to create
-2. Select **Duration** - Choose video length (4-8 seconds)
-3. Select **Aspect Ratio** - Choose 16:9, 9:16, or 1:1
-4. Tap **Generate** - Start video generation
-5. View Result - Watch the generated video
-6. Save or Share - Download or share the video
+### Data Privacy
 
-## Component Examples
+- **MUST** comply with data protection regulations
+- **MUST** obtain user consent for generation
+- **MUST** provide privacy policy
+- **MUST** allow data deletion requests
 
-### Duration Selector
+---
 
-```tsx
-import { DurationSelector, createDurationOptions } from '@umituz/react-native-ai-generation-content';
+## 🎨 Best Practices
 
-const durations = createDurationOptions([4, 5, 6, 7, 8]);
+### Prompt Engineering
 
-<DurationSelector
-  selectedDuration={duration}
-  onSelectDuration={setDuration}
-  durations={durations}
-/>
-```
+1. **Be Specific**
+   - Good: "A sunset over mountains with birds flying, camera pans left, cinematic lighting"
+   - Bad: "A sunset video"
 
-### Style Presets
+2. **Include Camera Movement**
+   - Specify: pans, zooms, tracking shots
+   - Example: "camera slowly zooms in on subject"
 
-```tsx
-import { StylePresetsGrid } from '@umituz/react-native-ai-generation-content';
+3. **Add Technical Details**
+   - Lighting, camera angle, composition
+   - Example: "golden hour lighting, wide angle shot"
 
-const styles = [
-  { id: 'realistic', name: 'Realistic', preview: '...' },
-  { id: 'cinematic', name: 'Cinematic', preview: '...' },
-  { id: 'anime', name: 'Anime', preview: '...' },
-];
+4. **Specify Style**
+   - Genre, mood, atmosphere
+   - Example: "cinematic, epic orchestral feel"
 
-<StylePresetsGrid
-  styles={styles}
-  selectedStyle={selectedStyle}
-  onSelectStyle={setSelectedStyle}
-/>
-```
+### Performance Optimization
 
-## Example Prompts
+1. **Debounce Input**
+   - Wait 500ms after user stops typing
+   - Prevents unnecessary validations
 
-```tsx
-const examplePrompts = [
-  'A majestic eagle soaring through mountain peaks at sunrise',
-  'A futuristic city with flying cars and neon lights',
-  'Ocean waves crashing on a peaceful beach during sunset',
-  'A cozy cabin in the woods during winter with falling snow',
-  'A dramatic battle scene between two knights in armor',
-];
-```
+2. **Progress Feedback**
+   - Show realistic time estimates
+   - Video generation takes 2-5 minutes
 
-## Advanced Usage
+3. **Cache Results**
+   - Store generated videos locally
+   - Implement cache invalidation strategy
 
-### Custom Generation Options
+4. **Thumbnail Generation**
+   - Generate thumbnail for preview
+   - Use first frame or midpoint
 
-```tsx
-const result = await feature.generate({
-  duration: 6,
-  aspectRatio: '16:9',
-  style: 'cinematic',
-  negativePrompt: 'blurry, low quality, distorted',
-});
-```
+---
 
-### Progress Stages
+## 🐛 Common Pitfalls
 
-```tsx
-const { state } = useTextToVideoFeature({ ...config });
+### Prompt Issues
 
-// Progress stages:
-// - Initializing (0-10%)
-// - Processing prompt (10-30%)
-// - Generating frames (30-70%)
-// - Rendering video (70-90%)
-// - Finalizing (90-100%)
-```
+❌ **Problem**: Video doesn't match expectations
+✅ **Solution**: Be more specific in prompt, include camera movements
 
-### Video Saving
+### Performance Issues
 
-```tsx
-const { state, saveVideo } = useTextToVideoFeature({
-  config: {
-    onProcessingComplete: async (result) => {
-      if (result.success && result.videoUrl) {
-        await saveVideo(result.videoUrl);
-      }
-    },
-  },
-  // ... other props
-});
-```
+❌ **Problem**: Very slow generation
+✅ **Solution**: Show progress, allow cancellation, use shorter duration
 
-## Best Practices
+### Memory Issues
 
-1. **Detailed Prompts**: Use descriptive prompts for better results
-2. **Duration**: Shorter videos (4-5s) generate faster
-3. **Aspect Ratio**: Match aspect ratio to your use case (16:9 for YouTube, 9:16 for TikTok)
-4. **Style**: Choose appropriate style for your content
-5. **Patience**: Video generation takes time, show progress to users
+❌ **Problem**: App crashes during generation
+✅ **Solution**: Clean up properly, implement streaming, optimize memory
 
-## Error Handling
+### Quality Issues
 
-```tsx
-const { state, generate } = useTextToVideoFeature({ ...config });
+❌ **Problem**: Poor video quality
+✅ **Solution**: Use higher quality model, better prompts
 
-useEffect(() => {
-  if (state.error) {
-    Alert.alert('Generation Failed', state.error);
-  }
-}, [state.error]);
-```
+---
 
-## Related Features
+## 📦 Related Components
 
-- [Text to Image](../text-to-image) - Generate images from text
-- [Image to Video](../image-to-video) - Convert images to videos
-- [Script Generator](../script-generator) - Generate video scripts
+Use these components from the library:
 
-## License
+- **GenerationProgressModal**: Progress display
+- **StyleSelector**: Style selection UI
+- **AspectRatioSelector**: Aspect ratio picker
+- **DurationSelector**: Duration options
+- **VideoPlayer**: Video playback component
 
-MIT
+Located at: `src/presentation/components/`
+
+---
+
+## 🔄 Migration Strategy
+
+If migrating from previous implementation:
+
+1. **Update imports** to new path
+2. **Replace old config** with new structure
+3. **Update state handling** to match new interface
+4. **Test all error cases**
+5. **Update UI components** for new state structure
+
+---
+
+## 📚 Additional Resources
+
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/text-to-video/`
+- Architecture: `/ARCHITECTURE.md`
+
+---
+
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
+
+---
+
+## 📝 Changelog
+
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
+
+### v1.0.0 - Initial Release
+- Initial feature documentation

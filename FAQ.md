@@ -1,48 +1,58 @@
 # Frequently Asked Questions
 
-Common questions and answers about `@umituz/react-native-ai-generation-content`.
+Common questions and strategies for using `@umituz/react-native-ai-generation-content`.
+
+## 🎯 Purpose
+
+Quick reference for common questions, configuration strategies, and troubleshooting approaches. Focus on "what to do" rather than extensive code examples.
+
+---
 
 ## 📋 Table of Contents
 
 - [General](#general)
 - [Installation & Setup](#installation--setup)
 - [Features & Usage](#features--usage)
+- [Configuration](#configuration)
 - [Pricing & Credits](#pricing--credits)
-- [Performance & Optimization](#performance--optimization)
+- [Performance](#performance)
 - [Troubleshooting](#troubleshooting)
-- [API & Integration](#api--integration)
+
+---
 
 ## General
 
 ### What is this library?
 
-A comprehensive React Native library for AI-powered content generation. It provides:
-- 30+ AI features (image generation, video creation, face swap, etc.)
-- Provider-agnostic architecture
-- Type-safe TypeScript APIs
-- Pre-built UI components
-- Content moderation
-- Usage tracking
+Provider-agnostic AI generation orchestration for React Native with:
+- **25+ AI features** (image, video, audio generation)
+- **Clean architecture** (domain-driven design)
+- **Type-safe APIs** (comprehensive TypeScript)
+- **Multiple provider support**
+- **Content moderation** built-in
+- **Usage tracking** capabilities
 
 ### What AI providers are supported?
 
-The library is provider-agnostic. You can integrate with:
+**Provider-agnostic architecture** supports:
 - OpenAI (DALL-E, GPT)
 - Google (Imagen, Veo)
 - Stability AI
 - Replicate
-- Any custom AI provider
+- Any custom provider
 
 ### Is this library free?
 
-The library itself is open-source (MIT license), but you'll need:
-- API keys from AI providers (paid services)
+**MIT License** - Free to use, but you need:
+- API keys from AI providers (paid)
 - Your own backend infrastructure
 - Provider-specific pricing applies
 
-### Can I use this in commercial projects?
+### Can I use this commercially?
 
-Yes! The library is licensed under MIT, allowing commercial use.
+**Yes!** MIT license allows commercial use.
+
+---
 
 ## Installation & Setup
 
@@ -52,86 +62,95 @@ Yes! The library is licensed under MIT, allowing commercial use.
 npm install @umituz/react-native-ai-generation-content
 ```
 
-or
+### Minimum requirements?
 
-```bash
-yarn add @umituz/react-native-ai-generation-content
-```
-
-### What are the minimum requirements?
-
-- React Native 0.70+
-- iOS 13+ / Android 8+
-- TypeScript 5.0+
-- Node.js 18+
+- **React Native**: 0.70+
+- **iOS**: 13+ / **Android**: 8+
+- **TypeScript**: 5.0+
+- **Node.js**: 18+
 
 ### How do I configure API keys?
 
-```tsx
+**Strategy**: Use environment variables, never hardcode
+
+```typescript
 import { configureAppServices } from '@umituz/react-native-ai-generation-content';
 
 configureAppServices({
   networkService: {
-    baseUrl: 'https://your-api.com',
+    baseUrl: process.env.API_BASE_URL,
     apiKey: process.env.AI_API_KEY,
   },
 });
 ```
 
-**⚠️ Important:** Never commit API keys to version control!
+**⚠️ Critical**: Never commit API keys to version control!
 
 ### Do I need a backend server?
 
-While not strictly required, we recommend:
-- **For Development**: Direct API calls (with caution)
-- **For Production**: Backend server to:
-  - Secure API keys
-  - Implement rate limiting
-  - Track usage
-  - Handle payments
+**Recommendation**:
+- **Development**: Direct API calls (caution)
+- **Production**: Backend server for:
+  - API key security
+  - Rate limiting
+  - Usage tracking
+  - Payment processing
+
+---
 
 ## Features & Usage
 
-### How do I generate an image from text?
+### How do I use a feature?
 
-```tsx
+**Strategy**:
+1. Import feature hook
+2. Configure with userId
+3. Check isReady before actions
+4. Handle isProcessing state
+5. Display errors clearly
+
+```typescript
 import { useTextToImageFeature } from '@umituz/react-native-ai-generation-content';
 
 const feature = useTextToImageFeature({
-  config: {
-    model: 'imagen-3',
-  },
+  config: { model: 'imagen-3' },
   userId: 'user-123',
 });
 
-await feature.generate({
-  prompt: 'A beautiful sunset over mountains',
-  style: 'realistic',
-});
+// Use feature.state, feature.generate(), etc.
 ```
 
-### How do I swap faces?
+**See feature documentation**: `src/features/text-to-image/README.md`
 
-```tsx
-import { useFaceSwapFeature } from '@umituz/react-native-ai-generation-content';
+### Which features are available?
 
-const feature = useFaceSwapFeature({
-  config: {
-    enhanceFace: true,
-  },
-  onSelectSourceImage: async () => { /* ... */ },
-  onSelectTargetImage: async () => { /* ... */ },
-  onSaveImage: async (url) => { /* ... */ },
-});
+**Image Generation**:
+- Text to Image, Image to Image, Style Transfer
+- Photo Restoration, Upscaling, HD Touch Up
 
-await feature.process();
-```
+**Face & Person**:
+- Face Swap, AI Hug, AI Kiss, Couple Future
 
-### Can I use the UI components directly?
+**Video**:
+- Text to Video, Image to Video
 
-Yes! All UI components are exported:
+**Editing**:
+- Remove/Replace Background, Inpainting, Remove Object
 
-```tsx
+**Creative**:
+- Meme Generator, Sketch to Image, Anime Selfie
+
+**Audio**:
+- Audio Generation, Text to Voice
+
+**Analysis**:
+- Image Captioning
+
+### Can I use UI components directly?
+
+**Yes!** All components exported:
+
+```typescript
 import {
   AIFeatureScreen,
   GenerationProgressModal,
@@ -140,9 +159,11 @@ import {
 } from '@umituz/react-native-ai-generation-content';
 ```
 
-### How do I add a custom provider?
+### How do I add custom provider?
 
-```tsx
+**Strategy**: Register with explicit capabilities
+
+```typescript
 import { providerRegistry } from '@umituz/react-native-ai-generation-content';
 
 providerRegistry.registerProvider({
@@ -150,7 +171,8 @@ providerRegistry.registerProvider({
   name: 'My AI Provider',
   capabilities: {
     textToImage: true,
-    faceSwap: true,
+    faceSwap: false,
+    // Declare all capabilities
   },
   execute: async (request) => {
     // Your implementation
@@ -159,32 +181,35 @@ providerRegistry.registerProvider({
 });
 ```
 
-## Pricing & Credits
+---
 
-### How do I track usage?
+## Configuration
 
-```tsx
-import { createHistoryTrackingMiddleware } from '@umituz/react-native-ai-generation-content';
+### What services must I configure?
 
-const historyMiddleware = createHistoryTrackingMiddleware({
-  maxHistorySize: 100,
-  onHistoryUpdate: (history) => {
-    console.log('Usage:', history.length);
-  },
-});
-```
+**Required**:
+- `networkService` - API communication
+- `creditService` - Credit checking (if using credits)
+- `paywallService` - Paywall display (if using paywall)
+
+**Optional**:
+- `analyticsService` - Usage tracking
+- `moderationService` - Content moderation
+- `storageService` - Local storage
 
 ### How do I implement credit system?
 
-```tsx
+**Strategy**: Check before, deduct after
+
+```typescript
 configureAppServices({
   creditService: {
     checkCredits: async (userId, cost) => {
-      const user = await getUserCredits(userId);
+      // Check if user has enough credits
       return user.credits >= cost;
     },
     deductCredits: async (userId, cost) => {
-      await updateUserCredits(userId, -cost);
+      // Deduct credits from user
     },
   },
 });
@@ -192,7 +217,9 @@ configureAppServices({
 
 ### How do I show paywall?
 
-```tsx
+**Strategy**: Trigger on insufficient credits
+
+```typescript
 import { createCreditCheckMiddleware } from '@umituz/react-native-ai-generation-content';
 
 const creditMiddleware = createCreditCheckMiddleware({
@@ -205,14 +232,57 @@ const creditMiddleware = createCreditCheckMiddleware({
 });
 ```
 
-## Performance & Optimization
+---
+
+## Pricing & Credits
+
+### How do I track usage?
+
+**Strategy**: Use history tracking middleware
+
+```typescript
+import { createHistoryTrackingMiddleware } from '@umituz/react-native-ai-generation-content';
+
+const historyMiddleware = createHistoryTrackingMiddleware({
+  maxHistorySize: 100,
+  onHistoryUpdate: (history) => {
+    console.log('Usage:', history.length);
+  },
+});
+```
+
+### How do I set pricing?
+
+**Strategy**: Configure per feature
+
+```typescript
+const featurePricing = {
+  'text-to-image': 1,
+  'face-swap': 2,
+  'photo-restoration': 1,
+  // Cost in credits per generation
+};
+```
+
+---
+
+## Performance
+
+### How do I optimize performance?
+
+**Best Practices**:
+1. **Cache results** locally
+2. **Compress images** before upload
+3. **Lazy load** features
+4. **Background processing** for long operations
+5. **Pagination** for large datasets
 
 ### How do I cache results?
 
-The library doesn't cache by default, but you can:
+**Strategy**: Use AsyncStorage or custom cache
 
-```tsx
-import { AsyncStorage } from 'react-native';
+```typescript
+import { AsyncStorage } from '@react-native-async-storage/async-storage';
 
 const cacheResult = async (key: string, result: any) => {
   await AsyncStorage.setItem(`cache_${key}`, JSON.stringify(result));
@@ -224,12 +294,13 @@ const getCachedResult = async (key: string) => {
 };
 ```
 
-### How do I optimize image sizes?
+### How do I optimize images?
 
-```tsx
+**Strategy**: Compress before upload
+
+```typescript
 import { preparePhoto } from '@umituz/react-native-ai-generation-content';
 
-// Automatically compresses and optimizes
 const optimizedImage = await preparePhoto({
   imageBase64: rawImage,
   maxSize: 1024, // 1MB
@@ -238,11 +309,11 @@ const optimizedImage = await preparePhoto({
 });
 ```
 
-### Can I run generations in background?
+### Can I run in background?
 
-Yes!
+**Yes!** Use background generation hook
 
-```tsx
+```typescript
 import { useBackgroundGeneration } from '@umituz/react-native-ai-generation-content';
 
 const { startGeneration, getJobs } = useBackgroundGeneration();
@@ -253,12 +324,15 @@ await startGeneration({
 });
 ```
 
+---
+
 ## Troubleshooting
 
 ### "Network service not configured"
 
-**Solution:**
-```tsx
+**Solution**: Configure app services first
+
+```typescript
 configureAppServices({
   networkService: {
     baseUrl: 'https://your-api.com',
@@ -269,37 +343,38 @@ configureAppServices({
 
 ### "UserId is required"
 
-**Solution:**
-```tsx
+**Solution**: Always provide userId
+
+```typescript
 const feature = useFeature({
   config: { /* ... */ },
-  userId: 'user-123', // ← Add this
+  userId: 'user-123', // ← Required
 });
 ```
 
 ### Generation is very slow
 
-**Possible causes:**
+**Possible causes**:
 - Network latency
 - Provider load
 - Large image sizes
 - Complex prompts
 
-**Solutions:**
+**Solutions**:
 - Check network connection
 - Reduce image size
 - Use simpler prompts
 - Show progress to users
+- Implement timeout
 
 ### Error: "Insufficient credits"
 
-**Solution:**
-```tsx
-// Check credits before generation
+**Solution**: Check before processing
+
+```typescript
 const hasCredits = await checkCredits(userId, cost);
 
 if (!hasCredits) {
-  // Show paywall or upgrade prompt
   showPaywall();
   return;
 }
@@ -307,103 +382,65 @@ if (!hasCredits) {
 
 ### Images not generating
 
-**Check:**
+**Check**:
 1. API key is valid
-2. Network connection is working
-3. Provider is accessible
-4. Prompt isn't empty
-5. Account has sufficient quota
+2. Network connection working
+3. Provider accessible
+4. Prompt not empty
+5. Sufficient quota
 
 ### TypeScript errors
 
-**Solution:**
-```tsx
-// Make sure you're using proper types
+**Solution**: Use proper types
+
+```typescript
 import type { TextToImageOptions } from '@umituz/react-native-ai-generation-content';
 
 const options: TextToImageOptions = {
   style: 'realistic',
+  aspectRatio: '16:9',
 };
 ```
 
-## API & Integration
+---
 
-### Can I use this with Expo?
+## Common Strategies
 
-Yes! The library works with Expo. Just install and use:
+### Error Handling Strategy
 
-```bash
-expo install @umituz/react-native-ai-generation-content
-```
+1. **Classify errors** by type
+2. **Show user-friendly** messages
+3. **Log technical** details
+4. **Offer retry** or alternatives
+5. **Recover gracefully**
 
-### How do I integrate with my existing app?
+### Performance Strategy
 
-```tsx
-// 1. Install the library
-npm install @umituz/react-native-ai-generation-content
+1. **Implement caching** for results
+2. **Compress uploads** before sending
+3. **Lazy load** features
+4. **Background process** long operations
+5. **Show progress** to users
 
-// 2. Configure services
-configureAppServices({ /* ... */ });
+### Security Strategy
 
-// 3. Add to your navigation
-<Stack.Screen
-  name="AIImage"
-  component={AIFeatureScreen}
-  initialParams={{ featureId: 'text-to-image' }}
-/>
-
-// 4. Navigate
-navigation.navigate('AIImage', { featureId: 'text-to-image', userId: 'user-123' });
-```
-
-### How do I test my integration?
-
-```tsx
-import { renderHook, waitFor } from '@testing-library/react-native';
-import { useTextToImageFeature } from '@umituz/react-native-ai-generation-content';
-
-test('generates image', async () => {
-  const { result } = renderHook(() =>
-    useTextToImageFeature({
-      config: {},
-      userId: 'test-user',
-    })
-  );
-
-  await act(async () => {
-    await result.current.generate({ prompt: 'Test' });
-  });
-
-  await waitFor(() => {
-    expect(result.current.state.imageUrl).toBeTruthy();
-  });
-});
-```
-
-### How do I handle errors?
-
-```tsx
-try {
-  await feature.process();
-} catch (error) {
-  if (error.type === AIErrorType.INSUFFICIENT_CREDITS) {
-    // Handle credits
-  } else if (error.type === AIErrorType.PROVIDER_ERROR) {
-    // Handle provider error
-  } else {
-    // Handle other errors
-  }
-}
-```
-
-## Still Have Questions?
-
-- Check the [Documentation](./README.md)
-- Read [Architecture](./ARCHITECTURE.md)
-- Review [Contributing](./CONTRIBUTING.md)
-- Search [GitHub Issues](https://github.com/umituz/react-native-ai-generation-content/issues)
-- Open a [New Issue](https://github.com/umituz/react-native-ai-generation-content/issues/new)
+1. **Never hardcode** API keys
+2. **Use environment** variables
+3. **Implement rate** limiting
+4. **Moderate content** appropriately
+5. **Secure backend** for production
 
 ---
 
-Last updated: 2025-01-08
+## Still Have Questions?
+
+- **Documentation**: [README.md](./README.md)
+- **Architecture**: [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **Contributing**: [CONTRIBUTING.md](./CONTRIBUTING.md)
+- **Issues**: [GitHub Issues](https://github.com/umituz/react-native-ai-generation-content/issues)
+- **New Issue**: [Create Issue](https://github.com/umituz/react-native-ai-generation-content/issues/new)
+
+---
+
+**Version**: 2.0.0 (Strategy-based Documentation)
+**Last Updated**: 2025-01-08

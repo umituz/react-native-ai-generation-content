@@ -1,361 +1,421 @@
-# Image Captioning
+# Image Captioning Feature
 
 Generate descriptive captions for images using AI.
 
-## Features
+## 📍 Import Path
 
-- Generate detailed image descriptions
-- Multiple caption styles (detailed, brief, creative)
-- Support for various image types
-- Keyword extraction
-- Scene and object recognition
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
+```typescript
+import { useImageCaptioningFeature } from '@umituz/react-native-ai-generation-content';
 ```
 
-## Basic Usage
+**Location**: `src/features/image-captioning/`
 
-### Using the Hook
+## 🎯 Feature Purpose
 
-```tsx
-import { useImageCaptioning } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+Generate detailed, descriptive captions for images using AI. Supports multiple caption styles (detailed, brief, creative, factual) with keyword extraction, object recognition, and scene description capabilities.
 
-function ImageCaptioningScreen() {
-  const [image, setImage] = useState<string | null>(null);
+---
 
-  const feature = useImageCaptioning({
-    config: {
-      captionStyle: 'detailed',
-      onProcessingStart: () => console.log('Generating caption...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectImage: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setImage(base64);
-        return base64;
-      }
-      return null;
-    },
-  });
+## 📋 Usage Strategy
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={image}
-        onSelectImage={feature.selectImage}
-        title="Select Image to Caption"
-      />
+### When to Use This Feature
 
-      <CaptionStyleSelector
-        selectedStyle={feature.state.captionStyle}
-        onSelectStyle={feature.setCaptionStyle}
-      />
+✅ **Use Cases:**
+- Generating social media captions
+- Creating alt text for accessibility
+- Auto-generating image descriptions for CMS
+- SEO-friendly image descriptions
+- Content management and organization
 
-      <Button
-        title="Generate Caption"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+❌ **When NOT to Use:**
+- Generating images from descriptions (use Text to Image)
+- Detailed image analysis beyond captions (use image analysis tools)
+- Real-time video captioning
+- Multi-image comparisons
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+### Implementation Strategy
 
-      {feature.state.result && (
-        <View>
-          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-            Caption:
-          </Text>
-          <Text>{feature.state.result.caption}</Text>
+1. **Select image** to caption
+2. **Choose caption style** (detailed, brief, creative, factual)
+3. **Configure options** (keywords, objects, scene)
+4. **Generate caption** with progress tracking
+5. **Review result** with metadata
+6. **Copy or share** caption
 
-          {feature.state.result.keywords && (
-            <View>
-              <Text style={{ fontSize: 14, fontWeight: 'bold' }}>
-                Keywords:
-              </Text>
-              {feature.state.result.keywords.map(keyword => (
-                <Text key={keyword}>• {keyword}</Text>
-              ))}
-            </View>
-          )}
+---
 
-          <Button
-            title="Copy Caption"
-            onPress={() => Clipboard.setString(feature.state.result.caption)}
-          />
-        </View>
-      )}
-    </View>
-  );
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Image Requirements
+- **MUST** provide ONE image to caption
+- **MUST** use clear, appropriate images
+- **MUST** have visible content
+- **MUST NOT** exceed file size limits (10MB max)
+- **MUST** respect copyright and usage rights
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `captionStyle` (detailed, brief, creative, factual)
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectImage` callback
+- **MUST** handle caption display and copying
+
+### 3. State Management
+- **MUST** check `isReady` before enabling generate button
+- **MUST** display progress during generation
+- **MUST** handle `isProcessing` state to prevent duplicate requests
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache results locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** generate multiple captions simultaneously
+
+### 5. Content Quality
+- **MUST** provide caption with confidence score
+- **MUST** support optional metadata (keywords, objects, scene)
+- **MUST** handle various image types
+- **MUST** support multiple caption styles
+- **MUST** offer regeneration with different styles
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Images**
+   - Always validate image is selected
+   - Never call process() without image
+   - Show clear upload prompt
+
+2. **No Auto-Processing**
+   - Never start captioning without user action
+   - Always require explicit "Generate" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore captioning failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store both image and caption unnecessarily
+   - Clean up temporary images
+   - Implement proper image disposal
+
+6. **No Blocked UI**
+   - Never block main thread with image processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Copyright Issues**
+   - Never claim copyright on generated captions
+   - Respect image usage rights
+   - Provide attribution when needed
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing an image captioning feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useImageCaptioningFeature hook
+3. Select caption style (detailed, brief, creative, factual)
+4. Implement image selection UI
+5. Configure options (keywords, objects, scene)
+6. Validate image before captioning
+7. Display caption with metadata
+8. Handle long processing times with progress
+9. Implement proper error handling
+10. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate image before calling process()
+- MUST display caption with confidence score
+- MUST handle caption style selection
+- MUST handle optional metadata options
+- MUST implement debouncing (300ms)
+- MUST allow regeneration with different styles
+- MUST implement copy to clipboard functionality
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set captionStyle: 'detailed' | 'brief' | 'creative' | 'factual'
+- Set language?: string (caption language, default: 'en')
+- Set includeKeywords?: boolean (include extracted keywords)
+- Set maxCaptionLength?: number (maximum caption length)
+- Implement onSelectImage callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+CAPTION STYLES:
+- detailed: Comprehensive, descriptive captions
+- brief: Short, concise captions
+- creative: Artistic and creative descriptions
+- factual: Objective, factual descriptions
+
+OPTIONS:
+- includeKeywords: Extract and include keywords (default: false)
+- includeObjects: List detected objects (default: false)
+- includeScene: Describe scene setting (default: false)
+- maxCaptionLength: Limit caption length (default: unlimited)
+- language: Caption language (default: 'en')
+
+STRICTLY FORBIDDEN:
+- No missing image validation
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No copyright issues
+
+QUALITY CHECKLIST:
+- [ ] Image selection implemented
+- [ ] Caption style selector added
+- [ ] Optional metadata toggles included
+- [ ] Validation before process()
+- [ ] Caption display with confidence score
+- [ ] Keywords/objects/scene display (when enabled)
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Copy to clipboard functionality
+- [ ] Regeneration with different styles
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Image selection implemented
+- [ ] Caption style selector added
+- [ ] Metadata toggles implemented
+- [ ] Validation before process()
+- [ ] Caption display with confidence
+- [ ] Keywords display (when enabled)
+- [ ] Objects display (when enabled)
+- [ ] Scene display (when enabled)
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Copy to clipboard button
+- [ ] Regeneration option
+- [ ] Cleanup on unmount
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  captionStyle: 'detailed' | 'brief' | 'creative' | 'factual'
+  onSelectImage: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  includeKeywords?: boolean
+  includeObjects?: boolean
+  includeScene?: boolean
+  maxCaptionLength?: number
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-## Configuration Options
+### Recommended Settings
 
-### Feature Config
+1. **Caption Styles**
+   - Detailed: Comprehensive descriptions (recommended for CMS)
+   - Brief: Short captions (social media, alt text)
+   - Creative: Artistic descriptions (marketing, storytelling)
+   - Factual: Objective descriptions (accessibility, documentation)
 
-```tsx
-interface ImageCaptioningFeatureConfig {
-  captionStyle?: 'detailed' | 'brief' | 'creative' | 'factual';
-  language?: string; // Caption language (default: 'en')
-  includeKeywords?: boolean; // Include extracted keywords
-  maxCaptionLength?: number; // Maximum caption length
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: ImageCaptioningResult) => void;
-  onError?: (error: string) => void;
+2. **Metadata Options**
+   - includeKeywords: Extract key terms for categorization
+   - includeObjects: List detected objects
+   - includeScene: Describe environment/setting
+
+3. **Length Limits**
+   - Alt text: 125 characters recommended
+   - Instagram: 2200 characters maximum
+   - Twitter: 280 characters maximum
+   - No limit for CMS/documentation
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Image selected and validated
+- Check before enabling generate button
+
+**isProcessing**: boolean
+- Caption generation in progress
+- Show loading/progress indicator
+- Disable generate button
+
+**progress**: number (0-100)
+- Generation progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if generation failed
+- Display to user with clear message
+
+**result**: {
+  caption: string
+  keywords?: string[]
+  objects?: string[]
+  scene?: string
+  confidence: number
+  language: string
 }
-```
 
-### Generation Options
+---
 
-```tsx
-interface ImageCaptioningOptions {
-  captionStyle: 'detailed' | 'brief' | 'creative' | 'factual';
-  language?: string;
-  includeKeywords?: boolean;
-  includeObjects?: boolean; // List detected objects
-  includeScene?: boolean; // Describe scene setting
-}
-```
+## 🎨 Best Practices
 
-## Caption Styles
+### Caption Style Selection
 
-### Detailed
+1. **Detailed**
+   - Use for: CMS, documentation, comprehensive descriptions
+   - Best: High-quality, content-rich images
+   - Example: "A serene beach scene at sunset with gentle waves rolling onto the shore. The sky is painted in vibrant shades of orange and pink as the sun dips below the horizon."
 
-Comprehensive, descriptive captions:
+2. **Brief**
+   - Use for: Social media, quick summaries, alt text
+   - Best: Any image type
+   - Example: "Beach sunset with orange sky"
 
-```tsx
-const result = await feature.process({
-  captionStyle: 'detailed',
-  includeObjects: true,
-  includeScene: true,
-});
+3. **Creative**
+   - Use for: Marketing, storytelling, artistic content
+   - Best: Visually striking or emotional images
+   - Example: "Nature's daily masterpiece unfolds as the sun bids farewell, painting the sky in a breathtaking symphony of warm hues."
 
-// Example: "A serene beach scene at sunset with gentle waves rolling onto the shore.
-//           The sky is painted in vibrant shades of orange and pink as the sun dips
-//           below the horizon. Seagulls can be seen flying in the distance."
-```
+4. **Factual**
+   - Use for: Accessibility, documentation, objective needs
+   - Best: Any image type
+   - Example: "A beach at sunset. Visible elements include sand, ocean water, sky, sun, and birds."
 
-### Brief
+### Use Case Matching
 
-Short, concise captions:
+1. **Social Media**
+   - Style: Brief or Creative
+   - Length: Match platform limits
+   - Include keywords: Yes
 
-```tsx
-const result = await feature.process({
-  captionStyle: 'brief',
-});
+2. **Accessibility (Alt Text)**
+   - Style: Factual or Brief
+   - Length: 125 characters
+   - Include keywords: Optional
 
-// Example: "Beach sunset with orange sky"
-```
+3. **CMS/Documentation**
+   - Style: Detailed
+   - Length: No limit
+   - Include all metadata: Yes
 
-### Creative
+---
 
-Artistic and creative descriptions:
+## 🐛 Common Pitfalls
 
-```tsx
-const result = await feature.process({
-  captionStyle: 'creative',
-});
+### Quality Issues
 
-// Example: "Nature's daily masterpiece unfolds as the sun bids farewell,
-//           painting the sky in a breathtaking symphony of warm hues."
-```
+❌ **Problem**: Caption doesn't match image content
+✅ **Solution**: Try different caption style, improve image quality
 
-### Factual
+### Length Issues
 
-Objective, factual descriptions:
+❌ **Problem**: Caption too long for platform
+✅ **Solution**: Use maxCaptionLength parameter
 
-```tsx
-const result = await feature.process({
-  captionStyle: 'factual',
-});
+### Missing Metadata
 
-// Example: "A beach at sunset. Visible elements include sand, ocean water,
-//           sky, sun, and birds. Lighting is natural with warm tones."
-```
+❌ **Problem**: Keywords or objects not showing
+✅ **Solution**: Enable includeKeywords and includeObjects options
 
-## Result Structure
+### Confidence Issues
 
-```tsx
-interface ImageCaptioningResult {
-  caption: string;
-  keywords?: string[];
-  objects?: string[];
-  scene?: string;
-  confidence: number;
-  language: string;
-}
-```
+❌ **Problem**: Low confidence caption
+✅ **Solution**: Review and edit caption, improve image quality
 
-## Usage Flow
+---
 
-1. Select **Image** - Choose an image to caption
-2. Choose **Caption Style** - Select the desired style
-3. Configure **Options** - Enable/disable keywords, objects, scene
-4. Tap **Generate** - Create the caption
-5. View Result - See the generated caption and metadata
-6. Copy or Share - Copy to clipboard or share
+## 📦 Related Components
 
-## Component Examples
+Use these components from the library:
 
-### Caption Style Selector
+- **PhotoUploadCard**: Upload image interface
+- **CaptionStyleSelector**: Choose caption style
+- **MetadataToggles**: Enable/disable keywords, objects, scene
+- **CaptionDisplay**: Display caption with metadata
+- **CopyButton**: Copy caption to clipboard
+- **ProgressBar**: Progress display
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+Located at: `src/presentation/components/`
 
-const styles = [
-  { id: 'detailed', name: 'Detailed', description: 'Comprehensive description' },
-  { id: 'brief', name: 'Brief', description: 'Short and concise' },
-  { id: 'creative', name: 'Creative', description: 'Artistic description' },
-  { id: 'factual', name: 'Factual', description: 'Objective description' },
-];
+---
 
-<GridSelector
-  options={styles}
-  selectedOption={selectedStyle}
-  onSelectOption={setSelectedStyle}
-/>
-```
+## 🔄 Migration Strategy
 
-### Caption Display
+If migrating from previous implementation:
 
-```tsx
-import { View, Text } from 'react-native';
+1. **Update imports** to new path
+2. **Add caption style selector**
+3. **Implement metadata toggles**
+4. **Add copy to clipboard functionality**
+5. **Update state handling** for new structure
+6. **Display confidence scores**
+7. **Test all caption styles**
 
-function CaptionDisplay({ result }) {
-  return (
-    <View style={{ padding: 16 }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>
-        {result.caption}
-      </Text>
+---
 
-      {result.keywords && (
-        <View style={{ marginTop: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 4 }}>
-            Keywords:
-          </Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            {result.keywords.map(keyword => (
-              <View
-                key={keyword}
-                style={{
-                  backgroundColor: '#E0E0E0',
-                  borderRadius: 16,
-                  padding: 8,
-                  marginRight: 8,
-                  marginBottom: 8,
-                }}
-              >
-                <Text>{keyword}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      )}
+## 📚 Additional Resources
 
-      {result.objects && (
-        <View style={{ marginTop: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 4 }}>
-            Objects:
-          </Text>
-          <Text>{result.objects.join(', ')}</Text>
-        </View>
-      )}
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/image-captioning/`
+- Architecture: `/ARCHITECTURE.md`
 
-      {result.scene && (
-        <View style={{ marginTop: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 4 }}>
-            Scene:
-          </Text>
-          <Text>{result.scene}</Text>
-        </View>
-      )}
+---
 
-      <Text style={{ marginTop: 16, fontSize: 12, color: '#666' }}>
-        Confidence: {Math.round(result.confidence * 100)}%
-      </Text>
-    </View>
-  );
-}
-```
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-### Copy to Clipboard
+---
 
-```tsx
-import { Clipboard, Alert } from 'react-native';
+## 📝 Changelog
 
-const handleCopy = async (caption: string) => {
-  await Clipboard.setString(caption);
-  Alert.alert('Copied', 'Caption copied to clipboard');
-};
-```
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-## Use Cases
-
-### Social Media Captions
-
-```tsx
-// Generate Instagram/Twitter captions
-const result = await feature.process({
-  captionStyle: 'creative',
-  maxCaptionLength: 2200, // Instagram limit
-});
-```
-
-### Accessibility
-
-```tsx
-// Generate alt text for accessibility
-const result = await feature.process({
-  captionStyle: 'factual',
-  maxCaptionLength: 125, // Recommended alt text length
-});
-```
-
-### Content Management
-
-```tsx
-// Auto-generate image descriptions for CMS
-const result = await feature.process({
-  captionStyle: 'detailed',
-  includeKeywords: true,
-  includeObjects: true,
-});
-```
-
-### SEO
-
-```tsx
-// Generate SEO-friendly image descriptions
-const result = await feature.process({
-  captionStyle: 'detailed',
-  includeKeywords: true,
-});
-```
-
-## Best Practices
-
-1. **Image Quality**: Clear, high-quality images produce better captions
-2. **Style Selection**: Match style to your use case
-3. **Length Control**: Use maxCaptionLength for platform limits
-4. **Review**: Always review and edit generated captions
-5. **Keywords**: Enable keywords for better categorization
-
-## Related Features
-
-- [Text to Image](../text-to-image) - Generate images from descriptions
-- [Script Generator](../script-generator) - Generate content scripts
-- [Audio Generation](../audio-generation) - Generate audio content
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

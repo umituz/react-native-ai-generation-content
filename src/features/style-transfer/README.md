@@ -1,301 +1,400 @@
-# Style Transfer
+# Style Transfer Feature
 
 Apply artistic styles to images using AI.
 
-## Features
+## 📍 Import Path
 
-- Transform photos into artwork
-- Multiple artistic styles (painting, sketch, watercolor, etc.)
-- Customizable style intensity
-- Preserve image content while changing style
-- High-quality artistic output
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useStyleTransferFeature } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+```
 
-function StyleTransferScreen() {
-  const [image, setImage] = useState<string | null>(null);
+**Location**: `src/features/style-transfer/`
 
-  const feature = useStyleTransferFeature({
-    config: {
-      style: 'oil-painting',
-      intensity: 0.8,
-      onProcessingStart: () => console.log('Applying style...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectImage: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setImage(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSaveResult: async (imageUrl) => {
-      await saveToGallery(imageUrl);
-    },
-  });
+## 🎯 Feature Purpose
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={image}
-        onSelectImage={feature.selectImage}
-        title="Select Image to Style"
-      />
+Transform photos into artistic artwork using AI style transfer. Apply various artistic styles like oil painting, watercolor, sketch, and more while preserving image content.
 
-      <StyleSelector
-        selectedStyle={feature.state.style}
-        onSelectStyle={feature.setStyle}
-      />
+---
 
-      <IntensitySlider
-        value={feature.state.intensity}
-        onChange={feature.setIntensity}
-      />
+## 📋 Usage Strategy
 
-      <Button
-        title="Apply Style"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+### When to Use This Feature
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+✅ **Use Cases:**
+- Creating artistic versions of photos
+- Applying famous painting styles
+- Generating unique artwork
+- Social media creative content
+- Artistic experimentation
 
-      {feature.state.result && (
-        <ResultDisplay
-          originalImage={image}
-          resultImage={feature.state.result.imageUrl}
-          onSave={() => feature.saveResult()}
-        />
-      )}
-    </View>
-  );
+❌ **When NOT to Use:**
+- Anime style conversion (use Anime Selfie)
+- Photo restoration (use Photo Restoration)
+- Image filters and basic edits (use image editing software)
+- Background removal (use Remove Background)
+
+### Implementation Strategy
+
+1. **Select image** to stylize
+2. **Choose artistic style** (painting, sketch, watercolor, etc.)
+3. **Adjust intensity** level (0.0 to 1.0)
+4. **Apply style transfer** with progress tracking
+5. **Preview and compare** with original
+6. **Save or share** artwork
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Image Requirements
+- **MUST** provide ONE image to stylize
+- **MUST** use clear, reasonably high-quality photos
+- **MUST** have recognizable content
+- **MUST** use reasonable resolution (min 512x512)
+- **MUST NOT** exceed file size limits (10MB max)
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `style` (artistic style type)
+- **MUST** set `intensity` level (0.0 to 1.0)
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectImage` callback
+
+### 3. State Management
+- **MUST** check `isReady` before enabling apply button
+- **MUST** display progress during style transfer
+- **MUST** handle long processing times
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache results locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** stylize multiple images simultaneously
+
+### 5. Content Quality
+- **MUST** provide before/after comparison
+- **MUST** allow intensity adjustment
+- **MUST** handle various image types
+- **MUST** preserve important details when enabled
+- **MUST** offer style regeneration
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Images**
+   - Always validate image is selected
+   - Never call process() without image
+
+2. **No Auto-Processing**
+   - Never start transfer without user action
+   - Always require explicit "Apply Style" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore transfer failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store both original and stylized large images simultaneously
+   - Clean up temporary images
+   - Implement proper image disposal
+
+6. **No Blocked UI**
+   - Never block main thread with image processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Copyright Issues**
+   - Never claim copyrighted artwork as original
+   - Allow artistic style transformation only
+   - Implement proper attribution
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing a style transfer feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useStyleTransferFeature hook
+3. Select artistic style type
+4. Implement image selection UI
+5. Adjust intensity level (0.0 to 1.0)
+6. Validate image before transfer
+7. Show before/after comparison
+8. Handle long processing times with progress
+9. Implement proper error handling
+10. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate image before calling apply()
+- MUST show before/after comparison
+- MUST handle intensity adjustment
+- MUST preserve important details when enabled
+- MUST implement debouncing (300ms)
+- MUST allow style regeneration
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set style: 'oil-painting' | 'watercolor' | 'sketch' | 'impressionist' | 'pop-art'
+- Set intensity: 0.0 to 1.0 (default: 0.8)
+- Implement onSelectImage callback
+- Implement onSaveResult callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+OPTIONS:
+- style: Select artistic style type
+- intensity: 0.0 (subtle) to 1.0 (full style)
+- preserveDetails: boolean (maintain important details)
+
+STRICTLY FORBIDDEN:
+- No missing image validation
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No copyright violations
+
+QUALITY CHECKLIST:
+- [ ] Image selection implemented
+- [ ] Style selector added
+- [ ] Intensity slider included
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Download/share functionality
+- [ ] Style regeneration option
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Image selection implemented
+- [ ] Style selector added
+- [ ] Intensity control implemented
+- [ ] Validation before apply()
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Download/share buttons
+- [ ] Style regeneration option
+- [ ] Cleanup on unmount
+- [ ] Original image preserved
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  style: 'oil-painting' | 'watercolor' | 'sketch' | 'impressionist' | 'pop-art'
+  intensity: number  // 0.0 to 1.0
+  onSelectImage: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Artistic Styles**
+   - Oil Painting: Classic oil painting style
+   - Watercolor: Soft, transparent watercolor
+   - Sketch: Pencil or charcoal drawing
+   - Impressionist: Impressionist painting style
+   - Pop Art: Bold, colorful pop art
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="style-transfer"
-      userId="user-123"
-    />
-  );
+2. **Intensity Levels**
+   - 0.3-0.5: Subtle artistic influence
+   - 0.6-0.8: Balanced transformation (recommended)
+   - 0.9-1.0: Full artistic style
+
+3. **Image Quality**
+   - Minimum: 512x512 resolution
+   - Recommended: 1024x1024 or higher
+   - Format: JPEG or PNG
+   - Max size: 10MB
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Image selected and validated
+- Check before enabling apply button
+
+**isProcessing**: boolean
+- Style transfer in progress
+- Show loading/progress indicator
+- Disable apply button
+
+**progress**: number (0-100)
+- Transfer progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if transfer failed
+- Display to user with clear message
+
+**result**: {
+  imageUrl: string
+  originalImageUrl?: string
+  style?: string
+  intensity?: number
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface StyleTransferFeatureConfig {
-  style?: 'oil-painting' | 'watercolor' | 'sketch' | 'anime' | 'impressionist';
-  intensity?: number; // 0.0 - 1.0 (default: 0.8)
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: StyleTransferResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Image Selection
 
-### Processing Options
+1. **Image Quality**
+   - Good: Clear, well-composed photos
+   - Bad: Blurry, cluttered images
 
-```tsx
-interface StyleTransferOptions {
-  style: string; // Style ID
-  intensity: number; // How strong the style is (0.0 - 1.0)
-  preserveDetails?: boolean; // Maintain original details (default: true)
-}
-```
+2. **Style Matching**
+   - Match style to image content
+   - Consider subject matter for style
+   - Landscape vs portrait considerations
 
-## Available Styles
+3. **Intensity**
+   - Start with moderate intensity (0.7-0.8)
+   - Adjust based on results
+   - Lower intensity for subtle effects
 
-### Oil Painting
+4. **Content Preservation**
+   - Enable detail preservation for important elements
+   - Consider focal points in image
+   - Balance style vs content
 
-Classic oil painting style:
+### User Experience
 
-```tsx
-const result = await feature.process({
-  style: 'oil-painting',
-  intensity: 0.8,
-  preserveDetails: true,
-});
-```
+1. **Before/After Comparison**
+   - Side-by-side comparison
+   - Slider or toggle for easy comparison
+   - Zoom capability for detail inspection
 
-### Watercolor
+2. **Style Preview**
+   - Show examples of each style
+   - Preview style before applying
+   - Explain style characteristics
 
-Soft watercolor painting style:
+3. **Progress Feedback**
+   - Show estimated time remaining
+   - Update progress regularly
+   - Allow cancellation
 
-```tsx
-const result = await feature.process({
-  style: 'watercolor',
-  intensity: 0.7,
-});
-```
+---
 
-### Sketch
+## 🐛 Common Pitfalls
 
-Pencil sketch style:
+### Quality Issues
 
-```tsx
-const result = await feature.process({
-  style: 'sketch',
-  intensity: 0.9,
-});
-```
+❌ **Problem**: Poor style transfer
+✅ **Solution**: Use higher quality photos, try different style or intensity
 
-### Anime
+### Style Issues
 
-Anime/manga style:
+❌ **Problem**: Artistic style doesn't match image
+✅ **Solution**: Try different style, adjust intensity, consider image content
 
-```tsx
-const result = await feature.process({
-  style: 'anime',
-  intensity: 0.8,
-});
-```
+### Performance Issues
 
-### Impressionist
+❌ **Problem**: Slow processing
+✅ **Solution**: Compress images, show progress, allow cancellation
 
-Impressionist painting style:
+### Memory Issues
 
-```tsx
-const result = await feature.process({
-  style: 'impressionist',
-  intensity: 0.7,
-});
-```
+❌ **Problem**: App crashes with large images
+✅ **Solution**: Compress images, clean up properly, optimize memory
 
-## Usage Flow
+---
 
-1. Select **Image** - Choose an image to transform
-2. Choose **Style** - Select the artistic style
-3. Adjust **Intensity** - Control style strength
-4. Tap **Apply** - Start the style transfer
-5. View Result - See the styled image
-6. Save or Share - Save or share the result
+## 📦 Related Components
 
-## Component Examples
+Use these components from the library:
 
-### Style Selector
+- **PhotoUploadCard**: Upload image interface
+- **ResultDisplay**: Before/after comparison
+- **StyleSelector**: Choose artistic style
+- **IntensitySlider**: Adjust intensity
+- **ProgressBar**: Progress display
 
-```tsx
-import { StylePresetsGrid } from '@umituz/react-native-ai-generation-content';
+Located at: `src/presentation/components/`
 
-const styles = [
-  { id: 'oil-painting', name: 'Oil Painting', preview: '...' },
-  { id: 'watercolor', name: 'Watercolor', preview: '...' },
-  { id: 'sketch', name: 'Sketch', preview: '...' },
-  { id: 'anime', name: 'Anime', preview: '...' },
-  { id: 'impressionist', name: 'Impressionist', preview: '...' },
-];
+---
 
-<StylePresetsGrid
-  styles={styles}
-  selectedStyle={selectedStyle}
-  onSelectStyle={setSelectedStyle}
-/>
-```
+## 🔄 Migration Strategy
 
-### Intensity Slider
+If migrating from previous implementation:
 
-```tsx
-import { Slider } from 'react-native';
+1. **Update imports** to new path
+2. **Add style selector**
+3. **Implement intensity control**
+4. **Update state handling** for new structure
+5. **Add before/after comparison**
+6. **Test all artistic styles**
 
-<Slider
-  minimumValue={0}
-  maximumValue={1}
-  step={0.1}
-  value={intensity}
-  onValueChange={setIntensity}
-/>
+---
 
-<Text>Style Intensity: {Math.round(intensity * 100)}%</Text>
-```
+## 📚 Additional Resources
 
-### Before/After Comparison
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/style-transfer/`
+- Architecture: `/ARCHITECTURE.md`
 
-```tsx
-import { ResultDisplay } from '@umituz/react-native-ai-generation-content';
+---
 
-{feature.state.result && image && (
-  <ResultDisplay
-    originalImage={image}
-    resultImage={feature.state.result.imageUrl}
-    onSave={() => feature.saveResult()}
-    onShare={() => shareImage(feature.state.result.imageUrl)}
-  />
-)}
-```
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-## Use Cases
+---
 
-### Art Creation
+## 📝 Changelog
 
-```tsx
-// Create artwork from photos
-const result = await feature.process({
-  style: 'oil-painting',
-  intensity: 0.9,
-});
-```
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-### Social Media
-
-```tsx
-// Create stylized content
-const result = await feature.process({
-  style: 'sketch',
-  intensity: 0.8,
-});
-```
-
-### Photo Effects
-
-```tsx
-// Add artistic effects to photos
-const result = await feature.process({
-  style: 'watercolor',
-  intensity: 0.7,
-});
-```
-
-## Best Practices
-
-1. **Style Selection**: Match style to image content for best results
-2. **Intensity**: Start with 0.7-0.8 for balanced results
-3. **Image Quality**: High-quality images produce better artwork
-4. **Preserve Details**: Enable for photos with important details
-5. **Experiment**: Try different styles to find the best match
-
-## Related Features
-
-- [Anime Selfie](../anime-selfie) - Convert photos to anime style
-- [Image to Image](../image-to-image) - Transform images with AI
-- [Text to Image](../text-to-image) - Generate artwork from text
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

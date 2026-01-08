@@ -1,352 +1,405 @@
-# Remove Object
+# Remove Object Feature
 
 Remove unwanted objects from images using AI.
 
-## Features
+## 📍 Import Path
 
-- Remove any unwanted object from photos
-- Automatic background reconstruction
-- Smart fill to maintain image quality
-- Support for multiple objects
-- Natural-looking results
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useRemoveObjectFeature } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+```
 
-function RemoveObjectScreen() {
-  const [image, setImage] = useState<string | null>(null);
-  const [mask, setMask] = useState<string | null>(null);
+**Location**: `src/features/remove-object/`
 
-  const feature = useRemoveObjectFeature({
-    config: {
-      onProcessingStart: () => console.log('Removing object...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectImage: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setImage(base64);
-        return base64;
-      }
-      return null;
-    },
-    onCreateMask: async () => {
-      // User paints over the object to remove
-      const maskImage = await paintMaskOverImage(image);
-      setMask(maskImage);
-      return maskImage;
-    },
-    onSaveResult: async (imageUrl) => {
-      await saveToGallery(imageUrl);
-    },
-  });
+## 🎯 Feature Purpose
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={image}
-        onSelectImage={feature.selectImage}
-        title="Select Image with Object to Remove"
-      />
+Intelligently remove unwanted objects from photos with automatic background reconstruction. Uses AI to fill in the removed area with natural-looking content that matches the surroundings.
 
-      <MaskEditor
-        image={image}
-        mask={mask}
-        onMaskCreated={feature.createMask}
-      />
+---
 
-      <Button
-        title="Remove Object"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+## 📋 Usage Strategy
 
-      {feature.state.isProcessing && (
-        <View>
-          <Text>Removing object...</Text>
-          <ProgressBar progress={feature.state.progress} />
-        </View>
-      )}
+### When to Use This Feature
 
-      {feature.state.result && (
-        <ResultDisplay
-          originalImage={image}
-          resultImage={feature.state.result.imageUrl}
-          onSave={() => feature.saveResult()}
-        />
-      )}
-    </View>
-  );
+✅ **Use Cases:**
+- Removing photobombers from photos
+- Cleaning up distracting elements
+- Removing text, logos, or watermarks
+- Eliminating trash or signs from nature photos
+- Removing unwanted objects from backgrounds
+
+❌ **When NOT to Use:**
+- Background removal (use Remove Background)
+- Filling missing areas (use Inpainting)
+- Photo restoration (use Photo Restoration)
+- Replacing background (use Replace Background)
+
+### Implementation Strategy
+
+1. **Select image** with unwanted objects
+2. **Create mask** by painting over objects to remove
+3. **Choose fill method** (smart, blur, color)
+4. **Configure options** (edge feathering, context preservation)
+5. **Process removal** with progress tracking
+6. **Preview and compare** with original
+7. **Save or adjust** result
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Image Requirements
+- **MUST** provide ONE image with objects to remove
+- **MUST** use high-quality images (min 512x512 recommended)
+- **MUST** have clear, visible objects to remove
+- **MUST NOT** exceed file size limits (10MB max)
+- **MUST** create accurate mask for objects
+
+### 2. Mask Requirements
+- **MUST** provide valid mask image
+- **MUST** paint mask completely over objects
+- **MUST** ensure mask covers entire object
+- **MUST** include mask creation interface
+- **MUST** validate mask before processing
+
+### 3. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `fillMethod` (smart, blur, color)
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectImage` callback
+- **MUST** implement `onCreateMask` callback
+
+### 4. State Management
+- **MUST** check `isReady` before enabling remove button
+- **MUST** verify both image and mask are provided
+- **MUST** display progress during removal
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 5. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache results locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** remove multiple objects simultaneously (combine masks)
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Mask**
+   - Always validate mask is created
+   - Never call process() without mask
+
+2. **No Auto-Processing**
+   - Never start removal without user action
+   - Always require explicit "Remove" button press
+   - Show mask preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore removal failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store both original and result simultaneously
+   - Clean up temporary mask images
+   - Implement proper image disposal
+
+6. **No Blocked UI**
+   - Never block main thread with mask processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Incomplete Masking**
+   - Never use partial masks that don't cover entire object
+   - Always provide tools for complete object coverage
+   - Allow mask adjustment before processing
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing a remove object feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useRemoveObjectFeature hook
+3. Implement image selection UI
+4. Implement mask creation UI with drawing tools
+5. Select fill method (smart, blur, color)
+6. Configure options (featherEdges, preserveContext)
+7. Validate both image and mask before processing
+8. Show before/after comparison
+9. Handle long processing times with progress
+10. Implement proper error handling
+11. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate both image and mask before calling process()
+- MUST provide mask drawing/creation interface
+- MUST show before/after comparison
+- MUST handle fill method selection
+- MUST implement debouncing (300ms)
+- MUST allow multiple removal attempts
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set fillMethod: 'smart' | 'blur' | 'color'
+- Set featherEdges: boolean (soften edges)
+- Set preserveContext: boolean (maintain surroundings)
+- Implement onSelectImage callback
+- Implement onCreateMask callback
+- Implement onSaveResult callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+FILL METHODS:
+- smart: AI-powered intelligent reconstruction (recommended)
+- blur: Blur and blend surrounding area
+- color: Fill with average surrounding color
+
+OPTIONS:
+- featherEdges: Soften edges for natural look (default: true)
+- preserveContext: Maintain surrounding context (default: true)
+
+STRICTLY FORBIDDEN:
+- No missing mask validation
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No incomplete masking
+
+QUALITY CHECKLIST:
+- [ ] Image selection implemented
+- [ ] Mask creation/drawing interface added
+- [ ] Fill method selector included
+- [ ] Mask validation before processing
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Download/share functionality
+- [ ] Multiple removal attempts supported
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Image selection implemented
+- [ ] Mask drawing interface implemented
+- [ ] Fill method selector added
+- [ ] Validation before process() (image + mask)
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Download/share buttons
+- [ ] Multiple removal attempts option
+- [ ] Cleanup on unmount
+- [ ] Original image preserved
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  fillMethod: 'smart' | 'blur' | 'color'
+  onSelectImage: () => Promise<string | null>
+  onCreateMask: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Fill Methods**
+   - Smart: AI-powered intelligent reconstruction (recommended for most cases)
+   - Blur: Blurred fill for simple backgrounds
+   - Color: Solid color fill for uniform areas
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="remove-object"
-      userId="user-123"
-    />
-  );
+2. **Options**
+   - featherEdges: Soften edges for natural look (default: true)
+   - preserveContext: Maintain surrounding context (default: true)
+
+3. **Image Quality**
+   - Minimum: 512x512 resolution
+   - Recommended: 1024x1024 or higher
+   - Format: JPEG or PNG
+   - Max size: 10MB
+
+4. **Mask Quality**
+   - Complete coverage of object
+   - Slight margin around object edges
+   - Semi-transparent for preview
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Image selected and mask created
+- Check before enabling remove button
+
+**isProcessing**: boolean
+- Object removal in progress
+- Show loading/progress indicator
+- Disable remove button
+
+**progress**: number (0-100)
+- Removal progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if removal failed
+- Display to user with clear message
+
+**result**: {
+  imageUrl: string
+  originalImageUrl?: string
+  fillMethod?: string
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface RemoveObjectFeatureConfig {
-  fillMethod?: 'smart' | 'blur' | 'color'; // How to fill the removed area
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: RemoveObjectResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Mask Creation
 
-### Processing Options
+1. **Object Coverage**
+   - Good: Complete coverage with slight margin
+   - Bad: Incomplete coverage, missing edges
 
-```tsx
-interface RemoveObjectOptions {
-  mask: string; // Base64 mask indicating the object to remove
-  fillMethod: 'smart' | 'blur' | 'color';
-  featherEdges?: boolean; // Soften edges for natural look (default: true)
-  preserveContext?: boolean; // Maintain surrounding context (default: true)
-}
-```
+2. **Background Complexity**
+   - Simple backgrounds: Easier removal
+   - Complex backgrounds: May require multiple attempts
+   - Smart fill works best for most cases
 
-## Fill Methods
+3. **Multiple Objects**
+   - Combine multiple objects into single mask
+   - Process all at once for consistency
 
-### Smart Fill
+### User Experience
 
-AI-powered intelligent reconstruction:
+1. **Mask Drawing Tools**
+   - Adjustable brush size
+   - Eraser for corrections
+   - Undo/redo support
+   - Zoom for precision
 
-```tsx
-const result = await feature.process({
-  mask: maskImage,
-  fillMethod: 'smart',
-  preserveContext: true,
-});
-```
+2. **Preview**
+   - Show mask overlay before processing
+   - Allow mask adjustments
+   - Preview fill method settings
 
-### Blur Fill
+3. **Before/After Comparison**
+   - Side-by-side comparison
+   - Slider for easy comparison
+   - Zoom for detail inspection
 
-Blur and blend surrounding area:
+---
 
-```tsx
-const result = await feature.process({
-  mask: maskImage,
-  fillMethod: 'blur',
-  featherEdges: true,
-});
-```
+## 🐛 Common Pitfalls
 
-### Color Fill
+### Mask Issues
 
-Fill with average surrounding color:
+❌ **Problem**: Object not fully removed
+✅ **Solution**: Ensure mask covers entire object completely
 
-```tsx
-const result = await feature.process({
-  mask: maskImage,
-  fillMethod: 'color',
-  featherEdges: true,
-});
-```
+### Background Issues
 
-## Usage Flow
+❌ **Problem**: Unnatural looking fill
+✅ **Solution**: Try smart fill, enable context preservation
 
-1. Select **Image** - Choose an image with unwanted objects
-2. Create **Mask** - Paint over the objects to remove
-3. Choose **Fill Method** - Select how to fill the removed area
-4. Tap **Remove** - Start the removal process
-5. View Result - See the cleaned image
-6. Save or Edit - Save or make further adjustments
+### Edge Issues
 
-## Component Examples
+❌ **Problem**: Visible edges around removed area
+✅ **Solution**: Enable edge feathering, improve mask precision
 
-### Fill Method Selector
+### Complex Objects
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+❌ **Problem**: Difficult to remove complex objects
+✅ **Solution**: Use smart fill, may require multiple attempts
 
-const fillMethods = [
-  { id: 'smart', name: 'Smart Fill', description: 'AI reconstruction' },
-  { id: 'blur', name: 'Blur', description: 'Blurred fill' },
-  { id: 'color', name: 'Color', description: 'Solid color fill' },
-];
+---
 
-<GridSelector
-  options={fillMethods}
-  selectedOption={selectedMethod}
-  onSelectOption={setSelectedMethod}
-/>
-```
+## 📦 Related Components
 
-### Mask Editor
+Use these components from the library:
 
-```tsx
-import { View, Image } from 'react-native';
-import { GestureHandlerRootView, GestureDetector } from 'react-native-gesture-handler';
+- **PhotoUploadCard**: Upload image interface
+- **MaskEditor**: Create mask with drawing tools
+- **FillMethodSelector**: Choose fill strategy
+- **ResultDisplay**: Before/after comparison
+- **ProgressBar**: Progress display
 
-function MaskEditor({ image, mask, onMaskCreated }) {
-  const [isDrawing, setIsDrawing] = useState(false);
+Located at: `src/presentation/components/`
 
-  const handleDraw = (gestureEvent) => {
-    // Implement drawing logic
-    // Update mask as user draws
-  };
+---
 
-  return (
-    <GestureDetector onGestureEvent={handleDraw}>
-      <View style={{ position: 'relative' }}>
-        <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />
-        {mask && (
-          <Image
-            source={{ uri: mask }}
-            style={{ width: 300, height: 300, position: 'absolute' }}
-          />
-        )}
-      </View>
-    </GestureDetector>
-  );
-}
-```
+## 🔄 Migration Strategy
 
-### Before/After Comparison
+If migrating from previous implementation:
 
-```tsx
-import { ResultDisplay } from '@umituz/react-native-ai-generation-content';
+1. **Update imports** to new path
+2. **Add mask creation interface**
+3. **Implement fill method selector**
+4. **Update state handling** for new structure
+5. **Add before/after comparison**
+6. **Test all fill methods**
 
-{feature.state.result && image && (
-  <ResultDisplay
-    originalImage={image}
-    resultImage={feature.state.result.imageUrl}
-    onSave={() => feature.saveResult()}
-    onShare={() => shareImage(feature.state.result.imageUrl)}
-  />
-)}
-```
+---
 
-## Use Cases
+## 📚 Additional Resources
 
-### Remove Photobombers
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/remove-object/`
+- Architecture: `/ARCHITECTURE.md`
 
-```tsx
-// Remove unwanted people from photos
-const result = await feature.process({
-  mask: photobomberMask,
-  fillMethod: 'smart',
-});
-```
+---
 
-### Clean Up Backgrounds
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-```tsx
-// Remove distracting elements
-const result = await feature.process({
-  mask: objectMask,
-  fillMethod: 'smart',
-  preserveContext: true,
-});
-```
+---
 
-### Remove Text & Watermarks
+## 📝 Changelog
 
-```tsx
-// Remove unwanted text or logos
-const result = await feature.process({
-  mask: textMask,
-  fillMethod: 'blur',
-  featherEdges: true,
-});
-```
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-### Remove Objects from Nature
-
-```tsx
-// Remove trash, signs, etc. from nature photos
-const result = await feature.process({
-  mask: objectMask,
-  fillMethod: 'smart',
-});
-```
-
-## Best Practices
-
-1. **Mask Precision**: Paint carefully over the object edges
-2. **Fill Method**: Use Smart Fill for most natural results
-4. **Simple Backgrounds**: Easier removal from simple backgrounds
-5. **Context Preservation**: Enable for objects near important elements
-6. **Multiple Passes**: For difficult objects, try multiple approaches
-
-## Advanced Usage
-
-### Multiple Objects
-
-```tsx
-// Create mask covering all objects to remove
-const combinedMask = combineMasks([mask1, mask2, mask3]);
-const result = await feature.process({
-  mask: combinedMask,
-  fillMethod: 'smart',
-});
-```
-
-### Iterative Refinement
-
-```tsx
-// Remove object, then adjust if needed
-let result = await feature.process({
-  mask: initialMask,
-  fillMethod: 'smart',
-});
-
-if (!result.success || needsRefinement) {
-  const refinedMask = refineMask(initialMask);
-  result = await feature.process({
-    mask: refinedMask,
-    fillMethod: 'smart',
-  });
-}
-```
-
-## Error Handling
-
-```tsx
-const { state, process } = useRemoveObjectFeature({ ...config });
-
-useEffect(() => {
-  if (state.error) {
-    Alert.alert('Removal Failed', state.error);
-  }
-}, [state.error]);
-```
-
-## Related Features
-
-- [Remove Background](../remove-background) - Remove entire backgrounds
-- [Inpainting](../inpainting) - Fill in missing parts of images
-- [Replace Background](../replace-background) - Replace with new background
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

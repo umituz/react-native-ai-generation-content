@@ -2,386 +2,316 @@
 
 AI prompt management and generation system for AI features.
 
-## Overview
+## 📍 Import Path
 
-The Prompts domain provides a comprehensive system for managing, generating, and templating AI prompts across all AI generation features. It includes services for prompt history, template management, and AI service processing.
-
-## Features
-
-- **Prompt Templates**: Pre-configured templates for various AI features
-- **Prompt History**: Track and manage generated prompts
-- **AI Service Processing**: Process prompts through AI services
-- **Type Safety**: Full TypeScript support with comprehensive types
-- **Extensible**: Easy to add new templates and services
-
-## Installation
-
-This domain is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
+```typescript
+import {
+  usePromptGeneration,
+  useTemplateRepository,
+  PromptGenerationService,
+  AIPromptTemplate
+} from '@umituz/react-native-ai-generation-content';
 ```
 
-## Core Components
+**Location**: `src/domains/prompts/`
 
-### Entities
+## 🎯 Domain Purpose
 
-#### AIPromptTemplate
+Comprehensive system for managing, generating, and templating AI prompts across all AI generation features. Includes prompt history tracking, template management, and AI service processing with type safety and extensibility.
 
-Base template for AI prompts:
+---
 
-```tsx
-import { AIPromptTemplate } from '@umituz/react-native-ai-generation-content';
+## 📋 Usage Strategy
 
-const template: AIPromptTemplate = {
-  id: 'text-to-image-default',
-  name: 'Default Text to Image',
-  template: 'Create an image of {description}',
-  variables: ['description'],
-  category: 'image-generation',
-};
+### When to Use This Domain
+
+✅ **Use Cases:**
+- Managing prompt templates for AI features
+- Tracking prompt generation history
+- Customizing prompts for specific use cases
+- Analyzing prompt effectiveness
+- Reusing successful prompts
+
+❌ **When NOT to Use:**
+- Bypassing prompt engineering (still important!)
+- Ignoring prompt optimization
+- Over-templating (lose flexibility)
+- Not tracking prompt performance
+
+### Implementation Strategy
+
+1. **Create templates** for common use cases
+2. **Organize templates** by category/feature
+3. **Track prompt history** for analytics
+4. **A/B test prompts** for effectiveness
+5. **Iterate on templates** based on results
+6. **Document prompt patterns**
+7. **Share successful prompts**
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Template Management
+- **MUST** organize templates by feature/category
+- **MUST** use clear variable names
+- **MUST** document template purpose
+- **MUST** version templates properly
+- **MUST** test templates before deployment
+
+### 2. Prompt History
+- **MUST** track all generated prompts
+- **MUST** log generation parameters
+- **MUST** record success/failure rates
+- **MUST** enable prompt analytics
+- **MUST** implement history cleanup
+
+### 3. Type Safety
+- **MUST** use TypeScript for all templates
+- **MUST** define proper interfaces
+- **MUST** validate prompt variables
+- **MUST** handle type conversions
+- **MUST** avoid `any` types
+
+### 4. Performance
+- **MUST** cache frequently used templates
+- **MUST** optimize prompt generation
+- **MUST** implement lazy loading
+- **MUST** handle concurrent requests
+- **MUST NOT** store excessive history
+
+### 5. Best Practices
+- **MUST** use descriptive variable names
+- **MUST** provide fallback values
+- **MUST** validate user input
+- **MUST** escape special characters
+- **MUST** handle edge cases
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Hardcoded Prompts**
+   - Always use templates
+   - Never hardcode prompt text
+   - Centralize prompt management
+
+2. **No Undefined Variables**
+   - Always validate template variables
+   - Provide fallback values
+   - Handle missing variables gracefully
+
+3. **No Excessive History**
+   - Clean up old prompt history
+   - Implement retention policies
+   - Archive old prompts periodically
+
+4. **No Duplicate Templates**
+   - Reuse existing templates
+   - Don't recreate similar templates
+   - Consolidate when possible
+
+5. **No Poor Variable Names**
+   - Use clear, descriptive names
+   - Avoid abbreviations
+   - Follow naming conventions
+
+6. **No Missing Validation**
+   - Always validate user input
+   - Sanitize prompt variables
+   - Prevent injection attacks
+
+7. **No Undefined Behavior**
+   - Document template behavior
+   - Handle edge cases
+   - Provide clear error messages
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing prompt management using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import prompt management functions
+2. Create and organize prompt templates
+3. Track prompt generation history
+4. Use hooks for prompt generation
+5. Validate prompt variables
+6. Implement caching for performance
+7. Test prompts thoroughly
+8. Document template patterns
+
+CRITICAL RULES:
+- MUST organize templates by feature/category
+- MUST use clear variable names
+- MUST validate template variables
+- MUST provide fallback values
+- MUST track prompt history
+- MUST implement history cleanup
+
+TEMPLATE STRUCTURE:
+- id: Unique identifier
+- name: Descriptive name
+- template: Prompt template with {variables}
+- variables: Array of variable names
+- category: Feature category
+
+HOOKS:
+- usePromptGeneration: Generate prompts from templates
+- useTemplateRepository: Manage templates
+- useFaceSwap: Face swap prompts
+- usePhotoRestoration: Restoration prompts
+- useStyleTransfer: Style transfer prompts
+
+BEST PRACTICES:
+- Organize templates by category
+- Use descriptive variable names
+- Provide fallback values
+- Validate user input
+- Track prompt history
+- Test thoroughly
+
+STRICTLY FORBIDDEN:
+- No hardcoded prompts
+- No undefined variables
+- No excessive history
+- No duplicate templates
+- No poor variable names
+- No missing validation
+- No undefined behavior
+
+QUALITY CHECKLIST:
+- [ ] Templates organized
+- [ ] Variables validated
+- [ ] Fallback values provided
+- [ ] History tracked
+- [ ] Caching implemented
+- [ ] Error handling
+- [ ] Documentation complete
+- [ ] Testing done
+- [ ] Performance optimized
+- [ ] Type safety maintained
 ```
 
-#### GeneratedPrompt
+---
 
-Represents a generated prompt:
+## 🛠️ Configuration Strategy
 
-```tsx
-import { GeneratedPrompt } from '@umituz/react-native-ai-generation-content';
+### Template Structure
 
-const generatedPrompt: GeneratedPrompt = {
-  id: 'prompt-123',
-  templateId: 'text-to-image-default',
-  content: 'Create an image of a beautiful sunset',
-  variables: {
-    description: 'a beautiful sunset',
-  },
-  createdAt: new Date(),
-};
+```typescript
+interface AIPromptTemplate {
+  id: string;
+  name: string;
+  template: string; // "Create {style} image of {subject}"
+  variables: string[]; // ['style', 'subject']
+  category: string;
+  metadata?: {
+    author?: string;
+    version?: string;
+    [key: string]: any;
+  };
+}
 ```
 
-#### Feature-Specific Configs
+### Feature-Specific Configs
 
-##### FaceSwapConfig
-
-```tsx
-import { FaceSwapConfig } from '@umituz/react-native-ai-generation-content';
-
-const config: FaceSwapConfig = {
-  enhanceFace: true,
-  matchSkinTone: true,
-};
+**FaceSwapConfig**
+```typescript
+{
+  enhanceFace: boolean;
+  matchSkinTone: boolean;
+}
 ```
 
-##### PhotoRestorationConfig
-
-```tsx
-import { PhotoRestorationConfig } from '@umituz/react-native-ai-generation-content';
-
-const config: PhotoRestorationConfig = {
-  removeScratches: true,
-  fixBlur: true,
-  colorize: false,
-};
+**PhotoRestorationConfig**
+```typescript
+{
+  removeScratches: boolean;
+  fixBlur: boolean;
+  colorize: boolean;
+}
 ```
 
-##### StyleTransferConfig
-
-```tsx
-import { StyleTransferConfig } from '@umituz/react-native-ai-generation-content';
-
-const config: StyleTransferConfig = {
-  style: 'oil-painting',
-  intensity: 0.8,
-};
+**StyleTransferConfig**
+```typescript
+{
+  style: string; // 'oil-painting' | 'watercolor' | etc.
+  intensity: number; // 0-1
+}
 ```
 
-##### TextGenerationConfig
+---
 
-```tsx
-import { TextGenerationConfig } from '@umituz/react-native-ai-generation-content';
-
-const config: TextGenerationConfig = {
-  model: 'gpt-4',
-  temperature: 0.7,
-  maxTokens: 1000,
-};
-```
+## 📊 Core Components
 
 ### Hooks
-
-#### usePromptGeneration
-
-Generate prompts from templates:
-
-```tsx
-import { usePromptGeneration } from '@umituz/react-native-ai-generation-content';
-
-function MyComponent() {
-  const { generatePrompt, isGenerating, error } = usePromptGeneration();
-
-  const handleGenerate = async () => {
-    const prompt = await generatePrompt({
-      templateId: 'text-to-image-default',
-      variables: {
-        description: 'a majestic mountain landscape',
-      },
-    });
-    console.log('Generated prompt:', prompt);
-  };
-
-  return <Button onPress={handleGenerate} title="Generate Prompt" />;
-}
-```
-
-#### useTemplateRepository
-
-Manage prompt templates:
-
-```tsx
-import { useTemplateRepository } from '@umituz/react-native-ai-generation-content';
-
-function TemplateManager() {
-  const { templates, addTemplate, updateTemplate, deleteTemplate } = useTemplateRepository();
-
-  const handleAddTemplate = async () => {
-    await addTemplate({
-      id: 'custom-template',
-      name: 'Custom Template',
-      template: 'Generate {style} image of {subject}',
-      variables: ['style', 'subject'],
-      category: 'custom',
-    });
-  };
-
-  return (
-    <View>
-      {templates.map(template => (
-        <Text key={template.id}>{template.name}</Text>
-      ))}
-      <Button onPress={handleAddTemplate} title="Add Template" />
-    </View>
-  );
-}
-```
-
-#### useFaceSwap
-
-Face swap specific prompt generation:
-
-```tsx
-import { useFaceSwap } from '@umituz/react-native-ai-generation-content';
-
-function FaceSwapComponent() {
-  const { generatePrompt, config } = useFaceSwap({
-    enhanceFace: true,
-    matchSkinTone: true,
-  });
-
-  const handleGenerate = async () => {
-    const prompt = await generatePrompt({
-      sourceImage: 'base64...',
-      targetImage: 'base64...',
-    });
-  };
-}
-```
-
-#### usePhotoRestoration
-
-Photo restoration prompt generation:
-
-```tsx
-import { usePhotoRestoration } from '@umituz/react-native-ai-generation-content';
-
-const { generatePrompt } = usePhotoRestoration({
-  removeScratches: true,
-  fixBlur: true,
-});
-```
-
-#### useStyleTransfer
-
-Style transfer prompt generation:
-
-```tsx
-import { useStyleTransfer } from '@umituz/react-native-ai-generation-content';
-
-const { generatePrompt } = useStyleTransfer({
-  style: 'oil-painting',
-  intensity: 0.8,
-});
-```
-
-#### useImageEnhancement
-
-Image enhancement prompt generation:
-
-```tsx
-import { useImageEnhancement } from '@umituz/react-native-ai-generation-content';
-
-const { generatePrompt } = useImageEnhancement({
-  enhanceDetails: true,
-  adjustColors: true,
-});
-```
+- `usePromptGeneration` - Generate prompts from templates
+- `useTemplateRepository` - Manage prompt templates
+- `useFaceSwap` - Face swap prompts
+- `usePhotoRestoration` - Photo restoration prompts
+- `useStyleTransfer` - Style transfer prompts
+- `useImageEnhancement` - Image enhancement prompts
 
 ### Services
-
-#### PromptGenerationService
-
-Core service for generating prompts:
-
-```tsx
-import { PromptGenerationService } from '@umituz/react-native-ai-generation-content';
-
-const service = new PromptGenerationService();
-
-const prompt = await service.generatePrompt({
-  templateId: 'text-to-image-default',
-  variables: { description: 'beautiful sunset' },
-});
-```
-
-#### AIServiceProcessor
-
-Process prompts through AI services:
-
-```tsx
-import { AIServiceProcessor } from '@umituz/react-native-ai-generation-content';
-
-const processor = new AIServiceProcessor({
-  apiKey: 'your-api-key',
-  provider: 'openai',
-});
-
-const result = await processor.processPrompt({
-  prompt: 'Create an image of...',
-  service: 'text-to-image',
-});
-```
+- `PromptGenerationService` - Core prompt generation
+- `AIServiceProcessor` - Process prompts through AI services
 
 ### Repositories
+- `TemplateRepository` - Manage prompt templates
+- `PromptHistoryRepository` - Track prompt history
 
-#### TemplateRepository
+---
 
-Manage prompt templates:
+## 🎨 Best Practices
 
-```tsx
-import { TemplateRepository } from '@umituz/react-native-ai-generation-content';
+### Template Organization
+- Group by feature/category
+- Use consistent naming
+- Document purposes
+- Version properly
 
-const repository = new TemplateRepository();
+### Variable Naming
+- Use clear, descriptive names
+- Avoid abbreviations
+- Be consistent
+- Provide examples
 
-// Get all templates
-const templates = await repository.getAll();
+### Prompt History
+- Set retention policies
+- Clean up regularly
+- Archive old prompts
+- Analyze patterns
 
-// Get template by ID
-const template = await repository.getById('text-to-image-default');
+---
 
-// Save template
-await repository.save(template);
+## 🐛 Common Pitfalls
 
-// Delete template
-await repository.delete('text-to-image-default');
-```
+❌ **Hardcoded prompts**: Use templates instead
+❌ **Poor variables**: Use descriptive names
+❌ **No validation**: Always validate input
+❌ **Excessive history**: Implement cleanup
+❌ **Duplicate templates**: Reuse existing ones
 
-#### PromptHistoryRepository
+---
 
-Track prompt generation history:
-
-```tsx
-import { PromptHistoryRepository } from '@umituz/react-native-ai-generation-content';
-
-const repository = new PromptHistoryRepository();
-
-// Add to history
-await repository.add({
-  promptId: 'prompt-123',
-  content: 'Create an image...',
-  createdAt: new Date(),
-});
-
-// Get history
-const history = await repository.getHistory({ limit: 10 });
-
-// Clear history
-await repository.clear();
-```
-
-## Sample Prompts
-
-Pre-configured example prompts:
-
-```tsx
-import {
-  DEFAULT_TEXT_TO_IMAGE_PROMPTS,
-  DEFAULT_TEXT_TO_VOICE_PROMPTS,
-} from '@umituz/react-native-ai-generation-content';
-
-// Text to image prompts
-DEFAULT_TEXT_TO_IMAGE_PROMPTS.forEach(prompt => {
-  console.log(prompt.id, prompt.fallbackText);
-  // Output:
-  // sunset, "A beautiful sunset over mountains with vibrant colors"
-  // cityscape, "Futuristic cityscape at night with neon lights"
-  // ...
-});
-
-// Text to voice prompts
-DEFAULT_TEXT_TO_VOICE_PROMPTS.forEach(prompt => {
-  console.log(prompt.id, prompt.fallbackText);
-  // Output:
-  // welcome, "Welcome to our amazing product!..."
-  // story, "Once upon a time..."
-  // ...
-});
-```
-
-## Custom Templates
-
-Create custom prompt templates:
-
-```tsx
-import { AIPromptTemplate } from '@umituz/react-native-ai-generation-content';
-
-const customTemplate: AIPromptTemplate = {
-  id: 'my-custom-template',
-  name: 'My Custom Template',
-  template: 'Create a {style} image of {subject} with {mood} mood',
-  variables: ['style', 'subject', 'mood'],
-  category: 'custom',
-  metadata: {
-    author: 'Your Name',
-    version: '1.0.0',
-  },
-};
-
-// Use custom template
-const prompt = await generatePrompt({
-  templateId: 'my-custom-template',
-  variables: {
-    style: 'realistic',
-    subject: 'a cat',
-    mood: 'playful',
-  },
-});
-// Result: "Create a realistic image of a cat with playful mood"
-```
-
-## Best Practices
-
-1. **Template Organization**: Group templates by category for easy management
-2. **Variable Naming**: Use clear, descriptive variable names
-3. **Prompt History**: Track prompt generation for analytics and debugging
-4. **Error Handling**: Always handle errors gracefully
-5. **Type Safety**: Leverage TypeScript types for type safety
-
-## Related Features
+## 📚 Related Domains
 
 - [Content Moderation](../content-moderation) - Moderate generated content
 - [Face Detection](../face-detection) - Detect faces in images
 - [Creations](../creations) - Manage AI-generated creations
 
-## License
+---
 
-MIT
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)

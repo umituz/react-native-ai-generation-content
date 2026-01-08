@@ -2,99 +2,216 @@
 
 Gallery and management system for AI-generated content.
 
-## Overview
+## 📍 Import Path
 
-The Creations domain provides a comprehensive system for managing AI-generated content. It includes features for storing, organizing, filtering, and sharing AI creations across all generation types.
-
-## Features
-
-- **Content Storage**: Store AI-generated images, videos, and audio
-- **Organization**: Organize creations by type, date, and custom tags
-- **Filtering & Sorting**: Advanced filtering and sorting options
-- **Gallery View**: Beautiful gallery grid for browsing creations
-- **Sharing**: Share creations to social media and other platforms
-- **Favorites**: Mark and organize favorite creations
-- **Metadata Management**: Track generation parameters and metadata
-
-## Installation
-
-This domain is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
+```typescript
+import {
+  useCreations,
+  useCreationDetails,
+  useCreationActions,
+  saveCreation,
+  CreationsGallery,
+  CreationCard
+} from '@umituz/react-native-ai-generation-content';
 ```
 
-## Basic Usage
+**Location**: `src/domains/creations/`
 
-### Using Creations Hook
+## 🎯 Domain Purpose
 
-```tsx
-import { useCreations } from '@umituz/react-native-ai-generation-content';
+Comprehensive system for managing AI-generated content. Store, organize, filter, and share AI creations across all generation types with gallery views, favorites, metadata management, and advanced filtering capabilities.
 
-function CreationsGallery() {
-  const {
-    creations,
-    loading,
-    error,
-    filters,
-    setFilters,
-    loadMore,
-    refresh,
-    deleteCreation,
-    toggleFavorite,
-  } = useCreations({
-    userId: 'user-123',
-    type: 'image', // 'image' | 'video' | 'audio' | 'all'
-  });
+---
 
-  if (loading) return <ActivityIndicator />;
-  if (error) return <Text>Error: {error}</Text>;
+## 📋 Usage Strategy
 
-  return (
-    <FlatGrid
-      data={creations}
-      renderItem={({ item }) => (
-        <CreationCard
-          creation={item}
-          onPress={() => viewCreation(item)}
-          onDelete={() => deleteCreation(item.id)}
-          onFavorite={() => toggleFavorite(item.id)}
-        />
-      )}
-      onEndReached={loadMore}
-      onEndReachedThreshold={0.5}
-    />
-  );
-}
+### When to Use This Domain
+
+✅ **Use Cases:**
+- Storing AI-generated images, videos, audio
+- Building creation galleries
+- Organizing content with tags/filters
+- Sharing creations to social media
+- Managing user content libraries
+
+❌ **When NOT to Use:**
+- Replacing cloud storage (use proper backend)
+- Storing large files locally only
+- Real-time collaboration (use specialized tools)
+- Content delivery (use CDN)
+
+### Implementation Strategy
+
+1. **Save creations** immediately after generation
+2. **Organize with tags** for easy filtering
+3. **Implement filtering** by type, date, feature
+4. **Add gallery view** for browsing
+5. **Enable sharing** to social platforms
+6. **Track metadata** for all creations
+7. **Implement favorites** for easy access
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Storage Requirements
+- **MUST** save creations immediately after generation
+- **MUST** store metadata with creations
+- **MUST** implement proper error handling
+- **MUST** handle storage limits
+- **MUST** implement cleanup for old creations
+
+### 2. Organization
+- **MUST** tag creations properly
+- **MUST** organize by type and feature
+- **MUST** enable filtering and sorting
+- **MUST** implement search functionality
+- **MUST** support favorites
+
+### 3. Performance
+- **MUST** implement lazy loading
+- **MUST** cache thumbnails
+- **MUST** paginate large galleries
+- **MUST** optimize image loading
+- **MUST** handle large datasets
+
+### 4. User Experience
+- **MUST** provide clear gallery UI
+- **MUST** enable quick actions
+- **MUST** show creation metadata
+- **MUST** implement sharing functionality
+- **MUST** support deletion and management
+
+### 5. Privacy & Security
+- **MUST** respect user privacy
+- **MUST** implement proper permissions
+- **MUST** secure sensitive content
+- **MUST** handle user data properly
+- **MUST** comply with regulations
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Metadata**
+   - Always save generation parameters
+   - Never save without context
+   - Track prompt, model, settings
+
+2. **No Poor Organization**
+   - Always tag and categorize
+   - Never dump all creations together
+   - Implement proper filtering
+
+3. **No Performance Issues**
+   - Never load all creations at once
+   - Always implement pagination
+   - Cache thumbnails efficiently
+
+4. **No Data Loss**
+   - Never delete without user action
+   - Always confirm deletions
+   - Implement backup/restore
+
+5. **No Privacy Violations**
+   - Never expose private content
+   - Always check permissions
+   - Implement proper access control
+
+6. **No Blocking UI**
+   - Never block on large operations
+   - Always show progress
+   - Implement background processing
+
+7. **No Missing Context**
+   - Always show when/what created
+   - Display generation parameters
+   - Provide creation history
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing creation management using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import creation management functions
+2. Save creations immediately after generation
+3. Organize with tags and metadata
+4. Implement filtering and sorting
+5. Add gallery view with lazy loading
+6. Enable sharing functionality
+7. Handle deletions properly
+8. Optimize for performance
+
+CRITICAL RULES:
+- MUST save with complete metadata
+- MUST organize by type and feature
+- MUST implement pagination/lazy loading
+- MUST provide clear gallery UI
+- MUST handle large datasets efficiently
+- MUST respect user privacy
+
+CREATION TYPES:
+- Image: Generated images
+- Video: Generated videos
+- Audio: Generated audio
+
+FILTERING OPTIONS:
+- type: image | video | audio | all
+- featureType: text-to-image | face-swap | etc.
+- tags: Custom tags array
+- dateFrom/dateTo: Date range
+- isFavorite: Boolean filter
+- sortBy: createdAt | updatedAt
+- sortOrder: asc | desc
+
+ACTIONS:
+- saveToGallery: Save to device
+- shareToSocialMedia: Share to platforms
+- download: Download to device
+- delete: Remove creation
+- duplicate: Copy creation
+- exportMetadata: Export metadata
+
+STRICTLY FORBIDDEN:
+- No missing metadata
+- No poor organization
+- No performance issues
+- No data loss
+- No privacy violations
+- No blocking UI
+- No missing context
+
+QUALITY CHECKLIST:
+- [ ] Creations saved with metadata
+- [ ] Tags and categories implemented
+- [ ] Filtering and sorting working
+- [ ] Gallery with lazy loading
+- [ ] Sharing functionality
+- [ ] Delete with confirmation
+- [ ] Performance optimized
+- [ ] Privacy protected
+- [ ] Error handling
+- [ ] User feedback
 ```
 
-### Saving Creations
+---
 
-```tsx
-import { saveCreation } from '@umituz/react-native-ai-generation-content';
+## 🛠️ Configuration Strategy
 
-// After generating content
-const result = await generateImage({ prompt: '...' });
+### Creation Structure
 
-await saveCreation({
-  userId: 'user-123',
-  type: 'image',
-  url: result.imageUrl,
-  metadata: {
-    prompt: '...',
-    model: 'imagen-3',
-    aspectRatio: '16:9',
-    style: 'realistic',
-    createdAt: new Date().toISOString(),
-  },
-});
-```
-
-## Data Models
-
-### Creation
-
-```tsx
+```typescript
 interface Creation {
   id: string;
   userId: string;
@@ -114,281 +231,81 @@ interface Creation {
 }
 ```
 
-### CreationsFilter
+### Filter Options
 
-```tsx
+```typescript
 interface CreationsFilter {
   type?: 'image' | 'video' | 'audio' | 'all';
-  featureType?: string; // e.g., 'text-to-image', 'face-swap'
+  featureType?: string;
   tags?: string[];
   dateFrom?: Date;
   dateTo?: Date;
   isFavorite?: boolean;
-  sortBy?: 'createdAt' | 'updatedAt' | 'name';
+  sortBy?: 'createdAt' | 'updatedAt';
   sortOrder?: 'asc' | 'desc';
 }
 ```
 
-## Hooks
+---
 
-### useCreations
+## 📊 Core Components
 
-Main hook for managing creations:
+### Hooks
+- `useCreations` - Main gallery management
+- `useCreationDetails` - Individual creation details
+- `useCreationActions` - Actions (save, share, delete)
 
-```tsx
-const {
-  creations,
-  loading,
-  error,
-  hasMore,
-  filters,
-  setFilters,
-  loadMore,
-  refresh,
-  deleteCreation,
-  toggleFavorite,
-  updateTags,
-  getCreation,
-} = useCreations(options);
-```
+### Components
+- `CreationsGallery` - Gallery grid view
+- `CreationCard` - Individual creation card
+- `CreationFilterBar` - Filter controls
 
-### useCreationDetails
+### Repositories
+- `CreationsRepository` - Data access layer
+- Custom repositories supported
 
-Get details of a specific creation:
+---
 
-```tsx
-import { useCreationDetails } from '@umituz/react-native-ai-generation-content';
+## 🎨 Best Practices
 
-function CreationDetailScreen({ creationId }) {
-  const { creation, loading, error, updateMetadata, share } = useCreationDetails({
-    creationId,
-  });
+### Metadata
+- Save all generation parameters
+- Include prompt, model, settings
+- Track creation timestamp
+- Store feature-specific data
 
-  if (loading) return <ActivityIndicator />;
-  if (error) return <Text>Error: {error}</Text>;
+### Organization
+- Use consistent tagging
+- Categorize by feature type
+- Enable smart collections
+- Implement search
 
-  return (
-    <View>
-      <Image source={{ uri: creation.url }} />
-      <Text>Prompt: {creation.metadata.prompt}</Text>
-      <Text>Created: {new Date(creation.createdAt).toLocaleDateString()}</Text>
-      <Button title="Share" onPress={() => share(creation)} />
-    </View>
-  );
-}
-```
+### Performance
+- Lazy load galleries
+- Cache thumbnails
+- Paginate large datasets
+- Optimize image loading
+- Background operations
 
-### useCreationActions
+---
 
-Actions for creations:
+## 🐛 Common Pitfalls
 
-```tsx
-import { useCreationActions } from '@umituz/react-native-ai-generation-content';
+❌ **Missing metadata**: Always save context
+❌ **Poor performance**: Implement pagination
+❌ **No organization**: Tag and filter properly
+❌ **Data loss**: Confirm deletions, backup
+❌ **Privacy issues**: Check permissions
 
-const {
-  saveToGallery,
-  shareToSocialMedia,
-  download,
-  delete: deleteCreation,
-  duplicate,
-  exportMetadata,
-} = useCreationActions();
+---
 
-// Save to device gallery
-await saveToGallery(creation);
-
-// Share to social media
-await shareToSocialMedia({
-  creation,
-  platform: 'instagram', // 'instagram' | 'facebook' | 'twitter' | 'whatsapp'
-});
-
-// Download to device
-await download(creation);
-
-// Delete creation
-await deleteCreation(creation.id);
-
-// Duplicate creation
-await duplicate(creation);
-
-// Export metadata
-const metadata = await exportMetadata(creation);
-```
-
-## Components
-
-### CreationsGallery
-
-```tsx
-import { CreationsGallery } from '@umituz/react-native-ai-generation-content';
-
-<CreationsGallery
-  userId="user-123"
-  type="image"
-  filters={{
-    featureType: 'text-to-image',
-    isFavorite: false,
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-  }}
-  onCreationPress={(creation) => console.log('Pressed:', creation)}
-  onCreationLongPress={(creation) => console.log('Long pressed:', creation)}
-  onRefresh={() => console.log('Refreshed')}
-/>
-```
-
-### CreationCard
-
-```tsx
-import { CreationCard } from '@umituz/react-native-ai-generation-content';
-
-<CreationCard
-  creation={creation}
-  onPress={() => viewCreation(creation)}
-  onLongPress={() => showOptions(creation)}
-  showMetadata
-  showFavoriteButton
-  onFavoriteToggle={() => toggleFavorite(creation.id)}
-/>
-```
-
-### CreationFilterBar
-
-```tsx
-import { CreationFilterBar } from '@umituz/react-native-ai-generation-content';
-
-<CreationFilterBar
-  filters={filters}
-  onFiltersChange={setFilters}
-  availableTypes={['image', 'video', 'audio']}
-  availableFeatures={['text-to-image', 'face-swap', 'style-transfer']}
-  availableTags={['portrait', 'landscape', 'artistic']}
-/>
-```
-
-## Filtering Examples
-
-### Filter by Type
-
-```tsx
-setFilters({
-  type: 'image',
-});
-```
-
-### Filter by Feature
-
-```tsx
-setFilters({
-  featureType: 'text-to-image',
-});
-```
-
-### Filter by Date Range
-
-```tsx
-setFilters({
-  dateFrom: new Date('2024-01-01'),
-  dateTo: new Date('2024-12-31'),
-});
-```
-
-### Filter by Tags
-
-```tsx
-setFilters({
-  tags: ['portrait', 'artistic'],
-});
-```
-
-### Filter by Favorites
-
-```tsx
-setFilters({
-  isFavorite: true,
-});
-```
-
-### Sort Options
-
-```tsx
-setFilters({
-  sortBy: 'createdAt',
-  sortOrder: 'desc', // Newest first
-});
-```
-
-## Advanced Usage
-
-### Custom Storage Backend
-
-```tsx
-import { CreationsRepository } from '@umituz/react-native-ai-generation-content';
-
-class CustomCreationsRepository extends CreationsRepository {
-  async save(creation: Creation): Promise<void> {
-    // Custom save logic (e.g., to your own backend)
-    await api.post('/creations', creation);
-  }
-
-  async getAll(filters: CreationsFilter): Promise<Creation[]> {
-    // Custom fetch logic
-    const response = await api.get('/creations', { params: filters });
-    return response.data;
-  }
-}
-```
-
-### Batch Operations
-
-```tsx
-import { batchDeleteCreations, batchUpdateTags } from '@umituz/react-native-ai-generation-content';
-
-// Delete multiple creations
-await batchDeleteCreations(['id1', 'id2', 'id3']);
-
-// Update tags for multiple creations
-await batchUpdateTags({
-  creationIds: ['id1', 'id2', 'id3'],
-  tags: ['portrait', 'professional'],
-  mode: 'replace', // 'replace' | 'append' | 'remove'
-});
-```
-
-### Export Creations
-
-```tsx
-import { exportCreations, exportCreationMetadata } from '@umituz/react-native-ai-generation-content';
-
-// Export creations to ZIP
-const zipFile = await exportCreations({
-  creationIds: ['id1', 'id2', 'id3'],
-  includeMetadata: true,
-  format: 'zip',
-});
-
-// Export metadata as JSON
-const metadata = await exportCreationMetadata({
-  creationIds: ['id1', 'id2', 'id3'],
-  format: 'json',
-});
-```
-
-## Best Practices
-
-1. **Metadata**: Always save relevant metadata for future reference
-2. **Tagging**: Use consistent tagging for easy organization
-3. **Cleanup**: Regularly clean up unwanted creations
-4. **Backup**: Implement backup for important creations
-5. **Privacy**: Respect user privacy when storing creations
-
-## Related Features
+## 📚 Related Domains
 
 - [Prompts](../prompts) - AI prompt management
 - [Content Moderation](../content-moderation) - Content moderation
 - [Face Detection](../face-detection) - Face detection API
 
-## License
+---
 
-MIT
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)

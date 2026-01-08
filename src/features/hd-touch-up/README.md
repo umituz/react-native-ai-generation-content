@@ -1,309 +1,396 @@
-# HD Touch Up
+# HD Touch Up Feature
 
 Apply high-detail enhancements to images using AI.
 
-## Features
+## 📍 Import Path
 
-- Enhance image quality and details
-- Sharpen and clarify images
-- Reduce noise and artifacts
-- Improve facial features in portraits
-- Add professional polish
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useHDTouchUpFeature } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+```
 
-function HDTouchUpScreen() {
-  const [image, setImage] = useState<string | null>(null);
+**Location**: `src/features/hd-touch-up/`
 
-  const feature = useHDTouchUpFeature({
-    config: {
-      enhancementLevel: 'medium',
-      enhanceFaces: true,
-      onProcessingStart: () => console.log('Enhancing image...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectImage: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setImage(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSaveResult: async (imageUrl) => {
-      await saveToGallery(imageUrl);
-    },
-  });
+## 🎯 Feature Purpose
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={image}
-        onSelectImage={feature.selectImage}
-        title="Select Image to Enhance"
-      />
+Enhance image quality with AI-powered improvements including sharpening, noise reduction, facial enhancement, color adjustment, and contrast optimization. Professional-quality touch-ups for portraits, product photos, landscapes, and more.
 
-      <EnhancementLevelSelector
-        selectedLevel={feature.state.enhancementLevel}
-        onSelectLevel={feature.setEnhancementLevel}
-      />
+---
 
-      <Button
-        title="Enhance Image"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+## 📋 Usage Strategy
 
-      {feature.state.isProcessing && (
-        <View>
-          <Text>Enhancing image...</Text>
-          <ProgressBar progress={feature.state.progress} />
-        </View>
-      )}
+### When to Use This Feature
 
-      {feature.state.result && (
-        <ResultDisplay
-          originalImage={image}
-          resultImage={feature.state.result.imageUrl}
-          onSave={() => feature.saveResult()}
-        />
-      )}
-    </View>
-  );
+✅ **Use Cases:**
+- Enhancing portrait photographs
+- Improving product photo quality
+- Sharpening landscape details
+- Reducing noise in low-light photos
+- Professional photo polishing
+
+❌ **When NOT to Use:**
+- Restoring damaged photos (use Photo Restoration)
+- Adding color to B&W photos (use Colorization)
+- Upscaling resolution (use Upscaling)
+- Applying artistic filters (use Style Transfer)
+
+### Implementation Strategy
+
+1. **Select image** to enhance
+2. **Choose enhancement level** (low, medium, high)
+3. **Configure options** (enhance faces, denoise, sharpen, etc.)
+4. **Process enhancement** with progress tracking
+5. **Preview and compare** with original
+6. **Save or share** enhanced image
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Image Requirements
+- **MUST** provide ONE image to enhance
+- **MUST** use reasonably high-quality images (min 512x512)
+- **MUST** have clear, visible content
+- **MUST NOT** exceed file size limits (10MB max)
+- **MUST NOT** use extremely blurry or unusable photos
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `enhancementLevel` (low, medium, high)
+- **MUST** configure enhancement options
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectImage` callback
+
+### 3. State Management
+- **MUST** check `isReady` before enabling enhance button
+- **MUST** display progress during enhancement
+- **MUST** handle long processing times
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache results locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** enhance multiple images simultaneously
+
+### 5. Enhancement Options
+- **MUST** provide enhancement level control
+- **MUST** support facial enhancement toggle
+- **MUST** support denoise option
+- **MUST** support sharpen option
+- **MUST** support color and contrast adjustments
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Images**
+   - Always validate image is selected
+   - Never call process() without image
+
+2. **No Auto-Processing**
+   - Never start enhancement without user action
+   - Always require explicit "Enhance" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore enhancement failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store both original and enhanced simultaneously
+   - Clean up temporary images
+   - Implement proper image disposal
+
+6. **No Blocked UI**
+   - Never block main thread with image processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Over-Enhancement**
+   - Never apply maximum enhancement by default
+   - Always start with moderate levels
+   - Allow user to adjust intensity
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing an HD touch up feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useHDTouchUpFeature hook
+3. Select enhancement level (low, medium, high)
+4. Implement image selection UI
+5. Configure enhancement options (faces, denoise, sharpen, colors, contrast)
+6. Validate image before enhancement
+7. Show before/after comparison
+8. Handle long processing times with progress
+9. Implement proper error handling
+10. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate image before calling enhance()
+- MUST show before/after comparison
+- MUST handle enhancement level selection
+- MUST handle individual enhancement toggles
+- MUST implement debouncing (300ms)
+- MUST allow regeneration with different settings
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set enhancementLevel: 'low' | 'medium' | 'high'
+- Set enhanceFaces: boolean (portrait enhancement)
+- Set denoise: boolean (reduce noise)
+- Set sharpen: boolean (sharpen details)
+- Set adjustColors: boolean (improve vibrancy)
+- Set adjustContrast: boolean (enhance tones)
+- Implement onSelectImage callback
+- Implement onSaveResult callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+ENHANCEMENT LEVELS:
+- low: Subtle improvements, natural look
+- medium: Balanced enhancements (recommended)
+- high: Strong enhancements, professional quality
+
+OPTIONS:
+- enhanceFaces: Apply face-specific enhancements
+- denoise: Remove noise and grain
+- sharpen: Enhance edges and details
+- adjustColors: Improve color vibrancy
+- adjustContrast: Enhance contrast and tones
+
+STRICTLY FORBIDDEN:
+- No missing image validation
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No over-enhancement
+
+QUALITY CHECKLIST:
+- [ ] Image selection implemented
+- [ ] Enhancement level selector added
+- [ ] Enhancement toggles included
+- [ ] Validation before enhance()
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Download/share functionality
+- [ ] Regeneration with different settings
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Image selection implemented
+- [ ] Enhancement level selector added
+- [ ] Enhancement toggles implemented
+- [ ] Validation before enhance()
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Download/share buttons
+- [ ] Regeneration option
+- [ ] Cleanup on unmount
+- [ ] Original image preserved
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  enhancementLevel: 'low' | 'medium' | 'high'
+  onSelectImage: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Enhancement Levels**
+   - Low: Subtle improvements for natural look
+   - Medium: Balanced enhancements (recommended for most photos)
+   - High: Maximum enhancements for professional quality
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="hd-touch-up"
-      userId="user-123"
-    />
-  );
+2. **Enhancement Options**
+   - enhanceFaces: Apply face-specific enhancements (portraits)
+   - denoise: Remove noise and grain (low-light, high-ISO photos)
+   - sharpen: Enhance edges and details
+   - adjustColors: Improve color vibrancy (faded/dull photos)
+   - adjustContrast: Enhance contrast and tones
+
+3. **Image Quality**
+   - Minimum: 512x512 resolution
+   - Recommended: 1024x1024 or higher
+   - Format: JPEG or PNG
+   - Max size: 10MB
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Image selected and validated
+- Check before enabling enhance button
+
+**isProcessing**: boolean
+- Enhancement in progress
+- Show loading/progress indicator
+- Disable enhance button
+
+**progress**: number (0-100)
+- Enhancement progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if enhancement failed
+- Display to user with clear message
+
+**result**: {
+  imageUrl: string
+  originalImageUrl?: string
+  enhancementLevel?: string
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface HDTouchUpFeatureConfig {
-  enhancementLevel?: 'low' | 'medium' | 'high';
-  enhanceFaces?: boolean; // Apply face-specific enhancements
-  denoise?: boolean; // Reduce image noise
-  sharpen?: boolean; // Sharpen details
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: HDTouchUpResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Enhancement Selection
 
-### Enhancement Options
+1. **Enhancement Level**
+   - Start with Medium for most photos
+   - Use Low for subtle improvements
+   - Use High for professional quality
 
-```tsx
-interface HDTouchUpOptions {
-  enhancementLevel: 'low' | 'medium' | 'high';
-  enhanceFaces?: boolean;
-  denoise?: boolean; // Remove noise and grain
-  sharpen?: boolean; // Enhance edges and details
-  adjustColors?: boolean; // Improve color vibrancy
-  adjustContrast?: boolean; // Enhance contrast and tones
-}
-```
+2. **Subject-Specific Options**
+   - Portraits: Enable enhanceFaces
+   - Landscapes: Enable sharpen and adjustContrast
+   - Product photos: Enable sharpen and adjustColors
+   - Low-light: Enable denoise
 
-## Enhancement Levels
+3. **Quality**
+   - Good: Clear, well-composed photos
+   - Bad: Extremely blurry or unusable photos
 
-### Low Enhancement
+### User Experience
 
-Subtle improvements, natural look:
+1. **Preview**
+   - Show preview of enhancement settings
+   - Compare different enhancement levels
+   - Allow option toggles
 
-```tsx
-const result = await feature.process({
-  enhancementLevel: 'low',
-  sharpen: true,
-});
-```
+2. **Before/After Comparison**
+   - Side-by-side comparison
+   - Slider for easy comparison
+   - Zoom for detail inspection
 
-### Medium Enhancement
+---
 
-Balanced improvements, noticeable but natural:
+## 🐛 Common Pitfalls
 
-```tsx
-const result = await feature.process({
-  enhancementLevel: 'medium',
-  enhanceFaces: true,
-  denoise: true,
-  sharpen: true,
-});
-```
+### Quality Issues
 
-### High Enhancement
+❌ **Problem**: Over-enhanced appearance
+✅ **Solution**: Reduce enhancement level, disable unnecessary options
 
-Strong enhancements, professional quality:
+### Subject Issues
 
-```tsx
-const result = await feature.process({
-  enhancementLevel: 'high',
-  enhanceFaces: true,
-  denoise: true,
-  sharpen: true,
-  adjustColors: true,
-  adjustContrast: true,
-});
-```
+❌ **Problem**: Wrong options for subject type
+✅ **Solution**: Match options to photo subject (portraits, landscapes, etc.)
 
-## Usage Flow
+### Performance Issues
 
-1. Select **Image** - Choose an image to enhance
-2. Choose **Enhancement Level** - Select intensity
-3. Configure **Options** - Toggle specific enhancements
-4. Tap **Enhance** - Start the enhancement
-5. View **Result** - See the enhanced image
-6. Save or Share - Save or share the result
+❌ **Problem**: Slow enhancement
+✅ **Solution**: Compress images, show progress, allow cancellation
 
-## Component Examples
+---
 
-### Enhancement Level Selector
+## 📦 Related Components
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+Use these components from the library:
 
-const levels = [
-  { id: 'low', name: 'Subtle', description: 'Light enhancements' },
-  { id: 'medium', name: 'Balanced', description: 'Moderate enhancements' },
-  { id: 'high', name: 'Strong', description: 'Maximum enhancements' },
-];
+- **PhotoUploadCard**: Upload image interface
+- **EnhancementLevelSelector**: Choose enhancement intensity
+- **EnhancementToggles**: Toggle specific enhancements
+- **ResultDisplay**: Before/after comparison
+- **ProgressBar**: Progress display
 
-<GridSelector
-  options={levels}
-  selectedOption={selectedLevel}
-  onSelectOption={setSelectedLevel}
-/>
-```
+Located at: `src/presentation/components/`
 
-### Enhancement Toggles
+---
 
-```tsx
-import { Switch } from 'react-native';
+## 🔄 Migration Strategy
 
-<View>
-  <Switch
-    value={enhanceFaces}
-    onValueChange={setEnhanceFaces}
-  />
-  <Text>Enhance Faces</Text>
+If migrating from previous implementation:
 
-  <Switch
-    value={denoise}
-    onValueChange={setDenoise}
-  />
-  <Text>Reduce Noise</Text>
+1. **Update imports** to new path
+2. **Add enhancement level selector**
+3. **Implement enhancement toggles**
+4. **Update state handling** for new structure
+5. **Add before/after comparison**
+6. **Test all enhancement levels**
 
-  <Switch
-    value={sharpen}
-    onValueChange={setSharpen}
-  />
-  <Text>Sharpen Details</Text>
-</View>
-```
+---
 
-### Before/After Comparison
+## 📚 Additional Resources
 
-```tsx
-import { ResultDisplay } from '@umituz/react-native-ai-generation-content';
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/hd-touch-up/`
+- Architecture: `/ARCHITECTURE.md`
 
-{feature.state.result && image && (
-  <ResultDisplay
-    originalImage={image}
-    resultImage={feature.state.result.imageUrl}
-    onSave={() => feature.saveResult()}
-    onShare={() => shareImage(feature.state.result.imageUrl)}
-  />
-)}
-```
+---
 
-## Use Cases
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-### Portrait Enhancement
+---
 
-```tsx
-// Enhance portrait photos
-const result = await feature.process({
-  enhancementLevel: 'high',
-  enhanceFaces: true,
-  adjustColors: true,
-});
-```
+## 📝 Changelog
 
-### Product Photos
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-```tsx
-// Improve product image quality
-const result = await feature.process({
-  enhancementLevel: 'medium',
-  sharpen: true,
-  adjustColors: true,
-});
-```
-
-### Landscape Enhancement
-
-```tsx
-// Enhance landscape details
-const result = await feature.process({
-  enhancementLevel: 'medium',
-  sharpen: true,
-  adjustContrast: true,
-});
-```
-
-### Old Photo Restoration
-
-```tsx
-// Improve old photo quality
-const result = await feature.process({
-  enhancementLevel: 'high',
-  denoise: true,
-  sharpen: true,
-});
-```
-
-## Best Practices
-
-1. **Enhancement Level**: Start with Medium for most photos
-2. **Face Enhancement**: Enable for portraits, disable for other subjects
-3. **Noise Reduction**: Useful for low-light or high-ISO photos
-4. **Sharpening**: Be careful not to over-sharpen
-5. **Color Adjustment**: Works well for faded or dull photos
-
-## Related Features
-
-- [Photo Restoration](../photo-restoration) - Restore old photos
-- [Upscaling](../upscaling) - Increase image resolution
-- [Colorization](../colorization) - Add color to B&W photos
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

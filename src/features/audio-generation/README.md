@@ -1,370 +1,413 @@
-# Audio Generation
+# Audio Generation Feature
 
 Generate audio content using AI.
 
-## Features
+## 📍 Import Path
 
-- Generate various audio content types
-- Music generation
-- Sound effects creation
-- Voice narration
-- Customizable parameters
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
+```typescript
+import { useAudioGenerationFeature } from '@umituz/react-native-ai-generation-content';
 ```
 
-## Basic Usage
+**Location**: `src/features/audio-generation/`
 
-### Using the Hook
+## 🎯 Feature Purpose
 
-```tsx
-import { useAudioGeneration } from '@umituz/react-native-ai-generation-content';
+Generate various audio content types including music, sound effects, ambient backgrounds, and voice content using AI. Customize genre, mood, tempo, and duration for professional-quality audio creation.
 
-function AudioGenerationScreen() {
-  const [prompt, setPrompt] = useState('');
+---
 
-  const feature = useAudioGeneration({
-    config: {
-      audioType: 'music',
-      duration: 30, // seconds
-      onProcessingStart: () => console.log('Generating audio...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-  });
+## 📋 Usage Strategy
 
-  const playAudio = async () => {
-    if (feature.state.audioUrl) {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: feature.state.audioUrl },
-        { shouldPlay: true }
-      );
-    }
-  };
+### When to Use This Feature
 
-  return (
-    <View>
-      <TextInput
-        placeholder="Describe the audio you want to generate..."
-        value={prompt}
-        onChangeText={setPrompt}
-        multiline
-        numberOfLines={4}
-      />
+✅ **Use Cases:**
+- Creating background music for videos
+- Generating sound effects for games/apps
+- Producing ambient background audio
+- Creating voice content
+- Podcast intro/outro music
 
-      <AudioTypeSelector
-        selectedType={feature.state.audioType}
-        onSelectType={feature.setAudioType}
-      />
+❌ **When NOT to Use:**
+- Converting text to speech (use Text to Voice)
+- Generating voiceovers (use Text to Voice)
+- Audio editing or mixing (use audio editing software)
+- Music composition assistance
 
-      <DurationSlider
-        value={feature.state.duration}
-        onChange={feature.setDuration}
-      />
+### Implementation Strategy
 
-      <Button
-        title="Generate Audio"
-        onPress={() => feature.generate(prompt)}
-        disabled={!prompt || feature.state.isProcessing}
-      />
+1. **Enter prompt** describing desired audio
+2. **Choose audio type** (music, sfx, ambient, voice)
+3. **Set duration** for audio length
+4. **Configure options** (genre, mood, tempo for music)
+5. **Generate audio** with progress tracking
+6. **Preview result** and offer regeneration
+7. **Save or share** final audio
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+---
 
-      {feature.state.audioUrl && (
-        <View>
-          <Button title="Play Audio" onPress={playAudio} />
-          <Button title="Save Audio" onPress={() => feature.saveAudio()} />
-        </View>
-      )}
-    </View>
-  );
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Input Requirements
+- **MUST** provide descriptive text prompt
+- **MUST** specify audio type
+- **MUST** set valid duration (5-120 seconds recommended)
+- **MUST NOT** exceed maximum duration limits
+- **MUST NOT** use copyrighted material in prompts
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `audioType` (music, sfx, ambient, voice)
+- **MUST** implement `onError` callback
+- **MUST** implement audio playback functionality
+- **MUST** handle file saving locally
+
+### 3. State Management
+- **MUST** check `isReady` before enabling generate button
+- **MUST** validate prompt and duration before generation
+- **MUST** handle `isProcessing` state to prevent duplicate requests
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement progress indicators during generation
+- **MUST** cache generated audio locally
+- **MUST** allow users to cancel long generations
+- **MUST** implement proper audio file disposal
+- **MUST NOT** generate multiple audio files simultaneously
+
+### 5. Audio Quality
+- **MUST** provide audio preview before saving
+- **MUST** support common audio formats (MP3, WAV)
+- **MUST** handle large audio file sizes
+- **MUST** implement proper audio playback controls
+- **MUST** offer regeneration with different settings
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Empty Prompts**
+   - Always validate prompt is provided
+   - Never call generate() without description
+   - Guide users with example prompts
+
+2. **No Auto-Generation**
+   - Never start generation without user action
+   - Always require explicit "Generate" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore generation failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store multiple audio files in memory
+   - Always cleanup audio references on unmount
+   - Implement proper audio disposal
+
+6. **No Blocked UI**
+   - Never block main thread with audio processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Copyright Infringement**
+   - Never generate copyrighted material
+   - Never use artist names or copyrighted songs in prompts
+   - Implement content moderation
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing an audio generation feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useAudioGenerationFeature hook
+3. Select audio type (music, sfx, ambient, voice)
+4. Implement text input for audio description
+5. Set duration (5-120 seconds recommended)
+6. Configure options (genre, mood, tempo for music)
+7. Validate prompt and duration before generation
+8. Implement audio playback for preview
+9. Handle long processing times with progress
+10. Implement proper error handling
+11. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate prompt and duration before calling generate()
+- MUST implement audio playback controls (play, pause, stop)
+- MUST handle audio type selection
+- MUST handle music-specific options (genre, mood, tempo)
+- MUST implement debouncing (300ms)
+- MUST allow regeneration with different settings
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set audioType: 'music' | 'sfx' | 'ambient' | 'voice'
+- Set duration: number (5-120 seconds recommended)
+- Set genre: string (for music type: rock, pop, jazz, etc.)
+- Set mood: string (happy, sad, energetic, calm, etc.)
+- Set tempo: number (BPM for music, default: 120)
+- Implement onSaveAudio callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+AUDIO TYPES:
+- music: Musical compositions with genre, mood, tempo options
+- sfx: Sound effects and foley sounds
+- ambient: Background ambient audio
+- voice: Voice content and narration
+
+OPTIONS:
+- genre: Music genre (rock, pop, jazz, electronic, classical, etc.)
+- mood: Audio mood (happy, sad, energetic, calm, dramatic, etc.)
+- tempo: Beats per minute for music (default: 120)
+
+STRICTLY FORBIDDEN:
+- No empty prompt validation
+- No auto-generation without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No copyright infringement
+
+QUALITY CHECKLIST:
+- [ ] Text input for audio description
+- [ ] Audio type selector added
+- [ ] Duration input/slider included
+- [ ] Music options (genre, mood, tempo) when type=music
+- [ ] Validation before generate()
+- [ ] Audio playback controls implemented
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Save/share functionality
+- [ ] Regeneration with different settings
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Text input for audio description implemented
+- [ ] Audio type selector added
+- [ ] Duration input implemented
+- [ ] Music-specific options (genre, mood, tempo)
+- [ ] Validation before generate()
+- [ ] Audio playback controls (play, pause, stop)
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Save/share buttons
+- [ ] Regeneration option
+- [ ] Cleanup on unmount
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  audioType: 'music' | 'sfx' | 'ambient' | 'voice'
+  prompt: string
+  duration: number
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Audio Types**
+   - Music: Background music, themes, intros (genre, mood, tempo options)
+   - SFX: Sound effects for games, apps, videos
+   - Ambient: Background atmospheres and environments
+   - Voice: Voice content and narration
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="audio-generation"
-      userId="user-123"
-    />
-  );
+2. **Music Options**
+   - genre: rock, pop, jazz, electronic, classical, hiphop
+   - mood: happy, sad, energetic, calm, dramatic, romantic
+   - tempo: 60-180 BPM (default: 120)
+
+3. **Duration Guidelines**
+   - SFX: 3-10 seconds
+   - Ambient: 30-120 seconds
+   - Music: 15-60 seconds for loops
+   - Voice: 5-30 seconds
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Prompt provided and duration set
+- Check before enabling generate button
+
+**isProcessing**: boolean
+- Audio generation in progress
+- Show loading/progress indicator
+- Disable generate button
+
+**progress**: number (0-100)
+- Generation progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if generation failed
+- Display to user with clear message
+
+**result**: {
+  audioUrl: string
+  audioType?: string
+  prompt?: string
+  duration?: number
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface AudioGenerationFeatureConfig {
-  audioType?: 'music' | 'sfx' | 'ambient' | 'voice';
-  duration?: number; // Duration in seconds
-  genre?: string; // Music genre (for music type)
-  mood?: string; // Audio mood
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: AudioGenerationResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Prompt Writing
 
-### Generation Options
+1. **Be Descriptive**
+   - Good: "Upbeat pop music with energetic drums and synth melody"
+   - Bad: "Music"
 
-```tsx
-interface AudioGenerationOptions {
-  audioType: 'music' | 'sfx' | 'ambient' | 'voice';
-  prompt: string; // Description of desired audio
-  duration: number; // Duration in seconds
-  genre?: string; // e.g., 'rock', 'jazz', 'electronic'
-  mood?: string; // e.g., 'happy', 'sad', 'energetic'
-  tempo?: number; // BPM for music (default: 120)
-}
-```
+2. **Specify Elements**
+   - Mention instruments, tempo, mood
+   - Describe the sound characteristics
+   - Include genre information
 
-## Audio Types
+3. **Match Use Case**
+   - Videos: Match video mood and pacing
+   - Games: Loop-friendly, appropriate mood
+   - Podcasts: Professional, not distracting
 
-### Music
+### Audio Type Selection
 
-Generate musical compositions:
+1. **Music**
+   - Use for: Background music, themes, intros
+   - Options: genre, mood, tempo
+   - Best: High-quality, loopable clips
 
-```tsx
-const result = await feature.generate('Upbeat background music', {
-  audioType: 'music',
-  genre: 'pop',
-  mood: 'happy',
-  tempo: 120,
-  duration: 30,
-});
-```
+2. **SFX**
+   - Use for: Sound effects, foley, impacts
+   - Options: Duration mainly
+   - Best: Short, focused sounds
 
-### Sound Effects
+3. **Ambient**
+   - Use for: Background atmospheres
+   - Options: Duration, mood
+   - Best: Consistent, non-distracting
 
-Generate sound effects:
+4. **Voice**
+   - Use for: Narration, voice content
+   - Consider: Use Text to Voice for better results
 
-```tsx
-const result = await feature.generate('Explosion sound', {
-  audioType: 'sfx',
-  duration: 5,
-});
-```
+---
 
-### Ambient
+## 🐛 Common Pitfalls
 
-Generate ambient/background audio:
+### Quality Issues
 
-```tsx
-const result = await feature.generate('Forest ambience with birds', {
-  audioType: 'ambient',
-  duration: 60,
-});
-```
+❌ **Problem**: Audio doesn't match expectations
+✅ **Solution**: Be more descriptive in prompt, try different settings
 
-### Voice
+### Duration Issues
 
-Generate voice content:
+❌ **Problem**: Audio too short/long
+✅ **Solution**: Set appropriate duration, consider use case
 
-```tsx
-const result = await feature.generate('Narrator voice introducing topic', {
-  audioType: 'voice',
-  duration: 10,
-});
-```
+### Format Issues
 
-## Usage Flow
+❌ **Problem**: Audio won't play
+✅ **Solution**: Ensure audio format is supported (MP3, WAV)
 
-1. Enter **Description** - Describe the audio you want
-2. Choose **Audio Type** - Select music, SFX, ambient, or voice
-3. Set **Duration** - Choose length
-4. Configure **Options** - Set genre, mood, tempo (for music)
-5. Tap **Generate** - Create the audio
-6. Play & Save - Listen to the result and save
+### Performance Issues
 
-## Component Examples
+❌ **Problem**: Slow generation
+✅ **Solution**: Use shorter durations, show progress
 
-### Audio Type Selector
+---
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+## 📦 Related Components
 
-const audioTypes = [
-  { id: 'music', name: 'Music', description: 'Musical compositions' },
-  { id: 'sfx', name: 'Sound Effects', description: 'SFX and foley' },
-  { id: 'ambient', name: 'Ambient', description: 'Background audio' },
-  { id: 'voice', name: 'Voice', description: 'Voice content' },
-];
+Use these components from the library:
 
-<GridSelector
-  options={audioTypes}
-  selectedOption={selectedType}
-  onSelectOption={setSelectedType}
-/>
-```
+- **TextInput**: For audio description
+- **AudioTypeSelector**: Choose audio type
+- **GenreSelector**: Music genre selection
+- **MoodSelector**: Audio mood selection
+- **DurationSlider**: Set audio duration
+- **AudioPlayer**: Play generated audio
+- **ProgressBar**: Progress display
 
-### Genre Selector (for Music)
+Located at: `src/presentation/components/`
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+---
 
-const genres = [
-  { id: 'rock', name: 'Rock' },
-  { id: 'pop', name: 'Pop' },
-  { id: 'jazz', name: 'Jazz' },
-  { id: 'electronic', name: 'Electronic' },
-  { id: 'classical', name: 'Classical' },
-  { id: 'hiphop', name: 'Hip Hop' },
-];
+## 🔄 Migration Strategy
 
-<GridSelector
-  options={genres}
-  selectedOption={selectedGenre}
-  onSelectOption={setSelectedGenre}
-/>
-```
+If migrating from previous implementation:
 
-### Mood Selector
+1. **Update imports** to new path
+2. **Add audio type selector**
+3. **Implement music-specific options** (genre, mood, tempo)
+4. **Update state handling** for new structure
+5. **Add audio playback controls**
+6. **Test all audio types**
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+---
 
-const moods = [
-  { id: 'happy', name: 'Happy' },
-  { id: 'sad', name: 'Sad' },
-  { id: 'energetic', name: 'Energetic' },
-  { id: 'calm', name: 'Calm' },
-  { id: 'dramatic', name: 'Dramatic' },
-  { id: 'romantic', name: 'Romantic' },
-];
+## 📚 Additional Resources
 
-<GridSelector
-  options={moods}
-  selectedOption={selectedMood}
-  onSelectOption={setSelectedMood}
-/>
-```
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/audio-generation/`
+- Architecture: `/ARCHITECTURE.md`
 
-### Duration Slider
+---
 
-```tsx
-import { Slider } from 'react-native';
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-<Slider
-  minimumValue={5}
-  maximumValue={120}
-  step={5}
-  value={duration}
-  onValueChange={setDuration}
-/>
+---
 
-<Text>Duration: {duration} seconds</Text>
-```
+## 📝 Changelog
 
-### Audio Player
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-```tsx
-import { Audio } from 'expo-av';
-import { useState, useEffect } from 'react';
-
-const [sound, setSound] = useState<Sound | null>(null);
-const [isPlaying, setIsPlaying] = useState(false);
-
-const playAudio = async () => {
-  const { sound } = await Audio.Sound.createAsync(
-    { uri: audioUrl },
-    { shouldPlay: true }
-  );
-  setSound(sound);
-  setIsPlaying(true);
-
-  sound.setOnPlaybackStatusUpdate((status) => {
-    if (status.isLoaded && status.didJustFinish) {
-      setIsPlaying(false);
-    }
-  });
-};
-
-const stopAudio = async () => {
-  if (sound) {
-    await sound.stopAsync();
-    setIsPlaying(false);
-  }
-};
-
-useEffect(() => {
-  return sound ? () => sound.unloadAsync() : undefined;
-}, [sound]);
-```
-
-## Use Cases
-
-### Background Music
-
-```tsx
-// Generate background music for videos
-const result = await feature.generate('Upbeat background music', {
-  audioType: 'music',
-  genre: 'pop',
-  mood: 'energetic',
-  duration: 60,
-});
-```
-
-### Sound Effects
-
-```tsx
-// Create sound effects for games or videos
-const result = await feature.generate('Magic spell sound', {
-  audioType: 'sfx',
-  duration: 3,
-});
-```
-
-### Ambient Sounds
-
-```tsx
-// Generate ambient backgrounds
-const result = await feature.generate('Ocean waves with seagulls', {
-  audioType: 'ambient',
-  duration: 120,
-});
-```
-
-### Podcast Intro
-
-```tsx
-// Generate podcast intro music
-const result = await feature.generate('Podcast intro music', {
-  audioType: 'music',
-  genre: 'electronic',
-  mood: 'energetic',
-  duration: 15,
-});
-```
-
-## Best Practices
-
-1. **Descriptive Prompts**: Be specific about the audio you want
-2. **Duration**: Start with shorter durations for testing
-3. **Genre Matching**: Match genre to your use case
-4. **Mood Selection**: Choose appropriate mood for your content
-5. **Multiple Takes**: Generate multiple versions to choose from
-
-## Related Features
-
-- [Text to Voice](../text-to-voice) - Convert text to speech
-- [Script Generator](../script-generator) - Generate audio scripts
-- [Text to Video](../text-to-video) - Generate videos with audio
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

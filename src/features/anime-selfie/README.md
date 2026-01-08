@@ -1,325 +1,396 @@
-# Anime Selfie
+# Anime Selfie Feature
 
 Convert photos to anime/manga style using AI.
 
-## Features
+## 📍 Import Path
 
-- Transform photos into anime-style artwork
-- Multiple anime style options
-- Support for portraits and group photos
-- High-quality character preservation
-- Customizable intensity levels
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useAnimeSelfieFeature } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+```
 
-function AnimeSelfieScreen() {
-  const [photo, setPhoto] = useState<string | null>(null);
+**Location**: `src/features/anime-selfie/`
 
-  const feature = useAnimeSelfieFeature({
-    config: {
-      style: 'shonen',
-      intensity: 0.8,
-      onProcessingStart: () => console.log('Converting to anime...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectPhoto: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setPhoto(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSaveResult: async (imageUrl) => {
-      await saveToGallery(imageUrl);
-    },
-  });
+## 🎯 Feature Purpose
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={photo}
-        onSelectImage={feature.selectPhoto}
-        title="Select Photo to Convert"
-      />
+Transform photos into anime/manga style artwork using AI. Supports various anime styles with customizable intensity levels while preserving facial features.
 
-      <AnimeStyleSelector
-        selectedStyle={feature.state.style}
-        onSelectStyle={feature.setStyle}
-      />
+---
 
-      <IntensitySlider
-        value={feature.state.intensity}
-        onChange={feature.setIntensity}
-      />
+## 📋 Usage Strategy
 
-      <Button
-        title="Convert to Anime"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+### When to Use This Feature
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+✅ **Use Cases:**
+- Creating anime avatars
+- Generating manga-style portraits
+- Artistic photo transformations
+- Social media profile pictures
+- Fan art and creative projects
 
-      {feature.state.result && (
-        <ResultDisplay
-          originalImage={photo}
-          resultImage={feature.state.result.imageUrl}
-          onSave={() => feature.saveResult()}
-        />
-      )}
-    </View>
-  );
+❌ **When NOT to Use:**
+- General artistic style transfer (use Style Transfer)
+- Face swapping (use Face Swap)
+- Image editing and filters (use image editing software)
+- Copyrighted character replication
+
+### Implementation Strategy
+
+1. **Select photo** to convert to anime
+2. **Choose anime style** (shonen, shojo, chibi, etc.)
+3. **Adjust intensity** level (0.0 to 1.0)
+4. **Generate anime version** with progress tracking
+5. **Preview and compare** with original
+6. **Save or share** result
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Image Requirements
+- **MUST** provide ONE image to convert
+- **MUST** use clear, well-lit photos
+- **MUST** have visible faces (for best results)
+- **MUST** use reasonable resolution (min 512x512)
+- **MUST NOT** exceed file size limits (10MB max)
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `style` (anime style type)
+- **MUST** set `intensity` level (0.0 to 1.0)
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectPhoto` callback
+
+### 3. State Management
+- **MUST** check `isReady` before enabling convert button
+- **MUST** display progress during conversion
+- **MUST** handle long processing times
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache results locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** convert multiple images simultaneously
+
+### 5. Content Quality
+- **MUST** provide before/after comparison
+- **MUST** allow intensity adjustment
+- **MUST** handle various photo types
+- **MUST** preserve facial features when enabled
+- **MUST** offer style regeneration
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Images**
+   - Always validate image is selected
+   - Never call process() without image
+
+2. **No Auto-Processing**
+   - Never start conversion without user action
+   - Always require explicit "Convert" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore conversion failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store both original and converted large images simultaneously
+   - Clean up temporary images
+   - Implement proper image disposal
+
+6. **No Blocked UI**
+   - Never block main thread with image processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Copyright Violations**
+   - Never replicate copyrighted anime characters exactly
+   - Allow style transformation only
+   - Implement content moderation
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing an anime selfie feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useAnimeSelfieFeature hook
+3. Select anime style type
+4. Implement image selection UI
+5. Adjust intensity level (0.0 to 1.0)
+6. Validate image before conversion
+7. Show before/after comparison
+8. Handle long processing times with progress
+9. Implement proper error handling
+10. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate image before calling convert()
+- MUST show before/after comparison
+- MUST handle intensity adjustment
+- MUST preserve facial features when enabled
+- MUST implement debouncing (300ms)
+- MUST allow style regeneration
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set style: 'shonen' | 'shojo' | 'chibi' | 'realistic'
+- Set intensity: 0.0 to 1.0 (default: 0.8)
+- Implement onSelectPhoto callback
+- Implement onSaveResult callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+OPTIONS:
+- style: Select anime style type
+- intensity: 0.0 (subtle) to 1.0 (full transformation)
+- preserveFaces: boolean (maintain facial features)
+
+STRICTLY FORBIDDEN:
+- No missing image validation
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No copyright violations
+
+QUALITY CHECKLIST:
+- [ ] Image selection implemented
+- [ ] Style selector added
+- [ ] Intensity slider included
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Download/share functionality
+- [ ] Style regeneration option
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Image selection implemented
+- [ ] Style selector added
+- [ ] Intensity control implemented
+- [ ] Validation before convert()
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Download/share buttons
+- [ ] Style regeneration option
+- [ ] Cleanup on unmount
+- [ ] Original image preserved
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  style: 'shonen' | 'shojo' | 'chibi' | 'realistic'
+  intensity: number  // 0.0 to 1.0
+  onSelectPhoto: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Anime Styles**
+   - Shonen: Action-oriented, bold lines
+   - Shojo: Elegant, detailed features
+   - Chibi: Cute, exaggerated proportions
+   - Realistic: Anime-style but realistic proportions
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="anime-selfie"
-      userId="user-123"
-    />
-  );
+2. **Intensity Levels**
+   - 0.3-0.5: Subtle anime influence
+   - 0.6-0.8: Balanced transformation (recommended)
+   - 0.9-1.0: Full anime style
+
+3. **Image Quality**
+   - Minimum: 512x512 resolution
+   - Recommended: 1024x1024 or higher
+   - Format: JPEG or PNG
+   - Max size: 10MB
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Photo selected and validated
+- Check before enabling convert button
+
+**isProcessing**: boolean
+- Anime conversion in progress
+- Show loading/progress indicator
+- Disable convert button
+
+**progress**: number (0-100)
+- Conversion progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if conversion failed
+- Display to user with clear message
+
+**result**: {
+  imageUrl: string
+  originalImageUrl?: string
+  style?: string
+  intensity?: number
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface AnimeSelfieFeatureConfig {
-  style?: 'shonen' | 'shojo' | 'chibi' | 'realistic';
-  intensity?: number; // 0.0 - 1.0 (default: 0.8)
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: AnimeSelfieResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Photo Selection
 
-### Generation Options
+1. **Image Quality**
+   - Good: Clear, well-lit photos
+   - Bad: Blurry, dark images
 
-```tsx
-interface AnimeSelfieOptions {
-  style: 'shonen' | 'shojo' | 'chibi' | 'realistic';
-  intensity: number; // How strong the anime effect is (0.0 - 1.0)
-  enhanceDetails?: boolean; // Enhance anime features (default: true)
-  backgroundStyle?: 'original' | 'anime' | 'solid';
-}
-```
+2. **Subject Clarity**
+   - Good: Clear facial features visible
+   - Bad: Occluded or distant faces
 
-## Anime Styles
+3. **Style Matching**
+   - Match style to photo content
+   - Consider gender and age for style
 
-### Shonen Style
+4. **Intensity**
+   - Start with moderate intensity (0.7-0.8)
+   - Adjust based on results
 
-Bold, action-oriented manga style:
+### User Experience
 
-```tsx
-const result = await feature.process({
-  style: 'shonen',
-  intensity: 0.9,
-});
-```
+1. **Before/After Comparison**
+   - Side-by-side comparison
+   - Slider or toggle for easy comparison
+   - Zoom capability for detail inspection
 
-### Shojo Style
+2. **Style Preview**
+   - Show examples of each style
+   - Preview style before conversion
+   - Explain style characteristics
 
-Soft, romantic manga style:
+3. **Progress Feedback**
+   - Show estimated time remaining
+   - Update progress regularly
+   - Allow cancellation
 
-```tsx
-const result = await feature.process({
-  style: 'shojo',
-  intensity: 0.8,
-});
-```
+---
 
-### Chibi Style
+## 🐛 Common Pitfalls
 
-Cute, small character style:
+### Quality Issues
 
-```tsx
-const result = await feature.process({
-  style: 'chibi',
-  intensity: 1.0,
-});
-```
+❌ **Problem**: Poor anime conversion
+✅ **Solution**: Use higher quality photos, try different style or intensity
 
-### Realistic Style
+### Style Issues
 
-Semi-realistic anime style:
+❌ **Problem**: Anime style doesn't match photo
+✅ **Solution**: Try different style, adjust intensity
 
-```tsx
-const result = await feature.process({
-  style: 'realistic',
-  intensity: 0.7,
-});
-```
+### Performance Issues
 
-## Usage Flow
+❌ **Problem**: Slow conversion
+✅ **Solution**: Compress images, show progress, allow cancellation
 
-1. Select **Photo** - Choose a photo to convert
-2. Choose **Anime Style** - Select the desired anime style
-3. Adjust **Intensity** - Control how strong the effect is
-4. Tap **Convert** - Start the conversion
-5. View **Result** - See the anime version
-6. Save or Share - Save or share the result
+### Memory Issues
 
-## Component Examples
+❌ **Problem**: App crashes with large images
+✅ **Solution**: Compress images, clean up properly, optimize memory
 
-### Style Selector
+---
 
-```tsx
-import { StylePresetsGrid } from '@umituz/react-native-ai-generation-content';
+## 📦 Related Components
 
-const animeStyles = [
-  { id: 'shonen', name: 'Shonen', preview: '...' },
-  { id: 'shojo', name: 'Shojo', preview: '...' },
-  { id: 'chibi', name: 'Chibi', preview: '...' },
-  { id: 'realistic', name: 'Realistic', preview: '...' },
-];
+Use these components from the library:
 
-<StylePresetsGrid
-  styles={animeStyles}
-  selectedStyle={selectedStyle}
-  onSelectStyle={setSelectedStyle}
-/>
-```
+- **PhotoUploadCard**: Upload photo interface
+- **ResultDisplay**: Before/after comparison
+- **StyleSelector**: Choose anime style
+- **IntensitySlider**: Adjust intensity
+- **ProgressBar**: Progress display
 
-### Intensity Slider
+Located at: `src/presentation/components/`
 
-```tsx
-import { Slider } from 'react-native';
+---
 
-<Slider
-  minimumValue={0}
-  maximumValue={1}
-  step={0.1}
-  value={intensity}
-  onValueChange={setIntensity}
-/>
+## 🔄 Migration Strategy
 
-<Text>Intensity: {Math.round(intensity * 100)}%</Text>
-```
+If migrating from previous implementation:
 
-### Before/After Comparison
+1. **Update imports** to new path
+2. **Add style selector**
+3. **Implement intensity control**
+4. **Update state handling** for new structure
+5. **Add before/after comparison**
+6. **Test all anime styles**
 
-```tsx
-import { ResultDisplay } from '@umituz/react-native-ai-generation-content';
+---
 
-{feature.state.result && photo && (
-  <ResultDisplay
-    originalImage={photo}
-    resultImage={feature.state.result.imageUrl}
-    onSave={() => feature.saveResult()}
-    onShare={() => shareImage(feature.state.result.imageUrl)}
-  />
-)}
-```
+## 📚 Additional Resources
 
-## Advanced Usage
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/anime-selfie/`
+- Architecture: `/ARCHITECTURE.md`
 
-### Custom Options
+---
 
-```tsx
-const result = await feature.process({
-  style: 'shonen',
-  intensity: 0.85,
-  enhanceDetails: true,
-  backgroundStyle: 'anime',
-});
-```
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-### Batch Processing
+---
 
-```tsx
-// Convert multiple photos
-const photos = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg'];
-const results = await Promise.all(
-  photos.map(photo => feature.process({ image: photo }))
-);
-```
+## 📝 Changelog
 
-## Best Practices
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-1. **Portrait Photos**: Forward-facing portraits work best
-2. **Good Lighting**: Even lighting produces better results
-3. **Clear Faces**: Ensure facial features are clearly visible
-4. **Intensity**: Start with 0.7-0.8 for natural results
-5. **Style Selection**: Match style to photo subject and mood
-
-## Use Cases
-
-### Profile Pictures
-
-```tsx
-// Create anime profile pictures
-const result = await feature.process({
-  style: 'shojo',
-  intensity: 0.8,
-});
-```
-
-### Social Media
-
-```tsx
-// Generate anime content for social media
-const result = await feature.process({
-  style: 'chibi',
-  intensity: 1.0,
-});
-```
-
-### Art Projects
-
-```tsx
-// Create anime art from photos
-const result = await feature.process({
-  style: 'realistic',
-  intensity: 0.7,
-  enhanceDetails: true,
-});
-```
-
-## Error Handling
-
-```tsx
-const { state, process } = useAnimeSelfieFeature({ ...config });
-
-useEffect(() => {
-  if (state.error) {
-    Alert.alert('Conversion Failed', state.error);
-  }
-}, [state.error]);
-```
-
-## Related Features
-
-- [Style Transfer](../style-transfer) - Apply artistic styles to images
-- [Face Swap](../face-swap) - Swap faces between images
-- [Text to Image](../text-to-image) - Generate anime from text prompts
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

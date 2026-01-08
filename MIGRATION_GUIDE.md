@@ -1,52 +1,61 @@
 # Migration Guide
 
-This guide helps you migrate between versions of `@umituz/react-native-ai-generation-content`.
+Strategy-based guide for migrating between versions of `@umituz/react-native-ai-generation-content`.
+
+## 🎯 Purpose
+
+Clear guidance for migrating between versions. Focus on breaking changes, required actions, and testing strategies. Minimize code changes while maximizing compatibility.
+
+---
 
 ## 📋 Table of Contents
 
-- [Version 1.x to 2.x](#version-1x-to-2x)
-- [Version 2.x to 3.x](#version-2x-to-3x)
-- [Breaking Changes](#breaking-changes)
-- [Deprecated Features](#deprecated-features)
+- [v1.x to v2.x](#v1x-to-v2x)
+- [v2.x to v3.x](#v2x-to-v3x)
+- [Common Issues](#common-issues)
+- [Testing Strategy](#testing-strategy)
+- [Rollback](#rollback)
 
-## Version 1.x to 2.x
+---
 
-### Overview
-
-Version 2.x introduces significant improvements to the API, better type safety, and new features.
+## v1.x to v2.x
 
 ### Breaking Changes
 
-#### 1. Hook Renaming
+#### 1. Hook Naming Convention
 
-Some hooks have been renamed for clarity:
+**Change**: All hooks renamed with "Feature" suffix
 
-```tsx
-// ❌ Old (v1.x)
-import { useTextToImage } from '@umituz/react-native-ai-generation-content';
-
-// ✅ New (v2.x)
-import { useTextToImageFeature } from '@umituz/react-native-ai-generation-content';
+**Old (v1.x)**:
+```typescript
+useTextToImage
+useFaceSwap
+usePhotoRestoration
 ```
 
-**Affected hooks:**
-- `useTextToImage` → `useTextToImageFeature`
-- `useFaceSwap` → `useFaceSwapFeature`
-- `usePhotoRestoration` → `usePhotoRestoreFeature`
-- And all other feature hooks
+**New (v2.x)**:
+```typescript
+useTextToImageFeature
+useFaceSwapFeature
+usePhotoRestoreFeature
+```
 
-#### 2. Config Object Structure
+**Action Required**: Update all hook imports
 
-Configuration objects now use more explicit property names:
+#### 2. Configuration Structure
 
-```tsx
-// ❌ Old (v1.x)
+**Change**: Config wrapped in `config` property, userId required
+
+**Old (v1.x)**:
+```typescript
 const feature = useTextToImageFeature({
   model: 'imagen-3',
   onPromptChange: (prompt) => console.log(prompt),
 });
+```
 
-// ✅ New (v2.x)
+**New (v2.x)**:
+```typescript
 const feature = useTextToImageFeature({
   config: {
     model: 'imagen-3',
@@ -56,18 +65,22 @@ const feature = useTextToImageFeature({
 });
 ```
 
+**Action Required**: Wrap config in `config` property, add userId
+
 #### 3. Result Object Structure
 
-Result objects now have consistent structure:
+**Change**: Consistent structure with `success` property
 
-```tsx
-// ❌ Old (v1.x)
+**Old (v1.x)**:
+```typescript
 interface Result {
   imageUrl?: string;
   error?: string;
 }
+```
 
-// ✅ New (v2.x)
+**New (v2.x)**:
+```typescript
 interface Result {
   success: boolean;
   imageUrl?: string;
@@ -81,18 +94,22 @@ interface Result {
 }
 ```
 
+**Action Required**: Update result handling to check `success`
+
 #### 4. Service Configuration
 
-App services configuration has changed:
+**Change**: Explicit service configuration
 
-```tsx
-// ❌ Old (v1.x)
+**Old (v1.x)**:
+```typescript
 configureAppServices({
   apiUrl: 'https://api.example.com',
   apiKey: 'your-key',
 });
+```
 
-// ✅ New (v2.x)
+**New (v2.x)**:
+```typescript
 configureAppServices({
   networkService: {
     baseUrl: 'https://api.example.com',
@@ -103,32 +120,33 @@ configureAppServices({
     checkCredits: async (userId, cost) => { /* ... */ },
     deductCredits: async (userId, cost) => { /* ... */ },
   },
-  // Other services now explicitly configured
 });
 ```
 
-### New Features
+**Action Required**: Update configuration structure
+
+---
+
+### New Features (v2.x)
 
 #### Unified AI Feature Screen
 
-```tsx
-// ✅ New in v2.x
+**New component** for quick feature integration:
+
+```typescript
 import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="text-to-image"
-      userId="user-123"
-    />
-  );
-}
+<AIFeatureScreen
+  featureId="text-to-image"
+  userId="user-123"
+/>
 ```
 
 #### Content Moderation
 
-```tsx
-// ✅ New in v2.x
+**New domain** for content filtering:
+
+```typescript
 import { ModerationWrapper } from '@umituz/react-native-ai-generation-content';
 
 const wrapper = new ModerationWrapper({
@@ -141,19 +159,22 @@ const wrapper = new ModerationWrapper({
 
 #### Creations Gallery
 
-```tsx
-// ✅ New in v2.x
+**New domain** for content management:
+
+```typescript
 import { useCreations } from '@umituz/react-native-ai-generation-content';
 
-const { creations, loadMore, deleteCreation } = useCreations({
+const { creations, loadMore } = useCreations({
   userId: 'user-123',
   type: 'image',
 });
 ```
 
-### Migration Steps
+---
 
-1. Update your package.json:
+### Migration Steps (v1.x → v2.x)
+
+**Step 1**: Update package.json
 ```json
 {
   "dependencies": {
@@ -162,24 +183,23 @@ const { creations, loadMore, deleteCreation } = useCreations({
 }
 ```
 
-2. Update hook names:
+**Step 2**: Update hook names (automated)
 ```bash
-# Find and replace
 find . -name "*.tsx" -type f -exec sed -i 's/useTextToImage/useTextToImageFeature/g' {} \;
+find . -name "*.tsx" -type f -exec sed -i 's/useFaceSwap/useFaceSwapFeature/g' {} \;
 ```
 
-3. Update config objects:
-```tsx
-// Wrap config in `config` property
+**Step 3**: Update config objects
+```typescript
+// Wrap in config property
 const feature = useFeature({
   config: { /* options */ },
   userId: 'user-123',
 });
 ```
 
-4. Update result handling:
-```tsx
-// Check success property
+**Step 4**: Update result handling
+```typescript
 if (result.success) {
   console.log(result.imageUrl);
 } else {
@@ -187,31 +207,34 @@ if (result.success) {
 }
 ```
 
-5. Configure required services:
-```tsx
+**Step 5**: Configure services
+```typescript
 configureAppServices({
   networkService: { /* ... */ },
   creditService: { /* ... */ },
-  // ...
 });
 ```
 
-## Version 2.x to 3.x
+---
+
+## v2.x to v3.x
 
 ### Breaking Changes
 
 #### 1. Provider Registration
 
-Provider registration now requires explicit capabilities:
+**Change**: Explicit capabilities declaration required
 
-```tsx
-// ❌ Old (v2.x)
+**Old (v2.x)**:
+```typescript
 providerRegistry.registerProvider({
   id: 'my-provider',
   execute: async (request) => { /* ... */ },
 });
+```
 
-// ✅ New (v3.x)
+**New (v3.x)**:
+```typescript
 providerRegistry.registerProvider({
   id: 'my-provider',
   name: 'My Provider',
@@ -219,24 +242,28 @@ providerRegistry.registerProvider({
     textToImage: true,
     textToVideo: false,
     imageToImage: true,
-    // ... declare all capabilities
+    // Declare all capabilities
   },
   execute: async (request) => { /* ... */ },
 });
 ```
 
+**Action Required**: Add capabilities to provider registration
+
 #### 2. Generation Options
 
-Generation options now use explicit types:
+**Change**: Explicit types for options
 
-```tsx
-// ❌ Old (v2.x)
+**Old (v2.x)**:
+```typescript
 await feature.generate({
   style: 'oil-painting',
   intensity: 0.8,
 });
+```
 
-// ✅ New (v3.x)
+**New (v3.x)**:
+```typescript
 await feature.process({
   style: 'oil-painting',
   intensity: 0.8,
@@ -244,93 +271,86 @@ await feature.process({
 });
 ```
 
+**Action Required**: Use proper types, change `generate` to `process`
+
 #### 3. Error Handling
 
-Error types are now more specific:
+**Change**: Specific error types
 
-```tsx
-// ❌ Old (v2.x)
+**Old (v2.x)**:
+```typescript
 try {
   await feature.process();
 } catch (error) {
   console.error('Error:', error);
 }
+```
 
-// ✅ New (v3.x)
+**New (v3.x)**:
+```typescript
 import { AIErrorType } from '@umituz/react-native-ai-generation-content';
 
 try {
   await feature.process();
 } catch (error) {
   if (error.type === AIErrorType.INSUFFICIENT_CREDITS) {
-    // Handle insufficient credits
+    // Handle credits
   } else if (error.type === AIErrorType.PROVIDER_ERROR) {
     // Handle provider error
   }
 }
 ```
 
-### Migration Steps
+**Action Required**: Use specific error types
 
-1. Update provider registrations:
-```tsx
+---
+
+### Migration Steps (v2.x → v3.x)
+
+**Step 1**: Update provider registrations
+```typescript
 providerRegistry.registerProvider({
-  // Add explicit capabilities
   capabilities: {
     textToImage: true,
     faceSwap: true,
-    // ... etc
   },
 });
 ```
 
-2. Update generation calls:
-```tsx
-// Change `generate` to `process` for most features
+**Step 2**: Update generation calls
+```typescript
 await feature.process(options);
 ```
 
-3. Update error handling:
-```tsx
-// Use specific error types
-if (result.error) {
-  const errorType = classifyError(result.error);
-  // Handle based on error type
+**Step 3**: Update error handling
+```typescript
+if (error.type === AIErrorType.INSUFFICIENT_CREDITS) {
+  // Handle
 }
 ```
 
-## Deprecated Features
+---
 
-### Removed in v2.x
+## Common Issues
 
-- `useAIImage()` - Use `useTextToImageFeature()` instead
-- `useAIGeneration()` - Use `useGeneration()` instead
-- `useBackgroundGeneration()` - Use `useBackgroundGeneration()` hook directly
+### "userId is required"
 
-### Removed in v3.x
+**Cause**: userId not provided to feature hook
 
-- `AIGenerator` component - Use `AIFeatureScreen` instead
-- `ImageUploader` component - Use `PhotoUploadCard` instead
-- Legacy provider interface - Use new `IAIProvider` interface
-
-## Common Migration Issues
-
-### Issue: "userId is required"
-
-**Solution:**
-```tsx
-// Add userId to all feature hooks
+**Solution**:
+```typescript
 const feature = useFeature({
   config: { /* ... */ },
-  userId: 'user-123', // ← Add this
+  userId: 'user-123', // Add this
 });
 ```
 
-### Issue: "Network service not configured"
+### "Network service not configured"
 
-**Solution:**
-```tsx
-// Configure network service
+**Cause**: Services not configured
+
+**Solution**:
+```typescript
 configureAppServices({
   networkService: {
     baseUrl: 'https://api.example.com',
@@ -339,11 +359,12 @@ configureAppServices({
 });
 ```
 
-### Issue: Type errors with options
+### Type errors with options
 
-**Solution:**
-```tsx
-// Import and use proper types
+**Cause**: Using incorrect option types
+
+**Solution**:
+```typescript
 import type { TextToImageOptions } from '@umituz/react-native-ai-generation-content';
 
 const options: TextToImageOptions = {
@@ -352,61 +373,103 @@ const options: TextToImageOptions = {
 };
 ```
 
-## Rollback Guide
+---
 
-If you need to rollback to a previous version:
+## Testing Strategy
+
+### Pre-Migration Testing
+
+1. **Backup current code**
+   ```bash
+   git commit -m "Backup before migration"
+   ```
+
+2. **Test current functionality**
+   - Document all working features
+   - Record expected behavior
+   - Create test cases
+
+### Post-Migration Testing
+
+**Test Checklist**:
+
+1. **Configuration**
+   - [ ] App services configure without errors
+   - [ ] API keys load correctly
+   - [ ] Network requests work
+
+2. **Feature Hooks**
+   - [ ] All hooks import correctly
+   - [ ] Hooks receive proper config
+   - [ ] userId is passed correctly
+
+3. **Generation**
+   - [ ] Can trigger generation
+   - [ ] Progress displays correctly
+   - [ ] Results return successfully
+
+4. **Error Handling**
+   - [ ] Network errors caught
+   - [ ] API errors displayed
+   - [ ] Insufficient credits handled
+
+5. **UI Components**
+   - [ ] Screens render correctly
+   - [ ] Progress modals work
+   - [ ] Results display properly
+
+### Rollback if Needed
 
 ```bash
 # Install previous version
 npm install @umituz/react-native-ai-generation-content@1.17.228
 
 # Revert code changes
-git checkout HEAD~1  # Or your backup
+git checkout HEAD~1
 
 # Reinstall dependencies
 npm install
 ```
 
-## Testing Your Migration
-
-After migrating, test your app:
-
-1. **Test all AI features**:
-   - Text to Image
-   - Face Swap
-   - Photo Restoration
-   - And any other features you use
-
-2. **Test error handling**:
-   - Network errors
-   - API errors
-   - Insufficient credits
-
-3. **Test UI components**:
-   - Progress modals
-   - Result displays
-   - Error displays
-
-4. **Test user flows**:
-   - Generation flow
-   - Saving/sharing
-   - History navigation
-
-## Need Help?
-
-- Check [GitHub Issues](https://github.com/umituz/react-native-ai-generation-content/issues)
-- Read [Documentation](./README.md)
-- Review [Architecture](./ARCHITECTURE.md)
-- Join our [Community Discord](https://discord.gg/...)
+---
 
 ## Version Compatibility
 
-| Version | React Native | TypeScript | Support Status |
-|---------|--------------|------------|----------------|
-| 1.x     | 0.60+        | 4.0+       | ⚠️ Deprecated |
-| 2.x     | 0.65+        | 4.5+       | ✅ Maintained |
-| 3.x     | 0.70+        | 5.0+       | ✅ Latest |
+| Version | React Native | TypeScript | Status      |
+|---------|--------------|------------|-------------|
+| 1.x     | 0.60+        | 4.0+       | Deprecated  |
+| 2.x     | 0.65+        | 4.5+       | Maintained  |
+| 3.x     | 0.70+        | 5.0+       | Latest      |
 
 ---
 
-Last updated: 2025-01-08
+## Best Practices
+
+### Migration Strategy
+
+1. **Plan migration** carefully
+2. **Test thoroughly** after each step
+3. **Use version control** for easy rollback
+4. **Update documentation** as you go
+5. **Communicate changes** to team
+
+### Testing Strategy
+
+1. **Unit tests** for feature hooks
+2. **Integration tests** for flows
+3. **E2E tests** for critical paths
+4. **Manual testing** for UI
+
+---
+
+## Need Help?
+
+- **GitHub Issues**: [Report Issue](https://github.com/umituz/react-native-ai-generation-content/issues)
+- **Documentation**: [README.md](./README.md)
+- **Architecture**: [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **FAQ**: [FAQ.md](./FAQ.md)
+
+---
+
+**Version**: 2.0.0 (Strategy-based Documentation)
+**Last Updated**: 2025-01-08

@@ -1,288 +1,405 @@
-# Replace Background
+# Replace Background Feature
 
 Replace image backgrounds with new scenes using AI.
 
-## Features
+## 📍 Import Path
 
-- Remove existing background
-- Replace with custom backgrounds
-- Built-in background templates
-- Upload custom background images
-- Natural edge blending
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useReplaceBackgroundFeature } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+```
 
-function ReplaceBackgroundScreen() {
-  const [foreground, setForeground] = useState<string | null>(null);
-  const [background, setBackground] = useState<string | null>(null);
+**Location**: `src/features/replace-background/`
 
-  const feature = useReplaceBackgroundFeature({
-    config: {
-      edgeSmoothness: 'medium',
-      onProcessingStart: () => console.log('Replacing background...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectForeground: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setForeground(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSelectBackground: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setBackground(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSaveResult: async (imageUrl) => {
-      await saveToGallery(imageUrl);
-    },
-  });
+## 🎯 Feature Purpose
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={foreground}
-        onSelectImage={feature.selectForeground}
-        title="Select Foreground Image"
-      />
+Remove existing backgrounds from images and replace them with custom backgrounds or built-in templates. Features automatic subject detection, natural edge blending, and optional lighting/color matching for seamless results.
 
-      <PhotoUploadCard
-        image={background}
-        onSelectImage={feature.selectBackground}
-        title="Select New Background"
-      />
+---
 
-      <Button
-        title="Replace Background"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+## 📋 Usage Strategy
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+### When to Use This Feature
 
-      {feature.state.result && (
-        <Image source={{ uri: feature.state.result.imageUrl }} />
-      )}
-    </View>
-  );
+✅ **Use Cases:**
+- Creating professional photos with studio backgrounds
+- Adding travel backgrounds to portraits
+- Creating product photos with clean backgrounds
+- Creative background replacements for social media
+- Replacing distracting backgrounds
+
+❌ **When NOT to Use:**
+- Simple background removal (use Remove Background)
+- Removing objects from images (use Remove Object)
+- Background removal without replacement (use Remove Background)
+
+### Implementation Strategy
+
+1. **Select foreground image** with subject
+2. **Select new background** (upload or template)
+3. **Configure options** (edge smoothness, lighting, colors)
+4. **Process replacement** with progress tracking
+5. **Preview result** and offer regeneration
+6. **Save or share** final image
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Image Requirements
+- **MUST** provide TWO images (foreground + background)
+- **MUST** use high-quality images (min 512x512 recommended)
+- **MUST** have clear subject in foreground
+- **MUST NOT** exceed file size limits (10MB each)
+- **MUST** validate both images before processing
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `edgeSmoothness` (low, medium, high)
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectForeground` callback
+- **MUST** implement `onSelectBackground` callback
+
+### 3. State Management
+- **MUST** check `isReady` before enabling replace button
+- **MUST** verify both images are selected
+- **MUST** display progress during replacement
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache results locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** replace multiple backgrounds simultaneously
+
+### 5. Quality Options
+- **MUST** provide edge smoothness control
+- **MUST** support lighting adjustment
+- **MUST** support color matching
+- **MUST** offer background blur option
+- **MUST** handle various image types
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Images**
+   - Always validate both foreground and background are selected
+   - Never call process() without both images
+
+2. **No Auto-Processing**
+   - Never start replacement without user action
+   - Always require explicit "Replace" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore replacement failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store all images simultaneously in state
+   - Clean up temporary images
+   - Implement proper image disposal
+
+6. **No Blocked UI**
+   - Never block main thread with image processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Perspective Mismatch**
+   - Never warn about perspective mismatches between images
+   - Always provide guidance on background selection
+   - Show preview before final processing
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing a replace background feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useReplaceBackgroundFeature hook
+3. Implement dual image selection (foreground + background)
+4. Provide background templates or custom upload
+5. Set edge smoothness level (low, medium, high)
+6. Configure options (adjustLighting, adjustColors, blurBackground)
+7. Validate both images before processing
+8. Show result preview
+9. Handle long processing times with progress
+10. Implement proper error handling
+11. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate both foreground and background images before calling process()
+- MUST provide clear UI for foreground vs background selection
+- MUST show result preview with quality check
+- MUST handle edge smoothness adjustment
+- MUST implement debouncing (300ms)
+- MUST allow background regeneration
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set edgeSmoothness: 'low' | 'medium' | 'high'
+- Set adjustLighting: boolean (match foreground/background lighting)
+- Set adjustColors: boolean (color-grade foreground to match background)
+- Set blurBackground: boolean (add blur for depth effect)
+- Implement onSelectForeground callback
+- Implement onSelectBackground callback
+- Implement onSaveResult callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+OPTIONS:
+- edgeSmoothness: Edge blending quality
+- adjustLighting: Match lighting between images
+- adjustColors: Harmonize colors
+- blurBackground: Add depth with background blur
+
+STRICTLY FORBIDDEN:
+- No missing image validation (both images required)
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No perspective mismatch warnings
+
+QUALITY CHECKLIST:
+- [ ] Foreground selection implemented
+- [ ] Background selection/template picker added
+- [ ] Edge smoothness selector included
+- [ ] Lighting/color adjustment toggles
+- [ ] Validation before process() (both images)
+- [ ] Result preview display
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Download/share functionality
+- [ ] Background template library
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Dual image selection implemented
+- [ ] Background templates provided
+- [ ] Edge smoothness selector added
+- [ ] Lighting/color adjustment toggles
+- [ ] Validation before process() (both images)
+- [ ] Result preview display
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Download/share buttons
+- [ ] Cleanup on unmount
+- [ ] Original images preserved
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  edgeSmoothness: 'low' | 'medium' | 'high'
+  onSelectForeground: () => Promise<string | null>
+  onSelectBackground: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Edge Smoothness**
+   - Low: Sharp, precise edges (products, objects)
+   - Medium: Balanced edges (portraits, general use)
+   - High: Soft, blended edges (artistic effects)
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="replace-background"
-      userId="user-123"
-    />
-  );
+2. **Quality Options**
+   - adjustLighting: Match foreground/background lighting
+   - adjustColors: Color-grade foreground to match background
+   - blurBackground: Add blur for depth effect
+
+3. **Image Quality**
+   - Minimum: 512x512 resolution
+   - Recommended: 1024x1024 or higher
+   - Format: JPEG or PNG
+   - Max size: 10MB each
+
+4. **Background Selection**
+   - Use backgrounds with similar perspective
+   - Match lighting direction when possible
+   - Consider color harmony
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Both images selected and validated
+- Check before enabling replace button
+
+**isProcessing**: boolean
+- Background replacement in progress
+- Show loading/progress indicator
+- Disable replace button
+
+**progress**: number (0-100)
+- Replacement progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if replacement failed
+- Display to user with clear message
+
+**result**: {
+  imageUrl: string
+  foregroundImageUrl?: string
+  backgroundImageUrl?: string
+  edgeSmoothness?: string
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface ReplaceBackgroundFeatureConfig {
-  edgeSmoothness?: 'low' | 'medium' | 'high';
-  adjustLighting?: boolean; // Match lighting between images
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: ReplaceBackgroundResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Background Selection
 
-### Processing Options
+1. **Perspective Matching**
+   - Good: Similar perspective and angle
+   - Bad: Conflicting perspectives
 
-```tsx
-interface ReplaceBackgroundOptions {
-  edgeSmoothness: 'low' | 'medium' | 'high';
-  adjustLighting?: boolean; // Match foreground and background lighting
-  adjustColors?: boolean; // Color-grade foreground to match background
-  blurBackground?: boolean; // Add blur to background for depth effect
-}
-```
+2. **Lighting Considerations**
+   - Enable adjustLighting for natural results
+   - Match lighting direction when possible
+   - Consider time of day
 
-## Usage Flow
+3. **Color Harmony**
+   - Use adjustColors for better integration
+   - Consider complementary colors
+   - Test different backgrounds
 
-1. Select **Foreground** - Choose the main subject image
-2. Select **Background** - Choose new background image
-3. Configure **Options** - Adjust edge smoothness and other settings
-4. Tap **Replace** - Start the replacement process
-5. View **Result** - See the combined image
-6. Save or Share - Save or share the result
+### User Experience
 
-## Component Examples
+1. **Background Templates**
+   - Provide curated background options
+   - Categorize by use case (studio, travel, nature, etc.)
+   - Show previews before selection
 
-### Background Templates
+2. **Preview**
+   - Show combined result before saving
+   - Allow option adjustment
+   - Compare with original
 
-```tsx
-import { StylePresetsGrid } from '@umituz/react-native-ai-generation-content';
+3. **Quality Settings**
+   - Explain edge smoothness options
+   - Provide presets (portrait, product, creative)
+   - Allow fine-tuning
 
-const backgrounds = [
-  { id: 'beach', name: 'Beach', preview: 'https://...' },
-  { id: 'city', name: 'City', preview: 'https://...' },
-  { id: 'nature', name: 'Nature', preview: 'https://...' },
-  { id: 'studio', name: 'Studio', preview: 'https://...' },
-];
+---
 
-<StylePresetsGrid
-  styles={backgrounds}
-  selectedStyle={selectedBackground}
-  onSelectStyle={async (bg) => {
-    const bgImage = await downloadBackground(bg.preview);
-    setBackground(bgImage);
-  }}
-/>
-```
+## 🐛 Common Pitfalls
 
-### Edge Smoothness Selector
+### Perspective Issues
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+❌ **Problem**: Unnatural looking result due to perspective mismatch
+✅ **Solution**: Choose background with similar perspective
 
-const smoothnessOptions = [
-  { id: 'low', name: 'Sharp', description: 'Precise edges' },
-  { id: 'medium', name: 'Balanced', description: 'Natural edges' },
-  { id: 'high', name: 'Smooth', description: 'Soft edges' },
-];
+### Edge Issues
 
-<GridSelector
-  options={smoothnessOptions}
-  selectedOption={smoothness}
-  onSelectOption={setSmoothness}
-/>
-```
+❌ **Problem**: Visible edges around subject
+✅ **Solution**: Adjust edge smoothness, enable lighting/color adjustment
 
-### Lighting Toggle
+### Quality Issues
 
-```tsx
-import { Switch } from 'react-native';
+❌ **Problem**: Poor subject detection
+✅ **Solution**: Use higher quality foreground image with clear subject
 
-<Switch
-  value={adjustLighting}
-  onValueChange={setAdjustLighting}
-/>
+### Lighting Issues
 
-<Text>Match Lighting</Text>
-```
+❌ **Problem**: Lighting doesn't match between images
+✅ **Solution**: Enable adjustLighting and adjustColors options
 
-## Advanced Usage
+---
 
-### Custom Options
+## 📦 Related Components
 
-```tsx
-const result = await feature.process({
-  edgeSmoothness: 'medium',
-  adjustLighting: true,
-  adjustColors: true,
-  blurBackground: false,
-});
-```
+Use these components from the library:
 
-### Preset Backgrounds
+- **PhotoUploadCard**: Upload image interface
+- **DualImagePicker**: Select foreground and background
+- **BackgroundTemplates**: Pre-made background options
+- **EdgeSmoothnessSelector**: Choose edge quality
+- **ResultDisplay**: Show combined result
+- **ProgressBar**: Progress display
 
-```tsx
-const PRESET_BACKGROUNDS = {
-  beach: 'https://example.com/bg/beach.jpg',
-  city: 'https://example.com/bg/city.jpg',
-  studio: 'https://example.com/bg/studio.jpg',
-  nature: 'https://example.com/bg/nature.jpg',
-};
+Located at: `src/presentation/components/`
 
-const result = await feature.process({
-  background: PRESET_BACKGROUNDS.beach,
-  edgeSmoothness: 'medium',
-});
-```
+---
 
-## Use Cases
+## 🔄 Migration Strategy
 
-### Professional Photos
+If migrating from previous implementation:
 
-```tsx
-// Replace with professional studio background
-const result = await feature.process({
-  background: studioBackground,
-  adjustLighting: true,
-  adjustColors: true,
-});
-```
+1. **Update imports** to new path
+2. **Add dual image selection** (foreground + background)
+3. **Implement edge smoothness control**
+4. **Add quality options** (lighting, color, blur)
+5. **Update state handling** for both images
+6. **Test all edge smoothness levels**
 
-### Travel Photos
+---
 
-```tsx
-// Add exotic travel backgrounds
-const result = await feature.process({
-  background: beachBackground,
-  edgeSmoothness: 'high',
-});
-```
+## 📚 Additional Resources
 
-### Creative Effects
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/replace-background/`
+- Architecture: `/ARCHITECTURE.md`
 
-```tsx
-// Create fantasy backgrounds
-const result = await feature.process({
-  background: fantasyBackground,
-  blurBackground: true,
-});
-```
+---
 
-### Product Photos
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-```tsx
-// Clean white background for products
-const result = await feature.process({
-  background: whiteBackground,
-  edgeSmoothness: 'low',
-  adjustLighting: true,
-});
-```
+---
 
-## Best Practices
+## 📝 Changelog
 
-1. **Foreground Quality**: Use high-quality images with clear subjects
-2. **Background Match**: Choose backgrounds with similar perspective
-3. **Edge Smoothness**: Higher values for portraits, lower for products
-4. **Lighting**: Enable lighting adjustment for more natural results
-5. **Colors**: Use color adjustment for better foreground/background harmony
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-## Related Features
-
-- [Remove Background](../remove-background) - Remove backgrounds
-- [Remove Object](../remove-object) - Remove unwanted objects
-- [Image to Image](../image-to-image) - Transform images with AI
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

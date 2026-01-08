@@ -1,289 +1,393 @@
-# Colorization
+# Colorization Feature
 
 Add color to black and white photos using AI.
 
-## Features
+## 📍 Import Path
 
-- Automatically add realistic color to B&W photos
-- Preserve historical accuracy
-- Multiple colorization options
-- Natural-looking color tones
-- Support for various photo types
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useColorizationFeature } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+```
 
-function ColorizationScreen() {
-  const [photo, setPhoto] = useState<string | null>(null);
+**Location**: `src/features/colorization/`
 
-  const feature = useColorizationFeature({
-    config: {
-      colorizationType: 'auto',
-      saturation: 1.0,
-      onProcessingStart: () => console.log('Colorizing photo...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectPhoto: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setPhoto(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSaveResult: async (imageUrl) => {
-      await saveToGallery(imageUrl);
-    },
-  });
+## 🎯 Feature Purpose
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={photo}
-        onSelectImage={feature.selectPhoto}
-        title="Select Black & White Photo"
-      />
+Automatically add realistic color to black and white photos using AI. Supports multiple colorization styles including vintage for historical accuracy, vibrant for rich colors, natural for subtle tones, and auto for intelligent detection.
 
-      <ColorizationTypeSelector
-        selectedType={feature.state.colorizationType}
-        onSelectType={feature.setColorizationType}
-      />
+---
 
-      <SaturationSlider
-        value={feature.state.saturation}
-        onChange={feature.setSaturation}
-      />
+## 📋 Usage Strategy
 
-      <Button
-        title="Colorize Photo"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+### When to Use This Feature
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+✅ **Use Cases:**
+- Colorizing old family photographs
+- Adding color to historical images
+- Creating artistic colorized versions
+- Restoring faded color photos
+- Creative visual effects
 
-      {feature.state.result && (
-        <ResultDisplay
-          originalImage={photo}
-          resultImage={feature.state.result.imageUrl}
-          onSave={() => feature.saveResult()}
-        />
-      )}
-    </View>
-  );
+❌ **When NOT to Use:**
+- Photo restoration with damage (use Photo Restoration)
+- Image enhancement without colorization (use HD Touch Up)
+- Color correction of existing color photos (use image editing software)
+- Adding artistic filters (use Style Transfer)
+
+### Implementation Strategy
+
+1. **Select black & white photo** to colorize
+2. **Choose colorization type** (auto, vintage, vibrant, natural)
+3. **Adjust saturation level** (0.5 to 1.5)
+4. **Generate colorized version** with progress tracking
+5. **Preview and compare** with original
+6. **Save or share** result
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Image Requirements
+- **MUST** provide ONE black & white photo
+- **MUST** use high-quality scans or photos (min 512x512)
+- **MUST** have clear, recognizable content
+- **MUST NOT** exceed file size limits (10MB max)
+- **MUST** be actual B&W or desaturated photos
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `colorizationType` (auto, vintage, vibrant, natural)
+- **MUST** set `saturation` level (0.5 to 1.5)
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectPhoto` callback
+
+### 3. State Management
+- **MUST** check `isReady` before enabling colorize button
+- **MUST** display progress during colorization
+- **MUST** handle long processing times
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache results locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** colorize multiple photos simultaneously
+
+### 5. Content Quality
+- **MUST** provide before/after comparison
+- **MUST** allow saturation adjustment
+- **MUST** handle various photo types
+- **MUST** preserve photo texture when enabled
+- **MUST** offer regeneration with different settings
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Color Images**
+   - Always validate input is B&W or desaturated
+   - Never attempt to colorize already color photos
+
+2. **No Auto-Processing**
+   - Never start colorization without user action
+   - Always require explicit "Colorize" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore colorization failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store both original and colorized simultaneously
+   - Clean up temporary images
+   - Implement proper image disposal
+
+6. **No Blocked UI**
+   - Never block main thread with image processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Historical Inaccuracy**
+   - Never claim colorized versions are historically accurate
+   - Provide disclaimer about AI interpretation
+   - Allow manual color adjustments for accuracy
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing a colorization feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useColorizationFeature hook
+3. Select colorization type (auto, vintage, vibrant, natural)
+4. Implement photo selection UI
+5. Adjust saturation level (0.5 to 1.5)
+6. Validate photo is black & white
+7. Show before/after comparison
+8. Handle long processing times with progress
+9. Implement proper error handling
+10. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate photo is black & white before colorizing
+- MUST show before/after comparison
+- MUST handle saturation adjustment
+- MUST preserve photo texture when enabled
+- MUST implement debouncing (300ms)
+- MUST allow colorization regeneration
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set colorizationType: 'auto' | 'vintage' | 'vibrant' | 'natural'
+- Set saturation: 0.5 to 1.5 (default: 1.0)
+- Set preserveTexture: boolean (maintain photo texture)
+- Implement onSelectPhoto callback
+- Implement onSaveResult callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+COLORIZATION TYPES:
+- auto: Automatic color detection and application
+- vintage: Historically accurate vintage tones
+- vibrant: Rich, saturated colors
+- natural: Subtle, natural-looking colors
+
+OPTIONS:
+- saturation: Color intensity (0.5 muted to 1.5 vibrant)
+- preserveTexture: Maintain photo texture (default: true)
+
+STRICTLY FORBIDDEN:
+- No color photo validation
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No historical accuracy claims
+
+QUALITY CHECKLIST:
+- [ ] Photo selection implemented
+- [ ] B&W photo validation added
+- [ ] Colorization type selector included
+- [ ] Saturation slider included
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Download/share functionality
+- [ ] Regeneration with different settings
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Photo selection implemented
+- [ ] B&W validation added
+- [ ] Colorization type selector added
+- [ ] Saturation control implemented
+- [ ] Validation before colorize()
+- [ ] Before/after comparison view
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Download/share buttons
+- [ ] Regeneration option
+- [ ] Cleanup on unmount
+- [ ] Original photo preserved
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  colorizationType: 'auto' | 'vintage' | 'vibrant' | 'natural'
+  saturation: number  // 0.5 to 1.5
+  onSelectPhoto: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Colorization Types**
+   - Auto: Automatic color detection (recommended for most photos)
+   - Vintage: Historical accuracy for old photos
+   - Vibrant: Rich, saturated colors for artistic effect
+   - Natural: Subtle, natural-looking colors
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="colorization"
-      userId="user-123"
-    />
-  );
+2. **Saturation Levels**
+   - 0.5-0.7: Muted colors (historical feel)
+   - 0.8-1.0: Natural colors (recommended)
+   - 1.1-1.5: Vibrant colors (artistic effect)
+
+3. **Image Quality**
+   - Minimum: 512x512 resolution
+   - Recommended: 1024x1024 or higher
+   - Format: JPEG or PNG
+   - Max size: 10MB
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Photo selected and validated as B&W
+- Check before enabling colorize button
+
+**isProcessing**: boolean
+- Colorization in progress
+- Show loading/progress indicator
+- Disable colorize button
+
+**progress**: number (0-100)
+- Colorization progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if colorization failed
+- Display to user with clear message
+
+**result**: {
+  imageUrl: string
+  originalImageUrl?: string
+  colorizationType?: string
+  saturation?: number
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface ColorizationFeatureConfig {
-  colorizationType?: 'auto' | 'vintage' | 'vibrant' | 'natural';
-  saturation?: number; // Color saturation level (0.5 - 1.5)
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: ColorizationResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Photo Selection
 
-### Processing Options
+1. **Photo Quality**
+   - Good: High-quality scans, clear content
+   - Bad: Blurry, low-resolution scans
 
-```tsx
-interface ColorizationOptions {
-  colorizationType: 'auto' | 'vintage' | 'vibrant' | 'natural';
-  saturation: number; // Saturation multiplier (0.5 - 1.5)
-  preserveTexture?: boolean; // Maintain photo texture (default: true)
-}
-```
+2. **Type Selection**
+   - Use Vintage for historical photos
+   - Use Vibrant for artistic effect
+   - Use Natural for subtle enhancement
+   - Use Auto for general use
 
-## Colorization Types
+3. **Saturation**
+   - Start with 1.0 for natural look
+   - Lower for vintage/historical feel
+   - Higher for vibrant colors
 
-### Auto
+### User Experience
 
-Automatic color detection and application:
+1. **Preview**
+   - Show B&W preview before colorizing
+   - Compare different colorization types
+   - Allow saturation adjustment
 
-```tsx
-const result = await feature.process({
-  colorizationType: 'auto',
-  saturation: 1.0,
-});
-```
+2. **Before/After Comparison**
+   - Side-by-side comparison
+   - Slider for easy comparison
+   - Zoom for detail inspection
 
-### Vintage
+---
 
-Historically accurate vintage tones:
+## 🐛 Common Pitfalls
 
-```tsx
-const result = await feature.process({
-  colorizationType: 'vintage',
-  saturation: 0.8,
-});
-```
+### Validation Issues
 
-### Vibrant
+❌ **Problem**: Attempting to colorize color photos
+✅ **Solution**: Validate photo is B&W before processing
 
-Rich, saturated colors:
+### Quality Issues
 
-```tsx
-const result = await feature.process({
-  colorizationType: 'vibrant',
-  saturation: 1.3,
-});
-```
+❌ **Problem**: Poor colorization results
+✅ **Solution**: Use higher quality scan, try different type
 
-### Natural
+### Historical Accuracy
 
-Subtle, natural-looking colors:
+❌ **Problem**: Colors don't match historical reality
+✅ **Solution**: Use vintage type, provide manual adjustment option
 
-```tsx
-const result = await feature.process({
-  colorizationType: 'natural',
-  saturation: 0.9,
-});
-```
+---
 
-## Usage Flow
+## 📦 Related Components
 
-1. Select **Photo** - Choose a black and white photo
-2. Choose **Type** - Select colorization style
-3. Adjust **Saturation** - Control color intensity
-4. Tap **Colorize** - Start colorization
-5. View **Result** - See the colorized photo
-6. Save or Share - Save or share the result
+Use these components from the library:
 
-## Component Examples
+- **PhotoUploadCard**: Upload photo interface
+- **ColorizationTypeSelector**: Choose colorization style
+- **SaturationSlider**: Adjust color intensity
+- **ResultDisplay**: Before/after comparison
+- **ProgressBar**: Progress display
 
-### Colorization Type Selector
+Located at: `src/presentation/components/`
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+---
 
-const types = [
-  { id: 'auto', name: 'Auto', description: 'Automatic detection' },
-  { id: 'vintage', name: 'Vintage', description: 'Historical tones' },
-  { id: 'vibrant', name: 'Vibrant', description: 'Rich colors' },
-  { id: 'natural', name: 'Natural', description: 'Subtle colors' },
-];
+## 🔄 Migration Strategy
 
-<GridSelector
-  options={types}
-  selectedOption={selectedType}
-  onSelectOption={setSelectedType}
-/>
-```
+If migrating from previous implementation:
 
-### Saturation Slider
+1. **Update imports** to new path
+2. **Add B&W photo validation**
+3. **Implement colorization type selector**
+4. **Update state handling** for new structure
+5. **Add before/after comparison**
+6. **Test all colorization types**
 
-```tsx
-import { Slider } from 'react-native';
+---
 
-<Slider
-  minimumValue={0.5}
-  maximumValue={1.5}
-  step={0.1}
-  value={saturation}
-  onValueChange={setSaturation}
-/>
+## 📚 Additional Resources
 
-<Text>Saturation: {saturation.toFixed(1)}x</Text>
-```
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/colorization/`
+- Architecture: `/ARCHITECTURE.md`
 
-### Before/After Comparison
+---
 
-```tsx
-import { ResultDisplay } from '@umituz/react-native-ai-generation-content';
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-{feature.state.result && photo && (
-  <ResultDisplay
-    originalImage={photo}
-    resultImage={feature.state.result.imageUrl}
-    onSave={() => feature.saveResult()}
-    onShare={() => shareImage(feature.state.result.imageUrl)}
-  />
-)}
-```
+---
 
-## Use Cases
+## 📝 Changelog
 
-### Family Photos
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-```tsx
-// Colorize old family photos
-const result = await feature.process({
-  colorizationType: 'vintage',
-  saturation: 0.9,
-});
-```
-
-### Historical Photos
-
-```tsx
-// Add color to historical images
-const result = await feature.process({
-  colorizationType: 'natural',
-  saturation: 0.8,
-  preserveTexture: true,
-});
-```
-
-### Artistic Effect
-
-```tsx
-// Create vibrant colorized artwork
-const result = await feature.process({
-  colorizationType: 'vibrant',
-  saturation: 1.4,
-});
-```
-
-## Best Practices
-
-1. **Photo Quality**: Use high-quality scans for best results
-2. **Type Selection**: Use Vintage for historical accuracy
-3. **Saturation**: Start with 1.0 and adjust as needed
-4. **Multiple Tries**: Different types work better for different photos
-5. **Texture Preservation**: Enable for photos with important textures
-
-## Related Features
-
-- [Photo Restoration](../photo-restoration) - Restore old photos
-- [Upscaling](../upscaling) - Increase image resolution
-- [HD Touch Up](../hd-touch-up) - Enhance photo quality
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

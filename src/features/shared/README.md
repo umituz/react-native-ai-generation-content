@@ -2,44 +2,227 @@
 
 Common functionality and utilities shared across multiple AI features.
 
-## Overview
+## 📍 Import Path
 
-This directory contains shared components, hooks, and utilities used by multiple features. It provides reusable implementations for common patterns like dual image/video processing.
-
-## Features
-
-- **Dual Image/Video Processing**: Shared logic for features that require two inputs
-- **Common Hooks**: Reusable hooks for similar feature patterns
-- **Type Definitions**: Shared TypeScript types and interfaces
-- **Utilities**: Common helper functions
-
-## Installation
-
-This is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
+```typescript
+import {
+  useDualImageVideoProcessing,
+  DualImagePicker,
+  DualVideoPicker
+} from '@umituz/react-native-ai-generation-content';
 ```
 
-## Dual Image/Video Processing
+**Location**: `src/features/shared/`
 
-Many AI features require two images or videos as input (e.g., face swap, AI hug, AI kiss). The dual image/video processing module provides a shared implementation for these features.
+## 🎯 Shared Purpose
 
-### Data Types
+Provide reusable components, hooks, and utilities for common AI feature patterns. Focus on dual image/video processing for features requiring two inputs, with shared state management, validation, and error handling.
 
-#### DualImageVideoProcessingStartData
+---
 
-```tsx
+## 📋 Usage Strategy
+
+### When to Use Shared Features
+
+✅ **Use Cases:**
+- Features requiring two images/videos
+- Common state management patterns
+- Shared validation logic
+- Reusable UI components
+- Dual input processing
+
+❌ **When NOT to Use:**
+- Single input features (use feature-specific hooks)
+- Complex custom logic (build custom solution)
+- Feature-specific requirements
+
+### Implementation Strategy
+
+1. **Identify common patterns** across features
+2. **Use shared hooks** for dual processing
+3. **Implement validation** consistently
+4. **Handle errors** uniformly
+5. **Track progress** with shared UI
+6. **Reset states** properly
+7. **Customize** when needed
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Dual Processing
+- **MUST** validate both inputs before processing
+- **MUST** handle missing inputs gracefully
+- **MUST** provide clear input labels
+- **MUST** implement input selection
+- **MUST** check `isReady` before processing
+
+### 2. State Management
+- **MUST** track both inputs independently
+- **MUST** handle processing state
+- **MUST** track progress percentage
+- **MUST** display errors clearly
+- **MUST** reset state properly
+
+### 3. Validation
+- **MUST** validate input types
+- **MUST** check file sizes
+- **MUST** verify input quality
+- **MUST** provide validation feedback
+- **MUST** prevent invalid operations
+
+### 4. User Experience
+- **MUST** provide clear UI labels
+- **MUST** show progress indicators
+- **MUST** handle long operations
+- **MUST** allow cancellation
+- **MUST** confirm before processing
+
+### 5. Error Handling
+- **MUST** handle processing errors
+- **MUST** provide user-friendly messages
+- **MUST** offer retry options
+- **MUST** log errors appropriately
+- **MUST** recover gracefully
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Validation**
+   - Always validate both inputs
+   - Never process without checking
+   - Provide clear validation messages
+
+2. **No Confusing UI**
+   - Always label inputs clearly
+   - Never mix up source/target
+   - Show which input is which
+
+3. **No Silent Failures**
+   - Always explain what went wrong
+   - Never fail silently
+   - Provide actionable guidance
+
+4. **No Blocking Operations**
+   - Never block main thread
+   - Always show progress
+   - Allow cancellation
+
+5. **No State Leaks**
+   - Always cleanup properly
+   - Reset state when done
+   - Clear temporary data
+
+6. **No Missing Context**
+   - Always explain what's happening
+   - Show current operation
+   - Provide progress feedback
+
+7. **No Partial Processing**
+   - Always complete or fail cleanly
+   - Never leave partial state
+   - Handle cancellation properly
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing dual image/video processing using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import shared processing hooks
+2. Implement dual input selection
+3. Validate both inputs
+4. Handle processing state
+5. Show progress indicators
+6. Handle errors gracefully
+7. Implement confirmation dialog
+8. Reset state properly
+
+CRITICAL RULES:
+- MUST validate both inputs before processing
+- MUST provide clear UI labels
+- MUST handle missing inputs
+- MUST show progress during processing
+- MUST implement error handling
+- MUST allow user cancellation
+
+SHARED HOOKS:
+- useDualImageVideoProcessing: Main dual processing hook
+- DualImagePicker: Image selection component
+- DualVideoPicker: Video selection component
+
+CONFIGURATION:
+- featureType: 'face-swap' | 'ai-hug' | 'ai-kiss' | etc.
+- inputType: 'image' | 'video'
+- defaultOptions: Feature-specific options
+- onProcessingStart: Callback when processing starts
+- onProcessingComplete: Callback when processing completes
+- onError: Error callback
+
+STATE MANAGEMENT:
+- sourceImageOrVideo: First input
+- targetImageOrVideo: Second input
+- isProcessing: Processing state
+- progress: Progress percentage (0-100)
+- error: Error message if failed
+- result: Processing result
+- isReady: Both inputs provided and valid
+
+VALIDATION:
+- Check both inputs provided
+- Verify input types match
+- Validate file sizes
+- Check input quality
+- Provide clear feedback
+
+STRICTLY FORBIDDEN:
+- No missing validation
+- No confusing UI
+- No silent failures
+- No blocking operations
+- No state leaks
+- No missing context
+- No partial processing
+
+QUALITY CHECKLIST:
+- [ ] Both inputs validated
+- [ ] Clear UI labels
+- [ ] Progress tracking
+- [ ] Error handling
+- [ ] Confirmation dialog
+- [ ] State reset
+- [ ] Cancellation support
+- [ ] User feedback
+- [ ] Clean state management
+- [ ] Proper cleanup
+```
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Dual Processing Types
+
+```typescript
+type DualInputType = 'image' | 'video';
+
 interface DualImageVideoProcessingStartData {
-  sourceImageOrVideo: string; // Base64 of source image/video
-  targetImageOrVideo: string; // Base64 of target image/video
+  sourceImageOrVideo: string; // Base64
+  targetImageOrVideo: string; // Base64
   options?: Record<string, any>;
 }
-```
 
-#### DualImageVideoResult
-
-```tsx
 interface DualImageVideoResult {
   success: boolean;
   result?: {
@@ -52,12 +235,12 @@ interface DualImageVideoResult {
 }
 ```
 
-#### DualImageVideoFeatureConfig
+### Feature Config
 
-```tsx
+```typescript
 interface DualImageVideoFeatureConfig {
-  featureType: string; // e.g., 'face-swap', 'ai-hug', 'ai-kiss'
-  inputType: 'image' | 'video';
+  featureType: string;
+  inputType: DualInputType;
   defaultOptions?: Record<string, any>;
   onProcessingStart?: () => void;
   onProcessingComplete?: (result: DualImageVideoResult) => void;
@@ -65,216 +248,64 @@ interface DualImageVideoFeatureConfig {
 }
 ```
 
-## Usage Example
+---
 
-### Using Dual Image/Video Processing
+## 📊 Features Using Shared
 
-```tsx
-import { useDualImageVideoProcessing } from '@umituz/react-native-ai-generation-content';
+### Dual Image Features
+- **Face Swap**: Swap faces between images
+- **AI Hug**: Generate hug images
+- **AI Kiss**: Generate kiss images
+- **Couple Future**: Future predictions
 
-function FaceSwapScreen() {
-  const [sourceImage, setSourceImage] = useState<string | null>(null);
-  const [targetImage, setTargetImage] = useState<string | null>(null);
+### Shared Components
+- `DualImagePicker` - Image selection UI
+- `DualVideoPicker` - Video selection UI
+- `DualImageVideoState` - State management
 
-  const {
-    state,
-    selectSourceImage,
-    selectTargetImage,
-    process,
-    reset,
-    isReady,
-  } = useDualImageVideoProcessing({
-    config: {
-      featureType: 'face-swap',
-      inputType: 'image',
-      defaultOptions: {
-        enhanceFace: true,
-        matchSkinTone: true,
-      },
-      onProcessingStart: () => console.log('Starting face swap...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectSourceImage: async () => {
-      // Select source image
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setSourceImage(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSelectTargetImage: async () => {
-      // Select target image
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setTargetImage(base64);
-        return base64;
-      }
-      return null;
-    },
-  });
+---
 
-  return (
-    <View>
-      <DualImagePicker
-        sourceImage={sourceImage}
-        targetImage={targetImage}
-        onSelectSourceImage={selectSourceImage}
-        onSelectTargetImage={selectTargetImage}
-      />
+## 🎨 Best Practices
 
-      <Button
-        title="Process"
-        onPress={process}
-        disabled={!isReady || state.isProcessing}
-      />
-
-      {state.isProcessing && <ActivityIndicator />}
-
-      {state.result && (
-        <Image source={{ uri: state.result.result?.imageUrl }} />
-      )}
-
-      {state.error && <Text>Error: {state.error}</Text>}
-    </View>
-  );
-}
-```
-
-## State Management
-
-### Processing State
-
-```tsx
-interface DualImageVideoState {
-  sourceImageOrVideo: string | null;
-  targetImageOrVideo: string | null;
-  result: DualImageVideoResult | null;
-  isProcessing: boolean;
-  progress: number;
-  error: string | null;
-}
-```
-
-## Features Using Dual Image/Video Processing
-
-- **Face Swap**: Swap faces between two images
-- **AI Hug**: Generate hug images from two photos
-- **AI Kiss**: Generate kiss images from two photos
-- **Couple Future**: Generate future predictions for couples
-
-## Helper Components
-
-### DualImagePicker
-
-```tsx
-import { DualImagePicker } from '@umituz/react-native-ai-generation-content';
-
-<DualImagePicker
-  sourceImage={sourceImage}
-  targetImage={targetImage}
-  onSelectSourceImage={handleSelectSource}
-  onSelectTargetImage={handleSelectTarget}
-  sourceLabel="First Image"
-  targetLabel="Second Image"
-/>
-```
-
-### DualVideoPicker
-
-```tsx
-import { DualVideoPicker } from '@umituz/react-native-ai-generation-content';
-
-<DualVideoPicker
-  sourceVideo={sourceVideo}
-  targetVideo={targetVideo}
-  onSelectSourceVideo={handleSelectSource}
-  onSelectTargetVideo={handleSelectTarget}
-  sourceLabel="First Video"
-  targetLabel="Second Video"
-/>
-```
-
-## Advanced Usage
-
-### Custom Processing Logic
-
-```tsx
-import { useDualImageVideoProcessing } from '@umituz/react-native-ai-generation-content';
-
-const { process } = useDualImageVideoProcessing({
-  config: {
-    featureType: 'my-custom-feature',
-    inputType: 'image',
-  },
-  // ... other props
-  customProcess: async (source, target, options) => {
-    // Custom processing logic
-    const result = await myCustomProcessingFunction(source, target, options);
-    return result;
-  },
-});
-```
+### Input Labeling
+- "First Image/Video" vs "Second Image/Video"
+- "Source" vs "Target" for swap features
+- "Person 1" vs "Person 2" for couple features
+- Always show which is which
 
 ### Validation
+- Check both inputs present
+- Validate file types
+- Check file sizes
+- Verify quality
+- Provide clear feedback
 
-```tsx
-const { validate } = useDualImageVideoProcessing({
-  // ... config
-  validateInput: (source, target) => {
-    if (!source || !target) {
-      throw new Error('Both images are required');
-    }
-    if (source.size > MAX_SIZE) {
-      throw new Error('Source image is too large');
-    }
-    if (target.size > MAX_SIZE) {
-      throw new Error('Target image is too large');
-    }
-    return true;
-  },
-});
-```
+### User Experience
+- Show input previews
+- Display progress clearly
+- Confirm before processing
+- Allow cancellation
+- Explain errors clearly
 
-### Before Process Hook
+---
 
-```tsx
-const { process } = useDualImageVideoProcessing({
-  // ... config
-  onBeforeProcess: async (source, target) => {
-    // Show confirmation dialog
-    return new Promise((resolve) => {
-      Alert.alert(
-        'Confirm',
-        'Do you want to proceed?',
-        [
-          { text: 'Cancel', onPress: () => resolve(false) },
-          { text: 'OK', onPress: () => resolve(true) },
-        ]
-      );
-    });
-  },
-});
-```
+## 🐛 Common Pitfalls
 
-## Best Practices
+❌ **Mixed up inputs**: Clear labels, visual indicators
+❌ **Missing validation**: Always check both inputs
+❌ **No feedback**: Show progress, errors clearly
+❌ **State issues**: Proper cleanup and reset
 
-1. **Input Validation**: Always validate inputs before processing
-2. **Error Handling**: Handle errors gracefully and show user-friendly messages
-3. **Progress Tracking**: Show progress to users during processing
-4. **Confirmation**: Use confirmation dialogs for destructive operations
-5. **State Reset**: Reset state after successful operations
+---
 
-## Related Features
+## 📚 Related Features
 
-- [Face Swap](../face-swap) - Swap faces between images
-- [AI Hug](../ai-hug) - Generate AI hug images
-- [AI Kiss](../ai-kiss) - Generate AI kiss images
-- [Couple Future](../couple-future) - Generate future couple predictions
+- [Face Swap](../face-swap) - Uses dual image processing
+- [AI Hug](../ai-hug) - Uses dual image processing
+- [AI Kiss](../ai-kiss) - Uses dual image processing
+- [Couple Future](../couple-future) - Uses dual image processing
 
-## License
+---
 
-MIT
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)

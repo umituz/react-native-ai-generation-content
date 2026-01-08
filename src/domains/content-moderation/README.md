@@ -2,362 +2,305 @@
 
 Content moderation and filtering system for AI-generated content.
 
-## Overview
+## 📍 Import Path
 
-The Content Moderation domain provides comprehensive content moderation capabilities for AI-generated content. It helps ensure that generated content meets safety guidelines and community standards.
-
-## Features
-
-- **Text Moderation**: Filter inappropriate text content
-- **Image Moderation**: Detect and filter inappropriate images
-- **Video Moderation**: Moderate video content
-- **Voice Moderation**: Filter audio content
-- **Configurable Rules**: Customize moderation rules and policies
-- **Policy Violation Detection**: Detect and report policy violations
-
-## Installation
-
-This domain is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
+```typescript
+import {
+  ModerationWrapper,
+  moderateText,
+  moderateImage,
+  moderateVideo,
+  moderateVoice
+} from '@umituz/react-native-ai-generation-content';
 ```
 
-## Basic Usage
+**Location**: `src/domains/content-moderation/`
 
-### Using Moderation Wrapper
+## 🎯 Domain Purpose
 
-```tsx
-import { ModerationWrapper } from '@umituz/react-native-ai-generation-content';
+Provide comprehensive content moderation capabilities for AI-generated content. Ensure that generated content meets safety guidelines and community standards through configurable rules, policy violation detection, and multi-modal content filtering.
 
-// Wrap generation with moderation
-const wrapper = new ModerationWrapper({
-  enabled: true,
-  onViolation: (result) => {
-    Alert.alert('Content Warning', result.warning);
-  },
-});
+---
 
-// Generate with moderation
-const result = await wrapper.execute({
-  type: 'text-to-image',
-  input: { prompt: 'Your prompt here' },
-  generate: async (input) => {
-    return await generateImage(input);
-  },
-});
+## 📋 Usage Strategy
 
-if (result.isModerated) {
-  console.log('Content was flagged:', result.violations);
-}
+### When to Use This Domain
+
+✅ **Use Cases:**
+- Filtering inappropriate text prompts
+- Detecting policy violations in images
+- Moderating user-generated content
+- Ensuring community safety standards
+- Compliance with content regulations
+
+❌ **When NOT to Use:**
+- Censoring legitimate content
+- Over-blocking creative expression
+- Replacing human moderation entirely
+- Real-time chat moderation (use specialized tools)
+
+### Implementation Strategy
+
+1. **Enable moderation** early in development
+2. **Configure rules** based on use case
+3. **Set thresholds** appropriately (strict vs lenient)
+4. **Implement callbacks** for violations
+5. **Test thoroughly** with edge cases
+6. **Monitor false positives/negatives**
+7. **Adjust rules** based on feedback
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Configuration Requirements
+- **MUST** enable moderation for user-generated content
+- **MUST** configure rules based on platform policies
+- **MUST** set appropriate confidence thresholds
+- **MUST** implement violation callbacks
+- **MUST** handle moderation results properly
+
+### 2. Rule Categories
+- **MUST** cover profanity filtering
+- **MUST** cover hate speech detection
+- **MUST** cover violent content
+- **MUST** cover sexual content
+- **MUST** cover harassment/bullying
+
+### 3. Threshold Settings
+- **MUST** balance strictness with user experience
+- **MUST** test thresholds with real content
+- **MUST** allow adjustment based on feedback
+- **MUST** consider platform-specific requirements
+- **MUST** document threshold rationale
+
+### 4. User Experience
+- **MUST** provide clear violation messages
+- **MUST** allow appeals/overrides when appropriate
+- **MUST** explain why content was flagged
+- **MUST** offer guidance on corrections
+- **MUST** respect user context
+
+### 5. Performance
+- **MUST** implement efficient moderation checks
+- **MUST** cache moderation results when appropriate
+- **MUST** handle high-volume content
+- **MUST NOT** block main thread excessively
+- **MUST** optimize for speed
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Disabled Moderation**
+   - Always enable moderation for public platforms
+   - Never ship without moderation in production
+   - Document why if disabled (private/internal only)
+
+2. **No Hardcoded Rules**
+   - Never hardcode moderation logic
+   - Use configurable rules system
+   - Allow runtime adjustment
+
+3. **No Silent Blocking**
+   - Always explain why content was blocked
+   - Never silently filter content
+   - Provide clear feedback to users
+
+4. **No Over-Blocking**
+   - Avoid false positives
+   - Test thoroughly before deploying
+   - Implement appeal process
+
+5. **No Context Ignoring**
+   - Always consider content context
+   - Never apply rules blindly
+   - Allow for exceptions when appropriate
+
+6. **No Privacy Violations**
+   - Never store moderation data unnecessarily
+   - Anonymize logged content
+   - Comply with privacy regulations
+
+7. **No Biased Rules**
+   - Ensure rules are fair and unbiased
+   - Test for demographic bias
+   - Regularly audit moderation outcomes
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing content moderation using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import moderation functions from package
+2. Enable moderation for user-generated content
+3. Configure rules based on platform policies
+4. Set appropriate confidence thresholds
+5. Implement violation callbacks
+6. Test with edge cases
+7. Monitor false positives/negatives
+8. Adjust rules based on feedback
+
+CRITICAL RULES:
+- MUST enable moderation before production
+- MUST implement clear violation messaging
+- MUST allow appeals/overrides when appropriate
+- MUST explain why content was flagged
+- MUST test thoroughly with real content
+- MUST document threshold rationale
+
+MODERATION TYPES:
+- Text: Filter inappropriate text content
+- Image: Detect and filter inappropriate images
+- Video: Moderate video content
+- Voice: Filter audio content
+
+RULE CATEGORIES:
+- Profanity: Filter bad language
+- Hate Speech: Detect hateful content
+- Violence: Flag violent content
+- Sexual: Detect sexual content
+- Harassment: Flag bullying/harassment
+
+THRESHOLDS:
+- Strict: 0.3 (more blocking, safer)
+- Balanced: 0.5 (default)
+- Lenient: 0.8 (less blocking, more risk)
+
+STRICTLY FORBIDDEN:
+- No disabled moderation in production
+- No hardcoded rules
+- No silent blocking
+- No over-blocking
+- No context ignoring
+- No privacy violations
+- No biased rules
+
+QUALITY CHECKLIST:
+- [ ] Moderation enabled
+- [ ] Rules configured
+- [ ] Thresholds set appropriately
+- [ ] Violation callbacks implemented
+- [ ] Clear user messaging
+- [ ] Appeal process in place
+- [ ] Testing with edge cases
+- [ ] Monitoring implemented
+- [ ] Feedback mechanism
+- [ ] Regular audits
 ```
 
-### Direct Moderation
+---
 
-```tsx
-import { moderateText, moderateImage } from '@umituz/react-native-ai-generation-content';
-
-// Moderate text
-const textResult = await moderateText({
-  text: 'Some text to moderate',
-  rules: ['profanity', 'hate-speech', 'violence'],
-});
-
-if (textResult.isSafe) {
-  console.log('Text is safe');
-} else {
-  console.log('Violations:', textResult.violations);
-}
-
-// Moderate image
-const imageResult = await moderateImage({
-  imageBase64: 'base64...',
-  rules: ['nudity', 'violence', 'gore'],
-});
-
-if (imageResult.isSafe) {
-  console.log('Image is safe');
-} else {
-  console.log('Violations:', imageResult.violations);
-}
-```
-
-## Configuration Options
+## 🛠️ Configuration Strategy
 
 ### Moderation Config
 
-```tsx
+```typescript
 interface ModerationConfig {
-  enabled: boolean; // Enable/disable moderation
-  rules?: ModerationRule[]; // Custom moderation rules
-  threshold?: number; // Confidence threshold (0-1)
-  onViolation?: (result: ModerationResult) => void; // Violation callback
-  allowOverride?: boolean; // Allow users to override warnings
-}
-```
-
-### Moderation Rules
-
-```tsx
-interface ModerationRule {
-  id: string;
-  category: 'profanity' | 'hate-speech' | 'violence' | 'sexual' | 'self-harm' | 'other';
-  severity: 'low' | 'medium' | 'high';
   enabled: boolean;
-  action: 'flag' | 'block' | 'warn';
+  rules?: ModerationRule[];
+  threshold?: number; // 0-1, default: 0.5
+  onViolation?: (result: ModerationResult) => void;
+  allowOverride?: boolean;
 }
 ```
 
-## Moderation Types
+### Strict vs Lenient
 
-### Text Moderation
-
-```tsx
-import { moderateText } from '@umituz/react-native-ai-generation-content';
-
-const result = await moderateText({
-  text: 'Your text content',
-  rules: ['profanity', 'hate-speech', 'harassment'],
-});
-
-// Result
-interface TextModerationResult {
-  isSafe: boolean;
-  confidence: number;
-  violations: {
-    category: string;
-    severity: 'low' | 'medium' | 'high';
-    confidence: number;
-    position?: { start: number; end: number };
-  }[];
-  filteredText?: string; // Text with violations removed
-}
-```
-
-### Image Moderation
-
-```tsx
-import { moderateImage } from '@umituz/react-native-ai-generation-content';
-
-const result = await moderateImage({
-  imageBase64: 'base64...',
-  rules: ['nudity', 'violence', 'gore', 'racy'],
-});
-
-// Result
-interface ImageModerationResult {
-  isSafe: boolean;
-  confidence: number;
-  violations: {
-    category: string;
-    severity: 'low' | 'medium' | 'high';
-    confidence: number;
-    boundingBox?: { x: number; y: number; width: number; height: number };
-  }[];
-}
-```
-
-### Video Moderation
-
-```tsx
-import { moderateVideo } from '@umituz/react-native-ai-generation-content';
-
-const result = await moderateVideo({
-  videoUrl: 'https://...',
-  rules: ['nudity', 'violence', 'gore'],
-  frameInterval: 5, // Check every 5th frame
-});
-
-// Result
-interface VideoModerationResult {
-  isSafe: boolean;
-  confidence: number;
-  violations: {
-    category: string;
-    severity: 'low' | 'medium' | 'high';
-    timestamp: number; // Time in seconds
-    confidence: number;
-  }[];
-}
-```
-
-### Voice Moderation
-
-```tsx
-import { moderateVoice } from '@umituz/react-native-ai-generation-content';
-
-const result = await moderateVoice({
-  audioUrl: 'https://...',
-  rules: ['profanity', 'hate-speech', 'violence'],
-  language: 'en',
-});
-
-// Result
-interface VoiceModerationResult {
-  isSafe: boolean;
-  confidence: number;
-  transcript?: string; // Transcribed text
-  violations: {
-    category: string;
-    severity: 'low' | 'medium' | 'high';
-    timestamp: number;
-    confidence: number;
-    text?: string; // Transcribed text segment
-  }[];
-}
-```
-
-## Using with AI Features
-
-### Wrap Generation with Moderation
-
-```tsx
-import { generationWrapper, ModerationWrapper } from '@umituz/react-native-ai-generation-content';
-
-// Setup moderation
-const moderation = new ModerationWrapper({
-  enabled: true,
+**Strict (Safe Platforms)**
+```typescript
+{
+  threshold: 0.3,
+  allowOverride: false,
   rules: [
-    { id: 'no-nudity', category: 'sexual', severity: 'high', enabled: true, action: 'block' },
-    { id: 'no-violence', category: 'violence', severity: 'medium', enabled: true, action: 'warn' },
-  ],
-  onViolation: (result) => {
-    Alert.alert('Content Flagged', result.warning);
-  },
-});
-
-// Wrap generation
-const wrappedGenerate = moderation.wrap({
-  type: 'text-to-image',
-  generate: async (input) => {
-    return await generationWrapper.executeImageFeature({
-      featureType: 'text-to-image',
-      inputData: input,
-    });
-  },
-});
-
-// Use wrapped generation
-const result = await wrappedGenerate({
-  prompt: 'Your prompt here',
-});
-
-if (result.isModerated) {
-  // Content was flagged
-  console.log('Violations:', result.violations);
-} else {
-  // Content is safe
-  console.log('Generated image:', result.imageUrl);
+    { category: 'profanity', severity: 'low', action: 'block' },
+    { category: 'hate-speech', severity: 'high', action: 'block' },
+    // ... all categories, block on low severity
+  ]
 }
 ```
 
-### Custom Moderation Rules
-
-```tsx
-import { ModerationWrapper } from '@umituz/react-native-ai-generation-content';
-
-const customRules = [
-  {
-    id: 'custom-1',
-    category: 'other' as const,
-    severity: 'medium' as const,
-    enabled: true,
-    action: 'warn' as const,
-    check: async (content: string) => {
-      // Custom check logic
-      return {
-        isViolation: content.includes('forbidden-word'),
-        confidence: 1.0,
-      };
-    },
-  },
-];
-
-const moderation = new ModerationWrapper({
-  enabled: true,
-  rules: customRules,
-});
-```
-
-## Component Integration
-
-### ModerationSummary Component
-
-```tsx
-import { ModerationSummary } from '@umituz/react-native-ai-generation-content';
-
-<ModerationSummary
-  violations={moderationResult.violations}
-  onDismiss={() => console.log('Dismissed')}
-  onOverride={() => console.log('Overridden')}
-/>
-```
-
-### Show Warning Helper
-
-```tsx
-import { showContentModerationWarning } from '@umituz/react-native-ai-generation-content';
-
-const result = await moderateText({ text: '...' });
-
-if (!result.isSafe) {
-  showContentModerationWarning({
-    violations: result.violations,
-    onConfirm: () => {
-      // User acknowledged and wants to proceed
-    },
-    onCancel: () => {
-      // User cancelled
-    },
-  });
-}
-```
-
-## Best Practices
-
-1. **Enable Early**: Enable moderation from the start of development
-2. **Custom Rules**: Customize rules based on your use case
-3. **Thresholds**: Adjust confidence thresholds based on your needs
-4. **User Feedback**: Allow users to provide feedback on moderation
-5. **Transparency**: Be transparent about moderation with users
-
-## Configuration Examples
-
-### Strict Moderation
-
-```tsx
-const strictConfig: ModerationConfig = {
-  enabled: true,
-  threshold: 0.3, // Lower threshold = more strict
-  rules: [
-    { id: 'profanity', category: 'profanity', severity: 'low', enabled: true, action: 'block' },
-    { id: 'hate-speech', category: 'hate-speech', severity: 'high', enabled: true, action: 'block' },
-    { id: 'violence', category: 'violence', severity: 'low', enabled: true, action: 'block' },
-    { id: 'sexual', category: 'sexual', severity: 'low', enabled: true, action: 'block' },
-  ],
-};
-```
-
-### Lenient Moderation
-
-```tsx
-const lenientConfig: ModerationConfig = {
-  enabled: true,
-  threshold: 0.8, // Higher threshold = more lenient
+**Lenient (Creative Platforms)**
+```typescript
+{
+  threshold: 0.8,
   allowOverride: true,
   rules: [
-    { id: 'hate-speech', category: 'hate-speech', severity: 'high', enabled: true, action: 'block' },
-    { id: 'sexual', category: 'sexual', severity: 'high', enabled: true, action: 'warn' },
-  ],
-};
+    { category: 'hate-speech', severity: 'high', action: 'block' },
+    { category: 'sexual', severity: 'high', action: 'warn' },
+    // ... only high severity, allow warnings
+  ]
+}
 ```
 
-## Related Features
+---
+
+## 📊 Moderation Types
+
+### Text Moderation
+- Detect profanity, hate speech, harassment
+- Return filtered text and violation positions
+- Support for multiple languages
+
+### Image Moderation
+- Detect nudity, violence, gore
+- Return bounding boxes for violations
+- Face detection integration
+
+### Video Moderation
+- Frame-by-frame analysis
+- Timestamp violation reporting
+- Configurable frame intervals
+
+### Voice Moderation
+- Transcribe and analyze speech
+- Detect profanity and hate speech
+- Timestamp violations
+
+---
+
+## 🔐 Privacy & Ethics
+
+### Privacy
+- Anonymize moderation data
+- Store minimal information
+- Comply with GDPR/CCPA
+
+### Ethics
+- Avoid biased moderation
+- Regular bias audits
+- Fair appeal process
+- Transparent policies
+
+---
+
+## 🐛 Common Pitfalls
+
+❌ **Over-blocking**: Too many false positives → Adjust thresholds
+❌ **Under-blocking**: Missed violations → Lower thresholds, add rules
+❌ **Slow moderation**: Performance issues → Optimize, cache results
+❌ **Poor messaging**: User confusion → Clear violation explanations
+
+---
+
+## 📚 Related Domains
 
 - [Prompts](../prompts) - AI prompt management
 - [Creations](../creations) - Manage AI-generated creations
 - [Face Detection](../face-detection) - Face detection API
 
-## License
+---
 
-MIT
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)

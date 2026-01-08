@@ -1,369 +1,414 @@
-# Image to Video
+# Image to Video Feature
 
 Convert static images into animated videos using AI.
 
-## Features
+## 📍 Import Path
 
-- Animate static photos into videos
-- Multiple animation styles (zoom, pan, 3D motion)
-- Support for various durations
-- Natural movement patterns
-- High-quality output
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useImageToVideoFeature } from '@umituz/react-native-ai-generation-content';
-import * as ImagePicker from 'react-native-image-picker';
+```
 
-function ImageToVideoScreen() {
-  const [image, setImage] = useState<string | null>(null);
+**Location**: `src/features/image-to-video/`
 
-  const feature = useImageToVideoFeature({
-    config: {
-      motionType: 'zoom-in',
-      duration: 4,
-      onProcessingStart: () => console.log('Creating video...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    onSelectImage: async () => {
-      const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo' });
-      if (result.assets && result.assets[0].uri) {
-        const base64 = await convertToBase64(result.assets[0].uri);
-        setImage(base64);
-        return base64;
-      }
-      return null;
-    },
-    onSaveVideo: async (videoUrl) => {
-      await saveToGallery(videoUrl);
-    },
-  });
+## 🎯 Feature Purpose
 
-  return (
-    <View>
-      <PhotoUploadCard
-        image={image}
-        onSelectImage={feature.selectImage}
-        title="Select Image to Animate"
-      />
+Transform static photos into dynamic animated videos using AI. Supports multiple motion types including zoom in/out, pan, and 3D parallax effects for creating engaging video content from still images.
 
-      <MotionTypeSelector
-        selectedType={feature.state.motionType}
-        onSelectType={feature.setMotionType}
-      />
+---
 
-      <DurationSelector
-        selectedDuration={feature.state.duration}
-        onSelectDuration={feature.setDuration}
-      />
+## 📋 Usage Strategy
 
-      <Button
-        title="Create Video"
-        onPress={feature.process}
-        disabled={!feature.isReady || feature.state.isProcessing}
-      />
+### When to Use This Feature
 
-      {feature.state.isProcessing && (
-        <View>
-          <Text>Progress: {feature.state.progress}%</Text>
-          <ProgressBar progress={feature.state.progress} />
-        </View>
-      )}
+✅ **Use Cases:**
+- Creating social media content from photos
+- Adding motion to product images
+- Creating photo slideshows
+- Enhancing storytelling with movement
+- Dynamic video presentations
 
-      {feature.state.result && (
-        <Video source={{ uri: feature.state.result.videoUrl }} />
-      )}
-    </View>
-  );
+❌ **When NOT to Use:**
+- Video from text descriptions (use Text to Video)
+- Video editing of existing footage (use video editing software)
+- Complex video effects (use professional video tools)
+- Adding overlays/text to video (use video editing tools)
+
+### Implementation Strategy
+
+1. **Select static image** to animate
+2. **Choose motion type** (zoom-in, zoom-out, pan-left, pan-right, 3D)
+3. **Set duration** and intensity level
+4. **Generate animated video** with progress tracking
+5. **Preview result** and offer regeneration
+6. **Save or share** final video
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Image Requirements
+- **MUST** provide ONE image to animate
+- **MUST** use high-quality images (min 512x512 recommended)
+- **MUST** have clear focal point for best motion results
+- **MUST NOT** exceed file size limits (10MB max)
+- **MUST NOT** use extremely blurry or low-resolution images
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `motionType` (zoom-in, zoom-out, pan-left, pan-right, 3D)
+- **MUST** set `duration` in seconds (2-8 range)
+- **MUST** implement `onError` callback
+- **MUST** implement `onSelectImage` callback
+
+### 3. State Management
+- **MUST** check `isReady` before enabling generate button
+- **MUST** display progress during video generation
+- **MUST** handle long processing times
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement image compression before upload
+- **MUST** show progress indicator for processing
+- **MUST** cache generated videos locally
+- **MUST** allow users to cancel processing
+- **MUST NOT** generate multiple videos simultaneously
+
+### 5. Content Quality
+- **MUST** provide video preview before save
+- **MUST** allow duration adjustment
+- **MUST** support various motion types
+- **MUST** handle intensity adjustment
+- **MUST** offer motion regeneration
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Missing Images**
+   - Always validate image is selected
+   - Never call process() without image
+
+2. **No Auto-Processing**
+   - Never start animation without user action
+   - Always require explicit "Create Video" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore generation failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store both original and video simultaneously
+   - Clean up temporary video files
+   - Implement proper video disposal
+
+6. **No Blocked UI**
+   - Never block main thread with video processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Copyright Issues**
+   - Never claim copyrighted content as original
+   - Allow only user-provided images
+   - Implement proper attribution
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing an image to video feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useImageToVideoFeature hook
+3. Select motion type (zoom-in, zoom-out, pan-left, pan-right, 3D)
+4. Implement image selection UI
+5. Set duration (2-8 seconds)
+6. Adjust intensity level (0.0 to 1.0)
+7. Validate image before generation
+8. Show video preview with playback controls
+9. Handle long processing times with progress
+10. Implement proper error handling
+11. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate image before calling generate()
+- MUST show video preview with playback controls
+- MUST handle motion type selection
+- MUST adjust duration appropriately
+- MUST implement debouncing (300ms)
+- MUST allow motion regeneration
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set motionType: 'zoom-in' | 'zoom-out' | 'pan-left' | 'pan-right' | '3d'
+- Set duration: 2-8 (seconds)
+- Set intensity: 0.0 to 1.0 (default: 0.7)
+- Set fps: 30 (frames per second)
+- Implement onSelectImage callback
+- Implement onSaveVideo callback
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+OPTIONS:
+- motionType: Select animation style
+- duration: 2-8 seconds
+- intensity: 0.0 (subtle) to 1.0 (strong motion)
+- fps: Frames per second (default: 30)
+
+STRICTLY FORBIDDEN:
+- No missing image validation
+- No auto-processing without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No copyright violations
+
+QUALITY CHECKLIST:
+- [ ] Image selection implemented
+- [ ] Motion type selector added
+- [ ] Duration control included
+- [ ] Intensity slider added
+- [ ] Video preview with playback
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Download/share functionality
+- [ ] Motion regeneration option
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Image selection implemented
+- [ ] Motion type selector added
+- [ ] Duration control implemented
+- [ ] Intensity slider included
+- [ ] Validation before generate()
+- [ ] Video preview with playback
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Download/share buttons
+- [ ] Motion regeneration option
+- [ ] Cleanup on unmount
+- [ ] Original image preserved
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  motionType: 'zoom-in' | 'zoom-out' | 'pan-left' | 'pan-right' | '3d'
+  duration: number  // 2-8 seconds
+  onSelectImage: () => Promise<string | null>
+}
+
+// Optional callbacks
+{
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Motion Types**
+   - Zoom In: Gradually zoom into focal point
+   - Zoom Out: Gradually zoom out from image
+   - Pan Left: Slowly pan image to the left
+   - Pan Right: Slowly pan image to the right
+   - 3D: Add depth with parallax effect
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="image-to-video"
-      userId="user-123"
-    />
-  );
+2. **Duration Settings**
+   - Short: 2-3s (social media, quick views)
+   - Medium: 4-5s (standard content)
+   - Long: 6-8s (presentations, detailed views)
+
+3. **Intensity Levels**
+   - 0.3-0.5: Subtle motion
+   - 0.6-0.8: Balanced animation (recommended)
+   - 0.9-1.0: Strong motion effects
+
+4. **Image Quality**
+   - Minimum: 512x512 resolution
+   - Recommended: 1024x1024 or higher
+   - Format: JPEG or PNG
+   - Max size: 10MB
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Image selected and validated
+- Check before enabling generate button
+
+**isProcessing**: boolean
+- Video generation in progress
+- Show loading/progress indicator
+- Disable generate button
+
+**progress**: number (0-100)
+- Generation progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if generation failed
+- Display to user with clear message
+
+**result**: {
+  videoUrl: string
+  thumbnailUrl?: string
+  duration?: number
+  motionType?: string
+  intensity?: number
+  metadata?: any
 }
-```
-
-## Configuration Options
 
-### Feature Config
+---
 
-```tsx
-interface ImageToVideoFeatureConfig {
-  motionType?: 'zoom-in' | 'zoom-out' | 'pan-left' | 'pan-right' | '3d';
-  duration?: number; // Video duration in seconds (2-8)
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: ImageToVideoResult) => void;
-  onError?: (error: string) => void;
-}
-```
-
-### Generation Options
-
-```tsx
-interface ImageToVideoOptions {
-  motionType: 'zoom-in' | 'zoom-out' | 'pan-left' | 'pan-right' | '3d';
-  duration: number; // Duration in seconds
-  intensity?: number; // Motion intensity 0.0 - 1.0 (default: 0.7)
-  fps?: number; // Frames per second (default: 30)
-}
-```
-
-## Motion Types
+## 🎨 Best Practices
 
-### Zoom In
-
-Gradually zoom into the image:
-
-```tsx
-const result = await feature.process({
-  motionType: 'zoom-in',
-  duration: 4,
-  intensity: 0.7,
-});
-```
+### Image Selection
 
-### Zoom Out
-
-Gradually zoom out from the image:
-
-```tsx
-const result = await feature.process({
-  motionType: 'zoom-out',
-  duration: 5,
-  intensity: 0.6,
-});
-```
+1. **Image Quality**
+   - Good: High-resolution, clear focal point
+   - Bad: Blurry, cluttered images
 
-### Pan Left
+2. **Motion Matching**
+   - Match motion to image content
+   - Consider subject for motion direction
+   - Landscape vs portrait considerations
 
-Pan the image to the left:
+3. **Duration**
+   - Start with medium duration (4-5s)
+   - Adjust based on content complexity
+   - Shorter for social media
+   - Longer for presentations
 
-```tsx
-const result = await feature.process({
-  motionType: 'pan-left',
-  duration: 4,
-  intensity: 0.7,
-});
-```
-
-### Pan Right
-
-Pan the image to the right:
+4. **Intensity**
+   - Use moderate intensity (0.6-0.8) for natural motion
+   - Lower intensity for subtle effects
+   - Higher intensity for dramatic motion
 
-```tsx
-const result = await feature.process({
-  motionType: 'pan-right',
-  duration: 4,
-  intensity: 0.7,
-});
-```
-
-### 3D Motion
-
-Add depth with 3D parallax effect:
-
-```tsx
-const result = await feature.process({
-  motionType: '3d',
-  duration: 5,
-  intensity: 0.8,
-});
-```
-
-## Usage Flow
-
-1. Select **Image** - Choose a static image to animate
-2. Choose **Motion Type** - Select the animation style
-3. Set **Duration** - Choose video length
-4. Tap **Create Video** - Start the animation
-5. View Result - Watch the generated video
-6. Save or Share - Save to gallery or share
-
-## Component Examples
-
-### Motion Type Selector
-
-```tsx
-import { StylePresetsGrid } from '@umituz/react-native-ai-generation-content';
-
-const motionTypes = [
-  { id: 'zoom-in', name: 'Zoom In', preview: '...' },
-  { id: 'zoom-out', name: 'Zoom Out', preview: '...' },
-  { id: 'pan-left', name: 'Pan Left', preview: '...' },
-  { id: 'pan-right', name: 'Pan Right', preview: '...' },
-  { id: '3d', name: '3D Motion', preview: '...' },
-];
-
-<StylePresetsGrid
-  styles={motionTypes}
-  selectedStyle={selectedMotionType}
-  onSelectStyle={setSelectedMotionType}
-/>
-```
-
-### Duration Selector
-
-```tsx
-import { DurationSelector, createDurationOptions } from '@umituz/react-native-ai-generation-content';
-
-const durations = createDurationOptions([2, 3, 4, 5, 6, 7, 8]);
-
-<DurationSelector
-  selectedDuration={duration}
-  onSelectDuration={setDuration}
-  durations={durations}
-/>
-```
-
-### Intensity Slider
-
-```tsx
-import { Slider } from 'react-native';
-
-<Slider
-  minimumValue={0}
-  maximumValue={1}
-  step={0.1}
-  value={intensity}
-  onValueChange={setIntensity}
-/>
-
-<Text>Motion Intensity: {Math.round(intensity * 100)}%</Text>
-```
-
-## Advanced Usage
-
-### Custom Options
-
-```tsx
-const result = await feature.process({
-  motionType: '3d',
-  duration: 6,
-  intensity: 0.8,
-  fps: 30,
-});
-```
-
-### Progress Stages
-
-```tsx
-const { state } = useImageToVideoFeature({ ...config });
-
-// Progress stages:
-// - Analyzing image (0-20%)
-// - Generating motion (20-60%)
-// - Rendering frames (60-90%)
-// - Finalizing video (90-100%)
-```
-
-### Video Preview
-
-```tsx
-import { Video } from 'expo-av';
-import { useRef } from 'react';
-
-const videoRef = useRef<Video>(null);
-
-<Video
-  ref={videoRef}
-  source={{ uri: feature.state.result.videoUrl }}
-  useNativeControls
-  resizeMode="contain"
-  style={{ width: '100%', height: 300 }}
-/>
-```
-
-## Use Cases
-
-### Social Media Content
-
-```tsx
-// Create animated posts
-const result = await feature.process({
-  motionType: 'zoom-in',
-  duration: 4,
-});
-```
-
-### Photo Slideshows
-
-```tsx
-// Animate photos for slideshows
-const result = await feature.process({
-  motionType: 'pan-right',
-  duration: 5,
-});
-```
-
-### Product Showcases
-
-```tsx
-// Create dynamic product videos
-const result = await feature.process({
-  motionType: '3d',
-  duration: 6,
-  intensity: 0.8,
-});
-```
-
-### Storytelling
-
-```tsx
-// Add motion to story images
-const result = await feature.process({
-  motionType: 'zoom-out',
-  duration: 5,
-});
-```
-
-## Best Practices
-
-1. **Image Quality**: Use high-resolution images for best results
-2. **Subject Focus**: Choose motion that highlights the main subject
-3. **Duration**: Shorter durations (3-5s) work well for social media
-4. **Intensity**: Moderate intensity (0.6-0.8) produces natural motion
-5. **Testing**: Try different motion types to find the best fit
-
-## Error Handling
-
-```tsx
-const { state, process } = useImageToVideoFeature({ ...config });
-
-useEffect(() => {
-  if (state.error) {
-    Alert.alert('Generation Failed', state.error);
-  }
-}, [state.error]);
-```
-
-## Related Features
-
-- [Text to Video](../text-to-video) - Generate videos from text
-- [Text to Image](../text-to-image) - Generate images from text
-- [Upscaling](../upscaling) - Increase image resolution before video creation
-
-## License
-
-MIT
+### User Experience
+
+1. **Motion Preview**
+   - Show examples of each motion type
+   - Preview motion before applying
+   - Explain motion characteristics
+
+2. **Progress Feedback**
+   - Show estimated time remaining
+   - Update progress regularly
+   - Allow cancellation
+
+3. **Video Playback**
+   - Support standard video controls
+   - Loop preview for continuous viewing
+   - Show video metadata
+
+---
+
+## 🐛 Common Pitfalls
+
+### Quality Issues
+
+❌ **Problem**: Poor animation quality
+✅ **Solution**: Use higher quality images, try different motion type or intensity
+
+### Motion Issues
+
+❌ **Problem**: Motion doesn't match image content
+✅ **Solution**: Try different motion type, adjust intensity, consider focal point
+
+### Performance Issues
+
+❌ **Problem**: Slow generation
+✅ **Solution**: Compress images, show progress, allow cancellation
+
+### Memory Issues
+
+❌ **Problem**: App crashes with large images
+✅ **Solution**: Compress images, clean up properly, optimize memory
+
+---
+
+## 📦 Related Components
+
+Use these components from the library:
+
+- **PhotoUploadCard**: Upload image interface
+- **MotionTypeSelector**: Choose animation style
+- **DurationSelector**: Set video length
+- **IntensitySlider**: Adjust motion intensity
+- **ProgressBar**: Progress display
+- **VideoPlayer**: Video playback component
+
+Located at: `src/presentation/components/`
+
+---
+
+## 🔄 Migration Strategy
+
+If migrating from previous implementation:
+
+1. **Update imports** to new path
+2. **Add motion type selector**
+3. **Implement duration control**
+4. **Update state handling** for new structure
+5. **Add video preview component**
+6. **Test all motion types**
+
+---
+
+## 📚 Additional Resources
+
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/image-to-video/`
+- Architecture: `/ARCHITECTURE.md`
+
+---
+
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
+
+---
+
+## 📝 Changelog
+
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
+
+### v1.0.0 - Initial Release
+- Initial feature documentation

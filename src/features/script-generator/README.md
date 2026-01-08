@@ -1,362 +1,433 @@
-# Script Generator
+# Script Generator Feature
 
 Generate scripts for videos, podcasts, and content using AI.
 
-## Features
+## 📍 Import Path
 
-- Generate video scripts
-- Podcast script templates
-- Social media content scripts
-- Customizable script formats
-- Multiple tone and style options
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
+```typescript
+import { useScriptGeneratorFeature } from '@umituz/react-native-ai-generation-content';
 ```
 
-## Basic Usage
+**Location**: `src/features/script-generator/`
 
-### Using the Hook
+## 🎯 Feature Purpose
 
-```tsx
-import { useScriptGenerator } from '@umituz/react-native-ai-generation-content';
+Generate professional scripts for various content types including videos, podcasts, social media, and presentations. Customize tone, duration, and format for high-quality content creation with visual cues and production notes.
 
-function ScriptGeneratorScreen() {
-  const [prompt, setPrompt] = useState('');
+---
 
-  const feature = useScriptGenerator({
-    config: {
-      scriptType: 'video',
-      tone: 'casual',
-      duration: 60, // seconds
-      onProcessingStart: () => console.log('Generating script...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-  });
+## 📋 Usage Strategy
 
-  return (
-    <View>
-      <TextInput
-        placeholder="What's your script about?"
-        value={prompt}
-        onChangeText={setPrompt}
-        multiline
-        numberOfLines={4}
-      />
+### When to Use This Feature
 
-      <ScriptTypeSelector
-        selectedType={feature.state.scriptType}
-        onSelectType={feature.setScriptType}
-      />
+✅ **Use Cases:**
+- Creating YouTube video scripts
+- Generating podcast episode scripts
+- Writing social media content (TikTok, Reels)
+- Preparing presentation scripts
+- Content ideation and planning
 
-      <ToneSelector
-        selectedTone={feature.state.tone}
-        onSelectTone={feature.setTone}
-      />
+❌ **When NOT to Use:**
+- Converting scripts to speech (use Text to Voice)
+- Generating visual content (use Text to Image/Video)
+- Real-time captioning
+- Collaborative script editing
 
-      <DurationInput
-        value={feature.state.duration}
-        onChange={feature.setDuration}
-      />
+### Implementation Strategy
 
-      <Button
-        title="Generate Script"
-        onPress={() => feature.generate(prompt)}
-        disabled={!prompt || feature.state.isProcessing}
-      />
+1. **Enter topic/description** for the script
+2. **Choose script type** (video, podcast, social, presentation)
+3. **Select tone** (casual, professional, humorous, dramatic)
+4. **Set duration** target
+5. **Generate script** with progress tracking
+6. **Review and edit** generated script
+7. **Save or export** final script
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+---
 
-      {feature.state.result && (
-        <ScriptDisplay
-          script={feature.state.result.script}
-          onSave={() => saveScript(feature.state.result.script)}
-          onShare={() => shareScript(feature.state.result.script)}
-        />
-      )}
-    </View>
-  );
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Input Requirements
+- **MUST** provide clear topic or description
+- **MUST** specify script type
+- **MUST** set duration target
+- **MUST** select appropriate tone
+- **MUST NOT** use copyrighted material in prompts
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify `scriptType` (video, podcast, social, presentation)
+- **MUST** specify `tone` (casual, professional, humorous, dramatic)
+- **MUST** implement `onError` callback
+- **MUST** handle script display and export
+
+### 3. State Management
+- **MUST** check `isReady` before enabling generate button
+- **MUST** validate topic and duration before generation
+- **MUST** handle `isProcessing` state to prevent duplicate requests
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount
+
+### 4. Performance
+- **MUST** implement progress indicators during generation
+- **MUST** cache generated scripts locally
+- **MUST** allow users to cancel long generations
+- **MUST** handle long scripts efficiently
+- **MUST NOT** generate multiple scripts simultaneously
+
+### 5. Content Quality
+- **MUST** provide editable script output
+- **MUST** support visual cues (for video scripts)
+- **MUST** handle various script formats
+- **MUST** offer regeneration with different settings
+- **MUST** implement copy/export functionality
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Empty Topics**
+   - Always validate topic is provided
+   - Never call generate() without description
+   - Guide users with example topics
+
+2. **No Auto-Generation**
+   - Never start generation without user action
+   - Always require explicit "Generate" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore generation failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store multiple scripts unnecessarily
+   - Clean up old scripts
+   - Implement proper cleanup
+
+6. **No Blocked UI**
+   - Never block main thread with processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Copyright Infringement**
+   - Never generate copyrighted content
+   - Never use trademarked material without permission
+   - Implement content moderation
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing a script generator feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useScriptGeneratorFeature hook
+3. Select script type (video, podcast, social, presentation)
+4. Select tone (casual, professional, humorous, dramatic)
+5. Implement topic/description input
+6. Set duration target
+7. Configure options (visual cues, production notes)
+8. Validate input before generation
+9. Display editable script output
+10. Handle long processing times with progress
+11. Implement proper error handling
+12. Implement cleanup on unmount
+
+CRITICAL RULES:
+- MUST validate topic and duration before calling generate()
+- MUST display script in editable format
+- MUST handle script type selection
+- MUST handle tone selection
+- MUST implement debouncing (300ms)
+- MUST allow regeneration with different settings
+- MUST implement copy/export functionality
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set scriptType: 'video' | 'podcast' | 'social' | 'presentation'
+- Set tone: 'casual' | 'professional' | 'humorous' | 'dramatic'
+- Set duration: number (target duration in seconds)
+- Set includeVisuals?: boolean (include visual cues, default: true for video)
+- Set includeNotes?: boolean (include production notes, default: false)
+- Configure callbacks: onProcessingStart, onProcessingComplete, onError
+
+SCRIPT TYPES:
+- video: Video scripts with visual cues and scene descriptions
+- podcast: Conversational podcast scripts
+- social: Short-form social media content (TikTok, Reels, etc.)
+- presentation: Professional presentation scripts
+
+TONES:
+- casual: Conversational and friendly tone
+- professional: Formal and business-appropriate
+- humorous: Funny and entertaining
+- dramatic: Emotional and engaging
+
+OPTIONS:
+- includeVisuals: Include visual cues for video (default: true)
+- includeNotes: Include production notes (default: false)
+- language: Script language (default: 'en')
+
+STRICTLY FORBIDDEN:
+- No empty topic validation
+- No auto-generation without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks
+- No blocking UI
+- No copyright infringement
+
+QUALITY CHECKLIST:
+- [ ] Topic/description input implemented
+- [ ] Script type selector added
+- [ ] Tone selector added
+- [ ] Duration input included
+- [ ] Validation before generate()
+- [ ] Editable script display
+- [ ] Visual cues display (for video)
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Copy/export functionality
+- [ ] Regeneration with different settings
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Topic input implemented
+- [ ] Script type selector added
+- [ ] Tone selector added
+- [ ] Duration input implemented
+- [ ] Options toggles (visual cues, notes)
+- [ ] Validation before generate()
+- [ ] Editable script display
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Copy to clipboard button
+- [ ] Export functionality
+- [ ] Regeneration option
+- [ ] Cleanup on unmount
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  scriptType: 'video' | 'podcast' | 'social' | 'presentation'
+  tone: 'casual' | 'professional' | 'humorous' | 'dramatic'
+  prompt: string
+  duration: number
+}
+
+// Optional callbacks
+{
+  includeVisuals?: boolean
+  includeNotes?: boolean
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Script Types**
+   - Video: YouTube, tutorials, vlogs (with visual cues)
+   - Podcast: Conversational, interviews, storytelling
+   - Social: TikTok, Reels, Shorts (short-form)
+   - Presentation: Business, educational, formal
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="script-generator"
-      userId="user-123"
-    />
-  );
+2. **Tones**
+   - Casual: Conversational content (vlogs, lifestyle)
+   - Professional: Business and educational content
+   - Humorous: Entertainment and comedy
+   - Dramatic: Storytelling and narratives
+
+3. **Duration Targets**
+   - Social: 15-60 seconds
+   - Short video: 60-180 seconds (1-3 minutes)
+   - Medium video: 180-600 seconds (3-10 minutes)
+   - Long video: 600-3600 seconds (10-60 minutes)
+   - Podcast: 1800-3600 seconds (30-60 minutes)
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Topic provided and duration set
+- Check before enabling generate button
+
+**isProcessing**: boolean
+- Script generation in progress
+- Show loading/progress indicator
+- Disable generate button
+
+**progress**: number (0-100)
+- Generation progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if generation failed
+- Display to user with clear message
+
+**result**: {
+  script: string
+  scriptType?: string
+  tone?: string
+  duration?: number
+  includeVisuals?: boolean
+  includeNotes?: boolean
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface ScriptGeneratorFeatureConfig {
-  scriptType?: 'video' | 'podcast' | 'social' | 'presentation';
-  tone?: 'casual' | 'professional' | 'humorous' | 'dramatic';
-  duration?: number; // Target duration in seconds
-  language?: string; // Script language (default: 'en')
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: ScriptGeneratorResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Topic Writing
 
-### Generation Options
+1. **Be Specific**
+   - Good: "How to cook pasta from scratch, including ingredients and step-by-step instructions"
+   - Bad: "Pasta"
 
-```tsx
-interface ScriptGeneratorOptions {
-  scriptType: 'video' | 'podcast' | 'social' | 'presentation';
-  tone: 'casual' | 'professional' | 'humorous' | 'dramatic';
-  duration: number; // Target duration in seconds
-  includeVisuals?: boolean; // Include visual cues (default: true for video)
-  includeNotes?: boolean; // Include production notes (default: false)
-}
-```
+2. **Include Key Points**
+   - Mention important topics to cover
+   - Specify target audience
+   - Include format preferences
 
-## Script Types
+3. **Set Realistic Duration**
+   - Social: 60 seconds maximum
+   - YouTube: 5-10 minutes typical
+   - Podcast: 30-60 minutes
 
-### Video Script
+### Script Type Selection
 
-Scripts for videos with visual cues:
+1. **Video**
+   - Use for: YouTube, tutorials, vlogs
+   - Features: Visual cues, scene descriptions
+   - Best: High-quality, structured content
 
-```tsx
-const result = await feature.generate(prompt, {
-  scriptType: 'video',
-  tone: 'casual',
-  duration: 120,
-  includeVisuals: true,
-});
-```
+2. **Podcast**
+   - Use for: Audio content, interviews, discussions
+   - Features: Conversational format
+   - Best: Engaging, natural dialogue
 
-### Podcast Script
+3. **Social**
+   - Use for: TikTok, Reels, Shorts
+   - Features: Short-form, punchy
+   - Best: Quick, engaging content
 
-Conversational scripts for podcasts:
+4. **Presentation**
+   - Use for: Business, educational, formal
+   - Features: Structured, professional
+   - Best: Clear, informative content
 
-```tsx
-const result = await feature.generate(prompt, {
-  scriptType: 'podcast',
-  tone: 'casual',
-  duration: 1800, // 30 minutes
-});
-```
+---
 
-### Social Media Script
+## 🐛 Common Pitfalls
 
-Short scripts for social platforms:
+### Quality Issues
 
-```tsx
-const result = await feature.generate(prompt, {
-  scriptType: 'social',
-  tone: 'casual',
-  duration: 60, // 1 minute
-});
-```
+❌ **Problem**: Script doesn't match expectations
+✅ **Solution**: Be more specific in topic, try different tone
 
-### Presentation Script
+### Duration Issues
 
-Professional presentation scripts:
+❌ **Problem**: Script too long/short
+✅ **Solution**: Adjust duration target, be more specific about scope
 
-```tsx
-const result = await feature.generate(prompt, {
-  scriptType: 'presentation',
-  tone: 'professional',
-  duration: 600, // 10 minutes
-});
-```
+### Format Issues
 
-## Tones
+❌ **Problem**: Wrong format for platform
+✅ **Solution**: Match script type to use case
 
-### Casual
+### Editing Issues
 
-Conversational and friendly:
+❌ **Problem**: Can't edit generated script
+✅ **Solution**: Always provide editable text area
 
-```tsx
-const result = await feature.generate(prompt, {
-  tone: 'casual',
-});
-```
+---
 
-### Professional
+## 📦 Related Components
 
-Formal and business-appropriate:
+Use these components from the library:
 
-```tsx
-const result = await feature.generate(prompt, {
-  tone: 'professional',
-});
-```
+- **TextInput**: For topic/description
+- **ScriptTypeSelector**: Choose script type
+- **ToneSelector**: Choose tone
+- **DurationInput**: Set target duration
+- **OptionsToggles**: Enable/disable visual cues, notes
+- **ScriptDisplay**: Editable script display
+- **ProgressBar**: Progress display
 
-### Humorous
+Located at: `src/presentation/components/`
 
-Funny and entertaining:
+---
 
-```tsx
-const result = await feature.generate(prompt, {
-  tone: 'humorous',
-});
-```
+## 🔄 Migration Strategy
 
-### Dramatic
+If migrating from previous implementation:
 
-Emotional and engaging:
+1. **Update imports** to new path
+2. **Add script type selector**
+3. **Add tone selector**
+4. **Implement duration input**
+5. **Add visual cues options**
+6. **Update state handling** for new structure
+7. **Implement export functionality**
+8. **Test all script types**
 
-```tsx
-const result = await feature.generate(prompt, {
-  tone: 'dramatic',
-});
-```
+---
 
-## Usage Flow
+## 📚 Additional Resources
 
-1. Enter **Topic** - Describe what the script is about
-2. Choose **Script Type** - Select the format
-3. Choose **Tone** - Select the tone/style
-4. Set **Duration** - Target length
-5. Tap **Generate** - Create the script
-6. View Result - Read and edit the script
-7. Save or Export - Save or export the script
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/script-generator/`
+- Architecture: `/ARCHITECTURE.md`
 
-## Component Examples
+---
 
-### Script Type Selector
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+---
 
-const scriptTypes = [
-  { id: 'video', name: 'Video', description: 'With visual cues' },
-  { id: 'podcast', name: 'Podcast', description: 'Conversational' },
-  { id: 'social', name: 'Social Media', description: 'Short & engaging' },
-  { id: 'presentation', name: 'Presentation', description: 'Professional' },
-];
+## 📝 Changelog
 
-<GridSelector
-  options={scriptTypes}
-  selectedOption={selectedType}
-  onSelectOption={setSelectedType}
-/>
-```
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
 
-### Tone Selector
-
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
-
-const tones = [
-  { id: 'casual', name: 'Casual', description: 'Friendly & relaxed' },
-  { id: 'professional', name: 'Professional', description: 'Formal & business' },
-  { id: 'humorous', name: 'Humorous', description: 'Funny & entertaining' },
-  { id: 'dramatic', name: 'Dramatic', description: 'Emotional & engaging' },
-];
-
-<GridSelector
-  options={tones}
-  selectedOption={selectedTone}
-  onSelectOption={setSelectedTone}
-/>
-```
-
-### Duration Input
-
-```tsx
-import { TextInput } from 'react-native';
-
-<TextInput
-  placeholder="Duration (seconds)"
-  value={String(duration)}
-  onChangeText={(value) => setDuration(parseInt(value) || 60)}
-  keyboardType="numeric"
-/>
-```
-
-### Script Display
-
-```tsx
-import { ScrollView, Text } from 'react-native';
-
-<ScrollView style={{ padding: 16 }}>
-  <Text style={{ fontSize: 16, lineHeight: 24 }}>
-    {script}
-  </Text>
-</ScrollView>
-```
-
-## Use Cases
-
-### YouTube Videos
-
-```tsx
-// Generate YouTube video scripts
-const result = await feature.generate('How to cook pasta', {
-  scriptType: 'video',
-  tone: 'casual',
-  duration: 600, // 10 minutes
-});
-```
-
-### Podcast Episodes
-
-```tsx
-// Generate podcast episode scripts
-const result = await feature.generate('The future of AI', {
-  scriptType: 'podcast',
-  tone: 'casual',
-  duration: 3600, // 1 hour
-});
-```
-
-### TikTok/Reels
-
-```tsx
-// Generate short-form content
-const result = await feature.generate('Quick workout tips', {
-  scriptType: 'social',
-  tone: 'energetic',
-  duration: 60,
-});
-```
-
-### Business Presentations
-
-```tsx
-// Generate presentation scripts
-const result = await feature.generate('Q4 business review', {
-  scriptType: 'presentation',
-  tone: 'professional',
-  duration: 1200, // 20 minutes
-});
-```
-
-## Best Practices
-
-1. **Clear Prompts**: Be specific about the topic and key points
-2. **Duration**: Set realistic duration targets
-3. **Tone Matching**: Match tone to your audience and purpose
-4. **Editing**: Always review and edit generated scripts
-5. **Visual Cues**: Use visual cues for video scripts
-
-## Related Features
-
-- [Text to Voice](../text-to-voice) - Convert script to speech
-- [Text to Video](../text-to-video) - Generate video from script
-- [Audio Generation](../audio-generation) - Generate audio content
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation

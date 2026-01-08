@@ -1,335 +1,445 @@
-# Text to Voice
+# Text to Voice Feature
 
 Convert text to natural-sounding speech using AI.
 
-## Features
+## 📍 Import Path
 
-- Convert text to lifelike speech
-- Multiple voice options and languages
-- Adjustable speed and pitch
-- Support for long-form text
-- Natural intonation and expression
-
-## Installation
-
-This feature is part of `@umituz/react-native-ai-generation-content`.
-
-```bash
-npm install @umituz/react-native-ai-generation-content
-```
-
-## Basic Usage
-
-### Using the Hook
-
-```tsx
+```typescript
 import { useTextToVoiceFeature } from '@umituz/react-native-ai-generation-content';
+```
 
-function TextToVoiceScreen() {
-  const feature = useTextToVoiceFeature({
-    config: {
-      model: 'chirp-3',
-      onTextChange: (text) => console.log('Text changed:', text),
-      onProcessingStart: () => console.log('Starting generation...'),
-      onProcessingComplete: (result) => console.log('Complete:', result),
-      onError: (error) => console.error('Error:', error),
-    },
-    userId: 'user-123',
-  });
+**Location**: `src/features/text-to-voice/`
 
-  const [sound, setSound] = useState<Sound | null>(null);
+## 🎯 Feature Purpose
 
-  const playAudio = async () => {
-    if (feature.state.audioUrl) {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: feature.state.audioUrl },
-        { shouldPlay: true }
-      );
-      setSound(sound);
-    }
-  };
+Convert written text into lifelike speech using AI-powered text-to-speech technology. Support for multiple voices, languages, adjustable speed and pitch, with natural intonation and expression for audiobooks, accessibility, voice assistants, and more.
 
-  return (
-    <View>
-      <TextInput
-        placeholder="Enter text to convert to speech..."
-        onChangeText={feature.setText}
-        value={feature.state.text}
-        multiline
-        numberOfLines={4}
-      />
+---
 
-      <VoiceSelector
-        selectedVoice={feature.state.voice}
-        onSelectVoice={feature.setVoice}
-      />
+## 📋 Usage Strategy
 
-      <Button
-        title="Generate Speech"
-        onPress={() => feature.generate()}
-        disabled={!feature.isReady}
-      />
+### When to Use This Feature
 
-      {feature.state.isProcessing && (
-        <ActivityIndicator />
-      )}
+✅ **Use Cases:**
+- Creating audiobooks and narration
+- Building voice assistants
+- Accessibility features for visually impaired
+- Voiceovers for videos and presentations
+- Podcast and content creation
 
-      {feature.state.audioUrl && (
-        <View>
-          <Button title="Play Audio" onPress={playAudio} />
-          <Button title="Save Audio" onPress={() => feature.saveAudio()} />
-        </View>
-      )}
-    </View>
-  );
+❌ **When NOT to Use:**
+- Generating audio from descriptions (use Audio Generation)
+- Real-time translation (use translation services)
+- Voice cloning or impersonation
+- Music generation
+
+### Implementation Strategy
+
+1. **Enter text** to convert to speech
+2. **Select voice** from available options
+3. **Adjust settings** (speed, pitch)
+4. **Generate speech** with progress tracking
+5. **Preview audio** with playback controls
+6. **Save or share** final audio file
+
+---
+
+## ⚠️ Critical Rules (MUST FOLLOW)
+
+### 1. Input Requirements
+- **MUST** provide text to convert
+- **MUST** select valid voice
+- **MUST** keep text under character limits (5000 chars recommended)
+- **MUST NOT** use copyrighted material without permission
+- **MUST NOT** generate offensive or harmful content
+
+### 2. Configuration
+- **MUST** provide valid `userId` for tracking
+- **MUST** specify voice selection
+- **MUST** implement `onError` callback
+- **MUST** implement audio playback controls
+- **MUST** handle file saving locally
+
+### 3. State Management
+- **MUST** check `isReady` before enabling generate button
+- **MUST** validate text and voice before generation
+- **MUST** handle `isProcessing` state to prevent duplicate requests
+- **MUST** display `error` state with clear messages
+- **MUST** implement proper cleanup on unmount (dispose audio)
+
+### 4. Performance
+- **MUST** implement progress indicators during generation
+- **MUST** cache generated audio locally
+- **MUST** allow users to cancel long generations
+- **MUST** implement proper audio file disposal
+- **MUST NOT** generate multiple audio files simultaneously
+
+### 5. Audio Quality
+- **MUST** provide audio preview with playback controls
+- **MUST** support common audio formats (MP3, WAV)
+- **MUST** handle large audio file sizes
+- **MUST** implement play/pause/stop controls
+- **MUST** offer regeneration with different settings
+
+---
+
+## 🚫 Prohibitions (MUST AVOID)
+
+### Strictly Forbidden
+
+❌ **NEVER** do the following:
+
+1. **No Empty Text**
+   - Always validate text is provided
+   - Never call generate() without text
+   - Guide users with example texts
+
+2. **No Auto-Generation**
+   - Never start generation without user action
+   - Always require explicit "Generate" button press
+   - Show preview before processing
+
+3. **No Hardcoded Credentials**
+   - Never store API keys in component files
+   - Use environment variables or secure storage
+
+4. **No Unhandled Errors**
+   - Never ignore generation failures
+   - Always explain what went wrong
+   - Provide retry or alternative options
+
+5. **No Memory Leaks**
+   - Never store multiple audio files in memory
+   - Always cleanup audio references on unmount
+   - Implement proper audio disposal (unloadAsync)
+
+6. **No Blocked UI**
+   - Never block main thread with audio processing
+   - Always show progress indicator
+   - Allow cancellation
+
+7. **No Copyright Infringement**
+   - Never generate copyrighted content without permission
+   - Never use for voice cloning or impersonation
+   - Implement content moderation
+
+---
+
+## 🤖 AI Agent Directions
+
+### For AI Code Generation Tools
+
+When using this feature with AI code generation tools, follow these guidelines:
+
+#### Prompt Template for AI Agents
+
+```
+You are implementing a text to voice feature using @umituz/react-native-ai-generation-content.
+
+REQUIREMENTS:
+1. Import from: @umituz/react-native-ai-generation-content
+2. Use the useTextToVoiceFeature hook
+3. Select voice from available options
+4. Implement text input for speech content
+5. Adjust settings (speed, pitch)
+6. Validate text and voice before generation
+7. Implement audio playback for preview
+8. Handle long processing times with progress
+9. Implement proper error handling
+10. Implement cleanup on unmount (CRITICAL: dispose audio)
+
+CRITICAL RULES:
+- MUST validate text and voice before calling generate()
+- MUST implement audio playback controls (play, pause, stop)
+- MUST handle voice selection
+- MUST handle speed and pitch adjustments
+- MUST implement debouncing (300ms)
+- MUST allow regeneration with different settings
+- MUST properly dispose audio on unmount (useEffect cleanup)
+
+CONFIGURATION:
+- Provide valid userId (string)
+- Set voice: string (voice ID)
+- Set speed?: number (speech rate 0.25 - 4.0, default: 1.0)
+- Set pitch?: number (pitch adjustment -20.0 - 20.0, default: 0)
+- Set language?: string (language code, default: 'en-US')
+- Implement onSaveAudio callback
+- Configure callbacks: onTextChange, onProcessingStart, onProcessingComplete, onError
+
+VOICE OPTIONS:
+- English: Multiple male/female voices (US, UK, etc.)
+- Multi-language: Spanish, French, German, Italian, Japanese, Korean, Chinese
+- Default voice: Set in config
+
+SETTINGS:
+- speed: Speech rate (0.25 - 4.0, default: 1.0)
+- pitch: Pitch adjustment (-20.0 - 20.0, default: 0)
+- language: Language code (e.g., 'en-US', 'es-ES')
+
+AUDIO CONTROLS:
+- Play: Start audio playback
+- Pause: Pause current playback
+- Stop: Stop and reset playback
+- Unload: Dispose audio resource (CRITICAL for cleanup)
+
+STRICTLY FORBIDDEN:
+- No empty text validation
+- No auto-generation without user action
+- No hardcoded API keys
+- No unhandled errors
+- No memory leaks (especially audio)
+- No blocking UI
+- No copyright infringement
+
+CLEANUP CHECKLIST:
+- [ ] Audio unloaded on unmount
+- [ ] Sound reference nullified
+- [ ] Event listeners removed
+- [ ] No memory leaks
+
+QUALITY CHECKLIST:
+- [ ] Text input for speech content
+- [ ] Voice selector added
+- [ ] Speed control implemented
+- [ ] Pitch control implemented
+- [ ] Validation before generate()
+- [ ] Audio playback controls (play, pause, stop)
+- [ ] Progress indicator during processing
+- [ ] Error display with retry option
+- [ ] Save/share functionality
+- [ ] Regeneration with different settings
+- [ ] Proper cleanup on unmount
+```
+
+#### AI Implementation Checklist
+
+Use this checklist when generating code:
+
+- [ ] Feature imported from correct path
+- [ ] Text input for speech content implemented
+- [ ] Voice selector added
+- [ ] Speed control implemented
+- [ ] Pitch control implemented
+- [ ] Validation before generate()
+- [ ] Audio playback controls (play, pause, stop)
+- [ ] Progress indicator during processing
+- [ ] Error display with user-friendly message
+- [ ] Save/share buttons
+- [ ] Regeneration option
+- [ ] **CRITICAL**: Audio cleanup on unmount
+- [ ] **CRITICAL**: Sound reference disposal
+- [ ] **CRITICAL**: Event listener cleanup
+
+---
+
+## 🛠️ Configuration Strategy
+
+### Essential Configuration
+
+```typescript
+// Required fields
+{
+  userId: string
+  voice: string
+  text: string
+}
+
+// Optional callbacks
+{
+  speed?: number // 0.25 - 4.0, default: 1.0
+  pitch?: number // -20.0 - 20.0, default: 0
+  language?: string // e.g., 'en-US', 'es-ES'
+  onTextChange?: (text: string) => void
+  onProcessingStart?: () => void
+  onProcessingComplete?: (result) => void
+  onError?: (error: string) => void
 }
 ```
 
-### Using the Unified AI Feature Screen
+### Recommended Settings
 
-```tsx
-import { AIFeatureScreen } from '@umituz/react-native-ai-generation-content';
+1. **Voices**
+   - English: Multiple options (male/female, US/UK)
+   - Multi-language: Support for major languages
+   - Default: Set in configuration
 
-function App() {
-  return (
-    <AIFeatureScreen
-      featureId="text-to-voice"
-      userId="user-123"
-    />
-  );
+2. **Speed Settings**
+   - 0.25 - 0.75: Slow (audiobooks, learning)
+   - 0.8 - 1.2: Normal (most use cases)
+   - 1.3 - 2.0: Fast (quick consumption)
+   - 2.1 - 4.0: Very fast (skimming)
+
+3. **Pitch Settings**
+   - -20 to -5: Lower pitch
+   - -5 to 5: Normal range (default: 0)
+   - 5 to 20: Higher pitch
+
+4. **Text Length**
+   - Recommended: Under 5000 characters
+   - Long texts: Consider chunking
+   - Short texts: Better for performance
+
+---
+
+## 📊 State Management
+
+### Feature States
+
+**isReady**: boolean
+- Text provided and voice selected
+- Check before enabling generate button
+
+**isProcessing**: boolean
+- Speech generation in progress
+- Show loading/progress indicator
+- Disable generate button
+
+**progress**: number (0-100)
+- Generation progress percentage
+- Update progress bar
+
+**error**: string | null
+- Error message if generation failed
+- Display to user with clear message
+
+**result**: {
+  audioUrl: string
+  voice?: string
+  text?: string
+  speed?: number
+  pitch?: number
+  language?: string
+  metadata?: any
 }
-```
 
-## Configuration Options
+---
 
-### Feature Config
+## 🎨 Best Practices
 
-```tsx
-interface TextToVoiceFeatureConfig {
-  model?: string; // AI model to use (default: 'chirp-3')
-  defaultVoice?: string; // Default voice ID
-  defaultSpeed?: number; // Speech speed (0.25 - 4.0, default: 1.0)
-  defaultPitch?: number; // Pitch adjustment (-20.0 - 20.0, default: 0)
-  onTextChange?: (text: string) => void;
-  onProcessingStart?: () => void;
-  onProcessingComplete?: (result: TextToVoiceResult) => void;
-  onError?: (error: string) => void;
-}
-```
+### Text Preparation
 
-### Generation Options
+1. **Text Length**
+   - Keep under 5000 characters for best results
+   - Consider chunking for long texts
+   - Test with shorter texts first
 
-```tsx
-interface TextToVoiceOptions {
-  voice: string; // Voice ID
-  speed?: number; // Speech rate (0.25 - 4.0)
-  pitch?: number; // Pitch adjustment (-20.0 - 20.0)
-  language?: string; // Language code (e.g., 'en-US', 'es-ES')
-}
-```
+2. **Punctuation**
+   - Use proper punctuation for natural pauses
+   - Include commas, periods, question marks
+   - Use punctuation to control pacing
 
-## Available Voices
+3. **Formatting**
+   - Clear, readable text
+   - Remove unnecessary whitespace
+   - Use abbreviations consistently
 
-### English Voices
+### Voice Selection
 
-```tsx
-const englishVoices = [
-  { id: 'en-US-Neural2-A', name: 'Female (American)', gender: 'female' },
-  { id: 'en-US-Neural2-B', name: 'Male (American)', gender: 'male' },
-  { id: 'en-GB-Neural2-A', name: 'Female (British)', gender: 'female' },
-  { id: 'en-GB-Neural2-B', name: 'Male (British)', gender: 'male' },
-];
-```
+1. **Match Content Type**
+   - Audiobooks: Clear, pleasant voice
+   - Presentations: Professional voice
+   - Entertainment: Dynamic voice
+   - Accessibility: Clear, neutral voice
 
-### Multi-Language Voices
+2. **Language Matching**
+   - Match voice to text language
+   - Consider accent preferences
+   - Test different voices
 
-```tsx
-const voices = [
-  { id: 'es-ES-Neural2-A', name: 'Spanish (Female)', language: 'es-ES' },
-  { id: 'fr-FR-Neural2-A', name: 'French (Female)', language: 'fr-FR' },
-  { id: 'de-DE-Neural2-A', name: 'German (Female)', language: 'de-DE' },
-  { id: 'it-IT-Neural2-A', name: 'Italian (Female)', language: 'it-IT' },
-  { id: 'ja-JP-Neural2-A', name: 'Japanese (Female)', language: 'ja-JP' },
-  { id: 'ko-KR-Neural2-A', name: 'Korean (Female)', language: 'ko-KR' },
-  { id: 'zh-CN-Neural2-A', name: 'Chinese (Female)', language: 'zh-CN' },
-];
-```
+### Settings Optimization
 
-## Component Examples
+1. **Speed**
+   - 0.8-1.2: Most natural speech
+   - Adjust based on content type
+   - Test with playback before saving
 
-### Voice Selector
+2. **Pitch**
+   - Keep near 0 for natural sound
+   - Small adjustments (-5 to +5)
+   - Avoid extreme values
 
-```tsx
-import { GridSelector } from '@umituz/react-native-ai-generation-content';
+---
 
-const voices = [
-  { id: 'voice-1', name: 'Sarah', description: 'American English (Female)' },
-  { id: 'voice-2', name: 'John', description: 'American English (Male)' },
-  { id: 'voice-3', name: 'Emma', description: 'British English (Female)' },
-];
+## 🐛 Common Pitfalls
 
-<GridSelector
-  options={voices}
-  selectedOption={selectedVoice}
-  onSelectOption={setSelectedVoice}
-/>
-```
+### Audio Playback Issues
 
-### Speed Control
+❌ **Problem**: Audio won't play
+✅ **Solution**: Check audio URL, format compatibility
 
-```tsx
-import { Slider } from 'react-native';
+### Memory Leaks
 
-<Slider
-  minimumValue={0.25}
-  maximumValue={4.0}
-  step={0.25}
-  value={speed}
-  onValueChange={setSpeed}
-/>
+❌ **Problem**: App crashes after multiple generations
+✅ **Solution**: Implement proper audio cleanup in useEffect
 
-<Text>Speed: {speed}x</Text>
-```
+### Quality Issues
 
-### Audio Player
+❌ **Problem**: Speech sounds unnatural
+✅ **Solution**: Adjust speed and pitch, try different voice
 
-```tsx
-import { Audio } from 'expo-av';
-import { useState, useEffect } from 'react';
+### Long Text Issues
 
-const [sound, setSound] = useState<Sound | null>(null);
-const [isPlaying, setIsPlaying] = useState(false);
+❌ **Problem**: Generation fails for long texts
+✅ **Solution**: Chunk text into smaller segments
 
-const playAudio = async () => {
-  const { sound } = await Audio.Sound.createAsync(
-    { uri: audioUrl },
-    { shouldPlay: true }
-  );
-  setSound(sound);
-  setIsPlaying(true);
+### Cleanup Issues
 
-  sound.setOnPlaybackStatusUpdate((status) => {
-    if (status.isLoaded && status.didJustFinish) {
-      setIsPlaying(false);
-    }
-  });
-};
+❌ **Problem**: Audio continues playing after unmount
+✅ **Solution**: Implement proper cleanup with unloadAsync
 
-useEffect(() => {
-  return sound ? () => sound.unloadAsync() : undefined;
-}, [sound]);
-```
+---
 
-## Example Texts
+## 📦 Related Components
 
-```tsx
-const exampleTexts = [
-  'Welcome to our amazing product! We\'re excited to have you here.',
-  'Once upon a time, in a land far away, there lived a wise old wizard.',
-  'Breaking news: Scientists have made a groundbreaking discovery.',
-  'The sun was setting over the horizon, painting the sky in orange and pink.',
-  'Transform your business with our innovative solutions.',
-];
-```
+Use these components from the library:
 
-## Advanced Usage
+- **TextInput**: For speech content
+- **VoiceSelector**: Choose voice
+- **SpeedControl**: Adjust speech rate
+- **PitchControl**: Adjust pitch
+- **AudioPlayer**: Play generated audio
+- **ProgressBar**: Progress display
 
-### Custom Voice Options
+Located at: `src/presentation/components/`
 
-```tsx
-const result = await feature.generate({
-  voice: 'en-US-Neural2-A',
-  speed: 1.2,
-  pitch: 2.0,
-  language: 'en-US',
-});
-```
+---
 
-### Long-Form Text
+## 🔄 Migration Strategy
 
-```tsx
-// For long texts, consider chunking
-const longText = '...'; // Your long text
-const chunks = longText.match(/.{1,5000}/g) || [];
+If migrating from previous implementation:
 
-for (const chunk of chunks) {
-  const result = await feature.generate({ text: chunk });
-  // Process each chunk
-}
-```
+1. **Update imports** to new path
+2. **Add voice selector**
+3. **Implement speed/pitch controls**
+4. **Add audio playback controls**
+5. **Update state handling** for new structure
+6. **Implement proper audio cleanup** (CRITICAL)
+7. **Test all voices**
 
-### SSML Support
+---
 
-```tsx
-// Some models support SSML for advanced control
-const ssmlText = `
-  <speak>
-    <p>Hello <break time="1s"/> world!</p>
-    <p>This is <emphasis level="strong">important</emphasis>.</p>
-  </speak>
-`;
+## 📚 Additional Resources
 
-const result = await feature.generate({ text: ssmlText, useSSML: true });
-```
+- Main documentation: `/docs/`
+- API reference: `/docs/api/`
+- Examples: `/docs/examples/basic/text-to-voice/`
+- Architecture: `/ARCHITECTURE.md`
 
-## Best Practices
+---
 
-1. **Text Length**: Keep text under 5000 characters for best results
-2. **Voice Selection**: Choose voice that matches your content tone
-3. **Speed**: Use 0.8-1.2 speed for most natural speech
-4. **Punctuation**: Use proper punctuation for natural pauses
-5. **Testing**: Test different voices to find the best match
+**Last Updated**: 2025-01-08
+**Version**: 2.0.0 (Strategy-based Documentation)
 
-## Use Cases
+---
 
-### Audiobook Narration
+## 📝 Changelog
 
-```tsx
-const result = await feature.generate({
-  voice: 'en-GB-Neural2-B',
-  speed: 0.9,
-  pitch: 0,
-});
-```
+### v2.0.0 - 2025-01-08
+- **BREAKING**: Documentation format changed to strategy-based
+- Removed extensive code examples
+- Added rules, prohibitions, and AI agent directions
+- Focus on best practices and implementation guidance
+- Added critical audio cleanup guidance
 
-### Voice Assistant
-
-```tsx
-const result = await feature.generate({
-  voice: 'en-US-Neural2-A',
-  speed: 1.1,
-  pitch: 1.0,
-});
-```
-
-### Accessibility
-
-```tsx
-const result = await feature.generate({
-  voice: 'en-US-Neural2-A',
-  speed: 1.0,
-  pitch: 0,
-});
-```
-
-## Error Handling
-
-```tsx
-const { state, generate } = useTextToVoiceFeature({ ...config });
-
-useEffect(() => {
-  if (state.error) {
-    Alert.alert('Generation Failed', state.error);
-  }
-}, [state.error]);
-```
-
-## Related Features
-
-- [Text to Image](../text-to-image) - Generate images from text
-- [Audio Generation](../audio-generation) - Generate audio content
-- [Script Generator](../script-generator) - Generate scripts for voiceovers
-
-## License
-
-MIT
+### v1.0.0 - Initial Release
+- Initial feature documentation
