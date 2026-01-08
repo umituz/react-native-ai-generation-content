@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback, useRef, useMemo } from "react";
-import { generateUUID } from "@umituz/react-native-uuid";
+import { generateUUID } from "@umituz/react-native-design-system";
 import { executeImageFeature } from "../../../../infrastructure/services";
 import { createAnimeSelfiePrompt } from "../../../../domains/prompts";
 import type {

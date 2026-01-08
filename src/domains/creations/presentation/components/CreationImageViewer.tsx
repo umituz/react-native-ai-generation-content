@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { ImageGallery } from "@umituz/react-native-image";
+import { ImageGallery } from "@umituz/react-native-design-system";
 import type { Creation } from "../../domain/entities/Creation";
 
 interface CreationImageViewerProps {

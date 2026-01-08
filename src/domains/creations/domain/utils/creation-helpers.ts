@@ -3,7 +3,7 @@
  * Utility functions for creation data manipulation
  */
 
-import { generateUUID } from "@umituz/react-native-uuid";
+import { generateUUID } from "@umituz/react-native-design-system";
 import type { CreationTypeId } from "../types";
 
 /**

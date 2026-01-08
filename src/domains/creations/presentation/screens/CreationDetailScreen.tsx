@@ -1,8 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
-import { ImageGallery } from "@umituz/react-native-image";
+import { useAppDesignTokens, ImageGallery } from "@umituz/react-native-design-system";
 import type { Creation } from '../../domain/entities/Creation';
 import type { CreationsConfig } from '../../domain/value-objects/CreationsConfig';
 import { hasVideoContent, getPreviewUrl } from '../../domain/utils';
