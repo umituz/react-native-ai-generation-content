@@ -21,7 +21,7 @@ export const ROMANTIC_MOOD_OPTIONS: CoupleFeatureOption[] = [
   { id: "romantic", iconKey: "heart", labelKey: "romantic" },
   { id: "mysterious", iconKey: "moon", labelKey: "mysterious" },
   { id: "magical", iconKey: "sparkles", labelKey: "magical" },
-  { id: "energetic", iconKey: "bolt", labelKey: "energetic" },
+  { id: "energetic", iconKey: "flash-outline", labelKey: "energetic" },
   { id: "melancholic", iconKey: "cloud", labelKey: "melancholic" },
   { id: "passionate", iconKey: "flame", labelKey: "passionate" },
   { id: "nostalgic", iconKey: "camera", labelKey: "nostalgic" },
