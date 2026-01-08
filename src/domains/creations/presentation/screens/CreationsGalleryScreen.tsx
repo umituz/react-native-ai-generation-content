@@ -31,6 +31,7 @@ interface CreationsGalleryScreenProps {
   readonly onEmptyAction?: () => void;
   readonly emptyActionLabel?: string;
   readonly showFilter?: boolean;
+  readonly onViewResult?: (creation: Creation) => void;
 }
 
 export function CreationsGalleryScreen({
@@ -43,6 +44,7 @@ export function CreationsGalleryScreen({
   onEmptyAction,
   emptyActionLabel,
   showFilter = config.showFilter ?? true,
+  onViewResult,
 }: CreationsGalleryScreenProps) {
   const insets = useSafeAreaInsets();
   const tokens = useAppDesignTokens();
@@ -155,7 +157,7 @@ export function CreationsGalleryScreen({
   ), [isLoading, creations, filters.isFiltered, tokens, t, config, emptyActionLabel, onEmptyAction, filters.clearAllFilters]);
 
   if (selectedCreation) {
-    return <CreationDetailScreen creation={selectedCreation} config={config} onClose={() => setSelectedCreation(null)} onShare={handleShare} onDelete={handleDelete} t={t} />;
+    return <CreationDetailScreen creation={selectedCreation} config={config} onClose={() => setSelectedCreation(null)} onShare={handleShare} onDelete={handleDelete} onViewResult={onViewResult} t={t} />;
   }
 
   return (
