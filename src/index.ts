@@ -153,6 +153,9 @@ export * from "./features/meme-generator";
 export * from "./features/couple-future";
 export * from "./infrastructure/orchestration";
 
+// Result Preview Domain
+export * from "./domains/result-preview";
+
 // Unified AI Feature Screen
 export {
   AIFeatureScreen,
