@@ -17,7 +17,7 @@ import { ArtStyleSelector } from "../components/ArtStyleSelector";
 import { ArtistStyleSelector } from "../components/ArtistStyleSelector";
 import { WardrobeSelector } from "../components/WardrobeSelector";
 
-interface CoupleFeatureScreenProps {
+export interface CoupleFeatureScreenProps {
   featureId: CoupleFeatureId;
   selection: CoupleFeatureSelection;
   onSelectionChange: (selection: CoupleFeatureSelection) => void;
