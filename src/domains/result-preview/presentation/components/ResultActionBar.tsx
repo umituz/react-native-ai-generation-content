@@ -18,11 +18,9 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
   onDownload,
   onShare,
   onTryAgain,
-  onRate,
   saveButtonText,
   shareButtonText,
   tryAgainButtonText,
-  rateButtonText,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -30,38 +28,28 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
     () =>
       StyleSheet.create({
         container: {
-          marginTop: tokens.spacing.xl,
-          paddingHorizontal: tokens.spacing.md,
-        },
-        gridContainer: {
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: "center",
+          flexWrap: "wrap",
           gap: tokens.spacing.md,
+          paddingHorizontal: tokens.spacing.lg,
+          marginTop: tokens.spacing.xl,
         },
-        actionButton: {
-          flex: 1,
-          alignItems: "center",
-          gap: tokens.spacing.sm,
-        },
-        iconContainer: {
-          width: 56,
-          height: 56,
-          borderRadius: 28,
+        button: {
+          flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-        },
-        iconContainerSecondary: {
-          backgroundColor: tokens.colors.backgroundSecondary,
-          borderWidth: 1,
-          borderColor: tokens.colors.border,
-        },
-        iconContainerPrimary: {
+          paddingVertical: 12,
+          paddingHorizontal: 20,
+          borderRadius: 16,
+          gap: 8,
+          minWidth: 110,
           backgroundColor: tokens.colors.primary,
         },
-        label: {
-          fontSize: 12,
-          fontWeight: "500",
-          color: tokens.colors.textSecondary,
+        buttonText: {
+          fontWeight: "700",
+          color: tokens.colors.textInverse,
+          fontSize: 15,
         },
       }),
     [tokens],
@@ -69,53 +57,42 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.gridContainer}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={onDownload}
-          disabled={isSaving}
-        >
-          <View style={[styles.iconContainer, styles.iconContainerSecondary]}>
-            {isSaving ? (
-              <ActivityIndicator color={tokens.colors.primary} />
-            ) : (
-              <AtomicIcon name="download" size="md" color="textPrimary" />
-            )}
-          </View>
-          <AtomicText style={styles.label}>{saveButtonText}</AtomicText>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={onShare}
-          disabled={isSharing}
-        >
-          <View style={[styles.iconContainer, styles.iconContainerPrimary]}>
-            {isSharing ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <AtomicIcon name="share" size="md" color="onPrimary" />
-            )}
-          </View>
-          <AtomicText style={styles.label}>{shareButtonText}</AtomicText>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton} onPress={onTryAgain}>
-          <View style={[styles.iconContainer, styles.iconContainerSecondary]}>
-            <AtomicIcon name="refresh" size="md" color="textPrimary" />
-          </View>
-          <AtomicText style={styles.label}>{tryAgainButtonText}</AtomicText>
-        </TouchableOpacity>
-
-        {onRate && rateButtonText && (
-          <TouchableOpacity style={styles.actionButton} onPress={onRate}>
-            <View style={[styles.iconContainer, styles.iconContainerSecondary]}>
-              <AtomicIcon name="thumbs-up" size="md" color="textPrimary" />
-            </View>
-            <AtomicText style={styles.label}>{rateButtonText}</AtomicText>
-          </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={onDownload}
+        disabled={isSaving}
+        activeOpacity={0.7}
+      >
+        {isSaving ? (
+          <ActivityIndicator color={tokens.colors.textInverse} size="small" />
+        ) : (
+          <AtomicIcon name="download-outline" size="sm" color="onPrimary" />
         )}
-      </View>
+        <AtomicText style={styles.buttonText}>{saveButtonText}</AtomicText>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={onShare}
+        disabled={isSharing}
+        activeOpacity={0.7}
+      >
+        {isSharing ? (
+          <ActivityIndicator color={tokens.colors.textInverse} size="small" />
+        ) : (
+          <AtomicIcon name="share-social-outline" size="sm" color="onPrimary" />
+        )}
+        <AtomicText style={styles.buttonText}>{shareButtonText}</AtomicText>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={onTryAgain}
+        activeOpacity={0.7}
+      >
+        <AtomicIcon name="refresh-outline" size="sm" color="onPrimary" />
+        <AtomicText style={styles.buttonText}>{tryAgainButtonText}</AtomicText>
+      </TouchableOpacity>
     </View>
   );
 };

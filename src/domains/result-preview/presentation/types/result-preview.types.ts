@@ -63,20 +63,12 @@ export interface ResultActionBarProps {
   onShare: () => void;
   /** Try again callback */
   onTryAgain: () => void;
-  /** Rate callback (optional) */
-  onRate?: () => void;
   /** Save button text */
   saveButtonText: string;
-  /** Save button text when loading */
-  saveButtonLoadingText: string;
   /** Share button text */
   shareButtonText: string;
-  /** Share button text when loading */
-  shareButtonLoadingText: string;
   /** Try again button text */
   tryAgainButtonText: string;
-  /** Rate button text (optional) */
-  rateButtonText?: string;
 }
 
 /**
