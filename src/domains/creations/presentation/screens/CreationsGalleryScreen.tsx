@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -13,7 +13,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useGalleryFilters } from "../hooks/useGalleryFilters";
-import { GalleryHeader, CreationCard, CreationImageViewer, GalleryEmptyStates } from "../components";
+import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
@@ -26,8 +26,6 @@ interface CreationsGalleryScreenProps {
   readonly config: CreationsConfig;
   readonly t: (key: string) => string;
   readonly locale?: string;
-  readonly enableEditing?: boolean;
-  readonly onImageEdit?: (uri: string, creationId: string) => void | Promise<void>;
   readonly onEmptyAction?: () => void;
   readonly emptyActionLabel?: string;
   readonly showFilter?: boolean;
@@ -39,8 +37,6 @@ export function CreationsGalleryScreen({
   repository,
   config,
   t,
-  enableEditing = false,
-  onImageEdit,
   onEmptyAction,
   emptyActionLabel,
   showFilter = config.showFilter ?? true,
@@ -51,8 +47,6 @@ export function CreationsGalleryScreen({
   const { share } = useSharing();
   const alert = useAlert();
 
-  const [viewerVisible, setViewerVisible] = useState(false);
-  const [viewerIndex, setViewerIndex] = useState(0);
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
@@ -172,7 +166,6 @@ export function CreationsGalleryScreen({
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => void refetch()} tintColor={tokens.colors.primary} />}
       />
-      <CreationImageViewer creations={filters.filtered} visible={viewerVisible} index={viewerIndex} onDismiss={() => setViewerVisible(false)} onIndexChange={setViewerIndex} enableEditing={enableEditing} onImageEdit={onImageEdit} />
       <FilterSheet visible={filters.statusFilterVisible} onClose={filters.closeStatusFilter} options={filters.statusFilter.filterOptions} selectedIds={[filters.statusFilter.selectedId]} onFilterPress={filters.statusFilter.selectFilter} onClearFilters={filters.statusFilter.clearFilter} title={t(config.translations.statusFilterTitle ?? "creations.filter.status")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
       <FilterSheet visible={filters.mediaFilterVisible} onClose={filters.closeMediaFilter} options={filters.mediaFilter.filterOptions} selectedIds={[filters.mediaFilter.selectedId]} onFilterPress={filters.mediaFilter.selectFilter} onClearFilters={filters.mediaFilter.clearFilter} title={t(config.translations.mediaFilterTitle ?? "creations.filter.media")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
     </View>

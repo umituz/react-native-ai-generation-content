@@ -30,7 +30,6 @@ export { GalleryHeader } from "./GalleryHeader";
 export { EmptyState } from "./EmptyState";
 export { GalleryEmptyStates } from "./GalleryEmptyStates";
 export { CreationsHomeCard } from "./CreationsHomeCard";
-export { CreationImageViewer } from "./CreationImageViewer";
 export { CreationsGrid } from "./CreationsGrid";
 
 // Detail Components

@@ -8,6 +8,7 @@ import {
   AtomicText,
   AtomicIcon,
   useAppDesignTokens,
+  type IconName,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
 import { MESSAGE_TYPES } from "../../domain/constants";
@@ -41,7 +42,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ onCategoryPress }) =
             }]}
           >
             <View style={[styles.categoryIconContainer, { backgroundColor: `${tokens.colors.primary}15` }]}>
-              <AtomicIcon name={cat.icon as any} color="primary" size="md" />
+              <AtomicIcon name={cat.icon as IconName} color="primary" size="md" />
             </View>
             <AtomicText type="labelLarge" color="textPrimary">
               {t(cat.labelKey)}

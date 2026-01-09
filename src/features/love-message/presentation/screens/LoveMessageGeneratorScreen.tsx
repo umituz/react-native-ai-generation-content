@@ -1,6 +1,6 @@
 /**
  * Love Message Generator Screen
- * Optimized multi-step wizard flow
+ * Multi-step wizard flow
  */
 
 import { FC, useMemo } from "react";
@@ -10,8 +10,10 @@ import {
   AtomicButton,
   useAppDesignTokens,
   useSafeAreaInsets,
+  AppNavigation,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
+import { useRoute, RouteProp } from "@react-navigation/native";
 import { ProgressDots } from "../components/ProgressDots";
 import { MessageResult } from "../components/MessageResult";
 import { GeneratorHeader } from "../components/GeneratorHeader";
@@ -21,35 +23,37 @@ import { StepDetails } from "../components/StepDetails";
 import { MessageType } from "../../domain/types";
 import { useLoveMessageGenerator, GeneratorStep } from "../hooks/useLoveMessageGenerator";
 
-interface LoveMessageGeneratorScreenProps {
-  onBack: () => void;
-  onNavigateToProfile: () => void;
-  initialType?: MessageType;
-}
+type RouteParams = { initialType?: MessageType };
 
-export const LoveMessageGeneratorScreen: FC<LoveMessageGeneratorScreenProps> = ({
-  onBack,
-  onNavigateToProfile,
-  initialType,
-}) => {
+export const LoveMessageGeneratorScreen: FC = () => {
   const tokens = useAppDesignTokens();
   const { bottom } = useSafeAreaInsets();
   const { t } = useLocalization();
-  const gen = useLoveMessageGenerator({ onBack, initialType });
+  const route = useRoute<RouteProp<{ params: RouteParams }, "params">>();
+
+  const initialType = route.params?.initialType;
+  const gen = useLoveMessageGenerator({ onBack: () => AppNavigation.goBack(), initialType });
+
+  const handleNavigateToProfile = () => AppNavigation.navigate("PartnerProfile");
 
   const stepTitle = useMemo(() => {
     switch (gen.currentStep) {
-      case GeneratorStep.PARTNER: return t("loveMessage.generator.stepPartner");
-      case GeneratorStep.VIBE: return t("loveMessage.generator.stepVibe");
-      case GeneratorStep.DETAILS: return t("loveMessage.generator.stepDetails");
-      case GeneratorStep.RESULT: return t("loveMessage.generator.stepResult");
-      default: return "";
+      case GeneratorStep.PARTNER:
+        return t("loveMessage.generator.stepPartner");
+      case GeneratorStep.VIBE:
+        return t("loveMessage.generator.stepVibe");
+      case GeneratorStep.DETAILS:
+        return t("loveMessage.generator.stepDetails");
+      case GeneratorStep.RESULT:
+        return t("loveMessage.generator.stepResult");
+      default:
+        return "";
     }
   }, [gen.currentStep, t]);
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
-      <GeneratorHeader 
+      <GeneratorHeader
         currentStep={gen.currentStep}
         partnerName={gen.partnerName}
         onBack={gen.handleBack}
@@ -58,7 +62,10 @@ export const LoveMessageGeneratorScreen: FC<LoveMessageGeneratorScreenProps> = (
         isGenerating={gen.isGenerating}
       />
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: bottom + 120 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: bottom + 120 }}
+      >
         <View style={styles.heroSection}>
           <ProgressDots currentStep={gen.currentStep} totalSteps={4} />
           <AtomicText type="headlineLarge" color="textPrimary" style={styles.heroTitle}>
@@ -69,20 +76,20 @@ export const LoveMessageGeneratorScreen: FC<LoveMessageGeneratorScreenProps> = (
         <View style={styles.formContent}>
           {gen.currentStep === GeneratorStep.PARTNER && (
             <Animated.View>
-              <StepPartner 
+              <StepPartner
                 partnerName={gen.partnerName}
                 setPartnerName={gen.setPartnerName}
                 useProfile={gen.useProfile}
                 setUseProfile={gen.setUseProfile}
                 hasProfile={gen.hasProfile}
-                onEditProfile={onNavigateToProfile}
+                onEditProfile={handleNavigateToProfile}
               />
             </Animated.View>
           )}
 
           {gen.currentStep === GeneratorStep.VIBE && (
             <Animated.View>
-              <StepVibe 
+              <StepVibe
                 selectedType={gen.selectedType}
                 setSelectedType={gen.setSelectedType}
                 selectedTone={gen.selectedTone}
@@ -120,9 +127,20 @@ export const LoveMessageGeneratorScreen: FC<LoveMessageGeneratorScreenProps> = (
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  heroSection: { paddingVertical: 32, alignItems: 'center' },
-  heroTitle: { fontWeight: 'bold', textAlign: 'center', marginBottom: 8, paddingHorizontal: 20 },
+  heroSection: { paddingVertical: 32, alignItems: "center" },
+  heroTitle: {
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 8,
+    paddingHorizontal: 20,
+  },
   formContent: { paddingHorizontal: 20 },
-  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 24, backgroundColor: 'transparent' },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 24,
+  },
   actionBtn: { height: 60, borderRadius: 30 },
 });

@@ -9,6 +9,7 @@ import {
   AtomicText,
   AtomicIcon,
   useAppDesignTokens,
+  type IconName,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
 import { MESSAGE_TONES } from "../../domain/constants";
@@ -55,7 +56,7 @@ export const ToneSelector: FC<ToneSelectorProps> = ({
               ]}
             >
               <AtomicIcon
-                name={config.icon as any}
+                name={config.icon as IconName}
                 color={isSelected ? "onPrimary" : "secondary"}
                 size="sm"
                 style={styles.icon}
