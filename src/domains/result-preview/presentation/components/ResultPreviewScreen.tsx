@@ -24,7 +24,7 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   onShare,
   onTryAgain,
   onNavigateBack,
-  onRate,
+  _onRate,
   recentCreations,
   onViewAll,
   onCreationPress,

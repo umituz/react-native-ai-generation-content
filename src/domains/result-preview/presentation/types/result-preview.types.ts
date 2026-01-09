@@ -96,7 +96,7 @@ export interface ResultPreviewScreenProps {
   onShare: () => void;
   onTryAgain: () => void;
   onNavigateBack: () => void;
-  onRate?: () => void;
+  _onRate?: () => void;
   /** Recent creations to display */
   recentCreations?: readonly RecentCreation[];
   /** Navigate to all creations */
