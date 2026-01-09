@@ -20,6 +20,8 @@ export interface CreationCardData {
   uri?: string;
   provider?: string;
   createdAt: Date | number;
+  /** Whether this creation is marked as favorite */
+  isFavorite?: boolean;
 }
 
 /**

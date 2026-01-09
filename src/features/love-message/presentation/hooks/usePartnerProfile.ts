@@ -3,7 +3,6 @@
  */
 
 import { useState, useEffect, useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { PartnerProfile } from "../../domain/types";
 import { PartnerProfileRepository } from "../../infrastructure/persistence/PartnerProfileRepository";
 

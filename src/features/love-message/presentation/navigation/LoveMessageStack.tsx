@@ -5,10 +5,10 @@
 
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { LoveMessageExploreScreen } from "@domains/love-message/presentation/screens/LoveMessageExploreScreen";
-import { MessageListScreen } from "@domains/love-message/presentation/screens/MessageListScreen";
-import { LoveMessageGeneratorScreen } from "@domains/love-message/presentation/screens/LoveMessageGeneratorScreen";
-import { PartnerProfileScreen } from "@domains/love-message/presentation/screens/PartnerProfileScreen";
+import { LoveMessageExploreScreen } from "../screens/LoveMessageExploreScreen";
+import { MessageListScreen } from "../screens/MessageListScreen";
+import { LoveMessageGeneratorScreen } from "../screens/LoveMessageGeneratorScreen";
+import { PartnerProfileScreen } from "../screens/PartnerProfileScreen";
 
 export type LoveMessageStackParamList = {
   LoveMessageExplore: undefined;

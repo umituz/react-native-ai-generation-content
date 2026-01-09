@@ -45,7 +45,8 @@ export function useCreationCardActions({
     if (callbacks.onFavorite) {
       result.push({
         id: "favorite",
-        icon: "heart-outline",
+        icon: creation.isFavorite ? "heart" : "heart-outline",
+        color: creation.isFavorite ? "error" : undefined,
         onPress: () => callbacks.onFavorite?.(creation),
       });
     }

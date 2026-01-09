@@ -7,7 +7,6 @@ import { View, Pressable, StyleSheet } from "react-native";
 import {
   AtomicText,
   AtomicIcon,
-  useAppDesignTokens,
   useSafeAreaInsets,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
@@ -29,7 +28,6 @@ export const GeneratorHeader: React.FC<GeneratorHeaderProps> = ({
   onGenerate,
   isGenerating,
 }) => {
-  const tokens = useAppDesignTokens();
   const { top } = useSafeAreaInsets();
   const { t } = useLocalization();
 

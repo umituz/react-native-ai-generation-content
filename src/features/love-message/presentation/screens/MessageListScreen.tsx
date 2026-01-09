@@ -11,7 +11,6 @@ import {
   useSafeAreaInsets,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { CATEGORY_TEMPLATES, MESSAGE_TYPES } from "../../domain/constants";
 import { MessageListItem } from "../components/MessageListItem";
 

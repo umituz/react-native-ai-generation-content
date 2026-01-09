@@ -3,16 +3,12 @@
  * Premium entry point for Love Message domain
  */
 
-import { FC, useCallback } from "react";
-import { View, ScrollView, StyleSheet, Pressable } from "react-native";
+import { FC } from "react";
+import { View, ScrollView, StyleSheet } from "react-native";
 import {
-  AtomicText,
-  AtomicIcon,
   useAppDesignTokens,
   useSafeAreaInsets,
 } from "@umituz/react-native-design-system";
-import { useLocalization } from "@umituz/react-native-localization";
-import { useNavigation } from "@react-navigation/native";
 import { ExploreHeader } from "../components/ExploreHeader";
 import { LoveMessageHeroSection } from "../components/LoveMessageHeroSection";
 import { CategoryGrid } from "../components/CategoryGrid";
@@ -31,7 +27,6 @@ export const LoveMessageExploreScreen: FC<LoveMessageExploreScreenProps> = ({
 }) => {
   const tokens = useAppDesignTokens();
   const { bottom } = useSafeAreaInsets();
-  const { t } = useLocalization();
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>

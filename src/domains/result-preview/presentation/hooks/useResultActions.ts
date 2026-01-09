@@ -13,10 +13,26 @@ import type {
 } from "../types/result-preview.types";
 
 /**
- * Check if a string is a base64 data URL
+ * Check if a string is a base64 data URL or raw base64
  */
 const isBase64DataUrl = (str: string): boolean => {
   return str.startsWith("data:image/");
+};
+
+/**
+ * Check if a string is raw base64 (not a URL and not a data URL)
+ */
+const isRawBase64 = (str: string): boolean => {
+  return !str.startsWith("http") && !str.startsWith("data:image/") && !str.startsWith("file://");
+};
+
+/**
+ * Convert raw base64 to data URL format
+ */
+const toDataUrl = (str: string): string => {
+  if (isBase64DataUrl(str)) return str;
+  if (isRawBase64(str)) return `data:image/jpeg;base64,${str}`;
+  return str;
 };
 
 /**
@@ -80,11 +96,13 @@ export const useResultActions = (
         throw new Error("Media library permission not granted");
       }
 
-      let fileUri = imageUrl;
+      // Convert to data URL if raw base64
+      const normalizedUrl = toDataUrl(imageUrl);
+      let fileUri = normalizedUrl;
 
       // If it's a base64 string, save to file first
-      if (isBase64DataUrl(fileUri)) {
-        fileUri = await saveBase64ToFile(fileUri);
+      if (isBase64DataUrl(normalizedUrl)) {
+        fileUri = await saveBase64ToFile(normalizedUrl);
       }
 
       // Save to media library
@@ -112,11 +130,13 @@ export const useResultActions = (
       setIsSharing(true);
       onShareStart?.();
 
-      let shareUrl = imageUrl;
+      // Convert to data URL if raw base64
+      const normalizedUrl = toDataUrl(imageUrl);
+      let shareUrl = normalizedUrl;
 
       // If it's a base64 string, save to file first for sharing
-      if (isBase64DataUrl(shareUrl)) {
-        shareUrl = await saveBase64ToFile(shareUrl);
+      if (isBase64DataUrl(normalizedUrl)) {
+        shareUrl = await saveBase64ToFile(normalizedUrl);
       }
 
       // Use expo-sharing for cross-platform file sharing

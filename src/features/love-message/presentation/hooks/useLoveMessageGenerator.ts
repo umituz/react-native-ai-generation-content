@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import { useNavigation, useIsFocused, useRoute } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { MessageType, MessageTone } from "../../domain/types";
 import { generateLoveMessage } from "../../infrastructure/services/LoveMessageService";
 import { PartnerProfileRepository } from "../../infrastructure/persistence/PartnerProfileRepository";
@@ -76,7 +76,7 @@ export const useLoveMessageGenerator = (config: {
 
       setGeneratedMessage(message);
       setCurrentStep(GeneratorStep.RESULT);
-    } catch (error) {
+    } catch {
       // Error handled in usecase
     } finally {
       setIsGenerating(false);
