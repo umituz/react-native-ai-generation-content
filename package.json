@@ -62,7 +62,7 @@
     "@types/react": "~19.1.10",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
-    "@umituz/react-native-design-system": "^2.8.26",
+    "@umituz/react-native-design-system": "*",
     "@umituz/react-native-firebase": "*",
     "@umituz/react-native-localization": "*",
     "eslint": "^9.0.0",
