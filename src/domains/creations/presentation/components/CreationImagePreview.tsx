@@ -1,20 +1,16 @@
 /**
  * CreationImagePreview Component
  * Displays image preview with loading/placeholder states
+ * Uses expo-image for caching and performance
  */
 
-import React, { useMemo, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  type ImageErrorEventData,
-  type NativeSyntheticEvent,
-} from "react-native";
+import React, { useMemo, useState, useCallback } from "react";
+import { View, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
   AtomicIcon,
   AtomicSpinner,
+  AtomicImage,
 } from "@umituz/react-native-design-system";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { isInProgress, getTypeIcon } from "../../domain/utils";
@@ -46,12 +42,18 @@ export function CreationImagePreview({
   const inProgress = isInProgress(status);
   const typeIcon = getTypeIcon(type);
   const [imageError, setImageError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const hasPreview = !!uri && !inProgress && !imageError;
 
-  const handleImageError = (_error: NativeSyntheticEvent<ImageErrorEventData>) => {
+  const handleImageError = useCallback(() => {
     setImageError(true);
-  };
+    setIsLoading(false);
+  }, []);
+
+  const handleLoadEnd = useCallback(() => {
+    setIsLoading(false);
+  }, []);
 
   const styles = useMemo(
     () =>
@@ -74,11 +76,11 @@ export function CreationImagePreview({
           justifyContent: "center",
           alignItems: "center",
         },
-        loadingContainer: {
-          width: "100%",
-          height: "100%",
+        loadingOverlay: {
+          ...StyleSheet.absoluteFillObject,
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: tokens.colors.backgroundSecondary,
         },
         loadingIcon: {
           width: 64,
@@ -92,11 +94,11 @@ export function CreationImagePreview({
     [tokens, aspectRatio, height]
   );
 
-  // Show loading state
+  // Show loading state during generation
   if (inProgress && showLoadingIndicator) {
     return (
       <View style={styles.container}>
-        <View style={styles.loadingContainer}>
+        <View style={styles.loadingOverlay}>
           <View style={styles.loadingIcon}>
             <AtomicSpinner size="lg" color="primary" />
           </View>
@@ -105,16 +107,26 @@ export function CreationImagePreview({
     );
   }
 
-  // Show image preview
+  // Show image preview with caching
   if (hasPreview) {
     return (
       <View style={styles.container}>
-        <Image
+        <AtomicImage
           source={{ uri }}
           style={styles.image}
-          resizeMode="cover"
+          contentFit="cover"
+          transition={200}
+          cachePolicy="disk"
           onError={handleImageError}
+          onLoadEnd={handleLoadEnd}
+          placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
+          placeholderContentFit="cover"
         />
+        {isLoading && (
+          <View style={styles.loadingOverlay}>
+            <AtomicSpinner size="md" color="primary" />
+          </View>
+        )}
       </View>
     );
   }
