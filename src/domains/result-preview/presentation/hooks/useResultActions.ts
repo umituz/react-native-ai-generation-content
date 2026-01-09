@@ -119,6 +119,26 @@ export const useResultActions = (
   }, [imageUrl, onSaveSuccess, onSaveError]);
 
   /**
+   * Download image from URL to file
+   */
+  const downloadUrlToFile = async (url: string): Promise<string> => {
+    const timestamp = Date.now();
+    const filename = `ai_generation_${timestamp}.jpg`;
+    const file = new File(Paths.cache, filename);
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to download image: ${response.statusText}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    file.write(bytes);
+
+    return file.uri;
+  };
+
+  /**
    * Share image
    */
   const handleShare = useCallback(async () => {
@@ -134,9 +154,11 @@ export const useResultActions = (
       const normalizedUrl = toDataUrl(imageUrl);
       let shareUrl = normalizedUrl;
 
-      // If it's a base64 string, save to file first for sharing
+      // Download to file for sharing (works for both base64 and remote URLs)
       if (isBase64DataUrl(normalizedUrl)) {
         shareUrl = await saveBase64ToFile(normalizedUrl);
+      } else if (normalizedUrl.startsWith("http")) {
+        shareUrl = await downloadUrlToFile(normalizedUrl);
       }
 
       // Use expo-sharing for cross-platform file sharing
