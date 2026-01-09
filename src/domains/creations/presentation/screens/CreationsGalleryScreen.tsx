@@ -15,6 +15,7 @@ import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useGalleryFilters } from "../hooks/useGalleryFilters";
 import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
 import { ResultPreviewScreen } from "../../../result-preview/presentation/components/ResultPreviewScreen";
+import { StarRatingPicker } from "../../../result-preview/presentation/components/StarRatingPicker";
 import { useResultActions } from "../../../result-preview/presentation/hooks/useResultActions";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import { getPreviewUrl } from "../../domain/utils";
@@ -45,6 +46,7 @@ export function CreationsGalleryScreen({
   const { share } = useSharing();
   const alert = useAlert();
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
+  const [showRatingPicker, setShowRatingPicker] = useState(false);
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
   const deleteMutation = useDeleteCreation({ userId, repository });
@@ -101,13 +103,17 @@ export function CreationsGalleryScreen({
     setSelectedCreation(null);
   }, []);
 
-  const handleRate = useCallback(() => {
+  const handleOpenRatingPicker = useCallback(() => {
+    setShowRatingPicker(true);
+  }, []);
+
+  const handleSubmitRating = useCallback((rating: number) => {
     if (!userId || !selectedCreation) return;
     void (async () => {
-      const success = await repository.rate(userId, selectedCreation.id, 5);
+      const success = await repository.rate(userId, selectedCreation.id, rating);
       if (success) {
-        setSelectedCreation({ ...selectedCreation, rating: 5, ratedAt: new Date() });
-        alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("rating.thankYouTitle"), t("rating.thankYouMessage"));
+        setSelectedCreation({ ...selectedCreation, rating, ratedAt: new Date() });
+        alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("result.rateSuccessTitle"), t("result.rateSuccessMessage"));
         void refetch();
       }
     })();
@@ -182,29 +188,39 @@ export function CreationsGalleryScreen({
   if (selectedCreation && selectedImageUrl) {
     const hasRating = selectedCreation.rating !== undefined && selectedCreation.rating !== null;
     return (
-      <ResultPreviewScreen
-        imageUrl={selectedImageUrl}
-        isSaving={isSaving}
-        isSharing={isSharing}
-        onDownload={handleDownload}
-        onShare={handleShare}
-        onTryAgain={handleTryAgain}
-        onNavigateBack={handleBack}
-        onRate={handleRate}
-        hideLabel
-        iconOnly
-        showTryAgain={false}
-        showRating={!hasRating}
-        translations={{
-          title: t(config.translations.title),
-          yourResult: "",
-          saveButton: t("result.saveButton"),
-          saving: t("result.saving"),
-          shareButton: t("result.shareButton"),
-          sharing: t("result.sharing"),
-          tryAnother: "",
-        }}
-      />
+      <>
+        <ResultPreviewScreen
+          imageUrl={selectedImageUrl}
+          isSaving={isSaving}
+          isSharing={isSharing}
+          onDownload={handleDownload}
+          onShare={handleShare}
+          onTryAgain={handleTryAgain}
+          onNavigateBack={handleBack}
+          onRate={handleOpenRatingPicker}
+          hideLabel
+          iconOnly
+          showTryAgain={false}
+          showRating={!hasRating}
+          translations={{
+            title: t(config.translations.title),
+            yourResult: "",
+            saveButton: t("result.saveButton"),
+            saving: t("result.saving"),
+            shareButton: t("result.shareButton"),
+            sharing: t("result.sharing"),
+            tryAnother: "",
+          }}
+        />
+        <StarRatingPicker
+          visible={showRatingPicker}
+          onClose={() => setShowRatingPicker(false)}
+          onRate={handleSubmitRating}
+          title={t("result.rateTitle")}
+          submitLabel={t("common.submit")}
+          cancelLabel={t("common.cancel")}
+        />
+      </>
     );
   }
 

@@ -4,8 +4,8 @@
  */
 
 import React, { useMemo } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { View, StyleSheet } from "react-native";
+import { useAppDesignTokens, AtomicText } from "@umituz/react-native-design-system";
 
 interface CreationCardMetaProps {
   readonly formattedDate: string;
@@ -38,11 +38,11 @@ export function CreationCardMeta({
 
   return (
     <View style={styles.meta}>
-      <Text style={styles.metaText}>{formattedDate}</Text>
+      <AtomicText style={styles.metaText}>{formattedDate}</AtomicText>
       {provider && (
         <>
-          <Text style={[styles.metaText, styles.metaDot]}>•</Text>
-          <Text style={styles.metaText}>{provider}</Text>
+          <AtomicText style={[styles.metaText, styles.metaDot]}>•</AtomicText>
+          <AtomicText style={styles.metaText}>{provider}</AtomicText>
         </>
       )}
     </View>

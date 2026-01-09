@@ -152,7 +152,7 @@ export const ScenarioGrid: React.FC<ScenarioGridProps> = ({
 
       return (
         <AtomicCard
-          image={item.imageUrl || ""}
+          image={item.previewImageUrl ?? item.imageUrl ?? ""}
           title={title}
           subtitle={description}
           selected={selectedScenarioId === item.id}

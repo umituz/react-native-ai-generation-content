@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import {
   AtomicText,
   useAppDesignTokens,
@@ -56,7 +56,7 @@ export const StylePresetsGrid: React.FC<StylePresetsGridProps> = ({
             disabled={disabled}
           >
             <View style={styles.cardHeader}>
-              <Text style={styles.emoji}>{preset.emoji}</Text>
+              <AtomicText style={styles.emoji}>{preset.emoji}</AtomicText>
               {preset.duration !== undefined && (
                 <View
                   style={[

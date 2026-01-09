@@ -4,10 +4,12 @@
  */
 
 import React, { useMemo } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
   AtomicIcon,
+  AtomicText,
+  withAlpha,
 } from "@umituz/react-native-design-system";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { getStatusColorKey, getStatusText, getTypeIcon, getTypeText } from "../../domain/utils";
@@ -54,7 +56,7 @@ export function CreationBadges({
           paddingHorizontal: 8,
           paddingVertical: 4,
           borderRadius: 12,
-          backgroundColor: statusColor + "20",
+          backgroundColor: withAlpha(statusColor, 0.2),
         },
         statusDot: {
           width: 6,
@@ -96,14 +98,14 @@ export function CreationBadges({
       {showStatus && (
         <View style={styles.statusBadge}>
           <View style={styles.statusDot} />
-          <Text style={styles.statusText}>{displayStatusText}</Text>
+          <AtomicText style={styles.statusText}>{displayStatusText}</AtomicText>
         </View>
       )}
 
       {showType && type && (
         <View style={styles.typeBadge}>
           <AtomicIcon name={typeIcon} color="textInverse" size="xs" />
-          <Text style={styles.typeText}>{displayTypeText}</Text>
+          <AtomicText style={styles.typeText}>{displayTypeText}</AtomicText>
         </View>
       )}
     </>

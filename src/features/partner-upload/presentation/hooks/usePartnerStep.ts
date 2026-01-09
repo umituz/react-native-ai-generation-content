@@ -5,8 +5,7 @@
 
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
+import { useMedia, MediaLibraryPermission, readFileAsBase64 } from "@umituz/react-native-design-system";
 import type { UploadedImage } from "../../domain/types";
 
 export interface UsePartnerStepConfig {
@@ -20,6 +19,8 @@ export interface UsePartnerStepTranslations {
   readonly maxFileSize: string;
   readonly error: string;
   readonly uploadFailed: string;
+  readonly permissionDenied?: string;
+  readonly permissionRequired?: string;
 }
 
 export interface UsePartnerStepOptions {
@@ -42,6 +43,7 @@ const DEFAULT_CONFIG: UsePartnerStepConfig = {
 
 export const usePartnerStep = (options: UsePartnerStepOptions) => {
   const { initialName = "", config = DEFAULT_CONFIG, translations } = options;
+  const { pickImage, requestMediaLibraryPermission, getMediaLibraryPermissionStatus, isLoading: isPickerLoading } = useMedia();
 
   const [state, setState] = useState<PartnerStepState>({
     image: null,
@@ -59,9 +61,21 @@ export const usePartnerStep = (options: UsePartnerStepOptions) => {
 
   const handlePickImage = useCallback(async () => {
     try {
+      // Check permission first
+      let permission = await getMediaLibraryPermissionStatus();
+      if (permission !== MediaLibraryPermission.GRANTED) {
+        permission = await requestMediaLibraryPermission();
+        if (permission !== MediaLibraryPermission.GRANTED) {
+          Alert.alert(
+            translations.error,
+            translations.permissionDenied ?? "Photo library access is required to upload images.",
+          );
+          return;
+        }
+      }
+
       const maxFileSizeMB = config.maxFileSizeMB ?? 10;
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      const result = await pickImage({
         allowsEditing: config.allowsEditing ?? true,
         quality: config.imageQuality ?? 0.7,
       });
@@ -78,9 +92,11 @@ export const usePartnerStep = (options: UsePartnerStepOptions) => {
         return;
       }
 
-      const base64 = await FileSystem.readAsStringAsync(asset.uri, {
-        encoding: "base64",
-      });
+      const base64 = await readFileAsBase64(asset.uri);
+      if (!base64) {
+        Alert.alert(translations.error, translations.uploadFailed);
+        return;
+      }
 
       const uploadedImage: UploadedImage = {
         uri: asset.uri,
@@ -97,7 +113,7 @@ export const usePartnerStep = (options: UsePartnerStepOptions) => {
     } catch {
       Alert.alert(translations.error, translations.uploadFailed);
     }
-  }, [config, translations]);
+  }, [config, translations, pickImage, requestMediaLibraryPermission, getMediaLibraryPermissionStatus]);
 
   const canContinue = state.image !== null;
 
@@ -107,6 +123,7 @@ export const usePartnerStep = (options: UsePartnerStepOptions) => {
     setDescription,
     handlePickImage,
     canContinue,
+    isLoading: isPickerLoading,
   };
 };
 
