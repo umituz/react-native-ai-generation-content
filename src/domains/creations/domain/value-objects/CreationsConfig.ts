@@ -27,6 +27,8 @@ export interface CreationsTranslations {
   readonly statusFilterTitle?: string;
   readonly mediaFilterTitle?: string;
   readonly clearFilter?: string;
+  readonly resultTitle?: string;
+  readonly resultLabel?: string;
 }
 
 export interface CreationsFilterConfig {

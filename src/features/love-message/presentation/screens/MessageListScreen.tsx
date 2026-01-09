@@ -10,9 +10,9 @@ import {
   useAppDesignTokens,
   useSafeAreaInsets,
   AppNavigation,
+  useAppRoute,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
-import { useRoute, RouteProp } from "@react-navigation/native";
 import { CATEGORY_TEMPLATES, MESSAGE_TYPES } from "../../domain/constants";
 import { MessageListItem } from "../components/MessageListItem";
 import type { MessageType } from "../../domain/types";
@@ -23,7 +23,7 @@ export const MessageListScreen: FC = () => {
   const tokens = useAppDesignTokens();
   const { top, bottom } = useSafeAreaInsets();
   const { t } = useLocalization();
-  const route = useRoute<RouteProp<{ params: RouteParams }, "params">>();
+  const route = useAppRoute<{ params: RouteParams }, "params">();
 
   const categoryId = route.params?.categoryId ?? "romantic";
   const messages = useMemo(() => CATEGORY_TEMPLATES[categoryId] || [], [categoryId]);

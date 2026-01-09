@@ -1,36 +1,43 @@
 /**
- * useDeleteCreation Hook
- * Handles deletion of user creations with optimistic update
+ * useCreationRating Hook
+ * Handles rating of creations with optimistic update
  */
 
 import { useMutation, useQueryClient } from "@umituz/react-native-design-system";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 import type { Creation } from "../../domain/entities/Creation";
 
-interface UseDeleteCreationProps {
+interface UseCreationRatingProps {
   readonly userId: string | null;
   readonly repository: ICreationsRepository;
 }
 
-export function useDeleteCreation({
+interface RatingVariables {
+  readonly id: string;
+  readonly rating: number;
+}
+
+export function useCreationRating({
   userId,
   repository,
-}: UseDeleteCreationProps) {
+}: UseCreationRatingProps) {
   const queryClient = useQueryClient();
   const queryKey = ["creations", userId ?? ""];
 
   return useMutation({
-    mutationFn: async (creationId: string) => {
+    mutationFn: async ({ id, rating }: RatingVariables) => {
       if (!userId) return false;
-      return repository.delete(userId, creationId);
+      return repository.rate(userId, id, rating);
     },
-    onMutate: async (creationId: string) => {
+    onMutate: async ({ id, rating }: RatingVariables) => {
       await queryClient.cancelQueries({ queryKey });
       const previousData = queryClient.getQueryData<Creation[]>(queryKey);
 
       if (previousData) {
         queryClient.setQueryData<Creation[]>(queryKey, (old) =>
-          old?.filter((c) => c.id !== creationId) ?? []
+          old?.map((c) =>
+            c.id === id ? { ...c, rating, ratedAt: new Date() } : c
+          ) ?? []
         );
       }
 

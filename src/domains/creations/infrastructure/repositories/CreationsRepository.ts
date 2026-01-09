@@ -97,4 +97,12 @@ export class CreationsRepository
   ): Promise<boolean> {
     return this.writer.updateFavorite(userId, creationId, isFavorite);
   }
+
+  async rate(
+    userId: string,
+    creationId: string,
+    rating: number,
+  ): Promise<boolean> {
+    return this.writer.rate(userId, creationId, rating);
+  }
 }

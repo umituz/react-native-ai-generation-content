@@ -63,12 +63,20 @@ export interface ResultActionBarProps {
   onShare: () => void;
   /** Try again callback */
   onTryAgain: () => void;
+  /** Rate callback */
+  onRate?: () => void;
   /** Save button text */
   saveButtonText: string;
   /** Share button text */
   shareButtonText: string;
   /** Try again button text */
   tryAgainButtonText: string;
+  /** Show only icons without text */
+  iconOnly?: boolean;
+  /** Show try again button */
+  showTryAgain?: boolean;
+  /** Show rating button */
+  showRating?: boolean;
 }
 
 /**
@@ -96,7 +104,7 @@ export interface ResultPreviewScreenProps {
   onShare: () => void;
   onTryAgain: () => void;
   onNavigateBack: () => void;
-  _onRate?: () => void;
+  onRate?: () => void;
   /** Recent creations to display */
   recentCreations?: readonly RecentCreation[];
   /** Navigate to all creations */
@@ -107,6 +115,14 @@ export interface ResultPreviewScreenProps {
   translations: ResultPreviewTranslations;
   /** Optional custom style */
   style?: StyleProp<ViewStyle>;
+  /** Hide "Your Result" label */
+  hideLabel?: boolean;
+  /** Show icon-only action buttons */
+  iconOnly?: boolean;
+  /** Show try again button */
+  showTryAgain?: boolean;
+  /** Show rating button */
+  showRating?: boolean;
 }
 
 /**

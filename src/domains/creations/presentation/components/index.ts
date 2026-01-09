@@ -30,10 +30,5 @@ export { GalleryHeader } from "./GalleryHeader";
 export { EmptyState } from "./EmptyState";
 export { GalleryEmptyStates } from "./GalleryEmptyStates";
 export { CreationsHomeCard } from "./CreationsHomeCard";
+export { CreationRating } from "./CreationRating";
 export { CreationsGrid } from "./CreationsGrid";
-
-// Detail Components
-export { DetailHeader } from "./CreationDetail/DetailHeader";
-export { DetailImage } from "./CreationDetail/DetailImage";
-export { DetailStory } from "./CreationDetail/DetailStory";
-export { DetailActions } from "./CreationDetail/DetailActions";

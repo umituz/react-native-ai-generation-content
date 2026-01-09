@@ -33,6 +33,15 @@ export function CreationCard({
 }: CreationCardProps) {
   const tokens = useAppDesignTokens();
 
+  // Debug: Log at render time to verify callbacks
+  if (__DEV__) {
+    console.log("[CreationCard] RENDER", {
+      creationId: creation.id,
+      hasOnPress: !!callbacks.onPress,
+      callbacksKeys: Object.keys(callbacks),
+    });
+  }
+
   const previewUrl = getPreviewUrl(creation.output) || creation.uri;
   const title = getCreationTitle(creation.prompt, creation.type as CreationTypeId);
   const formattedDate = useCreationDateFormatter(creation.createdAt, formatDate);
@@ -45,6 +54,12 @@ export function CreationCard({
   });
 
   const handlePress = useCallback(() => {
+    if (__DEV__) {
+      console.log("[CreationCard] handlePress TRIGGERED", {
+        creationId: creation.id,
+        hasOnPress: !!callbacks.onPress,
+      });
+    }
     callbacks.onPress?.(creation);
   }, [callbacks, creation]);
 
@@ -80,14 +95,27 @@ export function CreationCard({
     [tokens]
   );
 
+  const handlePressIn = useCallback(() => {
+    if (__DEV__) {
+      console.log("[CreationCard] PRESS_IN detected", { creationId: creation.id });
+    }
+  }, [creation.id]);
+
+  const isDisabled = !callbacks.onPress;
+
+  if (__DEV__ && isDisabled) {
+    console.log("[CreationCard] WARNING: Card is DISABLED - onPress is falsy");
+  }
+
   return (
     <TouchableOpacity
       style={styles.card}
       onPress={handlePress}
+      onPressIn={handlePressIn}
       activeOpacity={callbacks.onPress ? 0.7 : 1}
-      disabled={!callbacks.onPress}
+      disabled={isDisabled}
     >
-      <View style={styles.previewContainer}>
+      <View style={styles.previewContainer} pointerEvents="box-none">
         <CreationPreview
           uri={previewUrl}
           status={creation.status || "completed"}
@@ -103,9 +131,9 @@ export function CreationCard({
         )}
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
+      <View style={styles.content} pointerEvents="box-none">
+        <View style={styles.header} pointerEvents="box-none">
+          <View style={styles.titleContainer} pointerEvents="box-none">
             <AtomicText type="bodyMedium" style={styles.title} numberOfLines={2}>
               {title}
             </AtomicText>

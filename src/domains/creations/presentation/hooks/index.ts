@@ -15,6 +15,7 @@ export { useFilter, useStatusFilter, useMediaFilter } from "./useFilter";
 export type { UseFilterProps, UseFilterReturn } from "./useFilter";
 export { useGalleryFilters } from "./useGalleryFilters";
 export { useCreationPersistence } from "./useCreationPersistence";
+export { useCreationRating } from "./useCreationRating";
 export type {
   UseCreationPersistenceConfig,
   UseCreationPersistenceReturn,

@@ -148,4 +148,23 @@ export class CreationsWriter {
             return false;
         }
     }
+
+    async rate(
+        userId: string,
+        creationId: string,
+        rating: number,
+    ): Promise<boolean> {
+        const docRef = this.pathResolver.getDocRef(userId, creationId);
+        if (!docRef) return false;
+
+        try {
+            await updateDoc(docRef, {
+                rating,
+                ratedAt: new Date(),
+            });
+            return true;
+        } catch {
+            return false;
+        }
+    }
 }

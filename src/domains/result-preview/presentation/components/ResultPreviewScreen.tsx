@@ -24,12 +24,16 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   onShare,
   onTryAgain,
   onNavigateBack,
-  _onRate,
+  onRate,
   recentCreations,
   onViewAll,
   onCreationPress,
   translations,
   style,
+  hideLabel = false,
+  iconOnly = false,
+  showTryAgain = true,
+  showRating = false,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -55,37 +59,22 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
 
   const displayImageUrl = useMemo(() => {
     if (!imageUrl) return null;
-
-    // If not a URL and not a data URL, assume it's base64
-    if (
-      !imageUrl.startsWith("http") &&
-      !imageUrl.startsWith("data:image")
-    ) {
+    if (!imageUrl.startsWith("http") && !imageUrl.startsWith("data:image")) {
       return `data:image/jpeg;base64,${imageUrl}`;
     }
-
     return imageUrl;
   }, [imageUrl]);
 
-  if (!displayImageUrl) {
-    return null;
-  }
+  if (!displayImageUrl) return null;
 
   return (
-    <ScreenLayout
-      scrollable
-      edges={["left", "right"]}
-      backgroundColor={tokens.colors.backgroundPrimary}
-    >
-      <NavigationHeader
-        title={translations.title}
-        onBackPress={onNavigateBack}
-      />
+    <ScreenLayout scrollable edges={["left", "right"]} backgroundColor={tokens.colors.backgroundPrimary}>
+      <NavigationHeader title={translations.title} onBackPress={onNavigateBack} />
       <View style={[styles.container, style]}>
         <View style={styles.resultContainer}>
-          <AtomicText style={styles.title}>
-            {translations.yourResult}
-          </AtomicText>
+          {!hideLabel && (
+            <AtomicText style={styles.title}>{translations.yourResult}</AtomicText>
+          )}
           <ResultImageCard imageUrl={displayImageUrl} />
           <ResultActionBar
             isSaving={isSaving}
@@ -93,9 +82,13 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
             onDownload={onDownload}
             onShare={onShare}
             onTryAgain={onTryAgain}
+            onRate={onRate}
             saveButtonText={translations.saveButton}
             shareButtonText={translations.shareButton}
             tryAgainButtonText={translations.tryAnother}
+            iconOnly={iconOnly}
+            showTryAgain={showTryAgain}
+            showRating={showRating}
           />
         </View>
         {recentCreations && recentCreations.length > 0 && translations.recentCreations && translations.viewAll && (

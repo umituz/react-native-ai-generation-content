@@ -25,4 +25,9 @@ export interface ICreationsRepository {
     creationId: string,
     isFavorite: boolean,
   ): Promise<boolean>;
+  rate(
+    userId: string,
+    creationId: string,
+    rating: number,
+  ): Promise<boolean>;
 }

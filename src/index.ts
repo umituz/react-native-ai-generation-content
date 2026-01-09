@@ -153,6 +153,7 @@ export * from "./features/meme-generator";
 export * from "./features/couple-future";
 export * from "./features/love-message";
 export * from "./features/partner-upload";
+export * from "./features/scenarios";
 export * from "./infrastructure/orchestration";
 
 // Result Preview Domain

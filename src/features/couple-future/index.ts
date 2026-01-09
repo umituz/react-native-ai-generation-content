@@ -41,3 +41,22 @@ export type {
   CoupleFeatureOption,
 } from "./infrastructure/coupleFeatureRegistry";
 export { enhanceCouplePrompt } from "./infrastructure/couplePromptEnhancer";
+
+// Generation utilities
+export {
+  buildGenerationInputFromConfig,
+  processGenerationResultFromConfig,
+  buildCreationFromConfig,
+  DEFAULT_VISUAL_STYLES,
+} from "./infrastructure/generationUtils";
+export type {
+  ScenarioConfig,
+  VisualStyleConfig,
+  GenerationImage,
+  BuildGenerationInputConfig,
+  GenerationInputResult,
+  ProcessResultConfig,
+  GenerationResultData,
+  BuildCreationConfig,
+  CoupleFutureCreationData,
+} from "./infrastructure/generationUtils";

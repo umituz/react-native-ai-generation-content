@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import { useIsFocused } from "@react-navigation/native";
+import { useAppIsFocused } from "@umituz/react-native-design-system";
 import { MessageType, MessageTone } from "../../domain/types";
 import { generateLoveMessage } from "../../infrastructure/services/LoveMessageService";
 import { PartnerProfileRepository } from "../../infrastructure/persistence/PartnerProfileRepository";
@@ -20,7 +20,7 @@ export const useLoveMessageGenerator = (config: {
   onBack: () => void;
   initialType?: MessageType;
 }) => {
-  const isFocused = useIsFocused();
+  const isFocused = useAppIsFocused();
 
   const [currentStep, setCurrentStep] = useState<GeneratorStep>(GeneratorStep.PARTNER);
   const [partnerName, setPartnerName] = useState("");

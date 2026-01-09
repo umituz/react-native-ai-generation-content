@@ -97,10 +97,12 @@ export function CreationActions({
             action.filled && styles.actionButtonFilled,
             action.disabled && styles.actionButtonDisabled,
           ]}
-          onPress={action.onPress}
+          onPress={(e) => {
+            e.stopPropagation();
+            action.onPress();
+          }}
           disabled={action.disabled || action.loading}
           activeOpacity={0.7}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           {action.loading ? (
             <AtomicSpinner

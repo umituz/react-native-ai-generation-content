@@ -3,7 +3,7 @@
  * Fetches user's creations from repository
  */
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@umituz/react-native-design-system";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 import type { Creation } from "../../domain/entities/Creation";
 
