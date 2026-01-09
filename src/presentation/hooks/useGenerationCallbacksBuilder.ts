@@ -4,7 +4,7 @@
  */
 
 import { useCallback, useMemo, useRef } from "react";
-import { useQueryClient } from "@umituz/react-native-tanstack";
+import { useQueryClient } from "@tanstack/react-query";
 import type {
   GenerationExecutionResult,
   GenerationCallbacks,

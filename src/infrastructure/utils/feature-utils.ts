@@ -3,8 +3,13 @@
  * Uses ONLY configured app services - no alternatives
  */
 
-import { readFileAsBase64 } from "@umituz/react-native-filesystem";
+import * as FileSystem from "expo-file-system";
 import { getAuthService, getCreditService, getPaywallService, isAppServicesConfigured } from "../config/app-services.config";
+
+async function readFileAsBase64(uri: string): Promise<string> {
+  const base64 = await FileSystem.readAsStringAsync(uri, { encoding: "base64" });
+  return `data:image/jpeg;base64,${base64}`;
+}
 
 declare const __DEV__: boolean;
 
