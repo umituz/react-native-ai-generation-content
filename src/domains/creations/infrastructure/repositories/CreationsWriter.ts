@@ -84,6 +84,15 @@ export class CreationsWriter {
             if (updates.output !== undefined) {
                 updateData.output = updates.output;
             }
+            if ((updates as any).rating !== undefined) {
+                updateData.rating = (updates as any).rating;
+            }
+            if ((updates as any).ratedAt !== undefined) {
+                updateData.ratedAt = (updates as any).ratedAt;
+            }
+            if ((updates as any).isFavorite !== undefined) {
+                updateData.isFavorite = (updates as any).isFavorite;
+            }
 
             await updateDoc(docRef, updateData);
             return true;

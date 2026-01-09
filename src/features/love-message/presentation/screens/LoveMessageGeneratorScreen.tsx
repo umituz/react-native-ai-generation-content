@@ -12,13 +12,13 @@ import {
   useSafeAreaInsets,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
-import { useNavigation } from "@react-navigation/native";
 import { ProgressDots } from "../components/ProgressDots";
 import { MessageResult } from "../components/MessageResult";
 import { GeneratorHeader } from "../components/GeneratorHeader";
 import { StepPartner } from "../components/StepPartner";
 import { StepVibe } from "../components/StepVibe";
 import { StepDetails } from "../components/StepDetails";
+import { MessageType } from "../../domain/types";
 import { useLoveMessageGenerator, GeneratorStep } from "../hooks/useLoveMessageGenerator";
 
 interface LoveMessageGeneratorScreenProps {

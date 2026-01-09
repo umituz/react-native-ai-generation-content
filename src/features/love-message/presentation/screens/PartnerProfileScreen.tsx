@@ -16,18 +16,22 @@ import { LOVE_LANGUAGES } from "../../domain/constants";
 import { usePartnerProfile } from "../hooks/usePartnerProfile";
 import { FieldInput } from "../components/FieldInput";
 
-export const PartnerProfileScreen: FC = () => {
+interface PartnerProfileScreenProps {
+  onBack: () => void;
+}
+
+export const PartnerProfileScreen: FC<PartnerProfileScreenProps> = ({ onBack }) => {
   const tokens = useAppDesignTokens();
   const { top, bottom } = useSafeAreaInsets();
   const { t } = useLocalization();
-  const p = usePartnerProfile();
+  const p = usePartnerProfile(onBack);
 
   if (p.isLoading) return null;
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
       <View style={[styles.header, { paddingTop: top + tokens.spacing.md }]}>
-        <AtomicButton icon="arrow-back" onPress={() => p.navigation.goBack()} variant="text" size="sm" />
+        <AtomicButton icon="arrow-back" onPress={onBack} variant="text" size="sm" />
         <View style={styles.headerTitle}>
           <AtomicText type="headlineSmall" color="textPrimary" style={styles.headerText}>
             {t("loveMessage.partnerProfile.title")}

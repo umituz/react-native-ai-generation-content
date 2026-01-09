@@ -14,7 +14,7 @@ import {
 import { useLocalization } from "@umituz/react-native-localization";
 import { useNavigation } from "@react-navigation/native";
 import { ExploreHeader } from "../components/ExploreHeader";
-import { HeroSection } from "../components/HeroSection";
+import { LoveMessageHeroSection } from "../components/LoveMessageHeroSection";
 import { CategoryGrid } from "../components/CategoryGrid";
 import { TrendingSection } from "../components/TrendingSection";
 
@@ -39,9 +39,9 @@ export const LoveMessageExploreScreen: FC<LoveMessageExploreScreenProps> = ({
 
       <ScrollView 
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: bottom + 100 }}
+        contentContainerStyle={{ paddingBottom: bottom + 120 }}
       >
-        <HeroSection />
+        <LoveMessageHeroSection />
         
         <CategoryGrid 
           onCategoryPress={onNavigateToCategory} 
@@ -51,19 +51,6 @@ export const LoveMessageExploreScreen: FC<LoveMessageExploreScreenProps> = ({
           onViewAll={onNavigateToTrending} 
         />
       </ScrollView>
-
-      {/* Floating Action Button */}
-      <View style={[styles.fabContainer, { bottom: bottom + tokens.spacing.lg }]}>
-        <Pressable 
-          onPress={onNavigateToGenerator}
-          style={[styles.fab, { backgroundColor: tokens.colors.primary }]}
-        >
-          <AtomicIcon name="sparkles" color="onPrimary" size="sm" />
-          <AtomicText type="labelLarge" color="onPrimary" style={styles.fabText}>
-            {t("loveMessage.explore.generateMagic")}
-          </AtomicText>
-        </Pressable>
-      </View>
     </View>
   );
 };
@@ -72,18 +59,17 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   fabContainer: {
     position: 'absolute',
-    left: 20,
-    right: 20,
+    left: 0,
+    right: 0,
     alignItems: 'center',
+    zIndex: 10,
   },
   fab: {
-    flexDirection: 'row',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 18,
-    paddingHorizontal: 32,
-    borderRadius: 32,
-    gap: 12,
+    elevation: 8,
   },
-  fabText: { fontWeight: 'bold', letterSpacing: 1 },
 });

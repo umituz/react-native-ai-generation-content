@@ -18,7 +18,7 @@ export { MessageListScreen } from "./presentation/screens/MessageListScreen";
 export { PartnerProfileScreen } from "./presentation/screens/PartnerProfileScreen";
 
 export { ExploreHeader } from "./presentation/components/ExploreHeader";
-export { HeroSection } from "./presentation/components/HeroSection";
+export { LoveMessageHeroSection } from "./presentation/components/LoveMessageHeroSection";
 export { CategoryGrid } from "./presentation/components/CategoryGrid";
 export { TrendingSection } from "./presentation/components/TrendingSection";
 export { GeneratorHeader } from "./presentation/components/GeneratorHeader";

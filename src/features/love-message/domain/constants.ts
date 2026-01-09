@@ -2,7 +2,7 @@
  * Love Message Configuration
  */
 
-import { MessageType, MessageTone, LoveLanguage } from "../types";
+import { MessageType, MessageTone, LoveLanguage } from "./types";
 
 export interface MessageTypeConfig {
   type: MessageType;

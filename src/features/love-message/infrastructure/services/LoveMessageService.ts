@@ -4,7 +4,7 @@
 
 import { buildLoveMessagePrompt } from "../prompts/messagePromptBuilder";
 import { MessageGenerationParams } from "../../domain/types";
-import { providerRegistry } from "../../../index";
+import { providerRegistry } from "../../../../infrastructure/services";
 import { PartnerProfileRepository } from "../persistence/PartnerProfileRepository";
 
 export const generateLoveMessage = async (

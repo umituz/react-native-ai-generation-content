@@ -28,7 +28,7 @@ export function useCreationCardActions({
     if (callbacks.onDownload && isDownloadAvailable && creation.output) {
       result.push({
         id: "download",
-        icon: "Download",
+        icon: "download",
         onPress: () => callbacks.onDownload?.(creation),
       });
     }
@@ -62,7 +62,7 @@ export function useCreationCardActions({
     if (callbacks.onPostToFeed && canPostToFeed) {
       result.push({
         id: "post",
-        icon: "Send",
+        icon: "send",
         filled: true,
         onPress: () => callbacks.onPostToFeed?.(creation),
       });

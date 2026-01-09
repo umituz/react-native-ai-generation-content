@@ -11,7 +11,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
 
-export const HeroSection: React.FC = () => {
+export const LoveMessageHeroSection: React.FC = () => {
   const tokens = useAppDesignTokens();
   const { t } = useLocalization();
 

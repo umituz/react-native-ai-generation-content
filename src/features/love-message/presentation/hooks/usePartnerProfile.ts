@@ -7,8 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { PartnerProfile } from "../../domain/types";
 import { PartnerProfileRepository } from "../../infrastructure/persistence/PartnerProfileRepository";
 
-export const usePartnerProfile = () => {
-  const navigation = useNavigation();
+export const usePartnerProfile = (onBack: () => void) => {
   const [profile, setProfile] = useState<PartnerProfile>({
     name: "",
     nickname: "",
@@ -32,15 +31,14 @@ export const usePartnerProfile = () => {
   const handleSave = useCallback(async () => {
     const success = await PartnerProfileRepository.saveProfile(profile);
     if (success) {
-      navigation.goBack();
+      onBack();
     }
-  }, [profile, navigation]);
+  }, [profile, onBack]);
 
   return {
     profile,
     setProfile,
     isLoading,
     handleSave,
-    navigation,
   };
 };
