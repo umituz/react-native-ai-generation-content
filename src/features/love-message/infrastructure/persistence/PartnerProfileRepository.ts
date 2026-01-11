@@ -3,8 +3,8 @@
  * Handles persistence of partner profile data
  */
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { PartnerProfile } from "../../domain/types";
+import { storageRepository, unwrap } from "@umituz/react-native-design-system";
+import type { PartnerProfile } from "../../domain/types";
 
 const PARTNER_PROFILE_STORAGE_KEY = "love_message_partner_profile";
 
@@ -14,7 +14,9 @@ export const PartnerProfileRepository = {
    */
   getProfile: async (): Promise<PartnerProfile | null> => {
     try {
-      const data = await AsyncStorage.getItem(PARTNER_PROFILE_STORAGE_KEY);
+      const result = await storageRepository.getString(PARTNER_PROFILE_STORAGE_KEY, null);
+      const data = unwrap(result, null);
+
       if (data) {
         return JSON.parse(data) as PartnerProfile;
       }
@@ -29,7 +31,7 @@ export const PartnerProfileRepository = {
    */
   saveProfile: async (profile: PartnerProfile): Promise<boolean> => {
     try {
-      await AsyncStorage.setItem(PARTNER_PROFILE_STORAGE_KEY, JSON.stringify(profile));
+      await storageRepository.setItem(PARTNER_PROFILE_STORAGE_KEY, JSON.stringify(profile));
       return true;
     } catch {
       return false;
@@ -41,7 +43,7 @@ export const PartnerProfileRepository = {
    */
   clearProfile: async (): Promise<boolean> => {
     try {
-      await AsyncStorage.removeItem(PARTNER_PROFILE_STORAGE_KEY);
+      await storageRepository.removeItem(PARTNER_PROFILE_STORAGE_KEY);
       return true;
     } catch {
       return false;

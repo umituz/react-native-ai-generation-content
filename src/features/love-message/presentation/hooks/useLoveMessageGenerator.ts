@@ -4,11 +4,7 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import {
-  useAppIsFocused,
-  AlertService,
-} from "@umituz/react-native-design-system";
-import { useLocalization } from "@umituz/react-native-localization";
+import { useAppIsFocused } from "@umituz/react-native-design-system";
 import { MessageType, MessageTone } from "../../domain/types";
 import { generateLoveMessage } from "../../infrastructure/services/LoveMessageService";
 import { PartnerProfileRepository } from "../../infrastructure/persistence/PartnerProfileRepository";
@@ -23,9 +19,10 @@ export enum GeneratorStep {
 export const useLoveMessageGenerator = (config: {
   onBack: () => void;
   initialType?: MessageType;
+  onSuccess?: () => void;
+  onError?: () => void;
 }) => {
   const isFocused = useAppIsFocused();
-  const { t } = useLocalization();
 
   const [currentStep, setCurrentStep] = useState<GeneratorStep>(GeneratorStep.PARTNER);
   const [partnerName, setPartnerName] = useState("");
@@ -81,20 +78,13 @@ export const useLoveMessageGenerator = (config: {
 
       setGeneratedMessage(message);
       setCurrentStep(GeneratorStep.RESULT);
-
-      AlertService.createSuccessAlert(
-        t("loveMessage.generator.successTitle"),
-        t("loveMessage.generator.successMessage")
-      );
+      config.onSuccess?.();
     } catch (error) {
-      AlertService.createErrorAlert(
-        t("loveMessage.generator.errorTitle"),
-        t("loveMessage.generator.errorMessage")
-      );
+      config.onError?.();
     } finally {
       setIsGenerating(false);
     }
-  }, [partnerName, selectedType, selectedTone, details, useProfile, isGenerating, t]);
+  }, [partnerName, selectedType, selectedTone, details, useProfile, isGenerating, config]);
 
   const startOver = useCallback(() => {
     setCurrentStep(GeneratorStep.PARTNER);

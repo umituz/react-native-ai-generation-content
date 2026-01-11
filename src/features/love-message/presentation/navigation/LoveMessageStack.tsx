@@ -4,7 +4,10 @@
  */
 
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  StackNavigator,
+  type StackNavigatorConfig,
+} from "@umituz/react-native-design-system";
 import { LoveMessageExploreScreen } from "../screens/LoveMessageExploreScreen";
 import { MessageListScreen } from "../screens/MessageListScreen";
 import { LoveMessageGeneratorScreen } from "../screens/LoveMessageGeneratorScreen";
@@ -18,15 +21,19 @@ export type LoveMessageStackParamList = {
   PartnerProfile: undefined;
 };
 
-const Stack = createStackNavigator<LoveMessageStackParamList>();
+const stackConfig: StackNavigatorConfig<LoveMessageStackParamList> = {
+  initialRouteName: "LoveMessageExplore",
+  screenOptions: {
+    headerShown: false,
+  },
+  screens: [
+    { name: "LoveMessageExplore", component: LoveMessageExploreScreen },
+    { name: "MessageList", component: MessageListScreen },
+    { name: "MessageGenerator", component: LoveMessageGeneratorScreen },
+    { name: "PartnerProfile", component: PartnerProfileScreen },
+  ],
+};
 
 export const LoveMessageStack: React.FC = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="LoveMessageExplore">
-      <Stack.Screen name="LoveMessageExplore" component={LoveMessageExploreScreen} />
-      <Stack.Screen name="MessageList" component={MessageListScreen} />
-      <Stack.Screen name="MessageGenerator" component={LoveMessageGeneratorScreen} />
-      <Stack.Screen name="PartnerProfile" component={PartnerProfileScreen} />
-    </Stack.Navigator>
-  );
+  return <StackNavigator config={stackConfig} />;
 };

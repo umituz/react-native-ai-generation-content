@@ -70,8 +70,8 @@ export const ScenarioGrid: React.FC<ScenarioGridProps> = ({
   const isLoadingMore = isLoading && displayedCount > pageSize;
 
   const styles = useMemo(
-    () => createStyles(tokens, cardWidth, cardSpacing),
-    [tokens, cardWidth, cardSpacing],
+    () => createStyles(tokens, cardWidth, cardSpacing, horizontalPadding),
+    [tokens, cardWidth, cardSpacing, horizontalPadding],
   );
 
   const loadMore = useCallback(() => {
@@ -96,23 +96,23 @@ export const ScenarioGrid: React.FC<ScenarioGridProps> = ({
 
   const ListEmptyComponent = useMemo(
     () => (
-      <View style={styles.centerContainer}>
+      <View style={[styles.centerContainer, { paddingHorizontal: horizontalPadding }]}>
         <AtomicText type="bodyMedium" color="textSecondary">
           {t("scenario.empty")}
         </AtomicText>
       </View>
     ),
-    [t, styles.centerContainer],
+    [t, styles.centerContainer, horizontalPadding],
   );
 
   const ListFooterComponent = useMemo(
     () =>
       isLoadingMore ? (
-        <View style={styles.footerLoader}>
+        <View style={[styles.footerLoader, { paddingHorizontal: horizontalPadding }]}>
           <AtomicSkeleton pattern="card" count={2} />
         </View>
       ) : null,
-    [isLoadingMore, styles.footerLoader],
+    [isLoadingMore, styles.footerLoader, horizontalPadding],
   );
 
   const ListHeaderComponent = useMemo(
@@ -184,7 +184,6 @@ export const ScenarioGrid: React.FC<ScenarioGridProps> = ({
         styles.listContent,
         {
           paddingBottom: insets.bottom + 100,
-          paddingHorizontal: horizontalPadding,
         },
       ]}
       initialNumToRender={pageSize}
@@ -198,6 +197,7 @@ const createStyles = (
   tokens: DesignTokens,
   cardWidth: number,
   cardSpacing: number,
+  horizontalPadding: number,
 ) =>
   StyleSheet.create({
     container: {
@@ -210,6 +210,7 @@ const createStyles = (
     row: {
       gap: cardSpacing,
       marginBottom: cardSpacing,
+      paddingHorizontal: horizontalPadding,
     },
     centerContainer: {
       flex: 1,

@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-ai-generation-content",
-  "version": "1.17.296",
+  "version": "1.17.298",
   "description": "Provider-agnostic AI generation orchestration for React Native with result preview components",
   "main": "src/index.ts",
   "types": "src/index.ts",

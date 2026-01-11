@@ -17,6 +17,8 @@ export { LoveMessageGeneratorScreen } from "./presentation/screens/LoveMessageGe
 export { MessageListScreen } from "./presentation/screens/MessageListScreen";
 export { PartnerProfileScreen } from "./presentation/screens/PartnerProfileScreen";
 
+export { LoveMessageStack, type LoveMessageStackParamList } from "./presentation/navigation/LoveMessageStack";
+
 export { ExploreHeader } from "./presentation/components/ExploreHeader";
 export { LoveMessageHeroSection } from "./presentation/components/LoveMessageHeroSection";
 export { CategoryGrid } from "./presentation/components/CategoryGrid";

@@ -3,7 +3,7 @@
  * Multi-step wizard flow
  */
 
-import { FC, useMemo } from "react";
+import { FC, useMemo, useCallback } from "react";
 import { View, ScrollView, StyleSheet, Animated } from "react-native";
 import {
   AtomicText,
@@ -12,6 +12,7 @@ import {
   useSafeAreaInsets,
   AppNavigation,
   useAppRoute,
+  AlertService,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
 import { ProgressDots } from "../components/ProgressDots";
@@ -32,7 +33,27 @@ export const LoveMessageGeneratorScreen: FC = () => {
   const route = useAppRoute<{ params: RouteParams }, "params">();
 
   const initialType = route.params?.initialType;
-  const gen = useLoveMessageGenerator({ onBack: () => AppNavigation.goBack(), initialType });
+
+  const handleSuccess = useCallback(() => {
+    AlertService.createSuccessAlert(
+      t("loveMessage.generator.successTitle"),
+      t("loveMessage.generator.successMessage")
+    );
+  }, [t]);
+
+  const handleError = useCallback(() => {
+    AlertService.createErrorAlert(
+      t("loveMessage.generator.errorTitle"),
+      t("loveMessage.generator.errorMessage")
+    );
+  }, [t]);
+
+  const gen = useLoveMessageGenerator({
+    onBack: () => AppNavigation.goBack(),
+    initialType,
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
 
   const handleNavigateToProfile = () => AppNavigation.navigate("PartnerProfile");
 
