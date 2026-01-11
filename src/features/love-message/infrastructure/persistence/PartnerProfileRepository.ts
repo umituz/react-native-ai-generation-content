@@ -14,7 +14,7 @@ export const PartnerProfileRepository = {
    */
   getProfile: async (): Promise<PartnerProfile | null> => {
     try {
-      const result = await storageRepository.getString(PARTNER_PROFILE_STORAGE_KEY, null);
+      const result = await storageRepository.getString(PARTNER_PROFILE_STORAGE_KEY, "");
       const data = unwrap(result, null);
 
       if (data) {
