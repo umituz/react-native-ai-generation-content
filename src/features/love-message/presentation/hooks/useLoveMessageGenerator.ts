@@ -79,7 +79,7 @@ export const useLoveMessageGenerator = (config: {
       setGeneratedMessage(message);
       setCurrentStep(GeneratorStep.RESULT);
       config.onSuccess?.();
-    } catch (error) {
+    } catch {
       config.onError?.();
     } finally {
       setIsGenerating(false);
