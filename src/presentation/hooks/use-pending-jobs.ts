@@ -3,7 +3,7 @@
  * Generic pending job management with TanStack Query
  */
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@umituz/react-native-design-system";
 import type {
   BackgroundJob,
   AddJobInput,
@@ -54,23 +54,23 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
       };
       return Promise.resolve(newJob);
     },
-    onSuccess: (newJob) => {
+    onSuccess: (newJob: BackgroundJob<TInput, TResult>) => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old) => [newJob, ...(old ?? [])],
+        (old: BackgroundJob<TInput, TResult>[] | undefined) => [newJob, ...(old ?? [])],
       );
     },
   });
 
   const updateJobMutation = useMutation({
     mutationFn: ({ id, updates }: UpdateJobInput) =>
-      Promise.resolve({ id, updates }),
-    onSuccess: ({ id, updates }) => {
+      Promise.resolve({ id, updates: updates as Partial<BackgroundJob<TInput, TResult>> }),
+    onSuccess: ({ id, updates }: { id: string; updates: Partial<BackgroundJob<TInput, TResult>> }) => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old) => {
+        (old: BackgroundJob<TInput, TResult>[] | undefined) => {
           if (!old) return [];
-          return old.map((job) =>
+          return old.map((job: BackgroundJob<TInput, TResult>) =>
             job.id === id ? ({ ...job, ...updates } as BackgroundJob<TInput, TResult>) : job,
           );
         },
@@ -80,10 +80,10 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
 
   const removeJobMutation = useMutation({
     mutationFn: (id: string) => Promise.resolve(id),
-    onSuccess: (id) => {
+    onSuccess: (id: string) => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old) => old?.filter((job) => job.id !== id) ?? [],
+        (old: BackgroundJob<TInput, TResult>[] | undefined) => old?.filter((job: BackgroundJob<TInput, TResult>) => job.id !== id) ?? [],
       );
     },
   });
@@ -93,7 +93,7 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
     onSuccess: () => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old) => old?.filter((job) => job.status !== "completed") ?? [],
+        (old: BackgroundJob<TInput, TResult>[] | undefined) => old?.filter((job: BackgroundJob<TInput, TResult>) => job.status !== "completed") ?? [],
       );
     },
   });
@@ -103,12 +103,12 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
     onSuccess: () => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old) => old?.filter((job) => job.status !== "failed") ?? [],
+        (old: BackgroundJob<TInput, TResult>[] | undefined) => old?.filter((job: BackgroundJob<TInput, TResult>) => job.status !== "failed") ?? [],
       );
     },
   });
 
-  const getJob = (id: string) => jobs.find((job) => job.id === id);
+  const getJob = (id: string) => jobs.find((job: BackgroundJob<TInput, TResult>) => job.id === id);
 
   return {
     jobs,

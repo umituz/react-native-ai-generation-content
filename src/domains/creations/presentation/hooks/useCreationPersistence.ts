@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@umituz/react-native-design-system";
 import { useAuth } from "@umituz/react-native-auth";
 import { createCreationsRepository } from "../../infrastructure/adapters";
 import type { Creation } from "../../domain/entities/Creation";

@@ -29,14 +29,14 @@ export function useDeleteCreation({
       const previousData = queryClient.getQueryData<Creation[]>(queryKey);
 
       if (previousData) {
-        queryClient.setQueryData<Creation[]>(queryKey, (old) =>
-          old?.filter((c) => c.id !== creationId) ?? []
+        queryClient.setQueryData<Creation[]>(queryKey, (old: Creation[] | undefined) =>
+          old?.filter((c: Creation) => c.id !== creationId) ?? []
         );
       }
 
       return { previousData };
     },
-    onError: (_error, _variables, context) => {
+    onError: (_error: Error, _variables: string, context: { previousData?: Creation[] } | undefined) => {
       if (context?.previousData) {
         queryClient.setQueryData(queryKey, context.previousData);
       }
