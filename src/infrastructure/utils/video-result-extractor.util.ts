@@ -16,14 +16,14 @@ export const defaultExtractVideoResult: VideoResultExtractor = (result) => {
 
   const r = result as Record<string, unknown>;
 
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[VideoExtractor] Result keys:", Object.keys(r));
   }
 
   // Handle fal.ai data wrapper
   const data = (r.data as Record<string, unknown>) ?? r;
 
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[VideoExtractor] Data keys:", Object.keys(data));
   }
 
@@ -37,7 +37,7 @@ export const defaultExtractVideoResult: VideoResultExtractor = (result) => {
   // Object with url property (e.g., { video: { url: "..." } })
   const videoObj = data.video as Record<string, unknown> | undefined;
   if (videoObj && typeof videoObj === "object" && typeof videoObj.url === "string") {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
       console.log("[VideoExtractor] Found data.video.url:", videoObj.url);
     }
     return videoObj.url;
@@ -45,13 +45,13 @@ export const defaultExtractVideoResult: VideoResultExtractor = (result) => {
 
   // Array format (e.g., { videos: [{ url: "..." }] })
   if (Array.isArray(data.videos) && typeof data.videos[0]?.url === "string") {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
       console.log("[VideoExtractor] Found videos[0].url:", data.videos[0].url);
     }
     return data.videos[0].url;
   }
 
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[VideoExtractor] No video URL found in result");
   }
 

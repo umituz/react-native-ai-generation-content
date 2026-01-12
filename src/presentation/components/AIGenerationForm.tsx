@@ -47,8 +47,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   translations,
   children,
 }) => {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
+  if (__DEV__) {
     console.log("[AIGenerationForm] RENDERING NOW - hideGenerateButton:", hideGenerateButton);
   }
 
@@ -57,8 +56,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   const buttonIsDisabled = onPromptChange ? !prompt?.trim() : false;
 
   useEffect(() => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
+    if (__DEV__) {
       console.log("[AIGenerationForm] MOUNTED/UPDATED - prompt:", prompt, "isGenerating:", isGenerating, "buttonIsDisabled:", buttonIsDisabled, "hideGenerateButton:", hideGenerateButton);
     }
   }, [prompt, isGenerating, buttonIsDisabled, hideGenerateButton]);

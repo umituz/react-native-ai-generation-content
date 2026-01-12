@@ -33,11 +33,7 @@
       "@ai-generation/face-detection/*": ["./src/domains/face-detection/*"],
       "@ai-generation/feature-background": ["./src/domains/feature-background"],
       "@ai-generation/feature-background/*": ["./src/domains/feature-background/*"],
-      "@features/*": ["./src/features/*"],
-      "@umituz/react-native-design-system": ["../react-native-design-system/src/index.ts"],
-      "@umituz/react-native-design-system/*": ["../react-native-design-system/src/*"],
-      "@umituz/react-native-localization": ["../react-native-localization/src/index.ts"],
-      "@umituz/react-native-localization/*": ["../react-native-localization/src/*"]
+      "@features/*": ["./src/features/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],

@@ -7,10 +7,10 @@ import { View, ScrollView, StyleSheet, Pressable, Share } from "react-native";
 import {
   AtomicText,
   AtomicIcon,
+  useAppNavigation,
+  useAppRoute,
   useAppDesignTokens,
   useSafeAreaInsets,
-  AppNavigation,
-  useAppRoute,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
 import { CATEGORY_TEMPLATES, MESSAGE_TYPES } from "../../domain/constants";
@@ -23,6 +23,7 @@ export const MessageListScreen: FC = () => {
   const tokens = useAppDesignTokens();
   const { top, bottom } = useSafeAreaInsets();
   const { t } = useLocalization();
+  const navigation = useAppNavigation();
   const route = useAppRoute<{ params: RouteParams }, "params">();
 
   const categoryId = route.params?.categoryId ?? "romantic";
@@ -34,10 +35,10 @@ export const MessageListScreen: FC = () => {
     return config ? t(config.labelKey) : categoryId;
   }, [categoryId, t]);
 
-  const handleBack = () => AppNavigation.goBack();
+  const handleBack = () => navigation.goBack();
 
   const handleNavigateToGenerator = (type?: string) => {
-    AppNavigation.navigate("MessageGenerator", { initialType: type as MessageType });
+    navigation.navigate("MessageGenerator", { initialType: type as MessageType });
   };
 
   const handleShare = useCallback(async (text: string) => {

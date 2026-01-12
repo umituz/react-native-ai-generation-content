@@ -28,7 +28,7 @@ class GenerationOrchestratorService {
   private onStatusUpdateCallback?: (requestId: string, status: string) => Promise<void>;
 
   configure(config: OrchestratorConfig): void {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
       console.log("[Orchestrator] configure() called", {
         hasPollingConfig: !!config.polling,
         hasStatusUpdate: !!config.onStatusUpdate,
@@ -45,7 +45,7 @@ class GenerationOrchestratorService {
     const provider = this.providerValidator.getProvider();
     const startTime = Date.now();
 
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
       console.log("[Orchestrator] Generate started:", {
         model: request.model,
         capability: request.capability,
@@ -67,7 +67,7 @@ class GenerationOrchestratorService {
 
       updateProgress("submitting");
 
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
+      if (__DEV__) {
         console.log("[Orchestrator] Job submitted:", {
           requestId: submission.requestId,
           provider: provider.providerId,
@@ -113,7 +113,7 @@ class GenerationOrchestratorService {
 
       const duration = Date.now() - startTime;
 
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
+      if (__DEV__) {
         console.log("[Orchestrator] Generate completed:", {
           requestId: submission.requestId,
           duration: `${duration}ms`,
@@ -137,7 +137,7 @@ class GenerationOrchestratorService {
     } catch (error) {
       const errorInfo = classifyError(error);
 
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
+      if (__DEV__) {
         console.error("[Orchestrator] Generation failed:", errorInfo);
       }
 

@@ -8,12 +8,13 @@ import { View, ScrollView, StyleSheet, Animated } from "react-native";
 import {
   AtomicText,
   AtomicButton,
-  useAppDesignTokens,
-  useSafeAreaInsets,
-  AppNavigation,
+  useAppNavigation,
   useAppRoute,
   AlertService,
+  useAppDesignTokens,
+  useSafeAreaInsets,
 } from "@umituz/react-native-design-system";
+
 import { useLocalization } from "@umituz/react-native-localization";
 import { ProgressDots } from "../components/ProgressDots";
 import { MessageResult } from "../components/MessageResult";
@@ -30,6 +31,7 @@ export const LoveMessageGeneratorScreen: FC = () => {
   const tokens = useAppDesignTokens();
   const { bottom } = useSafeAreaInsets();
   const { t } = useLocalization();
+  const navigation = useAppNavigation();
   const route = useAppRoute<{ params: RouteParams }, "params">();
 
   const initialType = route.params?.initialType;
@@ -49,13 +51,13 @@ export const LoveMessageGeneratorScreen: FC = () => {
   }, [t]);
 
   const gen = useLoveMessageGenerator({
-    onBack: () => AppNavigation.goBack(),
+    onBack: () => navigation.goBack(),
     initialType,
     onSuccess: handleSuccess,
     onError: handleError,
   });
 
-  const handleNavigateToProfile = () => AppNavigation.navigate("PartnerProfile");
+  const handleNavigateToProfile = () => navigation.navigate("PartnerProfile");
 
   const stepTitle = useMemo(() => {
     switch (gen.currentStep) {

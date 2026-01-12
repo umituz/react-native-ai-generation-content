@@ -8,7 +8,7 @@ import { View, ScrollView, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
   useSafeAreaInsets,
-  AppNavigation,
+  useAppNavigation,
 } from "@umituz/react-native-design-system";
 import { ExploreHeader } from "../components/ExploreHeader";
 import { LoveMessageHeroSection } from "../components/LoveMessageHeroSection";
@@ -18,17 +18,18 @@ import { TrendingSection } from "../components/TrendingSection";
 export const LoveMessageExploreScreen: FC = () => {
   const tokens = useAppDesignTokens();
   const { bottom } = useSafeAreaInsets();
+  const navigation = useAppNavigation();
 
   const handleNavigateToGenerator = () => {
-    AppNavigation.navigate("MessageGenerator", {});
+    navigation.navigate("MessageGenerator", {});
   };
 
   const handleNavigateToCategory = (categoryId: string) => {
-    AppNavigation.navigate("MessageList", { categoryId });
+    navigation.navigate("MessageList", { categoryId });
   };
 
   const handleNavigateToTrending = () => {
-    AppNavigation.navigate("MessageList", { categoryId: "trending" });
+    navigation.navigate("MessageList", { categoryId: "trending" });
   };
 
   return (

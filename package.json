@@ -17,8 +17,8 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit --skipLibCheck",
-    "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+    "lint": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix"
   },
   "keywords": [
     "react-native",

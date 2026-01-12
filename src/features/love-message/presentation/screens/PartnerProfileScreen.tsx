@@ -9,7 +9,7 @@ import {
   AtomicButton,
   useAppDesignTokens,
   useSafeAreaInsets,
-  AppNavigation,
+  useAppNavigation,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
 import { LOVE_LANGUAGES } from "../../domain/constants";
@@ -20,14 +20,15 @@ export const PartnerProfileScreen: FC = () => {
   const tokens = useAppDesignTokens();
   const { top, bottom } = useSafeAreaInsets();
   const { t } = useLocalization();
-  const p = usePartnerProfile(() => AppNavigation.goBack());
+  const navigation = useAppNavigation();
+  const p = usePartnerProfile(() => navigation.goBack());
 
   if (p.isLoading) return null;
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
       <View style={[styles.header, { paddingTop: top + tokens.spacing.md }]}>
-        <AtomicButton icon="arrow-back" onPress={() => AppNavigation.goBack()} variant="text" size="sm" />
+        <AtomicButton icon="arrow-back" onPress={() => navigation.goBack()} variant="text" size="sm" />
         <View style={styles.headerTitle}>
           <AtomicText type="headlineSmall" color="textPrimary" style={styles.headerText}>
             {t("loveMessage.partnerProfile.title")}

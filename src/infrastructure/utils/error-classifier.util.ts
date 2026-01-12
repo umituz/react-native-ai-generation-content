@@ -33,7 +33,7 @@ function getStatusCode(error: unknown): number | undefined {
 }
 
 function logClassification(info: AIErrorInfo): AIErrorInfo {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[ErrorClassifier] Classified as:", {
       type: info.type,
       messageKey: info.messageKey,
@@ -47,7 +47,7 @@ export function classifyError(error: unknown): AIErrorInfo {
   const message = error instanceof Error ? error.message : String(error);
   const statusCode = getStatusCode(error);
 
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[ErrorClassifier] Classifying error:", {
       message: message.slice(0, 100),
       statusCode,

@@ -52,7 +52,7 @@ function defaultExtractImageResult(result: unknown): string | undefined {
 
   const r = result as Record<string, unknown>;
 
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[ImageExtractor] Result keys:", Object.keys(r));
     console.log("[ImageExtractor] Has data:", !!r.data);
     console.log("[ImageExtractor] Has images:", !!r.images);
@@ -61,7 +61,7 @@ function defaultExtractImageResult(result: unknown): string | undefined {
   // Handle fal.ai data wrapper
   const data = (r.data as Record<string, unknown>) ?? r;
 
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[ImageExtractor] Data keys:", Object.keys(data));
   }
 
@@ -73,7 +73,7 @@ function defaultExtractImageResult(result: unknown): string | undefined {
   // Object with url property (birefnet, rembg format: data.image.url)
   const imageObj = data.image as Record<string, unknown> | undefined;
   if (imageObj && typeof imageObj === "object" && typeof imageObj.url === "string") {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
       console.log("[ImageExtractor] Found data.image.url:", imageObj.url);
     }
     return imageObj.url;
@@ -81,13 +81,13 @@ function defaultExtractImageResult(result: unknown): string | undefined {
 
   // Array format (flux, etc: data.images[0].url)
   if (Array.isArray(data.images) && typeof data.images[0]?.url === "string") {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
       console.log("[ImageExtractor] Found images[0].url:", data.images[0].url);
     }
     return data.images[0].url;
   }
 
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[ImageExtractor] No image URL found in result");
   }
 

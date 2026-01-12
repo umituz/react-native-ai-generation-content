@@ -23,7 +23,7 @@ export interface FeatureUtilsConfig {
 }
 
 export async function prepareImage(uri: string): Promise<string> {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
+  if (__DEV__) {
     console.log("[prepareImage] Starting with URI:", uri);
   }
 
@@ -34,7 +34,7 @@ export async function prepareImage(uri: string): Promise<string> {
   try {
     const base64 = await readFileAsBase64(uri);
 
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
       console.log("[prepareImage] Base64 length:", base64?.length || 0);
     }
 
@@ -45,7 +45,7 @@ export async function prepareImage(uri: string): Promise<string> {
     return base64;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
       console.error("[prepareImage] Error:", message);
     }
     throw new Error(`[prepareImage] Failed: ${message}`);
@@ -55,13 +55,13 @@ export async function prepareImage(uri: string): Promise<string> {
 export function createDevCallbacks(featureName: string) {
   return {
     onSuccess: (result: unknown) => {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
+      if (__DEV__) {
          
         console.log(`[${featureName}] Success:`, result);
       }
     },
     onError: (error: unknown) => {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
+      if (__DEV__) {
          
         console.error(`[${featureName}] Error:`, error);
       }
@@ -82,7 +82,7 @@ async function checkCreditGuard(cost: number, featureName: string): Promise<bool
   const paywallService = getPaywallService();
 
   if (!authService.isAuthenticated()) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
        
       console.log(`[${featureName}] Auth required`);
     }
@@ -96,7 +96,7 @@ async function checkCreditGuard(cost: number, featureName: string): Promise<bool
 
   const hasCredits = await creditService.checkCredits(cost);
   if (!hasCredits) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
+    if (__DEV__) {
        
       console.log(`[${featureName}] Insufficient credits`);
     }

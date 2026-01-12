@@ -42,8 +42,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
   onAccessoryRightPress,
   style,
 }) => {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
+  if (__DEV__) {
     console.log("[GenerateButton] RENDERING NOW");
   }
 
@@ -53,15 +52,13 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
   const finalDisplayText = costLabel ? `${displayText} (${costLabel})` : displayText;
 
   useEffect(() => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
+    if (__DEV__) {
       console.log("[GenerateButton] MOUNTED/UPDATED - isDisabled:", isDisabled, "isProcessing:", isProcessing, "disabled:", disabled, "text:", text);
     }
   }, [isDisabled, isProcessing, disabled, text]);
 
   const handlePress = () => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
+    if (__DEV__) {
       console.log("[GenerateButton] PRESSED - disabled:", disabled, "isDisabled:", isDisabled, "isProcessing:", isProcessing);
     }
     if (!disabled) {
