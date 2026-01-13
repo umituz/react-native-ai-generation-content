@@ -3,7 +3,7 @@
  * Couple future generation using centralized orchestrator
  */
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef } from "react";
 import {
   useGenerationOrchestrator,
   type GenerationStrategy,
@@ -42,9 +42,15 @@ export const useCoupleFutureGeneration = <TResult>(
     [],
   );
 
+  // Store input for use in save callback
+  const lastInputRef = useRef<CoupleFutureInput | null>(null);
+
   const strategy: GenerationStrategy<CoupleFutureInput, TResult> = useMemo(
     () => ({
       execute: async (input, onProgress) => {
+        // Store input for save callback
+        lastInputRef.current = input;
+
         const result = await executeCoupleFuture(
           {
             partnerABase64: input.partnerABase64,
@@ -63,9 +69,12 @@ export const useCoupleFutureGeneration = <TResult>(
       getCreditCost: () => 1,
       save: buildCreation
         ? async (result, uid) => {
-            const creation = buildCreation(result, {} as CoupleFutureInput);
-            if (creation) {
-              await repository.create(uid, creation);
+            const input = lastInputRef.current;
+            if (input) {
+              const creation = buildCreation(result, input);
+              if (creation) {
+                await repository.create(uid, creation);
+              }
             }
           }
         : undefined,

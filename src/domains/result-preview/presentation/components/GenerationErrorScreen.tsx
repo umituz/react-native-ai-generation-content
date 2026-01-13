@@ -54,6 +54,10 @@ export interface GenerationErrorScreenProps {
   readonly onTryAgain: () => void;
   /** Choose another scenario callback */
   readonly onChooseAnother: () => void;
+  /** Optional premium button text */
+  readonly premiumButtonText?: string;
+  /** Optional premium button callback */
+  readonly onGoPremium?: () => void;
   /** Optional custom style */
   readonly style?: StyleProp<ViewStyle>;
 }
@@ -70,6 +74,8 @@ export const GenerationErrorScreen: React.FC<GenerationErrorScreenProps> = ({
   config = DEFAULT_CONFIG,
   onTryAgain,
   onChooseAnother,
+  premiumButtonText,
+  onGoPremium,
   style,
 }) => {
   const tokens = useAppDesignTokens();
@@ -120,10 +126,20 @@ export const GenerationErrorScreen: React.FC<GenerationErrorScreenProps> = ({
           <View style={styles.spacer} />
 
           <View style={styles.actionsContainer}>
+            {onGoPremium && premiumButtonText && (
+              <AtomicButton
+                title={premiumButtonText}
+                onPress={onGoPremium}
+                variant="primary"
+                size="lg"
+                fullWidth
+              />
+            )}
+
             <AtomicButton
               title={translations.tryAgain}
               onPress={onTryAgain}
-              variant="primary"
+              variant={onGoPremium ? "secondary" : "primary"}
               size="lg"
               fullWidth
             />

@@ -188,3 +188,6 @@ export type {
   ComparisonTranslationKeys,
   PromptTranslationKeys,
 } from "./presentation/screens/ai-feature";
+
+// AIGenerationWizard - Generic wizard for all AI generation flows
+export * from "./features/wizard";

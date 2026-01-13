@@ -57,7 +57,11 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         const creditCost = strategy.getCreditCost();
         const hasCredits = await checkCredits(creditCost);
         if (!hasCredits) {
-          throw createGenerationError("credits", "Insufficient credits");
+          // Open paywall instead of showing error
+          isGeneratingRef.current = false;
+          setState(INITIAL_STATE);
+          onCreditsExhausted?.();
+          return;
         }
 
         setState((prev) => ({ ...prev, status: "generating", progress: 10 }));
