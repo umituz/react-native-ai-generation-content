@@ -1,25 +1,22 @@
 /**
  * useImageWithPromptFeature Hook Factory
  * Base hook for image + prompt processing features (e.g., replace-background)
+ * Uses centralized orchestrator for credit/error handling
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { generateUUID } from "@umituz/react-native-design-system";
 import { executeImageFeature } from "../../../../infrastructure/services";
+import {
+  useGenerationOrchestrator,
+  type GenerationStrategy,
+  type AlertMessages,
+} from "../../../../presentation/hooks/generation";
 import type {
   BaseImageWithPromptState,
   SingleImageConfig,
   BaseImageResult,
 } from "../../domain/types";
-
-const INITIAL_STATE: BaseImageWithPromptState = {
-  imageUri: null,
-  prompt: "",
-  processedUrl: null,
-  isProcessing: false,
-  progress: 0,
-  error: null,
-};
 
 export interface ImageWithPromptConfig<TResult extends BaseImageResult = BaseImageResult>
   extends SingleImageConfig<TResult> {
@@ -52,6 +49,26 @@ export interface ImageWithPromptOptions {
     config: ImageWithPromptConfig,
   ) => Record<string, unknown>;
   promptRequired?: boolean;
+  /** Alert messages for error handling */
+  alertMessages?: AlertMessages;
+  /** User ID for credit operations */
+  userId?: string;
+  /** Callback when credits are exhausted */
+  onCreditsExhausted?: () => void;
+}
+
+const DEFAULT_ALERT_MESSAGES: AlertMessages = {
+  networkError: "No internet connection. Please check your network.",
+  policyViolation: "Content not allowed. Please try a different image.",
+  saveFailed: "Failed to save result. Please try again.",
+  creditFailed: "Credit operation failed. Please try again.",
+  unknown: "An error occurred. Please try again.",
+};
+
+interface ImageWithPromptInput {
+  imageBase64: string;
+  prompt: string;
+  options?: Record<string, unknown>;
 }
 
 export function useImageWithPromptFeature<
@@ -62,48 +79,88 @@ export function useImageWithPromptFeature<
   options?: ImageWithPromptOptions,
 ): ImageWithPromptHookReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
-  const [state, setState] = useState<BaseImageWithPromptState>({
-    ...INITIAL_STATE,
-    prompt: config.defaultPrompt || "",
-  });
+
+  // Image and prompt state (separate from orchestrator state)
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [prompt, setPromptState] = useState(config.defaultPrompt || "");
+  const [imageError, setImageError] = useState<string | null>(null);
   const creationIdRef = useRef<string | null>(null);
+
+  // Create strategy for orchestrator
+  const strategy: GenerationStrategy<ImageWithPromptInput, string> = useMemo(
+    () => ({
+      execute: async (input, onProgress) => {
+        const executorInput = input.options
+          ? { ...input.options }
+          : { imageBase64: input.imageBase64, prompt: input.prompt };
+
+        const result = await executeImageFeature(
+          config.featureType,
+          executorInput,
+          { extractResult: config.extractResult, onProgress },
+        );
+
+        if (!result.success || !result.imageUrl) {
+          throw new Error(result.error || "Processing failed");
+        }
+
+        // Notify completion with creationId
+        const creationId = creationIdRef.current;
+        if (creationId) {
+          config.onProcessingComplete?.({ ...result, creationId } as unknown as TResult);
+        }
+
+        return result.imageUrl;
+      },
+      getCreditCost: () => config.creditCost || 1,
+    }),
+    [config],
+  );
+
+  // Use orchestrator for generation
+  const orchestrator = useGenerationOrchestrator(strategy, {
+    userId: options?.userId,
+    alertMessages: options?.alertMessages || DEFAULT_ALERT_MESSAGES,
+    onCreditsExhausted: options?.onCreditsExhausted,
+    onError: (error) => {
+      config.onError?.(error.message, creationIdRef.current ?? undefined);
+    },
+  });
 
   const selectImage = useCallback(async () => {
     try {
       const uri = await onSelectImage();
       if (uri) {
-        setState((prev) => ({ ...prev, imageUri: uri, error: null }));
+        setImageUri(uri);
+        setImageError(null);
         config.onImageSelect?.(uri);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
   }, [onSelectImage, config]);
 
   const setPrompt = useCallback(
-    (prompt: string) => {
-      setState((prev) => ({ ...prev, prompt, error: null }));
-      config.onPromptChange?.(prompt);
+    (newPrompt: string) => {
+      setPromptState(newPrompt);
+      setImageError(null);
+      config.onPromptChange?.(newPrompt);
     },
     [config],
   );
 
-  const handleProgress = useCallback((progress: number) => {
-    setState((prev) => ({ ...prev, progress }));
-  }, []);
-
   const process = useCallback(async () => {
-    if (!state.imageUri) return;
+    if (!imageUri) return;
 
     if (onBeforeProcess) {
       const canProceed = await onBeforeProcess();
       if (!canProceed) return;
     }
 
-    if (options?.promptRequired && !state.prompt.trim()) {
+    if (options?.promptRequired && !prompt.trim()) {
       const error = "Prompt is required";
-      setState((prev) => ({ ...prev, error }));
+      setImageError(error);
       config.onError?.(error, creationIdRef.current ?? undefined);
       return;
     }
@@ -111,78 +168,52 @@ export function useImageWithPromptFeature<
     const creationId = generateUUID();
     creationIdRef.current = creationId;
 
-    setState((prev) => ({
-      ...prev,
-      isProcessing: true,
-      progress: 0,
-      error: null,
-    }));
-
-    config.onProcessingStart?.({ creationId, imageUri: state.imageUri });
+    config.onProcessingStart?.({ creationId, imageUri });
 
     try {
-      const imageBase64 = await config.prepareImage(state.imageUri);
+      const imageBase64 = await config.prepareImage(imageUri);
 
-      const input = options?.buildInput
-        ? options.buildInput(imageBase64, state.prompt, config)
-        : { imageBase64, prompt: state.prompt };
+      const input: ImageWithPromptInput = options?.buildInput
+        ? {
+            imageBase64,
+            prompt,
+            options: options.buildInput(imageBase64, prompt, config),
+          }
+        : { imageBase64, prompt };
 
-      const result = await executeImageFeature(
-        config.featureType,
-        input,
-        { extractResult: config.extractResult, onProgress: handleProgress },
-      );
-
-      if (result.success && result.imageUrl) {
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          processedUrl: result.imageUrl!,
-          progress: 100,
-        }));
-        config.onProcessingComplete?.({ ...result, creationId } as unknown as TResult);
-      } else {
-        const errorMessage = result.error || "Processing failed";
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: errorMessage,
-          progress: 0,
-        }));
-        config.onError?.(errorMessage, creationId);
-      }
+      await orchestrator.generate(input);
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({
-        ...prev,
-        isProcessing: false,
-        error: message,
-        progress: 0,
-      }));
-      config.onError?.(message, creationIdRef.current ?? undefined);
+      // Error already handled by orchestrator
     }
-  }, [state.imageUri, state.prompt, config, options, handleProgress, onBeforeProcess]);
+  }, [imageUri, prompt, config, options, onBeforeProcess, orchestrator]);
 
   const save = useCallback(async () => {
-    if (!state.processedUrl) return;
+    if (!orchestrator.result) return;
 
     try {
-      await onSaveImage(state.processedUrl);
+      await onSaveImage(orchestrator.result);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
-  }, [state.processedUrl, onSaveImage]);
+  }, [orchestrator.result, onSaveImage]);
 
   const reset = useCallback(() => {
-    setState({
-      ...INITIAL_STATE,
-      prompt: config.defaultPrompt || "",
-    });
-  }, [config.defaultPrompt]);
+    setImageUri(null);
+    setPromptState(config.defaultPrompt || "");
+    setImageError(null);
+    creationIdRef.current = null;
+    orchestrator.reset();
+  }, [config.defaultPrompt, orchestrator]);
 
+  // Combine states for backward compatibility
   return {
-    ...state,
+    imageUri,
+    prompt,
+    processedUrl: orchestrator.result,
+    isProcessing: orchestrator.isGenerating,
+    progress: orchestrator.progress,
+    error: orchestrator.error?.message || imageError,
     selectImage,
     setPrompt,
     process,

@@ -1,13 +1,18 @@
 /**
  * useRemoveObjectFeature Hook
  * Manages remove object feature state and actions
+ * Uses centralized orchestrator for credit/error handling
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { generateUUID } from "@umituz/react-native-design-system";
 import { executeImageFeature } from "../../../../infrastructure/services";
+import {
+  useGenerationOrchestrator,
+  type GenerationStrategy,
+  type AlertMessages,
+} from "../../../../presentation/hooks/generation";
 import type {
-  RemoveObjectFeatureState,
   RemoveObjectFeatureConfig,
   RemoveObjectResult,
 } from "../../domain/types";
@@ -20,7 +25,23 @@ export interface UseRemoveObjectFeatureProps {
   onBeforeProcess?: () => Promise<boolean>;
 }
 
-export interface UseRemoveObjectFeatureReturn extends RemoveObjectFeatureState {
+export interface UseRemoveObjectFeatureOptions {
+  /** Alert messages for error handling */
+  alertMessages?: AlertMessages;
+  /** User ID for credit operations */
+  userId?: string;
+  /** Callback when credits are exhausted */
+  onCreditsExhausted?: () => void;
+}
+
+export interface UseRemoveObjectFeatureReturn {
+  imageUri: string | null;
+  maskUri: string | null;
+  prompt: string;
+  processedUrl: string | null;
+  isProcessing: boolean;
+  progress: number;
+  error: string | null;
   selectImage: () => Promise<void>;
   selectMask: () => Promise<void>;
   setPrompt: (prompt: string) => void;
@@ -29,33 +50,85 @@ export interface UseRemoveObjectFeatureReturn extends RemoveObjectFeatureState {
   reset: () => void;
 }
 
-const initialState: RemoveObjectFeatureState = {
-  imageUri: null,
-  maskUri: null,
-  prompt: "",
-  processedUrl: null,
-  isProcessing: false,
-  progress: 0,
-  error: null,
+const DEFAULT_ALERT_MESSAGES: AlertMessages = {
+  networkError: "No internet connection. Please check your network.",
+  policyViolation: "Content not allowed. Please try a different image.",
+  saveFailed: "Failed to save result. Please try again.",
+  creditFailed: "Credit operation failed. Please try again.",
+  unknown: "An error occurred. Please try again.",
 };
+
+interface RemoveObjectInput {
+  imageBase64: string;
+  maskBase64?: string;
+  prompt?: string;
+}
 
 export function useRemoveObjectFeature(
   props: UseRemoveObjectFeatureProps,
+  options?: UseRemoveObjectFeatureOptions,
 ): UseRemoveObjectFeatureReturn {
   const { config, onSelectImage, onSelectMask, onSaveImage, onBeforeProcess } = props;
-  const [state, setState] = useState<RemoveObjectFeatureState>(initialState);
+
+  // UI state (separate from orchestrator state)
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [maskUri, setMaskUri] = useState<string | null>(null);
+  const [prompt, setPromptState] = useState("");
+  const [imageError, setImageError] = useState<string | null>(null);
   const creationIdRef = useRef<string | null>(null);
+
+  // Create strategy for orchestrator
+  const strategy: GenerationStrategy<RemoveObjectInput, string> = useMemo(
+    () => ({
+      execute: async (input, onProgress) => {
+        const result = await executeImageFeature(
+          "remove-object",
+          {
+            imageBase64: input.imageBase64,
+            targetImageBase64: input.maskBase64,
+            prompt: input.prompt,
+          },
+          { extractResult: config.extractResult, onProgress },
+        );
+
+        if (!result.success || !result.imageUrl) {
+          throw new Error(result.error || "Processing failed");
+        }
+
+        // Notify completion with creationId
+        const creationId = creationIdRef.current;
+        if (creationId) {
+          config.onProcessingComplete?.({ ...result, creationId } as RemoveObjectResult & { creationId?: string });
+        }
+
+        return result.imageUrl;
+      },
+      getCreditCost: () => config.creditCost || 1,
+    }),
+    [config],
+  );
+
+  // Use orchestrator for generation
+  const orchestrator = useGenerationOrchestrator(strategy, {
+    userId: options?.userId,
+    alertMessages: options?.alertMessages || DEFAULT_ALERT_MESSAGES,
+    onCreditsExhausted: options?.onCreditsExhausted,
+    onError: (error) => {
+      config.onError?.(error.message, creationIdRef.current ?? undefined);
+    },
+  });
 
   const selectImage = useCallback(async () => {
     try {
       const uri = await onSelectImage();
       if (uri) {
-        setState((prev) => ({ ...prev, imageUri: uri, error: null }));
+        setImageUri(uri);
+        setImageError(null);
         config.onImageSelect?.(uri);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
   }, [onSelectImage, config]);
 
@@ -65,25 +138,23 @@ export function useRemoveObjectFeature(
     try {
       const uri = await onSelectMask();
       if (uri) {
-        setState((prev) => ({ ...prev, maskUri: uri, error: null }));
+        setMaskUri(uri);
+        setImageError(null);
         config.onMaskSelect?.(uri);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
   }, [onSelectMask, config]);
 
-  const setPrompt = useCallback((prompt: string) => {
-    setState((prev) => ({ ...prev, prompt }));
-  }, []);
-
-  const handleProgress = useCallback((progress: number) => {
-    setState((prev) => ({ ...prev, progress }));
+  const setPrompt = useCallback((newPrompt: string) => {
+    setPromptState(newPrompt);
+    setImageError(null);
   }, []);
 
   const process = useCallback(async () => {
-    if (!state.imageUri) return;
+    if (!imageUri) return;
 
     if (onBeforeProcess) {
       const canProceed = await onBeforeProcess();
@@ -93,78 +164,53 @@ export function useRemoveObjectFeature(
     const creationId = generateUUID();
     creationIdRef.current = creationId;
 
-    setState((prev) => ({
-      ...prev,
-      isProcessing: true,
-      progress: 0,
-      error: null,
-    }));
-
-    config.onProcessingStart?.({ creationId, imageUri: state.imageUri });
+    config.onProcessingStart?.({ creationId, imageUri });
 
     try {
-      const imageBase64 = await config.prepareImage(state.imageUri);
-      const maskBase64 = state.maskUri
-        ? await config.prepareImage(state.maskUri)
+      const imageBase64 = await config.prepareImage(imageUri);
+      const maskBase64 = maskUri
+        ? await config.prepareImage(maskUri)
         : undefined;
 
-      const result = await executeImageFeature(
-        "remove-object",
-        {
-          imageBase64,
-          targetImageBase64: maskBase64,
-          prompt: state.prompt || undefined,
-        },
-        { extractResult: config.extractResult, onProgress: handleProgress },
-      );
-
-      if (result.success && result.imageUrl) {
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          processedUrl: result.imageUrl!,
-          progress: 100,
-        }));
-        config.onProcessingComplete?.({ ...result, creationId } as RemoveObjectResult & { creationId?: string });
-      } else {
-        const errorMessage = result.error || "Processing failed";
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: errorMessage,
-          progress: 0,
-        }));
-        config.onError?.(errorMessage, creationId);
-      }
+      await orchestrator.generate({
+        imageBase64,
+        maskBase64,
+        prompt: prompt || undefined,
+      });
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({
-        ...prev,
-        isProcessing: false,
-        error: message,
-        progress: 0,
-      }));
-      config.onError?.(message, creationIdRef.current ?? undefined);
+      // Error already handled by orchestrator
     }
-  }, [state.imageUri, state.maskUri, state.prompt, config, handleProgress, onBeforeProcess]);
+  }, [imageUri, maskUri, prompt, config, onBeforeProcess, orchestrator]);
 
   const save = useCallback(async () => {
-    if (!state.processedUrl) return;
+    if (!orchestrator.result) return;
 
     try {
-      await onSaveImage(state.processedUrl);
+      await onSaveImage(orchestrator.result);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
-  }, [state.processedUrl, onSaveImage]);
+  }, [orchestrator.result, onSaveImage]);
 
   const reset = useCallback(() => {
-    setState(initialState);
-  }, []);
+    setImageUri(null);
+    setMaskUri(null);
+    setPromptState("");
+    setImageError(null);
+    creationIdRef.current = null;
+    orchestrator.reset();
+  }, [orchestrator]);
 
+  // Combine states for backward compatibility
   return {
-    ...state,
+    imageUri,
+    maskUri,
+    prompt,
+    processedUrl: orchestrator.result,
+    isProcessing: orchestrator.isGenerating,
+    progress: orchestrator.progress,
+    error: orchestrator.error?.message || imageError,
     selectImage,
     selectMask,
     setPrompt,

@@ -51,6 +51,7 @@ export interface HDTouchUpTranslations {
 export type HDTouchUpResultExtractor = (result: unknown) => string | undefined;
 
 export interface HDTouchUpFeatureConfig {
+  featureType: "hd-touch-up";
   creditCost?: number;
   extractResult?: HDTouchUpResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;

@@ -59,6 +59,7 @@ export interface AnimeSelfieTranslations {
 export type AnimeSelfieResultExtractor = (result: unknown) => string | undefined;
 
 export interface AnimeSelfieFeatureConfig {
+  featureType: "anime-selfie";
   creditCost?: number;
   defaultStyle?: AnimeSelfieStyle;
   extractResult?: AnimeSelfieResultExtractor;

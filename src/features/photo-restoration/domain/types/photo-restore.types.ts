@@ -53,6 +53,7 @@ export type PhotoRestoreResultExtractor = (
 ) => string | undefined;
 
 export interface PhotoRestoreFeatureConfig {
+  featureType: "photo-restore";
   creditCost?: number;
   extractResult?: PhotoRestoreResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;

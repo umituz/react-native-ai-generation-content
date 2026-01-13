@@ -2,43 +2,104 @@
  * useDualImageVideoFeature Hook
  * Base hook for video features that take two images (ai-hug, ai-kiss, etc.)
  * DRY: Consolidates common logic from useAIHugFeature and useAIKissFeature
+ * Uses centralized orchestrator for credit/error handling
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { executeVideoFeature } from "../../../../../infrastructure/services";
 import { generateCreationId } from "../../../../../domains/creations/domain/utils";
+import {
+  useGenerationOrchestrator,
+  type GenerationStrategy,
+  type AlertMessages,
+} from "../../../../../presentation/hooks/generation";
 import type {
-  DualImageVideoFeatureState,
   UseDualImageVideoFeatureProps,
   UseDualImageVideoFeatureReturn,
 } from "../../domain/types/dual-image-video.types";
 
-const initialState: DualImageVideoFeatureState = {
-  sourceImageUri: null,
-  targetImageUri: null,
-  processedVideoUrl: null,
-  isProcessing: false,
-  progress: 0,
-  error: null,
+export interface DualImageVideoFeatureOptions {
+  /** Alert messages for error handling */
+  alertMessages?: AlertMessages;
+  /** User ID for credit operations */
+  userId?: string;
+  /** Callback when credits are exhausted */
+  onCreditsExhausted?: () => void;
+}
+
+const DEFAULT_ALERT_MESSAGES: AlertMessages = {
+  networkError: "No internet connection. Please check your network.",
+  policyViolation: "Content not allowed. Please try different images.",
+  saveFailed: "Failed to save result. Please try again.",
+  creditFailed: "Credit operation failed. Please try again.",
+  unknown: "An error occurred. Please try again.",
 };
+
+interface DualImageVideoInput {
+  sourceImageBase64: string;
+  targetImageBase64: string;
+}
 
 export function useDualImageVideoFeature(
   props: UseDualImageVideoFeatureProps,
+  options?: DualImageVideoFeatureOptions,
 ): UseDualImageVideoFeatureReturn {
   const { featureType, config, onSelectSourceImage, onSelectTargetImage, onSaveVideo, onBeforeProcess } = props;
-  const [state, setState] = useState<DualImageVideoFeatureState>(initialState);
+
+  // Image selection state (separate from orchestrator state)
+  const [sourceImageUri, setSourceImageUri] = useState<string | null>(null);
+  const [targetImageUri, setTargetImageUri] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const currentCreationIdRef = useRef<string | null>(null);
+
+  // Create strategy for orchestrator
+  const strategy: GenerationStrategy<DualImageVideoInput, string> = useMemo(
+    () => ({
+      execute: async (input, onProgress) => {
+        const result = await executeVideoFeature(
+          featureType,
+          { sourceImageBase64: input.sourceImageBase64, targetImageBase64: input.targetImageBase64 },
+          { extractResult: config.extractResult, onProgress },
+        );
+
+        if (!result.success || !result.videoUrl) {
+          throw new Error(result.error || "Processing failed");
+        }
+
+        // Notify completion with creationId
+        const creationId = currentCreationIdRef.current;
+        if (creationId) {
+          config.onProcessingComplete?.({ success: true, videoUrl: result.videoUrl, creationId });
+        }
+
+        return result.videoUrl;
+      },
+      getCreditCost: () => config.creditCost || 1,
+    }),
+    [featureType, config],
+  );
+
+  // Use orchestrator for generation
+  const orchestrator = useGenerationOrchestrator(strategy, {
+    userId: options?.userId,
+    alertMessages: options?.alertMessages || DEFAULT_ALERT_MESSAGES,
+    onCreditsExhausted: options?.onCreditsExhausted,
+    onError: (error) => {
+      config.onError?.(error.message, currentCreationIdRef.current ?? undefined);
+    },
+  });
 
   const selectSourceImage = useCallback(async () => {
     try {
       const uri = await onSelectSourceImage();
       if (uri) {
-        setState((prev) => ({ ...prev, sourceImageUri: uri, error: null }));
+        setSourceImageUri(uri);
+        setImageError(null);
         config.onSourceImageSelect?.(uri);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
   }, [onSelectSourceImage, config]);
 
@@ -46,21 +107,18 @@ export function useDualImageVideoFeature(
     try {
       const uri = await onSelectTargetImage();
       if (uri) {
-        setState((prev) => ({ ...prev, targetImageUri: uri, error: null }));
+        setTargetImageUri(uri);
+        setImageError(null);
         config.onTargetImageSelect?.(uri);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
   }, [onSelectTargetImage, config]);
 
-  const handleProgress = useCallback((progress: number) => {
-    setState((prev) => ({ ...prev, progress }));
-  }, []);
-
   const process = useCallback(async () => {
-    if (!state.sourceImageUri || !state.targetImageUri) return;
+    if (!sourceImageUri || !targetImageUri) return;
 
     if (onBeforeProcess) {
       const canProceed = await onBeforeProcess();
@@ -71,69 +129,53 @@ export function useDualImageVideoFeature(
     const creationId = generateCreationId();
     currentCreationIdRef.current = creationId;
 
-    setState((prev) => ({
-      ...prev,
-      isProcessing: true,
-      progress: 0,
-      error: null,
-    }));
-
     // Notify start with creationId for Firestore creation
     config.onProcessingStart?.({
       creationId,
       featureType,
-      sourceImageUri: state.sourceImageUri,
-      targetImageUri: state.targetImageUri,
+      sourceImageUri,
+      targetImageUri,
     });
 
-    const sourceImageBase64 = await config.prepareImage(state.sourceImageUri);
-    const targetImageBase64 = await config.prepareImage(state.targetImageUri);
+    try {
+      const [sourceImageBase64, targetImageBase64] = await Promise.all([
+        config.prepareImage(sourceImageUri),
+        config.prepareImage(targetImageUri),
+      ]);
 
-    const result = await executeVideoFeature(
-      featureType,
-      { sourceImageBase64, targetImageBase64 },
-      { extractResult: config.extractResult, onProgress: handleProgress },
-    );
-
-    if (result.success && result.videoUrl) {
-      setState((prev) => ({
-        ...prev,
-        isProcessing: false,
-        processedVideoUrl: result.videoUrl!,
-        progress: 100,
-      }));
-      // Notify completion with creationId and videoUrl for Firestore update
-      config.onProcessingComplete?.({ success: true, videoUrl: result.videoUrl, creationId });
-    } else {
-      const errorMessage = result.error || "Processing failed";
-      setState((prev) => ({
-        ...prev,
-        isProcessing: false,
-        error: errorMessage,
-        progress: 0,
-      }));
-      // Notify error with creationId for Firestore update to "failed"
-      config.onError?.(errorMessage, creationId);
+      await orchestrator.generate({ sourceImageBase64, targetImageBase64 });
+    } catch (error) {
+      // Error already handled by orchestrator
     }
-  }, [state.sourceImageUri, state.targetImageUri, featureType, config, handleProgress, onBeforeProcess]);
+  }, [sourceImageUri, targetImageUri, featureType, config, onBeforeProcess, orchestrator]);
 
   const save = useCallback(async () => {
-    if (!state.processedVideoUrl) return;
+    if (!orchestrator.result) return;
 
     try {
-      await onSaveVideo(state.processedVideoUrl);
+      await onSaveVideo(orchestrator.result);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
-  }, [state.processedVideoUrl, onSaveVideo]);
+  }, [orchestrator.result, onSaveVideo]);
 
   const reset = useCallback(() => {
-    setState(initialState);
-  }, []);
+    setSourceImageUri(null);
+    setTargetImageUri(null);
+    setImageError(null);
+    currentCreationIdRef.current = null;
+    orchestrator.reset();
+  }, [orchestrator]);
 
+  // Combine states for backward compatibility
   return {
-    ...state,
+    sourceImageUri,
+    targetImageUri,
+    processedVideoUrl: orchestrator.result,
+    isProcessing: orchestrator.isGenerating,
+    progress: orchestrator.progress,
+    error: orchestrator.error?.message || imageError,
     selectSourceImage,
     selectTargetImage,
     process,

@@ -1,27 +1,23 @@
 /**
  * useDualImageFeature Hook Factory
  * Base hook for dual image processing features (e.g., face-swap)
+ * Uses centralized orchestrator for credit/error handling
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { generateUUID } from "@umituz/react-native-design-system";
 import { executeImageFeature } from "../../../../infrastructure/services";
+import {
+  useGenerationOrchestrator,
+  type GenerationStrategy,
+  type AlertMessages,
+} from "../../../../presentation/hooks/generation";
 import type {
-  BaseDualImageState,
   BaseDualImageHookProps,
   BaseDualImageHookReturn,
   DualImageConfig,
   BaseImageResult,
 } from "../../domain/types";
-
-const INITIAL_STATE: BaseDualImageState = {
-  sourceImageUri: null,
-  targetImageUri: null,
-  processedUrl: null,
-  isProcessing: false,
-  progress: 0,
-  error: null,
-};
 
 export interface DualImageFeatureOptions<TConfig extends DualImageConfig> {
   buildInput?: (
@@ -29,6 +25,26 @@ export interface DualImageFeatureOptions<TConfig extends DualImageConfig> {
     targetBase64: string,
     config: TConfig,
   ) => Record<string, unknown>;
+  /** Alert messages for error handling */
+  alertMessages?: AlertMessages;
+  /** User ID for credit operations */
+  userId?: string;
+  /** Callback when credits are exhausted */
+  onCreditsExhausted?: () => void;
+}
+
+const DEFAULT_ALERT_MESSAGES: AlertMessages = {
+  networkError: "No internet connection. Please check your network.",
+  policyViolation: "Content not allowed. Please try different images.",
+  saveFailed: "Failed to save result. Please try again.",
+  creditFailed: "Credit operation failed. Please try again.",
+  unknown: "An error occurred. Please try again.",
+};
+
+interface DualImageInput {
+  sourceImageBase64: string;
+  targetImageBase64: string;
+  options?: Record<string, unknown>;
 }
 
 export function useDualImageFeature<
@@ -39,19 +55,65 @@ export function useDualImageFeature<
   options?: DualImageFeatureOptions<TConfig>,
 ): BaseDualImageHookReturn {
   const { config, onSelectSourceImage, onSelectTargetImage, onSaveImage, onBeforeProcess } = props;
-  const [state, setState] = useState<BaseDualImageState>(INITIAL_STATE);
+
+  // Image selection state (separate from orchestrator state)
+  const [sourceImageUri, setSourceImageUri] = useState<string | null>(null);
+  const [targetImageUri, setTargetImageUri] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const creationIdRef = useRef<string | null>(null);
+
+  // Create strategy for orchestrator
+  const strategy: GenerationStrategy<DualImageInput, string> = useMemo(
+    () => ({
+      execute: async (input, onProgress) => {
+        const executorInput = input.options
+          ? { ...input.options }
+          : { imageBase64: input.sourceImageBase64, targetImageBase64: input.targetImageBase64 };
+
+        const result = await executeImageFeature(
+          config.featureType,
+          executorInput,
+          { extractResult: config.extractResult, onProgress },
+        );
+
+        if (!result.success || !result.imageUrl) {
+          throw new Error(result.error || "Processing failed");
+        }
+
+        // Notify completion with creationId
+        const creationId = creationIdRef.current;
+        if (creationId) {
+          config.onProcessingComplete?.({ ...result, creationId } as unknown as TResult);
+        }
+
+        return result.imageUrl;
+      },
+      getCreditCost: () => config.creditCost || 1,
+    }),
+    [config],
+  );
+
+  // Use orchestrator for generation
+  const orchestrator = useGenerationOrchestrator(strategy, {
+    userId: options?.userId,
+    alertMessages: options?.alertMessages || DEFAULT_ALERT_MESSAGES,
+    onCreditsExhausted: options?.onCreditsExhausted,
+    onError: (error) => {
+      config.onError?.(error.message, creationIdRef.current ?? undefined);
+    },
+  });
 
   const selectSourceImage = useCallback(async () => {
     try {
       const uri = await onSelectSourceImage();
       if (uri) {
-        setState((prev) => ({ ...prev, sourceImageUri: uri, error: null }));
+        setSourceImageUri(uri);
+        setImageError(null);
         config.onSourceImageSelect?.(uri);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
   }, [onSelectSourceImage, config]);
 
@@ -59,21 +121,18 @@ export function useDualImageFeature<
     try {
       const uri = await onSelectTargetImage();
       if (uri) {
-        setState((prev) => ({ ...prev, targetImageUri: uri, error: null }));
+        setTargetImageUri(uri);
+        setImageError(null);
         config.onTargetImageSelect?.(uri);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
   }, [onSelectTargetImage, config]);
 
-  const handleProgress = useCallback((progress: number) => {
-    setState((prev) => ({ ...prev, progress }));
-  }, []);
-
   const process = useCallback(async () => {
-    if (!state.sourceImageUri || !state.targetImageUri) return;
+    if (!sourceImageUri || !targetImageUri) return;
 
     if (onBeforeProcess) {
       const canProceed = await onBeforeProcess();
@@ -83,82 +142,59 @@ export function useDualImageFeature<
     const creationId = generateUUID();
     creationIdRef.current = creationId;
 
-    setState((prev) => ({
-      ...prev,
-      isProcessing: true,
-      progress: 0,
-      error: null,
-    }));
-
     config.onProcessingStart?.({
       creationId,
-      sourceImageUri: state.sourceImageUri,
-      targetImageUri: state.targetImageUri,
+      sourceImageUri,
+      targetImageUri,
     });
 
     try {
       const [sourceBase64, targetBase64] = await Promise.all([
-        config.prepareImage(state.sourceImageUri),
-        config.prepareImage(state.targetImageUri),
+        config.prepareImage(sourceImageUri),
+        config.prepareImage(targetImageUri),
       ]);
 
-      const input = options?.buildInput
-        ? options.buildInput(sourceBase64, targetBase64, config)
+      const input: DualImageInput = options?.buildInput
+        ? {
+            sourceImageBase64: sourceBase64,
+            targetImageBase64: targetBase64,
+            options: options.buildInput(sourceBase64, targetBase64, config),
+          }
         : { sourceImageBase64: sourceBase64, targetImageBase64: targetBase64 };
 
-      const result = await executeImageFeature(
-        config.featureType,
-        input,
-        { extractResult: config.extractResult, onProgress: handleProgress },
-      );
-
-      if (result.success && result.imageUrl) {
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          processedUrl: result.imageUrl!,
-          progress: 100,
-        }));
-        config.onProcessingComplete?.({ ...result, creationId } as unknown as TResult);
-      } else {
-        const errorMessage = result.error || "Processing failed";
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: errorMessage,
-          progress: 0,
-        }));
-        config.onError?.(errorMessage, creationId);
-      }
+      await orchestrator.generate(input);
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({
-        ...prev,
-        isProcessing: false,
-        error: message,
-        progress: 0,
-      }));
-      config.onError?.(message, creationIdRef.current ?? undefined);
+      // Error already handled by orchestrator
     }
-  }, [state.sourceImageUri, state.targetImageUri, config, options, handleProgress, onBeforeProcess]);
+  }, [sourceImageUri, targetImageUri, config, options, onBeforeProcess, orchestrator]);
 
   const save = useCallback(async () => {
-    if (!state.processedUrl) return;
+    if (!orchestrator.result) return;
 
     try {
-      await onSaveImage(state.processedUrl);
+      await onSaveImage(orchestrator.result);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      setState((prev) => ({ ...prev, error: message }));
+      setImageError(message);
     }
-  }, [state.processedUrl, onSaveImage]);
+  }, [orchestrator.result, onSaveImage]);
 
   const reset = useCallback(() => {
-    setState(INITIAL_STATE);
-  }, []);
+    setSourceImageUri(null);
+    setTargetImageUri(null);
+    setImageError(null);
+    creationIdRef.current = null;
+    orchestrator.reset();
+  }, [orchestrator]);
 
+  // Combine states for backward compatibility
   return {
-    ...state,
+    sourceImageUri,
+    targetImageUri,
+    processedUrl: orchestrator.result,
+    isProcessing: orchestrator.isGenerating,
+    progress: orchestrator.progress,
+    error: orchestrator.error?.message || imageError,
     selectSourceImage,
     selectTargetImage,
     process,
