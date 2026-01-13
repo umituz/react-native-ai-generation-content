@@ -5,7 +5,7 @@
 
 import { useMemo } from "react";
 import { useFormState, type UseFormStateOptions } from "./useFormState";
-import { useGeneration, type GenerationState } from "./useGeneration";
+import { useGeneration, type TextToImageGenerationState } from "./useGeneration";
 import type {
   TextToImageFormState,
   TextToImageFormActions,
@@ -19,7 +19,7 @@ export interface UseTextToImageFormOptions extends UseFormStateOptions {
 export interface UseTextToImageFormReturn {
   state: TextToImageFormState;
   actions: TextToImageFormActions;
-  generationState: GenerationState;
+  generationState: TextToImageGenerationState;
   totalCost: number;
   handleGenerate: () => Promise<void>;
   isReady: boolean;

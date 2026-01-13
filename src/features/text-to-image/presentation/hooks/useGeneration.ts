@@ -25,14 +25,14 @@ export interface UseGenerationOptions {
   onPromptCleared?: () => void;
 }
 
-export interface GenerationState {
+export interface TextToImageGenerationState {
   isGenerating: boolean;
   progress: number;
   error: string | null;
 }
 
 export interface UseGenerationReturn {
-  generationState: GenerationState;
+  generationState: TextToImageGenerationState;
   totalCost: number;
   handleGenerate: () => Promise<TextToImageGenerationResult | null>;
 }

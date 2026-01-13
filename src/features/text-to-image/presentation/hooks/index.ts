@@ -10,7 +10,7 @@ export type { UseFormStateOptions, UseFormStateReturn } from "./useFormState";
 // Generation Hook
 export { useGeneration } from "./useGeneration";
 export type {
-  GenerationState,
+  TextToImageGenerationState,
   UseGenerationOptions,
   UseGenerationReturn,
 } from "./useGeneration";

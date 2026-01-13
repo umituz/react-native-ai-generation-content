@@ -76,7 +76,7 @@ export {
 export type {
   UseFormStateOptions,
   UseFormStateReturn,
-  GenerationState,
+  TextToImageGenerationState,
   UseGenerationOptions,
   UseGenerationReturn,
   UseTextToImageFormOptions,
