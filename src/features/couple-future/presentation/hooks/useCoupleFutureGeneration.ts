@@ -1,77 +1,90 @@
-import { useCallback } from "react";
-import { usePhotoGeneration } from "../../../../presentation/hooks/usePhotoGeneration";
+/**
+ * useCoupleFutureGeneration Hook
+ * Couple future generation using centralized orchestrator
+ */
+
+import { useMemo, useCallback } from "react";
+import {
+  useGenerationOrchestrator,
+  type GenerationStrategy,
+  type AlertMessages,
+} from "../../../../presentation/hooks/generation";
 import { executeCoupleFuture } from "../../infrastructure/executor";
 import type { CoupleFutureInput } from "../../domain/types";
-import type { PhotoGenerationConfig, PhotoGenerationError } from "../../../../presentation/hooks/photo-generation.types";
 import { createCreationsRepository } from "../../../../domains/creations/infrastructure/adapters";
 import type { Creation } from "../../../../domains/creations/domain/entities/Creation";
 
-export interface UseCoupleFutureGenerationConfig<TInput extends CoupleFutureInput, TResult> {
+export interface CoupleFutureConfig<TResult> {
   userId: string | undefined;
-  processResult: (imageUrl: string, input: TInput) => Promise<TResult> | TResult;
-  buildCreation?: (result: TResult, input: TInput) => Creation | null;
-  deductCredits?: () => Promise<void>;
+  processResult: (imageUrl: string, input: CoupleFutureInput) => TResult;
+  buildCreation?: (result: TResult, input: CoupleFutureInput) => Creation | null;
+  onCreditsExhausted?: () => void;
   onSuccess?: (result: TResult) => void;
   onError?: (error: string) => void;
-  alertMessages: {
-    networkError: string;
-    policyViolation: string;
-    saveFailed: string;
-    creditFailed: string;
-    unknown: string;
-  };
+  alertMessages: AlertMessages;
 }
 
-export const useCoupleFutureGeneration = <TInput extends CoupleFutureInput, TResult>(
-  config: UseCoupleFutureGenerationConfig<TInput, TResult>
+export const useCoupleFutureGeneration = <TResult>(
+  config: CoupleFutureConfig<TResult>,
 ) => {
   const {
     userId,
     processResult,
     buildCreation,
-    deductCredits,
+    onCreditsExhausted,
     onSuccess,
     onError,
     alertMessages,
   } = config;
 
-  const repository = useCallback(() => createCreationsRepository("creations"), []);
+  const repository = useMemo(
+    () => createCreationsRepository("creations"),
+    [],
+  );
 
-  const generationConfig: PhotoGenerationConfig<TInput, TResult, void> = {
-    generate: async (input: TInput, onProgress?: (progress: number) => void) => {
-      const result = await executeCoupleFuture(
-        {
-          partnerABase64: input.partnerABase64,
-          partnerBBase64: input.partnerBBase64,
-          prompt: input.prompt,
-        },
-        { onProgress }
-      );
+  const strategy: GenerationStrategy<CoupleFutureInput, TResult> = useMemo(
+    () => ({
+      execute: async (input, onProgress) => {
+        const result = await executeCoupleFuture(
+          {
+            partnerABase64: input.partnerABase64,
+            partnerBBase64: input.partnerBBase64,
+            prompt: input.prompt,
+          },
+          { onProgress },
+        );
 
-      if (!result.success || !result.imageUrl) {
-        throw new Error(result.error || "Generation failed");
-      }
+        if (!result.success || !result.imageUrl) {
+          throw new Error(result.error || "Generation failed");
+        }
 
-      return processResult(result.imageUrl, input);
-    },
+        return processResult(result.imageUrl, input);
+      },
+      getCreditCost: () => 1,
+      save: buildCreation
+        ? async (result, uid) => {
+            const creation = buildCreation(result, {} as CoupleFutureInput);
+            if (creation) {
+              await repository.create(uid, creation);
+            }
+          }
+        : undefined,
+    }),
+    [processResult, buildCreation, repository],
+  );
 
-    save: async (result: TResult, input: TInput) => {
-      if (!userId || !buildCreation) {
-        return;
-      }
-      const creation = buildCreation(result, input);
-      if (creation) {
-        await repository().create(userId, creation);
-      }
-    },
-
-    deductCredits,
-    onSuccess,
-    onError: (error: PhotoGenerationError) => {
+  const handleError = useCallback(
+    (error: { message: string }) => {
       onError?.(error.message);
     },
-    alertMessages,
-  };
+    [onError],
+  );
 
-  return usePhotoGeneration(generationConfig);
+  return useGenerationOrchestrator(strategy, {
+    userId,
+    alertMessages,
+    onCreditsExhausted,
+    onSuccess: onSuccess as (result: unknown) => void,
+    onError: handleError,
+  });
 };

@@ -15,7 +15,7 @@ export type {
 } from "./domain/types";
 export { COUPLE_FUTURE_DEFAULTS } from "./domain/types";
 export { useCoupleFutureGeneration } from "./presentation/hooks/useCoupleFutureGeneration";
-export type { UseCoupleFutureGenerationConfig } from "./presentation/hooks/useCoupleFutureGeneration";
+export type { CoupleFutureConfig as UseCoupleFutureGenerationConfig } from "./presentation/hooks/useCoupleFutureGeneration";
 export {
   RomanticMoodSelector,
   ArtStyleSelector,

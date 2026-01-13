@@ -67,18 +67,19 @@ export { enhancePromptWithLanguage, getSupportedLanguages, getLanguageName, Mode
 export type { ModerationResult, ModerationConfig, SynchronousGenerationInput, SynchronousGenerationConfig } from "./infrastructure/wrappers";
 
 export {
-  useGeneration, usePendingJobs, useBackgroundGeneration, usePhotoGeneration,
+  useGeneration, usePendingJobs, useBackgroundGeneration,
   useGenerationFlow, useGenerationCallbacksBuilder, useAIFeatureCallbacks,
+  useGenerationOrchestrator, createGenerationError, getAlertMessage, parseError,
 } from "./presentation/hooks";
 
 export type {
   UseGenerationOptions, UseGenerationReturn, UsePendingJobsOptions, UsePendingJobsReturn,
   UseBackgroundGenerationOptions, UseBackgroundGenerationReturn, DirectExecutionResult,
-  UsePhotoGenerationReturn, PhotoGenerationInput, PhotoGenerationResult, PhotoGenerationError,
-  PhotoGenerationConfig, PhotoGenerationState, PhotoGenerationStatus, UseGenerationFlowOptions,
-  UseGenerationFlowReturn, CreditType, GenerationExecutionResult, GenerationCallbacksConfig,
-  GenerationCallbacks, UseGenerationCallbacksBuilderOptions, AIFeatureCallbacksConfig,
-  AIFeatureCallbacks, AIFeatureGenerationResult,
+  UseGenerationFlowOptions, UseGenerationFlowReturn, CreditType, GenerationExecutionResult,
+  GenerationCallbacksConfig, GenerationCallbacks, UseGenerationCallbacksBuilderOptions,
+  AIFeatureCallbacksConfig, AIFeatureCallbacks, AIFeatureGenerationResult,
+  GenerationStrategy, GenerationConfig, GenerationState, OrchestratorStatus,
+  GenerationError, GenerationErrorType, AlertMessages, UseGenerationOrchestratorReturn,
 } from "./presentation/hooks";
 
 export {
