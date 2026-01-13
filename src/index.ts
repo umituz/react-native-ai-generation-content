@@ -68,18 +68,20 @@ export type { ModerationResult, ModerationConfig, SynchronousGenerationInput, Sy
 
 export {
   useGeneration, usePendingJobs, useBackgroundGeneration,
-  useGenerationFlow, useGenerationCallbacksBuilder, useAIFeatureCallbacks,
-  useGenerationOrchestrator, createGenerationError, getAlertMessage, parseError,
+  useGenerationFlow, useAIFeatureCallbacks,
+  useGenerationOrchestrator, useImageGeneration, useVideoGeneration,
+  createGenerationError, getAlertMessage, parseError,
 } from "./presentation/hooks";
 
 export type {
   UseGenerationOptions, UseGenerationReturn, UsePendingJobsOptions, UsePendingJobsReturn,
   UseBackgroundGenerationOptions, UseBackgroundGenerationReturn, DirectExecutionResult,
-  UseGenerationFlowOptions, UseGenerationFlowReturn, CreditType, GenerationExecutionResult,
-  GenerationCallbacksConfig, GenerationCallbacks, UseGenerationCallbacksBuilderOptions,
+  UseGenerationFlowOptions, UseGenerationFlowReturn,
   AIFeatureCallbacksConfig, AIFeatureCallbacks, AIFeatureGenerationResult,
   GenerationStrategy, GenerationConfig, GenerationState, OrchestratorStatus,
   GenerationError, GenerationErrorType, AlertMessages, UseGenerationOrchestratorReturn,
+  SingleImageInput, DualImageInput, ImageGenerationInput, ImageGenerationConfig,
+  DualImageVideoInput, VideoGenerationConfig,
 } from "./presentation/hooks";
 
 export {
