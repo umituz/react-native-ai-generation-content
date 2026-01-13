@@ -1,5 +1,4 @@
 /**
-export * from "./presentation/components";
  * Photo Restoration Feature
  * Provider-agnostic photo restoration feature
  */
@@ -16,15 +15,8 @@ export type {
 } from "./domain";
 
 // Presentation Hooks
-export { usePhotoRestoreFeature } from "./presentation";
-export type {
-  UsePhotoRestoreFeatureProps,
-  UsePhotoRestoreFeatureReturn,
-} from "./presentation";
+export { usePhotoRestoreFeature, type UsePhotoRestoreFeatureProps } from "./presentation";
 
 // Presentation Components
 export { PhotoRestoreFeature, PhotoRestoreResultView } from "./presentation";
-export type {
-  PhotoRestoreFeatureProps,
-  PhotoRestoreResultViewProps,
-} from "./presentation";
+export type { PhotoRestoreFeatureProps, PhotoRestoreResultViewProps } from "./presentation";

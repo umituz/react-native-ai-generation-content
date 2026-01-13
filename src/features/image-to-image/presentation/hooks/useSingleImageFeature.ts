@@ -19,7 +19,7 @@ import type {
   BaseImageResult,
 } from "../../domain/types";
 
-export interface SingleImageFeatureOptions<TConfig extends SingleImageConfig> {
+export interface SingleImageFeatureOptions<TConfig = SingleImageConfig> {
   buildInput?: (imageBase64: string, config: TConfig) => Record<string, unknown>;
   /** Alert messages for error handling */
   alertMessages?: AlertMessages;
@@ -43,13 +43,16 @@ interface SingleImageInput {
 }
 
 export function useSingleImageFeature<
-  TConfig extends SingleImageConfig = SingleImageConfig,
-  TResult extends BaseImageResult = BaseImageResult,
+  TConfig = SingleImageConfig,
+  TResult = BaseImageResult,
 >(
   props: BaseSingleImageHookProps<TConfig>,
   options?: SingleImageFeatureOptions<TConfig>,
 ): BaseSingleImageHookReturn {
-  const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
+  const { config: rawConfig, onSelectImage, onSaveImage, onBeforeProcess } = props;
+
+  // Cast config to base type for internal usage
+  const config = rawConfig as unknown as SingleImageConfig;
 
   // Image selection state (separate from orchestrator state)
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -73,7 +76,7 @@ export function useSingleImageFeature<
         // Notify completion with creationId
         const creationId = creationIdRef.current;
         if (creationId) {
-          config.onProcessingComplete?.({ ...result, creationId } as unknown as TResult);
+          config.onProcessingComplete?.({ ...result, creationId } as BaseImageResult);
         }
 
         return result.imageUrl;
@@ -124,14 +127,14 @@ export function useSingleImageFeature<
       const imageBase64 = await config.prepareImage(imageUri);
 
       const input: SingleImageInput = options?.buildInput
-        ? { imageBase64, options: options.buildInput(imageBase64, config) }
+        ? { imageBase64, options: options.buildInput(imageBase64, rawConfig) }
         : { imageBase64 };
 
       await orchestrator.generate(input);
     } catch (error) {
       // Error already handled by orchestrator
     }
-  }, [imageUri, config, options, onBeforeProcess, orchestrator]);
+  }, [imageUri, config, rawConfig, options, onBeforeProcess, orchestrator]);
 
   const save = useCallback(async () => {
     if (!orchestrator.result) return;

@@ -20,6 +20,10 @@ export type {
   GenerationErrorType,
   AlertMessages,
   UseGenerationOrchestratorReturn,
+  AuthCallbacks,
+  ModerationCallbacks,
+  ModerationResult,
+  CreditCallbacks,
 } from "./types";
 
 export type {

@@ -16,21 +16,6 @@ export type ReplaceBackgroundMode =
   | "creative-scene"
   | "solid-color";
 
-export interface ReplaceBackgroundOptions {
-  mode?: ReplaceBackgroundMode;
-  prompt?: string;
-  backgroundColor?: string;
-  blurIntensity?: number;
-}
-
-export interface ReplaceBackgroundRequest {
-  imageUri: string;
-  imageBase64?: string;
-  userId: string;
-  prompt?: string;
-  options?: ReplaceBackgroundOptions;
-}
-
 export type ReplaceBackgroundResult = BaseImageResult;
 
 export interface ReplaceBackgroundFeatureState extends BaseImageWithPromptState {

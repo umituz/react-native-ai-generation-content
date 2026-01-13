@@ -12,18 +12,6 @@ import type {
 
 export type UpscaleScaleFactor = 2 | 4 | 8;
 
-export interface UpscaleOptions {
-  scaleFactor?: UpscaleScaleFactor;
-  enhanceFaces?: boolean;
-}
-
-export interface UpscaleRequest {
-  imageUri: string;
-  imageBase64?: string;
-  userId: string;
-  options?: UpscaleOptions;
-}
-
 export type UpscaleResult = BaseImageResult;
 
 export type UpscaleFeatureState = BaseSingleImageState;

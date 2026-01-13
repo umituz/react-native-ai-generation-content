@@ -1,12 +1,9 @@
 /**
  * useUpscaleFeature Hook
- * Uses base single image hook with upscale-specific options
+ * Uses base single image hook for image upscaling
  */
 
-import {
-  useSingleImageFeature,
-  type BaseSingleImageHookReturn,
-} from "../../../image-to-image";
+import { useSingleImageFeature, type BaseSingleImageHookReturn } from "../../../image-to-image";
 import type { UpscaleFeatureConfig, UpscaleResult } from "../../domain/types";
 
 export interface UseUpscaleFeatureProps {
@@ -16,13 +13,11 @@ export interface UseUpscaleFeatureProps {
   onBeforeProcess?: () => Promise<boolean>;
 }
 
-export function useUpscaleFeature(
-  props: UseUpscaleFeatureProps,
-): BaseSingleImageHookReturn {
+export function useUpscaleFeature(props: UseUpscaleFeatureProps): BaseSingleImageHookReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
 
   return useSingleImageFeature<UpscaleFeatureConfig, UpscaleResult>(
-    { config, onSelectImage, onSaveImage, onBeforeProcess },
+    { config: config as never, onSelectImage, onSaveImage, onBeforeProcess },
     {
       buildInput: (imageBase64, cfg) => ({
         imageBase64,

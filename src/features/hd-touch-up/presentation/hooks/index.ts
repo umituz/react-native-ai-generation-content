@@ -1,5 +1,1 @@
-export { useHDTouchUpFeature } from "./useHDTouchUpFeature";
-export type {
-  UseHDTouchUpFeatureProps,
-  UseHDTouchUpFeatureReturn,
-} from "./useHDTouchUpFeature";
+export { useHDTouchUpFeature, type UseHDTouchUpFeatureProps } from "./useHDTouchUpFeature";

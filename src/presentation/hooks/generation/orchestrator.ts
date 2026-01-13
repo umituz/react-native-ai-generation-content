@@ -1,6 +1,8 @@
 /**
  * Generation Orchestrator
  * Feature-agnostic hook for AI generation with centralized:
+ * - Auth checking (optional)
+ * - Content moderation (optional)
  * - Credit management
  * - Error handling
  * - Alert display
@@ -18,6 +20,8 @@ import type {
   UseGenerationOrchestratorReturn,
 } from "./types";
 
+declare const __DEV__: boolean;
+
 const INITIAL_STATE = {
   status: "idle" as const,
   isGenerating: false,
@@ -30,110 +34,253 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   strategy: GenerationStrategy<TInput, TResult>,
   config: GenerationConfig,
 ): UseGenerationOrchestratorReturn<TInput, TResult> => {
-  const { userId, alertMessages, onCreditsExhausted, onSuccess, onError } =
-    config;
+  const { userId, alertMessages, onCreditsExhausted, onSuccess, onError, auth, moderation, credits } = config;
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[Orchestrator] Hook initialized:", {
+      userId,
+      hasAuth: !!auth,
+      hasModeration: !!moderation,
+      hasCreditsCallbacks: !!credits,
+    });
+  }
 
   const [state, setState] = useState<GenerationState<TResult>>(INITIAL_STATE);
   const isGeneratingRef = useRef(false);
+  const pendingInputRef = useRef<TInput | null>(null);
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
-  const { checkCredits, deductCredit } = useDeductCredit({
-    userId,
-    onCreditsExhausted,
-  });
+  const defaultCredits = useDeductCredit({ userId, onCreditsExhausted });
+
+  // Use provided credit callbacks or default to useDeductCredit hook
+  const checkCredits = credits?.checkCredits ?? defaultCredits.checkCredits;
+  const deductCredit = credits?.deductCredits ?? defaultCredits.deductCredit;
+  const handleCreditsExhausted = credits?.onCreditsExhausted ?? onCreditsExhausted;
+
+  // Core execution logic (after all checks pass)
+  const executeGeneration = useCallback(
+    async (input: TInput) => {
+      const creditCost = strategy.getCreditCost();
+
+      setState((prev) => ({ ...prev, status: "generating", progress: 10 }));
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[Orchestrator] 🎨 Starting strategy.execute()");
+      }
+
+      const result = await strategy.execute(input, (progress) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] 📊 Progress update:", progress);
+        }
+        setState((prev) => ({ ...prev, progress }));
+      });
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[Orchestrator] ✅ strategy.execute() completed");
+      }
+
+      setState((prev) => ({ ...prev, progress: 70 }));
+
+      // Save result
+      if (strategy.save && userId) {
+        setState((prev) => ({ ...prev, status: "saving" }));
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] 💾 Saving result...");
+        }
+        try {
+          await strategy.save(result, userId);
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] ✅ Save completed");
+          }
+        } catch (saveErr) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] ❌ Save failed:", saveErr);
+          }
+          throw createGenerationError("save", "Failed to save", saveErr instanceof Error ? saveErr : undefined);
+        }
+      }
+
+      setState((prev) => ({ ...prev, progress: 90 }));
+
+      // Deduct credit
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[Orchestrator] 💳 Deducting credit:", creditCost);
+      }
+      await deductCredit(creditCost);
+
+      // Success
+      setState({ status: "success", isGenerating: false, progress: 100, result, error: null });
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[Orchestrator] 🎉 Generation SUCCESS");
+      }
+
+      if (alertMessages.success) {
+        void showSuccess("Success", alertMessages.success);
+      }
+
+      onSuccess?.(result);
+    },
+    [strategy, userId, alertMessages, deductCredit, showSuccess, onSuccess],
+  );
 
   const generate = useCallback(
     async (input: TInput) => {
-      if (isGeneratingRef.current) return;
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[Orchestrator] 🚀 generate() called");
+        console.log("[Orchestrator] Input:", JSON.stringify(input, null, 2).slice(0, 500));
+      }
+
+      if (isGeneratingRef.current) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] ⚠️ Already generating, skipping");
+        }
+        return;
+      }
 
       isGeneratingRef.current = true;
+      pendingInputRef.current = input;
       setState({ ...INITIAL_STATE, status: "checking", isGenerating: true });
 
       try {
-        if (!offlineStore.isOnline) {
-          throw createGenerationError("network", "No internet connection");
-        }
+        // 1. Auth check (optional)
+        if (auth) {
+          setState((prev) => ({ ...prev, status: "authenticating" }));
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] 🔐 Checking authentication...");
+          }
 
-        const creditCost = strategy.getCreditCost();
-        const hasCredits = await checkCredits(creditCost);
-        if (!hasCredits) {
-          // Open paywall instead of showing error
-          isGeneratingRef.current = false;
-          setState(INITIAL_STATE);
-          onCreditsExhausted?.();
-          return;
-        }
-
-        setState((prev) => ({ ...prev, status: "generating", progress: 10 }));
-
-        const result = await strategy.execute(input, (progress) => {
-          setState((prev) => ({ ...prev, progress }));
-        });
-
-        setState((prev) => ({ ...prev, progress: 70 }));
-
-        if (strategy.save && userId) {
-          setState((prev) => ({ ...prev, status: "saving" }));
-          try {
-            await strategy.save(result, userId);
-          } catch (saveErr) {
-            throw createGenerationError(
-              "save",
-              "Failed to save",
-              saveErr instanceof Error ? saveErr : undefined,
-            );
+          if (!auth.isAuthenticated()) {
+            if (typeof __DEV__ !== "undefined" && __DEV__) {
+              console.log("[Orchestrator] ❌ Not authenticated");
+            }
+            isGeneratingRef.current = false;
+            setState(INITIAL_STATE);
+            auth.onAuthRequired?.();
+            return;
+          }
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] ✅ Authentication passed");
           }
         }
 
-        setState((prev) => ({ ...prev, progress: 90 }));
-
-        await deductCredit(creditCost);
-
-        setState({
-          status: "success",
-          isGenerating: false,
-          progress: 100,
-          result,
-          error: null,
-        });
-
-        if (alertMessages.success) {
-          void showSuccess("Success", alertMessages.success);
+        // 2. Network check
+        if (!offlineStore.isOnline) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] ❌ Network check failed - offline");
+          }
+          throw createGenerationError("network", "No internet connection");
+        }
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] ✅ Network check passed");
         }
 
-        onSuccess?.(result);
+        // 3. Credit check
+        const creditCost = strategy.getCreditCost();
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] 💳 Credit cost:", creditCost);
+        }
+
+        const hasCredits = await checkCredits(creditCost);
+        if (!hasCredits) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] ❌ No credits, opening paywall");
+          }
+          isGeneratingRef.current = false;
+          setState(INITIAL_STATE);
+          handleCreditsExhausted?.();
+          return;
+        }
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] ✅ Credit check passed");
+        }
+
+        // 4. Content moderation (optional)
+        if (moderation) {
+          setState((prev) => ({ ...prev, status: "moderating" }));
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] 🛡️ Checking content moderation...");
+          }
+
+          const moderationResult = await moderation.checkContent(input);
+          if (!moderationResult.allowed && moderationResult.warnings.length > 0) {
+            if (typeof __DEV__ !== "undefined" && __DEV__) {
+              console.log("[Orchestrator] ⚠️ Moderation warnings:", moderationResult.warnings);
+            }
+
+            if (moderation.onShowWarning) {
+              // Show warning and let user decide
+              moderation.onShowWarning(
+                moderationResult.warnings,
+                () => {
+                  // User cancelled
+                  if (typeof __DEV__ !== "undefined" && __DEV__) {
+                    console.log("[Orchestrator] User cancelled after moderation warning");
+                  }
+                  isGeneratingRef.current = false;
+                  setState(INITIAL_STATE);
+                },
+                async () => {
+                  // User continued - execute generation
+                  if (typeof __DEV__ !== "undefined" && __DEV__) {
+                    console.log("[Orchestrator] User continued after moderation warning");
+                  }
+                  try {
+                    await executeGeneration(input);
+                  } catch (err) {
+                    const error = parseError(err);
+                    setState({ status: "error", isGenerating: false, progress: 0, result: null, error });
+                    void showError("Error", getAlertMessage(error, alertMessages));
+                    onError?.(error);
+                  } finally {
+                    isGeneratingRef.current = false;
+                  }
+                },
+              );
+              return; // Exit here - callback will handle the rest
+            }
+            // No warning handler - block the request
+            throw createGenerationError("policy", "Content policy violation");
+          }
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] ✅ Moderation passed");
+          }
+        }
+
+        // 5. Execute generation
+        await executeGeneration(input);
       } catch (err) {
         const error = parseError(err);
-
-        setState({
-          status: "error",
-          isGenerating: false,
-          progress: 0,
-          result: null,
-          error,
-        });
-
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] ❌ Generation ERROR:", error);
+        }
+        setState({ status: "error", isGenerating: false, progress: 0, result: null, error });
         void showError("Error", getAlertMessage(error, alertMessages));
         onError?.(error);
       } finally {
         isGeneratingRef.current = false;
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] 🏁 generate() finished");
+        }
       }
     },
     [
+      auth,
+      moderation,
       strategy,
-      userId,
       alertMessages,
       offlineStore.isOnline,
       checkCredits,
-      deductCredit,
+      handleCreditsExhausted,
+      executeGeneration,
       showError,
-      showSuccess,
-      onSuccess,
       onError,
     ],
   );
 
   const reset = useCallback(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[Orchestrator] 🔄 reset() called");
+    }
     setState(INITIAL_STATE);
     isGeneratingRef.current = false;
   }, []);

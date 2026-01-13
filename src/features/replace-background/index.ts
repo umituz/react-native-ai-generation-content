@@ -1,13 +1,11 @@
 /**
  * Replace Background Feature
- * AI-powered background replacement feature for React Native
+ * AI-powered background replacement feature
  */
 
 // Domain Types
 export type {
   ReplaceBackgroundMode,
-  ReplaceBackgroundOptions,
-  ReplaceBackgroundRequest,
   ReplaceBackgroundResult,
   ReplaceBackgroundFeatureState,
   ReplaceBackgroundTranslations,
@@ -15,12 +13,11 @@ export type {
 } from "./domain/types";
 
 // Presentation Components
-export { ReplaceBackgroundFeature } from "./presentation/components";
-export type { ReplaceBackgroundFeatureProps } from "./presentation/components";
+export { ReplaceBackgroundFeature, type ReplaceBackgroundFeatureProps } from "./presentation/components";
 
 // Presentation Hooks
-export { useReplaceBackgroundFeature } from "./presentation/hooks";
-export type {
-  UseReplaceBackgroundFeatureProps,
-  UseReplaceBackgroundFeatureReturn,
+export {
+  useReplaceBackgroundFeature,
+  type UseReplaceBackgroundFeatureProps,
+  type UseReplaceBackgroundFeatureReturn,
 } from "./presentation/hooks";

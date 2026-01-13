@@ -1,5 +1,4 @@
 /**
-export * from "./presentation/components";
  * Remove Background Feature
  * Provider-agnostic background removal feature
  */
@@ -7,7 +6,6 @@ export * from "./presentation/components";
 // Domain Types
 export type {
   RemoveBackgroundOptions,
-  RemoveBackgroundRequest,
   RemoveBackgroundResult,
   RemoveBackgroundFeatureState,
   RemoveBackgroundTranslations,
@@ -15,9 +13,7 @@ export type {
 } from "./domain";
 
 // Presentation Hooks
-export { useRemoveBackgroundFeature } from "./presentation";
-export type { UseRemoveBackgroundFeatureProps } from "./presentation";
+export { useRemoveBackgroundFeature, type UseRemoveBackgroundFeatureProps } from "./presentation";
 
 // Presentation Components
-export { RemoveBackgroundFeature } from "./presentation";
-export type { RemoveBackgroundFeatureProps } from "./presentation";
+export { RemoveBackgroundFeature, type RemoveBackgroundFeatureProps } from "./presentation";

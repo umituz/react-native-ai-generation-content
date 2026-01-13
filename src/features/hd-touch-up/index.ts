@@ -1,5 +1,4 @@
 /**
-export * from "./presentation/components";
  * HD Touch Up Feature
  * Provider-agnostic HD enhancement feature
  */
@@ -16,12 +15,7 @@ export type {
 } from "./domain";
 
 // Presentation Hooks
-export { useHDTouchUpFeature } from "./presentation";
-export type {
-  UseHDTouchUpFeatureProps,
-  UseHDTouchUpFeatureReturn,
-} from "./presentation";
+export { useHDTouchUpFeature, type UseHDTouchUpFeatureProps } from "./presentation";
 
 // Presentation Components
-export { HDTouchUpFeature } from "./presentation";
-export type { HDTouchUpFeatureProps } from "./presentation";
+export { HDTouchUpFeature, type HDTouchUpFeatureProps } from "./presentation";

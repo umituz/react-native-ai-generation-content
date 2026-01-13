@@ -15,15 +15,6 @@ export interface FaceSwapOptions {
   preserveSkinTone?: boolean;
 }
 
-export interface FaceSwapRequest {
-  sourceImageUri: string;
-  targetImageUri: string;
-  sourceImageBase64?: string;
-  targetImageBase64?: string;
-  userId: string;
-  options?: FaceSwapOptions;
-}
-
 export type FaceSwapResult = BaseImageResult;
 
 export type FaceSwapFeatureState = BaseDualImageState;

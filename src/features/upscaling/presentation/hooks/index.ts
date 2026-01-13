@@ -1,2 +1,1 @@
-export { useUpscaleFeature } from "./useUpscaleFeature";
-export type { UseUpscaleFeatureProps } from "./useUpscaleFeature";
+export { useUpscaleFeature, type UseUpscaleFeatureProps } from "./useUpscaleFeature";

@@ -3,14 +3,8 @@
  * Uses base single image hook for background removal
  */
 
-import {
-  useSingleImageFeature,
-  type BaseSingleImageHookReturn,
-} from "../../../image-to-image";
-import type {
-  RemoveBackgroundFeatureConfig,
-  RemoveBackgroundResult,
-} from "../../domain/types";
+import { useSingleImageFeature, type BaseSingleImageHookReturn } from "../../../image-to-image";
+import type { RemoveBackgroundFeatureConfig, RemoveBackgroundResult } from "../../domain/types";
 
 export interface UseRemoveBackgroundFeatureProps {
   config: RemoveBackgroundFeatureConfig;
@@ -19,13 +13,11 @@ export interface UseRemoveBackgroundFeatureProps {
   onBeforeProcess?: () => Promise<boolean>;
 }
 
-export function useRemoveBackgroundFeature(
-  props: UseRemoveBackgroundFeatureProps,
-): BaseSingleImageHookReturn {
+export function useRemoveBackgroundFeature(props: UseRemoveBackgroundFeatureProps): BaseSingleImageHookReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
 
   return useSingleImageFeature<RemoveBackgroundFeatureConfig, RemoveBackgroundResult>(
-    { config, onSelectImage, onSaveImage, onBeforeProcess },
+    { config: config as never, onSelectImage, onSaveImage, onBeforeProcess },
     {
       buildInput: (imageBase64, cfg) => ({
         imageBase64,

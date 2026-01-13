@@ -1,13 +1,10 @@
 /**
-export * from "./presentation/components";
  * Remove Object Feature
  * Provider-agnostic object removal (inpainting) feature
  */
 
 // Domain Types
 export type {
-  RemoveObjectOptions,
-  RemoveObjectRequest,
   RemoveObjectResult,
   RemoveObjectFeatureState,
   RemoveObjectTranslations,
@@ -16,12 +13,11 @@ export type {
 } from "./domain";
 
 // Presentation Hooks
-export { useRemoveObjectFeature } from "./presentation";
-export type {
-  UseRemoveObjectFeatureProps,
-  UseRemoveObjectFeatureReturn,
+export {
+  useRemoveObjectFeature,
+  type UseRemoveObjectFeatureProps,
+  type UseRemoveObjectFeatureReturn,
 } from "./presentation";
 
 // Presentation Components
-export { RemoveObjectFeature } from "./presentation";
-export type { RemoveObjectFeatureProps } from "./presentation";
+export { RemoveObjectFeature, type RemoveObjectFeatureProps } from "./presentation";

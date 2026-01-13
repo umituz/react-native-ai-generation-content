@@ -1,13 +1,24 @@
 /**
  * useCoupleFutureFlow Hook
- * Handles couple future wizard flow logic
+ * Optimized: Merged flow + generation logic
+ * Uses centralized orchestrator directly
  */
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useMemo } from "react";
 import { InteractionManager } from "react-native";
-import { useCoupleFutureGeneration } from "./useCoupleFutureGeneration";
+import {
+  useGenerationOrchestrator,
+  type GenerationStrategy,
+  type AlertMessages,
+} from "../../../../presentation/hooks/generation";
+import { executeCoupleFuture } from "../../infrastructure/executor";
 import { buildGenerationInputFromConfig } from "../../infrastructure/generationUtils";
+import { createCreationsRepository } from "../../../../domains/creations/infrastructure/adapters";
 import type { UploadedImage } from "../../../partner-upload/domain/types";
+import type { CoupleFutureInput } from "../../domain/types";
+import type { Creation } from "../../../../domains/creations/domain/entities/Creation";
+
+declare const __DEV__: boolean;
 
 export interface CoupleFutureFlowConfig<TStep, TScenarioId> {
   steps: {
@@ -64,99 +75,90 @@ export interface CoupleFutureFlowProps<TStep, TScenarioId, TResult> {
     defaultPartnerAName: string;
     defaultPartnerBName: string;
   };
-  alertMessages: {
-    networkError: string;
-    policyViolation: string;
-    saveFailed: string;
-    creditFailed: string;
-    unknown: string;
-  };
-  processResult: (imageUrl: string, input: unknown) => TResult;
-  buildCreation: (result: TResult, input: unknown) => unknown;
+  alertMessages: AlertMessages;
+  processResult: (imageUrl: string, input: CoupleFutureInput) => TResult;
+  buildCreation: (result: TResult, input: CoupleFutureInput) => Creation | null;
   onCreditsExhausted: () => void;
 }
 
 export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
   props: CoupleFutureFlowProps<TStep, TScenarioId, TResult>,
 ) => {
-  const { config, state, actions, generationConfig, alertMessages } = props;
-  const { processResult, buildCreation, onCreditsExhausted, userId } = props;
+  const { config, state, actions, generationConfig, alertMessages, userId } = props;
+  const { processResult, buildCreation, onCreditsExhausted } = props;
   const hasStarted = useRef(false);
+  const lastInputRef = useRef<CoupleFutureInput | null>(null);
+  const repository = useMemo(() => createCreationsRepository("creations"), []);
 
-  const { generate, isGenerating, progress } =
-    useCoupleFutureGeneration<TResult>({
-      userId,
-      onCreditsExhausted,
-      onSuccess: (result) => {
-        actions.generationSuccess(result);
-        InteractionManager.runAfterInteractions(() => {
-          setTimeout(() => actions.onNavigateToHistory(), 300);
-        });
+  // Strategy for orchestrator - directly uses executor
+  const strategy: GenerationStrategy<CoupleFutureInput, TResult> = useMemo(
+    () => ({
+      execute: async (input, onProgress) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[CoupleFutureFlow] 🎯 Executing generation...");
+        }
+        lastInputRef.current = input;
+        const result = await executeCoupleFuture(
+          { partnerABase64: input.partnerABase64, partnerBBase64: input.partnerBBase64, prompt: input.prompt },
+          { onProgress },
+        );
+        if (!result.success || !result.imageUrl) throw new Error(result.error || "Generation failed");
+        return processResult(result.imageUrl, input);
       },
-      onError: actions.generationError,
-      processResult: processResult as never,
-      buildCreation: buildCreation as never,
-      alertMessages,
-    });
+      getCreditCost: () => 1,
+      save: async (result, uid) => {
+        const input = lastInputRef.current;
+        if (!input) return;
+        const creation = buildCreation(result, input);
+        if (creation) await repository.create(uid, creation);
+      },
+    }),
+    [processResult, buildCreation, repository],
+  );
 
-  const {
-    step,
-    isProcessing,
-    partnerA,
-    partnerB,
-    partnerAName,
-    partnerBName,
-    scenarioConfig,
-    customPrompt,
-    visualStyle,
-    selection,
-    selectedFeature,
-    selectedScenarioId,
-    selectedScenarioData,
-  } = state;
+  // Use orchestrator directly
+  const { generate, isGenerating, progress } = useGenerationOrchestrator(strategy, {
+    userId,
+    alertMessages,
+    onCreditsExhausted,
+    onSuccess: (result) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[CoupleFutureFlow] 🎉 Success");
+      actions.generationSuccess(result as TResult);
+      InteractionManager.runAfterInteractions(() => setTimeout(() => actions.onNavigateToHistory(), 300));
+    },
+    onError: (err) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[CoupleFutureFlow] ❌ Error:", err.message);
+      actions.generationError(err.message);
+    },
+  });
 
+  // Trigger generation when step changes to GENERATING
   useEffect(() => {
-    if (step !== config.steps.GENERATING) {
+    if (state.step !== config.steps.GENERATING) {
       hasStarted.current = false;
       return;
     }
-    if (!isProcessing || hasStarted.current) return;
+    if (!state.isProcessing || hasStarted.current) return;
     hasStarted.current = true;
 
     const input = buildGenerationInputFromConfig({
-      partnerA: partnerA as never,
-      partnerB: partnerB as never,
-      partnerAName,
-      partnerBName,
-      scenario: scenarioConfig as never,
-      customPrompt: customPrompt || undefined,
-      visualStyle: visualStyle || "",
+      partnerA: state.partnerA as never,
+      partnerB: state.partnerB as never,
+      partnerAName: state.partnerAName,
+      partnerBName: state.partnerBName,
+      scenario: state.scenarioConfig as never,
+      customPrompt: state.customPrompt || undefined,
+      visualStyle: state.visualStyle || "",
       defaultPartnerAName: generationConfig.defaultPartnerAName,
       defaultPartnerBName: generationConfig.defaultPartnerBName,
-      coupleFeatureSelection: selection as never,
+      coupleFeatureSelection: state.selection as never,
       visualStyles: generationConfig.visualStyleModifiers,
       customScenarioId: config.customScenarioId as string,
     });
     if (input) generate(input);
-  }, [
-    step,
-    isProcessing,
-    partnerA,
-    partnerB,
-    partnerAName,
-    partnerBName,
-    scenarioConfig,
-    customPrompt,
-    visualStyle,
-    selection,
-    config.steps.GENERATING,
-    config.customScenarioId,
-    generationConfig.defaultPartnerAName,
-    generationConfig.defaultPartnerBName,
-    generationConfig.visualStyleModifiers,
-    generate,
-  ]);
+  }, [state, config, generationConfig, generate]);
 
+  // Handlers
   const handleScenarioSelect = useCallback(
     (id: string) => {
       actions.selectScenario(id as TScenarioId);
@@ -165,32 +167,14 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
     [actions, config.steps.SCENARIO_PREVIEW],
   );
 
-  const handleScenarioPreviewBack = useCallback(
-    () => actions.setStep(config.steps.SCENARIO),
-    [actions, config.steps.SCENARIO],
-  );
+  const handleScenarioPreviewBack = useCallback(() => actions.setStep(config.steps.SCENARIO), [actions, config.steps.SCENARIO]);
 
   const handleScenarioPreviewContinue = useCallback(() => {
-    if (selectedFeature) {
-      actions.setStep(config.steps.COUPLE_FEATURE_SELECTOR);
-    } else if (
-      selectedScenarioId === config.customScenarioId ||
-      selectedScenarioData?.requiresPhoto === false
-    ) {
+    if (state.selectedFeature) actions.setStep(config.steps.COUPLE_FEATURE_SELECTOR);
+    else if (state.selectedScenarioId === config.customScenarioId || state.selectedScenarioData?.requiresPhoto === false)
       actions.setStep(config.steps.TEXT_INPUT);
-    } else {
-      actions.setStep(config.steps.PARTNER_A);
-    }
-  }, [
-    actions,
-    config.steps.COUPLE_FEATURE_SELECTOR,
-    config.steps.TEXT_INPUT,
-    config.steps.PARTNER_A,
-    config.customScenarioId,
-    selectedFeature,
-    selectedScenarioId,
-    selectedScenarioData,
-  ]);
+    else actions.setStep(config.steps.PARTNER_A);
+  }, [actions, config, state.selectedFeature, state.selectedScenarioId, state.selectedScenarioData]);
 
   const handlePartnerAContinue = useCallback(
     (image: UploadedImage, name: string) => {
@@ -202,18 +186,8 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
   );
 
   const handlePartnerABack = useCallback(() => {
-    actions.setStep(
-      selectedScenarioId === config.customScenarioId
-        ? config.steps.TEXT_INPUT
-        : config.steps.SCENARIO_PREVIEW,
-    );
-  }, [
-    actions,
-    config.customScenarioId,
-    config.steps.TEXT_INPUT,
-    config.steps.SCENARIO_PREVIEW,
-    selectedScenarioId,
-  ]);
+    actions.setStep(state.selectedScenarioId === config.customScenarioId ? config.steps.TEXT_INPUT : config.steps.SCENARIO_PREVIEW);
+  }, [actions, config, state.selectedScenarioId]);
 
   const handlePartnerBContinue = useCallback(
     (image: UploadedImage, name: string) => {
@@ -226,28 +200,19 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
     [actions],
   );
 
-  const handlePartnerBBack = useCallback(
-    () => actions.setStep(config.steps.PARTNER_A),
-    [actions, config.steps.PARTNER_A],
-  );
+  const handlePartnerBBack = useCallback(() => actions.setStep(config.steps.PARTNER_A), [actions, config.steps.PARTNER_A]);
 
   const handleMagicPromptContinue = useCallback(
     (prompt: string, style: string) => {
       actions.setCustomPrompt(prompt);
       actions.setVisualStyle(style);
-      if (selectedScenarioId === config.customScenarioId) {
-        actions.setStep(config.steps.PARTNER_A);
-      } else {
-        actions.startGeneration();
-      }
+      if (state.selectedScenarioId === config.customScenarioId) actions.setStep(config.steps.PARTNER_A);
+      else actions.startGeneration();
     },
-    [actions, config.customScenarioId, config.steps.PARTNER_A, selectedScenarioId],
+    [actions, config, state.selectedScenarioId],
   );
 
-  const handleMagicPromptBack = useCallback(
-    () => actions.setStep(config.steps.SCENARIO_PREVIEW),
-    [actions, config.steps.SCENARIO_PREVIEW],
-  );
+  const handleMagicPromptBack = useCallback(() => actions.setStep(config.steps.SCENARIO_PREVIEW), [actions, config.steps.SCENARIO_PREVIEW]);
 
   return {
     isGenerating,

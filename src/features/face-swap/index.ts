@@ -1,5 +1,4 @@
 /**
-export * from "./presentation/components";
  * Face Swap Feature
  * Provider-agnostic face swap generation feature
  */
@@ -7,7 +6,6 @@ export * from "./presentation/components";
 // Domain Types
 export type {
   FaceSwapOptions,
-  FaceSwapRequest,
   FaceSwapResult,
   FaceSwapFeatureState,
   FaceSwapTranslations,
@@ -15,9 +13,7 @@ export type {
 } from "./domain";
 
 // Presentation Hooks
-export { useFaceSwapFeature } from "./presentation";
-export type { UseFaceSwapFeatureProps } from "./presentation";
+export { useFaceSwapFeature, type UseFaceSwapFeatureProps } from "./presentation";
 
 // Presentation Components
-export { FaceSwapFeature } from "./presentation";
-export type { FaceSwapFeatureProps } from "./presentation";
+export { FaceSwapFeature, type FaceSwapFeatureProps } from "./presentation";

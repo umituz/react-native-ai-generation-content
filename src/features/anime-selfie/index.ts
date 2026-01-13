@@ -1,5 +1,4 @@
 /**
-export * from "./presentation/components";
  * Anime Selfie Feature
  * Provider-agnostic anime selfie generation feature
  */
@@ -7,10 +6,7 @@ export * from "./presentation/components";
 // Domain Types
 export type {
   AnimeSelfieStyle,
-  AnimeSelfieOptions,
-  AnimeSelfieRequest,
   AnimeSelfieResult,
-  AnimeSelfieProcessingStartData,
   AnimeSelfieFeatureState,
   AnimeSelfieTranslations,
   AnimeSelfieFeatureConfig,
@@ -18,12 +14,7 @@ export type {
 } from "./domain";
 
 // Presentation Hooks
-export { useAnimeSelfieFeature } from "./presentation";
-export type {
-  UseAnimeSelfieFeatureProps,
-  UseAnimeSelfieFeatureReturn,
-} from "./presentation";
+export { useAnimeSelfieFeature, type UseAnimeSelfieFeatureProps } from "./presentation";
 
 // Presentation Components
-export { AnimeSelfieFeature } from "./presentation";
-export type { AnimeSelfieFeatureProps } from "./presentation";
+export { AnimeSelfieFeature, type AnimeSelfieFeatureProps } from "./presentation";

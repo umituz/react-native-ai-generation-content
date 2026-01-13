@@ -16,13 +16,6 @@ export interface RemoveBackgroundOptions {
   backgroundColor?: string;
 }
 
-export interface RemoveBackgroundRequest {
-  imageUri: string;
-  imageBase64?: string;
-  userId: string;
-  options?: RemoveBackgroundOptions;
-}
-
 export type RemoveBackgroundResult = BaseImageResult;
 
 export type RemoveBackgroundFeatureState = BaseSingleImageState;

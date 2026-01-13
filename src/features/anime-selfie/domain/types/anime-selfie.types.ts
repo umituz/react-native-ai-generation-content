@@ -1,22 +1,8 @@
 /**
  * Anime Selfie Feature Types
- * Request, Result, Config types for anime selfie generation
  */
 
 export type AnimeSelfieStyle = "anime" | "manga" | "cartoon" | "disney" | "pixar";
-
-export interface AnimeSelfieOptions {
-  style?: AnimeSelfieStyle;
-  preserveBackground?: boolean;
-  enhanceDetails?: boolean;
-}
-
-export interface AnimeSelfieRequest {
-  imageUri: string;
-  imageBase64?: string;
-  userId: string;
-  options?: AnimeSelfieOptions;
-}
 
 export interface AnimeSelfieResult {
   success: boolean;
@@ -25,11 +11,6 @@ export interface AnimeSelfieResult {
   error?: string;
   requestId?: string;
   creationId?: string;
-}
-
-export interface AnimeSelfieProcessingStartData {
-  creationId: string;
-  imageUri: string;
 }
 
 export interface AnimeSelfieFeatureState {
@@ -65,7 +46,7 @@ export interface AnimeSelfieFeatureConfig {
   extractResult?: AnimeSelfieResultExtractor;
   prepareImage: (imageUri: string) => Promise<string>;
   onImageSelect?: (uri: string) => void;
-  onProcessingStart?: (data: AnimeSelfieProcessingStartData) => void;
+  onProcessingStart?: (data: { creationId: string; imageUri: string }) => void;
   onProcessingComplete?: (result: AnimeSelfieResult) => void;
   onError?: (error: string, creationId?: string) => void;
 }

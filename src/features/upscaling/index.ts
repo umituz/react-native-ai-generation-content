@@ -1,5 +1,4 @@
 /**
-export * from "./presentation/components";
  * Upscaling Feature
  * Provider-agnostic image upscaling feature
  */
@@ -7,8 +6,6 @@ export * from "./presentation/components";
 // Domain Types
 export type {
   UpscaleScaleFactor,
-  UpscaleOptions,
-  UpscaleRequest,
   UpscaleResult,
   UpscaleFeatureState,
   UpscaleTranslations,
@@ -16,12 +13,8 @@ export type {
 } from "./domain";
 
 // Presentation Hooks
-export { useUpscaleFeature } from "./presentation";
-export type { UseUpscaleFeatureProps } from "./presentation";
+export { useUpscaleFeature, type UseUpscaleFeatureProps } from "./presentation";
 
 // Presentation Components
 export { UpscaleFeature, UpscaleResultView } from "./presentation";
-export type {
-  UpscaleFeatureProps,
-  UpscaleResultViewProps,
-} from "./presentation";
+export type { UpscaleFeatureProps, UpscaleResultViewProps } from "./presentation";

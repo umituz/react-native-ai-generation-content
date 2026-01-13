@@ -6,24 +6,47 @@
 import { useState, useCallback, useMemo } from "react";
 import { useGenerationExecution } from "./useGenerationExecution";
 import { validateImageToVideoGeneration } from "./useImageToVideoValidation";
-import { INITIAL_IMAGE_TO_VIDEO_STATE } from "./useImageToVideoFeature.constants";
-import type {
-  UseImageToVideoFeatureProps,
-  UseImageToVideoFeatureReturn,
-} from "./useImageToVideoFeature.types";
 import type {
   ImageToVideoFeatureState,
-  ImageToVideoGenerateParams,
+  ImageToVideoFeatureConfig,
   ImageToVideoResult,
+  ImageToVideoFeatureCallbacks,
+  ImageToVideoGenerateParams,
 } from "../../domain/types";
 
 declare const __DEV__: boolean;
 
-export function useImageToVideoFeature(
-  props: UseImageToVideoFeatureProps,
-): UseImageToVideoFeatureReturn {
+// Initial state (inlined from constants file)
+const INITIAL_STATE: ImageToVideoFeatureState = {
+  imageUri: null,
+  motionPrompt: "",
+  videoUrl: null,
+  thumbnailUrl: null,
+  isProcessing: false,
+  progress: 0,
+  error: null,
+};
+
+// Types (inlined from types file)
+export interface UseImageToVideoFeatureProps {
+  config: ImageToVideoFeatureConfig;
+  callbacks?: ImageToVideoFeatureCallbacks;
+  userId: string;
+}
+
+export interface UseImageToVideoFeatureReturn {
+  state: ImageToVideoFeatureState;
+  setImageUri: (uri: string) => void;
+  setMotionPrompt: (prompt: string) => void;
+  generate: (params?: ImageToVideoGenerateParams) => Promise<ImageToVideoResult>;
+  reset: () => void;
+  isReady: boolean;
+  canGenerate: boolean;
+}
+
+export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseImageToVideoFeatureReturn {
   const { config, callbacks, userId } = props;
-  const [state, setState] = useState<ImageToVideoFeatureState>(INITIAL_IMAGE_TO_VIDEO_STATE);
+  const [state, setState] = useState<ImageToVideoFeatureState>(INITIAL_STATE);
 
   const executeGeneration = useGenerationExecution({
     userId,
@@ -68,30 +91,17 @@ export function useImageToVideoFeature(
         return validation;
       }
 
-      return executeGeneration(
-        effectiveImageUri!,
-        effectiveMotionPrompt,
-        options
-      );
+      return executeGeneration(effectiveImageUri!, effectiveMotionPrompt, options);
     },
     [state.imageUri, state.motionPrompt, callbacks, config.creditCost, executeGeneration],
   );
 
   const reset = useCallback(() => {
-    setState(INITIAL_IMAGE_TO_VIDEO_STATE);
+    setState(INITIAL_STATE);
   }, []);
 
-  const isReady = useMemo(
-    () => state.imageUri !== null && !state.isProcessing,
-    [state.imageUri, state.isProcessing],
-  );
-
-  const canGenerate = useMemo(
-    () => isReady && !state.error,
-    [isReady, state.error],
-  );
+  const isReady = useMemo(() => state.imageUri !== null && !state.isProcessing, [state.imageUri, state.isProcessing]);
+  const canGenerate = useMemo(() => isReady && !state.error, [isReady, state.error]);
 
   return { state, setImageUri, setMotionPrompt, generate, reset, isReady, canGenerate };
 }
-
-export type { UseImageToVideoFeatureProps, UseImageToVideoFeatureReturn } from "./useImageToVideoFeature.types";

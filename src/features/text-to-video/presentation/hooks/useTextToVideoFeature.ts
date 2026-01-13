@@ -1,9 +1,15 @@
 /**
  * useTextToVideoFeature Hook
- * Single Responsibility: Orchestrate text-to-video generation with callbacks
+ * Uses centralized orchestrator for auth, credits, moderation, and error handling
  */
 
 import { useState, useCallback, useMemo } from "react";
+import {
+  useGenerationOrchestrator,
+  type GenerationStrategy,
+  type AlertMessages,
+} from "../../../../presentation/hooks/generation";
+import { executeTextToVideo } from "../../infrastructure/services";
 import type {
   TextToVideoFeatureState,
   TextToVideoConfig,
@@ -13,7 +19,6 @@ import type {
   TextToVideoInputBuilder,
   TextToVideoResultExtractor,
 } from "../../domain/types";
-import { executeVideoGeneration } from "./textToVideoExecution";
 
 declare const __DEV__: boolean;
 
@@ -47,11 +52,125 @@ const INITIAL_STATE: TextToVideoFeatureState = {
   error: null,
 };
 
-export function useTextToVideoFeature(
-  props: UseTextToVideoFeatureProps,
-): UseTextToVideoFeatureReturn {
+const DEFAULT_ALERT_MESSAGES: AlertMessages = {
+  networkError: "No internet connection. Please check your network.",
+  policyViolation: "Content not allowed. Please try again.",
+  saveFailed: "Failed to save. Please try again.",
+  creditFailed: "Credit operation failed. Please try again.",
+  unknown: "An error occurred. Please try again.",
+};
+
+interface VideoGenerationInput {
+  prompt: string;
+  options?: TextToVideoOptions;
+  creationId: string;
+}
+
+function generateCreationId(): string {
+  return `text-to-video_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTextToVideoFeatureReturn {
   const { config, callbacks, userId, buildInput, extractResult } = props;
   const [state, setState] = useState<TextToVideoFeatureState>(INITIAL_STATE);
+
+  // Strategy for orchestrator
+  const strategy: GenerationStrategy<VideoGenerationInput, TextToVideoResult> = useMemo(
+    () => ({
+      execute: async (input, onProgress) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[TextToVideo] Executing generation:", input.prompt.slice(0, 100));
+        }
+
+        // Notify generation start
+        callbacks.onGenerationStart?.({
+          creationId: input.creationId,
+          type: "text-to-video",
+          prompt: input.prompt,
+          metadata: input.options as Record<string, unknown> | undefined,
+        }).catch(() => {});
+
+        const result = await executeTextToVideo(
+          { prompt: input.prompt, userId, options: input.options },
+          {
+            model: config.model,
+            buildInput,
+            extractResult,
+            onProgress: (progress) => {
+              setState((prev) => ({ ...prev, progress }));
+              onProgress?.(progress);
+              callbacks.onProgress?.(progress);
+            },
+          },
+        );
+
+        if (!result.success || !result.videoUrl) {
+          throw new Error(result.error || "Generation failed");
+        }
+
+        // Update state with result
+        setState((prev) => ({
+          ...prev,
+          videoUrl: result.videoUrl ?? null,
+          thumbnailUrl: result.thumbnailUrl ?? null,
+        }));
+
+        return result;
+      },
+      getCreditCost: () => config.creditCost,
+      save: async (result, uid) => {
+        if (result.success && result.videoUrl) {
+          await callbacks.onCreationSave?.({
+            creationId: generateCreationId(),
+            type: "text-to-video",
+            videoUrl: result.videoUrl,
+            thumbnailUrl: result.thumbnailUrl,
+            prompt: state.prompt,
+          });
+        }
+      },
+    }),
+    [config, callbacks, buildInput, extractResult, userId, state.prompt],
+  );
+
+  // Use orchestrator with optional callbacks for credits
+  const orchestrator = useGenerationOrchestrator(strategy, {
+    userId,
+    alertMessages: DEFAULT_ALERT_MESSAGES,
+    auth: callbacks.onAuthCheck
+      ? { isAuthenticated: callbacks.onAuthCheck, onAuthRequired: () => {} }
+      : undefined,
+    credits: callbacks.onCreditCheck
+      ? {
+          checkCredits: async (cost) => (await callbacks.onCreditCheck?.(cost)) ?? true,
+          deductCredits: async (cost) => { await callbacks.onCreditDeduct?.(cost); },
+          onCreditsExhausted: () => callbacks.onShowPaywall?.(config.creditCost),
+        }
+      : undefined,
+    moderation: callbacks.onModeration
+      ? {
+          checkContent: async (input) => {
+            const result = await callbacks.onModeration!((input as VideoGenerationInput).prompt);
+            return result;
+          },
+          onShowWarning: callbacks.onShowModerationWarning,
+        }
+      : undefined,
+    onSuccess: (result) => {
+      const videoResult = result as TextToVideoResult;
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[TextToVideo] Success!", videoResult.videoUrl?.slice(0, 50));
+      }
+      callbacks.onGenerate?.(videoResult);
+    },
+    onError: (err) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[TextToVideo] Error:", err.message);
+      }
+      setState((prev) => ({ ...prev, error: err.message }));
+      callbacks.onError?.(err.message);
+    },
+  });
 
   const setPrompt = useCallback(
     (prompt: string) => {
@@ -70,9 +189,6 @@ export function useTextToVideoFeature(
         const error = "Prompt is required";
         setState((prev) => ({ ...prev, error }));
         callbacks.onError?.(error);
-        if (__DEV__) {
-          console.log("[TextToVideoFeature] Generate failed: Prompt is required");
-        }
         return { success: false, error };
       }
 
@@ -80,74 +196,30 @@ export function useTextToVideoFeature(
         setState((prev) => ({ ...prev, prompt: effectivePrompt }));
       }
 
-      if (callbacks.onAuthCheck && !callbacks.onAuthCheck()) {
-        if (__DEV__) {
-          console.log("[TextToVideoFeature] Generate failed: Authentication required");
-        }
-        return { success: false, error: "Authentication required" };
+      setState((prev) => ({ ...prev, isProcessing: true, progress: 0, error: null }));
+
+      const creationId = generateCreationId();
+      await orchestrator.generate({ prompt: effectivePrompt, options, creationId });
+
+      setState((prev) => ({ ...prev, isProcessing: false }));
+
+      // Return result based on state
+      if (orchestrator.error) {
+        return { success: false, error: orchestrator.error.message };
       }
 
-      if (
-        callbacks.onCreditCheck &&
-        !(await callbacks.onCreditCheck(config.creditCost))
-      ) {
-        callbacks.onShowPaywall?.(config.creditCost);
-        if (__DEV__) {
-          console.log("[TextToVideoFeature] Generate failed: Insufficient credits");
-        }
-        return { success: false, error: "Insufficient credits" };
-      }
-
-      if (callbacks.onModeration) {
-        const moderationResult = await callbacks.onModeration(effectivePrompt);
-        if (!moderationResult.allowed && moderationResult.warnings.length > 0) {
-          return new Promise((resolve) => {
-            callbacks.onShowModerationWarning?.(
-              moderationResult.warnings,
-              () => {
-                setState((prev) => ({ ...prev, isProcessing: false }));
-                resolve({ success: false, error: "Content policy violation" });
-              },
-              async () => {
-                const result = await executeVideoGeneration(
-                  effectivePrompt,
-                  options,
-                  { userId, config, callbacks, buildInput, extractResult },
-                  {
-                    onStateUpdate: (update) =>
-                      setState((prev) => ({ ...prev, ...update })),
-                  },
-                );
-                resolve(result);
-              },
-            );
-          });
-        }
-      }
-
-      return executeVideoGeneration(
-        effectivePrompt,
-        options,
-        { userId, config, callbacks, buildInput, extractResult },
-        { onStateUpdate: (update) => setState((prev) => ({ ...prev, ...update })) },
-      );
+      return orchestrator.result || { success: false, error: "No result" };
     },
-    [state.prompt, callbacks, config, userId, buildInput, extractResult],
+    [state.prompt, callbacks, orchestrator],
   );
 
   const reset = useCallback(() => {
     setState(INITIAL_STATE);
-  }, []);
+    orchestrator.reset();
+  }, [orchestrator]);
 
-  const isReady = useMemo(
-    () => state.prompt.trim().length > 0 && !state.isProcessing,
-    [state.prompt, state.isProcessing],
-  );
-
-  const canGenerate = useMemo(
-    () => isReady && !state.error,
-    [isReady, state.error],
-  );
+  const isReady = useMemo(() => state.prompt.trim().length > 0 && !state.isProcessing, [state.prompt, state.isProcessing]);
+  const canGenerate = useMemo(() => isReady && !state.error, [isReady, state.error]);
 
   return { state, setPrompt, generate, reset, isReady, canGenerate };
 }

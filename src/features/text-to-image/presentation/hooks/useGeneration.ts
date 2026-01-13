@@ -1,9 +1,14 @@
 /**
  * Text-to-Image Generation Hook
- * Orchestrates generation with app-provided callbacks
+ * Uses centralized orchestrator for auth, credits, and error handling
  */
 
-import { useState, useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import {
+  useGenerationOrchestrator,
+  type GenerationStrategy,
+  type AlertMessages,
+} from "../../../../presentation/hooks/generation";
 import type {
   TextToImageFormState,
   TextToImageCallbacks,
@@ -11,16 +16,19 @@ import type {
   TextToImageGenerationRequest,
 } from "../../domain/types";
 
-export interface GenerationState {
-  isGenerating: boolean;
-  progress: number;
-  error: string | null;
-}
+declare const __DEV__: boolean;
 
 export interface UseGenerationOptions {
   formState: TextToImageFormState;
   callbacks: TextToImageCallbacks;
+  userId?: string;
   onPromptCleared?: () => void;
+}
+
+export interface GenerationState {
+  isGenerating: boolean;
+  progress: number;
+  error: string | null;
 }
 
 export interface UseGenerationReturn {
@@ -29,72 +37,73 @@ export interface UseGenerationReturn {
   handleGenerate: () => Promise<TextToImageGenerationResult | null>;
 }
 
-const initialState: GenerationState = {
-  isGenerating: false,
-  progress: 0,
-  error: null,
+const DEFAULT_ALERT_MESSAGES: AlertMessages = {
+  networkError: "No internet connection. Please check your network.",
+  policyViolation: "Content not allowed. Please try again.",
+  saveFailed: "Failed to save. Please try again.",
+  creditFailed: "Credit operation failed. Please try again.",
+  unknown: "An error occurred. Please try again.",
+  authRequired: "Please sign in to continue.",
 };
 
-declare const __DEV__: boolean;
-
 export function useGeneration(options: UseGenerationOptions): UseGenerationReturn {
-  const { formState, callbacks, onPromptCleared } = options;
-  const [generationState, setGenerationState] = useState<GenerationState>(initialState);
+  const { formState, callbacks, userId, onPromptCleared } = options;
 
   const totalCost = callbacks.calculateCost(formState.numImages, formState.selectedModel);
 
-  const handleGenerate = useCallback(async (): Promise<TextToImageGenerationResult | null> => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[TextToImage] handleGenerate called");
-    }
+  // Build strategy for orchestrator
+  const strategy: GenerationStrategy<TextToImageGenerationRequest, string[]> = useMemo(
+    () => ({
+      execute: async (request) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[TextToImage] Executing generation:", JSON.stringify(request, null, 2));
+        }
+        const result = await callbacks.executeGeneration(request);
+        if (result.success === false) {
+          throw new Error(result.error);
+        }
+        return result.imageUrls;
+      },
+      getCreditCost: () => totalCost,
+    }),
+    [callbacks, totalCost],
+  );
 
+  // Use orchestrator with auth support
+  const { generate, isGenerating, progress, error } = useGenerationOrchestrator(strategy, {
+    userId,
+    alertMessages: DEFAULT_ALERT_MESSAGES,
+    onCreditsExhausted: () => callbacks.onCreditsRequired?.(totalCost),
+    auth: {
+      isAuthenticated: callbacks.isAuthenticated,
+      onAuthRequired: callbacks.onAuthRequired,
+    },
+    onSuccess: (result) => {
+      const imageUrls = result as string[];
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[TextToImage] Success! Generated", imageUrls.length, "image(s)");
+      }
+      callbacks.onSuccess?.(imageUrls);
+      onPromptCleared?.();
+    },
+    onError: (err) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[TextToImage] Error:", err.message);
+      }
+      callbacks.onError?.(err.message);
+    },
+  });
+
+  const handleGenerate = useCallback(async (): Promise<TextToImageGenerationResult | null> => {
     const trimmedPrompt = formState.prompt.trim();
 
     if (!trimmedPrompt) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-         
         console.log("[TextToImage] No prompt provided");
       }
-      setGenerationState((prev) => ({ ...prev, error: "Prompt is required" }));
-      return null;
+      callbacks.onError?.("Prompt is required");
+      return { success: false, error: "Prompt is required" };
     }
-
-    const isAuth = callbacks.isAuthenticated();
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[TextToImage] isAuthenticated:", isAuth);
-    }
-
-    if (!isAuth) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-         
-        console.log("[TextToImage] Auth required - calling onAuthRequired");
-      }
-      callbacks.onAuthRequired?.();
-      return null;
-    }
-
-    const affordable = callbacks.canAfford(totalCost);
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[TextToImage] canAfford:", affordable, "totalCost:", totalCost);
-    }
-
-    if (!affordable) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-         
-        console.log("[TextToImage] Credits required - calling onCreditsRequired");
-      }
-      callbacks.onCreditsRequired?.(totalCost);
-      return null;
-    }
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[TextToImage] Starting generation...");
-    }
-    setGenerationState({ isGenerating: true, progress: 0, error: null });
 
     const request: TextToImageGenerationRequest = {
       prompt: trimmedPrompt,
@@ -109,51 +118,22 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
     };
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[TextToImage] Request:", JSON.stringify(request, null, 2));
+      console.log("[TextToImage] Starting generation...");
     }
 
-    try {
-      const result = await callbacks.executeGeneration(request);
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        const logResult = {
-          success: result.success,
-          imageCount: result.success ? result.imageUrls?.length : 0,
-          error: result.success === false ? result.error : undefined,
-        };
-         
-        console.log("[TextToImage] Result:", JSON.stringify(logResult));
-      }
+    await generate(request);
 
-      if (result.success === true) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-           
-          console.log("[TextToImage] Success! Generated", result.imageUrls?.length, "image(s)");
-        }
-        callbacks.onSuccess?.(result.imageUrls);
-        onPromptCleared?.();
-        setGenerationState({ isGenerating: false, progress: 100, error: null });
-      } else {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-           
-          console.log("[TextToImage] Generation failed:", result.error);
-        }
-        setGenerationState({ isGenerating: false, progress: 0, error: result.error });
-        callbacks.onError?.(result.error);
-      }
+    // Return result based on orchestrator state
+    return null; // Result handled via callbacks
+  }, [formState, generate, callbacks]);
 
-      return result;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-         
-        console.error("[TextToImage] Exception:", message);
-      }
-      setGenerationState({ isGenerating: false, progress: 0, error: message });
-      callbacks.onError?.(message);
-      return null;
-    }
-  }, [formState, callbacks, totalCost, onPromptCleared]);
-
-  return { generationState, totalCost, handleGenerate };
+  return {
+    generationState: {
+      isGenerating,
+      progress,
+      error: error?.message || null,
+    },
+    totalCost,
+    handleGenerate,
+  };
 }

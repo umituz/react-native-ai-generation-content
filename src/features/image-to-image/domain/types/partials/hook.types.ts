@@ -9,9 +9,7 @@ import type { BaseSingleImageState, BaseDualImageState } from "./state.types";
 /**
  * Base hook props for single image features
  */
-export interface BaseSingleImageHookProps<
-  TConfig extends SingleImageConfig = SingleImageConfig,
-> {
+export interface BaseSingleImageHookProps<TConfig = SingleImageConfig> {
   config: TConfig;
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;

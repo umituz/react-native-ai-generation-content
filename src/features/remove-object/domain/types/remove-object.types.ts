@@ -1,22 +1,7 @@
 /**
  * Remove Object Feature Types
- * Request, Result, Config types for object removal (inpainting)
+ * Types for object removal (inpainting)
  */
-
-export interface RemoveObjectOptions {
-  prompt?: string;
-  maskBase64?: string;
-  fillBackground?: boolean;
-}
-
-export interface RemoveObjectRequest {
-  imageUri: string;
-  imageBase64?: string;
-  maskBase64?: string;
-  prompt?: string;
-  userId: string;
-  options?: RemoveObjectOptions;
-}
 
 export interface RemoveObjectResult {
   success: boolean;

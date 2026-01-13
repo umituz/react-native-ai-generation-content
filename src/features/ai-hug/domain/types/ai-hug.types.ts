@@ -1,6 +1,6 @@
 /**
  * AI Hug Feature Types
- * Request, Result, Config types for AI hug video generation
+ * Extends dual-image-video types for AI hug video generation
  */
 
 import type {
@@ -8,21 +8,6 @@ import type {
   DualImageVideoFeatureState,
   DualImageVideoTranslations,
 } from "../../../shared/dual-image-video";
-
-export interface AIHugOptions {
-  intensity?: "gentle" | "warm" | "tight";
-  preserveFaces?: boolean;
-}
-
-export interface AIHugRequest {
-  sourceImageUri: string;
-  targetImageUri: string;
-  sourceImageBase64?: string;
-  targetImageBase64?: string;
-  userId: string;
-  prompt?: string;
-  options?: AIHugOptions;
-}
 
 export interface AIHugResult {
   success: boolean;
