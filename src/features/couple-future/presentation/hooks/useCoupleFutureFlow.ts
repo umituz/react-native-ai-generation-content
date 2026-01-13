@@ -99,30 +99,63 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
       alertMessages,
     });
 
+  const {
+    step,
+    isProcessing,
+    partnerA,
+    partnerB,
+    partnerAName,
+    partnerBName,
+    scenarioConfig,
+    customPrompt,
+    visualStyle,
+    selection,
+    selectedFeature,
+    selectedScenarioId,
+    selectedScenarioData,
+  } = state;
+
   useEffect(() => {
-    if (state.step !== config.steps.GENERATING) {
+    if (step !== config.steps.GENERATING) {
       hasStarted.current = false;
       return;
     }
-    if (!state.isProcessing || hasStarted.current) return;
+    if (!isProcessing || hasStarted.current) return;
     hasStarted.current = true;
 
     const input = buildGenerationInputFromConfig({
-      partnerA: state.partnerA as never,
-      partnerB: state.partnerB as never,
-      partnerAName: state.partnerAName,
-      partnerBName: state.partnerBName,
-      scenario: state.scenarioConfig as never,
-      customPrompt: state.customPrompt || undefined,
-      visualStyle: state.visualStyle || "",
+      partnerA: partnerA as never,
+      partnerB: partnerB as never,
+      partnerAName,
+      partnerBName,
+      scenario: scenarioConfig as never,
+      customPrompt: customPrompt || undefined,
+      visualStyle: visualStyle || "",
       defaultPartnerAName: generationConfig.defaultPartnerAName,
       defaultPartnerBName: generationConfig.defaultPartnerBName,
-      coupleFeatureSelection: state.selection as never,
+      coupleFeatureSelection: selection as never,
       visualStyles: generationConfig.visualStyleModifiers,
       customScenarioId: config.customScenarioId as string,
     });
     if (input) generate(input);
-  }, [state, config, generationConfig, generate]);
+  }, [
+    step,
+    isProcessing,
+    partnerA,
+    partnerB,
+    partnerAName,
+    partnerBName,
+    scenarioConfig,
+    customPrompt,
+    visualStyle,
+    selection,
+    config.steps.GENERATING,
+    config.customScenarioId,
+    generationConfig.defaultPartnerAName,
+    generationConfig.defaultPartnerBName,
+    generationConfig.visualStyleModifiers,
+    generate,
+  ]);
 
   const handleScenarioSelect = useCallback(
     (id: string) => {
@@ -138,17 +171,26 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
   );
 
   const handleScenarioPreviewContinue = useCallback(() => {
-    if (state.selectedFeature) {
+    if (selectedFeature) {
       actions.setStep(config.steps.COUPLE_FEATURE_SELECTOR);
     } else if (
-      state.selectedScenarioId === config.customScenarioId ||
-      state.selectedScenarioData?.requiresPhoto === false
+      selectedScenarioId === config.customScenarioId ||
+      selectedScenarioData?.requiresPhoto === false
     ) {
       actions.setStep(config.steps.TEXT_INPUT);
     } else {
       actions.setStep(config.steps.PARTNER_A);
     }
-  }, [actions, config, state]);
+  }, [
+    actions,
+    config.steps.COUPLE_FEATURE_SELECTOR,
+    config.steps.TEXT_INPUT,
+    config.steps.PARTNER_A,
+    config.customScenarioId,
+    selectedFeature,
+    selectedScenarioId,
+    selectedScenarioData,
+  ]);
 
   const handlePartnerAContinue = useCallback(
     (image: UploadedImage, name: string) => {
@@ -161,11 +203,17 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
 
   const handlePartnerABack = useCallback(() => {
     actions.setStep(
-      state.selectedScenarioId === config.customScenarioId
+      selectedScenarioId === config.customScenarioId
         ? config.steps.TEXT_INPUT
         : config.steps.SCENARIO_PREVIEW,
     );
-  }, [actions, config, state.selectedScenarioId]);
+  }, [
+    actions,
+    config.customScenarioId,
+    config.steps.TEXT_INPUT,
+    config.steps.SCENARIO_PREVIEW,
+    selectedScenarioId,
+  ]);
 
   const handlePartnerBContinue = useCallback(
     (image: UploadedImage, name: string) => {
@@ -187,13 +235,13 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
     (prompt: string, style: string) => {
       actions.setCustomPrompt(prompt);
       actions.setVisualStyle(style);
-      if (state.selectedScenarioId === config.customScenarioId) {
+      if (selectedScenarioId === config.customScenarioId) {
         actions.setStep(config.steps.PARTNER_A);
       } else {
         actions.startGeneration();
       }
     },
-    [actions, config, state.selectedScenarioId],
+    [actions, config.customScenarioId, config.steps.PARTNER_A, selectedScenarioId],
   );
 
   const handleMagicPromptBack = useCallback(
