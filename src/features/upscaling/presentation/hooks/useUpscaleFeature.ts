@@ -16,7 +16,7 @@ export interface UseUpscaleFeatureProps {
 export function useUpscaleFeature(props: UseUpscaleFeatureProps): BaseSingleImageHookReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
 
-  return useSingleImageFeature<UpscaleFeatureConfig, UpscaleResult>(
+  return useSingleImageFeature<UpscaleFeatureConfig>(
     { config: config as never, onSelectImage, onSaveImage, onBeforeProcess },
     {
       buildInput: (imageBase64, cfg) => ({

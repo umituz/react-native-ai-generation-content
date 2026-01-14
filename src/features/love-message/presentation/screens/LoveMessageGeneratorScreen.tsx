@@ -4,7 +4,7 @@
  */
 
 import { FC, useMemo, useCallback } from "react";
-import { View, ScrollView, StyleSheet, Animated } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import {
   AtomicText,
   AtomicButton,
@@ -98,7 +98,7 @@ export const LoveMessageGeneratorScreen: FC = () => {
 
         <View style={styles.formContent}>
           {gen.currentStep === GeneratorStep.PARTNER && (
-            <Animated.View>
+            <View>
               <StepPartner
                 partnerName={gen.partnerName}
                 setPartnerName={gen.setPartnerName}
@@ -107,24 +107,24 @@ export const LoveMessageGeneratorScreen: FC = () => {
                 hasProfile={gen.hasProfile}
                 onEditProfile={handleNavigateToProfile}
               />
-            </Animated.View>
+            </View>
           )}
 
           {gen.currentStep === GeneratorStep.VIBE && (
-            <Animated.View>
+            <View>
               <StepVibe
                 selectedType={gen.selectedType}
                 setSelectedType={gen.setSelectedType}
                 selectedTone={gen.selectedTone}
                 setSelectedTone={gen.setSelectedTone}
               />
-            </Animated.View>
+            </View>
           )}
 
           {gen.currentStep === GeneratorStep.DETAILS && (
-            <Animated.View>
+            <View>
               <StepDetails details={gen.details} setDetails={gen.setDetails} />
-            </Animated.View>
+            </View>
           )}
 
           {gen.currentStep === GeneratorStep.RESULT && (

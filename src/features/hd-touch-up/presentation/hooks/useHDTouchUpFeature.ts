@@ -16,7 +16,7 @@ export interface UseHDTouchUpFeatureProps {
 export function useHDTouchUpFeature(props: UseHDTouchUpFeatureProps): BaseSingleImageHookReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
 
-  return useSingleImageFeature<HDTouchUpFeatureConfig, HDTouchUpResult>(
+  return useSingleImageFeature<HDTouchUpFeatureConfig>(
     { config: config as never, onSelectImage, onSaveImage, onBeforeProcess },
     { buildInput: (imageBase64) => ({ imageBase64 }) },
   );

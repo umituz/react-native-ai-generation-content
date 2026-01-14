@@ -16,7 +16,7 @@ export interface UseRemoveBackgroundFeatureProps {
 export function useRemoveBackgroundFeature(props: UseRemoveBackgroundFeatureProps): BaseSingleImageHookReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
 
-  return useSingleImageFeature<RemoveBackgroundFeatureConfig, RemoveBackgroundResult>(
+  return useSingleImageFeature<RemoveBackgroundFeatureConfig>(
     { config: config as never, onSelectImage, onSaveImage, onBeforeProcess },
     {
       buildInput: (imageBase64, cfg) => ({

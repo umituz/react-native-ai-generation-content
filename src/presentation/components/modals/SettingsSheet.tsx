@@ -50,7 +50,7 @@ export const SettingsSheet: React.FC<SettingsSheetProps> = ({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="none"
       onRequestClose={onClose}
     >
       <Pressable

@@ -71,6 +71,25 @@ export interface CreditCallbacks {
   onCreditsExhausted?: () => void;
 }
 
+/**
+ * Lifecycle configuration for generation flow
+ * Centralizes post-generation behavior (navigation, cleanup, etc.)
+ */
+export interface LifecycleConfig {
+  /** Callback after generation completes (success or error) - for navigation, state updates */
+  onComplete?: (
+    status: "success" | "error",
+    result?: unknown,
+    error?: GenerationError,
+  ) => void;
+  /** Delay before calling onComplete (ms) - allows UI to show success state */
+  completeDelay?: number;
+  /** Auto-reset state after completion */
+  autoReset?: boolean;
+  /** Delay before auto-reset (ms) */
+  resetDelay?: number;
+}
+
 export interface GenerationConfig {
   userId: string | undefined;
   alertMessages: AlertMessages;
@@ -83,6 +102,8 @@ export interface GenerationConfig {
   moderation?: ModerationCallbacks;
   /** Optional credit callbacks - if provided, overrides default useDeductCredit */
   credits?: CreditCallbacks;
+  /** Lifecycle configuration for post-generation behavior */
+  lifecycle?: LifecycleConfig;
 }
 
 export interface GenerationState<TResult> {

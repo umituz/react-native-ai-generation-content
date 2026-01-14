@@ -16,7 +16,7 @@ export interface UsePhotoRestoreFeatureProps {
 export function usePhotoRestoreFeature(props: UsePhotoRestoreFeatureProps): BaseSingleImageHookReturn {
   const { config, onSelectImage, onSaveImage, onBeforeProcess } = props;
 
-  return useSingleImageFeature<PhotoRestoreFeatureConfig, PhotoRestoreResult>(
+  return useSingleImageFeature<PhotoRestoreFeatureConfig>(
     { config: config as never, onSelectImage, onSaveImage, onBeforeProcess },
     { buildInput: (imageBase64) => ({ imageBase64 }) },
   );
