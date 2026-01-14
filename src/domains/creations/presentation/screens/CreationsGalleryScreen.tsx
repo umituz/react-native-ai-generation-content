@@ -219,6 +219,7 @@ export function CreationsGalleryScreen({
           title={t("result.rateTitle")}
           submitLabel={t("common.submit")}
           cancelLabel={t("common.cancel")}
+          descriptionPlaceholder={t("result.feedbackPlaceholder")}
         />
       </>
     );
