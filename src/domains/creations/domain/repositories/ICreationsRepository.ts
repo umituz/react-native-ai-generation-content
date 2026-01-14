@@ -29,5 +29,6 @@ export interface ICreationsRepository {
     userId: string,
     creationId: string,
     rating: number,
+    description?: string,
   ): Promise<boolean>;
 }

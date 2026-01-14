@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useMemo } from "react";
-import { StyleSheet, View, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Modal, TextInput } from "react-native";
 import {
   AtomicIcon,
   AtomicText,
@@ -15,10 +15,11 @@ import {
 export interface StarRatingPickerProps {
   visible: boolean;
   onClose: () => void;
-  onRate: (rating: number) => void;
+  onRate: (rating: number, description: string) => void;
   title?: string;
   submitLabel?: string;
   cancelLabel?: string;
+  descriptionPlaceholder?: string;
 }
 
 export const StarRatingPicker: React.FC<StarRatingPickerProps> = ({
@@ -28,9 +29,11 @@ export const StarRatingPicker: React.FC<StarRatingPickerProps> = ({
   title = "Rate this creation",
   submitLabel = "Submit",
   cancelLabel = "Cancel",
+  descriptionPlaceholder = "Tell us what you think... (Optional)",
 }) => {
   const tokens = useAppDesignTokens();
   const [selectedRating, setSelectedRating] = useState(0);
+  const [description, setDescription] = useState("");
 
   const styles = useMemo(
     () =>
@@ -47,7 +50,7 @@ export const StarRatingPicker: React.FC<StarRatingPickerProps> = ({
           borderRadius: 20,
           padding: tokens.spacing.xl,
           width: "100%",
-          maxWidth: 320,
+          maxWidth: 340,
           alignItems: "center",
         },
         title: {
@@ -61,10 +64,26 @@ export const StarRatingPicker: React.FC<StarRatingPickerProps> = ({
           flexDirection: "row",
           justifyContent: "center",
           gap: 8,
-          marginBottom: tokens.spacing.xl,
+          marginBottom: tokens.spacing.lg,
         },
         starButton: {
           padding: 4,
+        },
+        inputContainer: {
+          width: "100%",
+          marginBottom: tokens.spacing.lg,
+        },
+        input: {
+          width: "100%",
+          minHeight: 80,
+          borderWidth: 1,
+          borderColor: tokens.colors.border,
+          borderRadius: tokens.shapes.radius.md,
+          padding: tokens.spacing.md,
+          color: tokens.colors.textPrimary,
+          backgroundColor: tokens.colors.background,
+          textAlignVertical: "top",
+          fontSize: 14,
         },
         buttonsContainer: {
           flexDirection: "row",
@@ -80,14 +99,16 @@ export const StarRatingPicker: React.FC<StarRatingPickerProps> = ({
 
   const handleSubmit = () => {
     if (selectedRating > 0) {
-      onRate(selectedRating);
+      onRate(selectedRating, description);
       setSelectedRating(0);
+      setDescription("");
       onClose();
     }
   };
 
   const handleClose = () => {
     setSelectedRating(0);
+    setDescription("");
     onClose();
   };
 
@@ -125,23 +146,36 @@ export const StarRatingPicker: React.FC<StarRatingPickerProps> = ({
               </TouchableOpacity>
             ))}
           </View>
-          <View style={styles.buttonsContainer}>
-            <View style={styles.button}>
-              <AtomicButton
-                title={cancelLabel}
-                variant="secondary"
-                onPress={handleClose}
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder={descriptionPlaceholder}
+                placeholderTextColor={tokens.colors.textTertiary}
+                multiline
+                numberOfLines={3}
+                value={description}
+                onChangeText={setDescription}
+                maxLength={500}
               />
             </View>
-            <View style={styles.button}>
-              <AtomicButton
-                title={submitLabel}
-                variant="primary"
-                onPress={handleSubmit}
-                disabled={selectedRating === 0}
-              />
+
+            <View style={styles.buttonsContainer}>
+              <View style={styles.button}>
+                <AtomicButton
+                  title={cancelLabel}
+                  variant="secondary"
+                  onPress={handleClose}
+                />
+              </View>
+              <View style={styles.button}>
+                <AtomicButton
+                  title={submitLabel}
+                  variant="primary"
+                  onPress={handleSubmit}
+                  disabled={selectedRating === 0}
+                />
+              </View>
             </View>
-          </View>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>

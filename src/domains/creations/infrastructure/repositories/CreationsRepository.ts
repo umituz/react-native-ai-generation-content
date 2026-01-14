@@ -102,7 +102,8 @@ export class CreationsRepository
     userId: string,
     creationId: string,
     rating: number,
+    description?: string,
   ): Promise<boolean> {
-    return this.writer.rate(userId, creationId, rating);
+    return this.writer.rate(userId, creationId, rating, description);
   }
 }

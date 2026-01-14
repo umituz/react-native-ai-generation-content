@@ -107,10 +107,10 @@ export function CreationsGalleryScreen({
     setShowRatingPicker(true);
   }, []);
 
-  const handleSubmitRating = useCallback((rating: number) => {
+  const handleSubmitRating = useCallback((rating: number, description: string) => {
     if (!userId || !selectedCreation) return;
     void (async () => {
-      const success = await repository.rate(userId, selectedCreation.id, rating);
+      const success = await repository.rate(userId, selectedCreation.id, rating, description);
       if (success) {
         setSelectedCreation({ ...selectedCreation, rating, ratedAt: new Date() });
         alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("result.rateSuccessTitle"), t("result.rateSuccessMessage"));
