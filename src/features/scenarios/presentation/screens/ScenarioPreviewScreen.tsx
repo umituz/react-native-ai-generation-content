@@ -79,7 +79,7 @@ export const ScenarioPreviewScreen: React.FC<ScenarioPreviewScreenProps> = ({
       >
         <HeroSection
           icon={scenario.icon}
-          imageUrl={scenario.previewImageUrl ?? scenario.imageUrl}
+          imageUrl={scenario.imageUrl ?? scenario.previewImageUrl}
         />
 
         <View style={styles.contentSection}>
