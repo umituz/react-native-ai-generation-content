@@ -78,7 +78,7 @@ export const StarRatingPicker: React.FC<StarRatingPickerProps> = ({
           minHeight: 80,
           borderWidth: 1,
           borderColor: tokens.colors.border,
-          borderRadius: tokens.shapes.radius.md,
+          borderRadius: tokens.radius.md,
           padding: tokens.spacing.md,
           color: tokens.colors.textPrimary,
           backgroundColor: tokens.colors.background,
