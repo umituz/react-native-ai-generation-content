@@ -1,19 +1,10 @@
-/**
- * AIHugFeature Component
- * Self-contained AI hug video feature UI component
- * Uses centralized DualImageVideoFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { DualImageVideoFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps, DualImageInputRenderProps } from "../../../../presentation/layouts";
+import type { DualImageInputRenderProps } from "../../../../presentation/layouts";
 import { useAIHugFeature } from "../hooks";
-import type {
-  AIHugTranslations,
-  AIHugFeatureConfig,
-} from "../../domain/types";
+import type { AIHugTranslations, AIHugFeatureConfig } from "../../domain/types";
 
 export interface AIHugFeatureProps {
   config: AIHugFeatureConfig;
@@ -27,7 +18,6 @@ export interface AIHugFeatureProps {
   onSelectTargetImage: () => Promise<string | null>;
   onSaveVideo: (videoUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
@@ -37,7 +27,6 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
   onSelectTargetImage,
   onSaveVideo,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = useAIHugFeature({
     config,
@@ -62,7 +51,6 @@ export const AIHugFeature: React.FC<AIHugFeatureProps> = ({
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ sourceImageUri, targetImageUri, onSelectSource, onSelectTarget, isDisabled }: DualImageInputRenderProps) => (
         <View style={styles.pickerContainer}>
           <DualImagePicker

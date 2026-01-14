@@ -1,23 +1,10 @@
-/**
- * AnimeSelfieFeature Component
- * Self-contained anime selfie feature UI component
- * Uses centralized SingleImageFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { Image, StyleSheet } from "react-native";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type {
-  ProcessingModalRenderProps,
-  SingleImageInputRenderProps,
-  ResultRenderProps,
-} from "../../../../presentation/layouts";
+import type { SingleImageInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
 import { useAnimeSelfieFeature } from "../hooks";
-import type {
-  AnimeSelfieTranslations,
-  AnimeSelfieFeatureConfig,
-} from "../../domain/types";
+import type { AnimeSelfieTranslations, AnimeSelfieFeatureConfig } from "../../domain/types";
 
 export interface AnimeSelfieFeatureProps {
   config: AnimeSelfieFeatureConfig;
@@ -29,9 +16,7 @@ export interface AnimeSelfieFeatureProps {
   };
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
-  /** Called before processing starts. Return false to cancel. */
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
@@ -40,7 +25,6 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
   onSelectImage,
   onSaveImage,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = useAnimeSelfieFeature({
     config,
@@ -64,7 +48,6 @@ export const AnimeSelfieFeature: React.FC<AnimeSelfieFeatureProps> = ({
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}

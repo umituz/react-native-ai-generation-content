@@ -177,7 +177,7 @@ export function useRemoveObjectFeature(
         maskBase64,
         prompt: prompt || undefined,
       });
-    } catch (error) {
+    } catch {
       // Error already handled by orchestrator
     }
   }, [imageUri, maskUri, prompt, config, onBeforeProcess, orchestrator]);

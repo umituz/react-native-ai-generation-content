@@ -182,7 +182,7 @@ export function useImageWithPromptFeature<
         : { imageBase64, prompt };
 
       await orchestrator.generate(input);
-    } catch (error) {
+    } catch {
       // Error already handled by orchestrator
     }
   }, [imageUri, prompt, config, options, onBeforeProcess, orchestrator]);

@@ -118,7 +118,7 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
         return result;
       },
       getCreditCost: () => config.creditCost,
-      save: async (result, uid) => {
+      save: async (result, _uid) => {
         if (result.success && result.videoUrl) {
           await callbacks.onCreationSave?.({
             creationId: generateCreationId(),

@@ -1,23 +1,10 @@
-/**
- * UpscaleFeature Component
- * Self-contained upscale feature UI component
- * Uses centralized SingleImageFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type {
-  ProcessingModalRenderProps,
-  SingleImageInputRenderProps,
-  CustomResultRenderProps,
-} from "../../../../presentation/layouts";
+import type { SingleImageInputRenderProps, CustomResultRenderProps } from "../../../../presentation/layouts";
 import { UpscaleResultView } from "./UpscaleResultView";
 import { useUpscaleFeature } from "../hooks";
-import type {
-  UpscaleTranslations,
-  UpscaleFeatureConfig,
-} from "../../domain/types";
+import type { UpscaleTranslations, UpscaleFeatureConfig } from "../../domain/types";
 
 export interface UpscaleFeatureProps {
   config: UpscaleFeatureConfig;
@@ -30,7 +17,6 @@ export interface UpscaleFeatureProps {
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
@@ -39,7 +25,6 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
   onSelectImage,
   onSaveImage,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = useUpscaleFeature({
     config,
@@ -64,7 +49,6 @@ export const UpscaleFeature: React.FC<UpscaleFeatureProps> = ({
       translations={translations}
       modalTranslations={modalTranslations}
       description={translations.description}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}

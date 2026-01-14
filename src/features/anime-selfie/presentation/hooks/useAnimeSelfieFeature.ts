@@ -29,7 +29,7 @@ export interface UseAnimeSelfieFeatureOptions {
   onCreditsExhausted?: () => void;
 }
 
-export interface UseAnimeSelfieFeatureReturn extends BaseSingleImageHookReturn {}
+export type UseAnimeSelfieFeatureReturn = BaseSingleImageHookReturn;
 
 export function useAnimeSelfieFeature(
   props: UseAnimeSelfieFeatureProps,

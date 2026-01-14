@@ -1,9 +1,3 @@
-/**
- * Feature Layout Types
- * Shared types for SingleImageFeatureLayout and DualImageFeatureLayout
- */
-
-// Re-export all partial types
 export type {
   ModalTranslations,
   BaseLayoutTranslations,
@@ -12,7 +6,6 @@ export type {
   DualImageInputRenderProps,
   SingleImageWithPromptInputRenderProps,
   ResultRenderProps,
-  ProcessingModalRenderProps,
   CustomResultRenderProps,
   DualImageVideoFeatureState,
   SingleImageWithPromptFeatureState,

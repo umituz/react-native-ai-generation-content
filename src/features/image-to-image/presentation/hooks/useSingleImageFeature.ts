@@ -42,10 +42,7 @@ interface SingleImageInput {
   options?: Record<string, unknown>;
 }
 
-export function useSingleImageFeature<
-  TConfig = SingleImageConfig,
-  TResult = BaseImageResult,
->(
+export function useSingleImageFeature<TConfig = SingleImageConfig>(
   props: BaseSingleImageHookProps<TConfig>,
   options?: SingleImageFeatureOptions<TConfig>,
 ): BaseSingleImageHookReturn {
@@ -131,7 +128,7 @@ export function useSingleImageFeature<
         : { imageBase64 };
 
       await orchestrator.generate(input);
-    } catch (error) {
+    } catch {
       // Error already handled by orchestrator
     }
   }, [imageUri, config, rawConfig, options, onBeforeProcess, orchestrator]);

@@ -1,23 +1,10 @@
-/**
- * PhotoRestoreFeature Component
- * Self-contained photo restore feature UI component
- * Uses centralized SingleImageFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type {
-  ProcessingModalRenderProps,
-  SingleImageInputRenderProps,
-  CustomResultRenderProps,
-} from "../../../../presentation/layouts";
+import type { SingleImageInputRenderProps, CustomResultRenderProps } from "../../../../presentation/layouts";
 import { PhotoRestoreResultView } from "./PhotoRestoreResultView";
 import { usePhotoRestoreFeature } from "../hooks";
-import type {
-  PhotoRestoreTranslations,
-  PhotoRestoreFeatureConfig,
-} from "../../domain/types";
+import type { PhotoRestoreTranslations, PhotoRestoreFeatureConfig } from "../../domain/types";
 
 export interface PhotoRestoreFeatureProps {
   config: PhotoRestoreFeatureConfig;
@@ -30,7 +17,6 @@ export interface PhotoRestoreFeatureProps {
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
@@ -39,7 +25,6 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
   onSelectImage,
   onSaveImage,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = usePhotoRestoreFeature({
     config,
@@ -63,7 +48,6 @@ export const PhotoRestoreFeature: React.FC<PhotoRestoreFeatureProps> = ({
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}

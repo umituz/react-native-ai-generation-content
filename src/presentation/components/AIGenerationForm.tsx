@@ -14,7 +14,6 @@ import { PromptInput } from "./PromptInput";
 import { GenerateButton } from "./buttons/GenerateButton";
 import { ExamplePrompts } from "./prompts/ExamplePrompts";
 import { StylePresetsGrid } from "./StylePresetsGrid";
-import { GenerationProgressModal } from "./GenerationProgressModal";
 import type { AIGenerationFormProps } from "./AIGenerationForm.types";
 
 export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
@@ -35,10 +34,6 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   onGenerate,
   isGenerating,
   hideGenerateButton,
-  progress,
-  progressIcon,
-  isProgressModalVisible,
-  onCloseProgressModal,
   generateButtonProps,
   showAdvanced,
   onAdvancedToggle,
@@ -155,17 +150,6 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
           )}
         </>
       )}
-
-      {/* MANDATORY: Progress Modal shows automatically when isGenerating */}
-      <GenerationProgressModal
-        visible={isProgressModalVisible ?? isGenerating}
-        progress={progress ?? 0}
-        icon={progressIcon || "sparkles-outline"}
-        title={translations.progressTitle || translations.generatingButton}
-        message={translations.progressMessage || translations.progressHint}
-        onClose={onCloseProgressModal}
-        backgroundHint={onCloseProgressModal ? translations.progressBackgroundHint : undefined}
-      />
     </>
   );
 };

@@ -144,7 +144,7 @@ export function useDualImageVideoFeature(
       ]);
 
       await orchestrator.generate({ sourceImageBase64, targetImageBase64 });
-    } catch (error) {
+    } catch {
       // Error already handled by orchestrator
     }
   }, [sourceImageUri, targetImageUri, featureType, config, onBeforeProcess, orchestrator]);

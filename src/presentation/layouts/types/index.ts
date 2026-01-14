@@ -16,11 +16,7 @@ export type {
   SingleImageWithPromptInputRenderProps,
 } from "./input-props";
 
-export type {
-  ResultRenderProps,
-  ProcessingModalRenderProps,
-  CustomResultRenderProps,
-} from "./result-props";
+export type { ResultRenderProps, CustomResultRenderProps } from "./result-props";
 
 export type {
   DualImageVideoFeatureState,

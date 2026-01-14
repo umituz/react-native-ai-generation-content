@@ -1,4 +1,3 @@
-export { GenerationProgressModal } from "./GenerationProgressModal";
 export { GenerationProgressContent } from "./GenerationProgressContent";
 export { GenerationProgressBar } from "./GenerationProgressBar";
 export { PendingJobCard } from "./PendingJobCard";
@@ -9,11 +8,6 @@ export { AIGenerationHero } from "./AIGenerationHero";
 export * from "./StylePresetsGrid";
 export * from "./AIGenerationForm";
 export * from "./AIGenerationForm.types";
-
-export type {
-  GenerationProgressModalProps,
-  GenerationProgressRenderProps,
-} from "./GenerationProgressModal";
 
 export type { GenerationProgressContentProps } from "./GenerationProgressContent";
 export type { GenerationProgressBarProps } from "./GenerationProgressBar";

@@ -85,7 +85,7 @@ export type {
 } from "./presentation/hooks";
 
 export {
-  GenerationProgressModal, GenerationProgressContent, GenerationProgressBar, PendingJobCard,
+  GenerationProgressContent, GenerationProgressBar, PendingJobCard,
   PendingJobProgressBar, PendingJobCardActions, GenerationResultContent, ResultHeader,
   ResultImageCard, ResultStoryCard, ResultActions, DEFAULT_RESULT_CONFIG, PhotoStep,
   DualImagePicker, PromptInput, AIGenerationHero, ExamplePrompts, ModerationSummary,
@@ -105,20 +105,19 @@ export type {
   SingleImageInputRenderProps, SingleImageWithPromptInputRenderProps,
   SingleImageWithPromptFeatureState, SingleImageWithPromptFeatureLayoutProps,
   DualImageInputRenderProps, ResultRenderProps, CustomResultRenderProps,
-  ProcessingModalRenderProps, SingleImageFeatureLayoutProps, DualImageFeatureLayoutProps,
+  SingleImageFeatureLayoutProps, DualImageFeatureLayoutProps,
   DualImageVideoFeatureState, DualImageVideoFeatureLayoutProps,
 } from "./presentation/layouts";
 
 export type {
-  GenerationProgressModalProps, GenerationProgressRenderProps, GenerationProgressContentProps,
-  GenerationProgressBarProps, PendingJobCardProps, StatusLabels, PendingJobProgressBarProps,
-  PendingJobCardActionsProps, GenerationResultData, GenerationResultContentProps, ResultHeaderProps,
-  ResultImageCardProps, ResultStoryCardProps, ResultActionsProps, ResultConfig, ResultHeaderConfig,
-  ResultImageConfig, ResultStoryConfig, ResultActionsConfig, ResultLayoutConfig, ResultActionButton,
-  PhotoStepProps, DualImagePickerProps, PromptInputProps, AIGenerationHeroProps, ExamplePromptsProps,
-  ModerationSummaryProps, StylePresetsGridProps, StylePreset, GenerateButtonProps, ResultDisplayProps,
-  ResultDisplayAction, AIGenerationResultProps, AIGenerationResultAction, ErrorDisplayProps,
-  FeatureHeaderProps, AIGenScreenHeaderProps, NavigationButtonType, CreditBadgeProps,
+  GenerationProgressContentProps, GenerationProgressBarProps, PendingJobCardProps, StatusLabels,
+  PendingJobProgressBarProps, PendingJobCardActionsProps, GenerationResultData, GenerationResultContentProps,
+  ResultHeaderProps, ResultImageCardProps, ResultStoryCardProps, ResultActionsProps, ResultConfig,
+  ResultHeaderConfig, ResultImageConfig, ResultStoryConfig, ResultActionsConfig, ResultLayoutConfig,
+  ResultActionButton, PhotoStepProps, DualImagePickerProps, PromptInputProps, AIGenerationHeroProps,
+  ExamplePromptsProps, ModerationSummaryProps, StylePresetsGridProps, StylePreset, GenerateButtonProps,
+  ResultDisplayProps, ResultDisplayAction, AIGenerationResultProps, AIGenerationResultAction,
+  ErrorDisplayProps, FeatureHeaderProps, AIGenScreenHeaderProps, NavigationButtonType, CreditBadgeProps,
   PhotoUploadCardProps, PhotoUploadCardConfig, SettingsSheetProps, StyleSelectorProps,
   AspectRatioSelectorProps, DurationSelectorProps, GridSelectorProps, GridSelectorOption,
   StyleOption, AspectRatioOption, DurationValue, AspectRatioTranslations, DurationOption,

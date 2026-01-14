@@ -5,15 +5,11 @@
 
 import React, { useMemo, useCallback, useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
-import type {
-  AIGenerationWizardProps,
-  WizardStepProps,
-  WizardStep,
-} from "../../domain/types";
+import type { AIGenerationWizardProps, WizardStepProps } from "../../domain/types";
 import { createWizardStore, type WizardStoreType } from "../store/useWizardStore";
 
 export const AIGenerationWizard: React.FC<AIGenerationWizardProps> = ({
-  userId,
+  userId: _userId,
   isAuthenticated = false,
   hasCredits = true,
   config,

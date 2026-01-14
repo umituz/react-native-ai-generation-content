@@ -1,23 +1,10 @@
-/**
- * FaceSwapFeature Component
- * Self-contained face swap feature UI component
- * Uses centralized DualImageFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { View, Image, StyleSheet } from "react-native";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { DualImageFeatureLayout } from "../../../../presentation/layouts";
-import type {
-  ProcessingModalRenderProps,
-  DualImageInputRenderProps,
-  ResultRenderProps,
-} from "../../../../presentation/layouts";
+import type { DualImageInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
 import { useFaceSwapFeature } from "../hooks";
-import type {
-  FaceSwapTranslations,
-  FaceSwapFeatureConfig,
-} from "../../domain/types";
+import type { FaceSwapTranslations, FaceSwapFeatureConfig } from "../../domain/types";
 
 export interface FaceSwapFeatureProps {
   config: FaceSwapFeatureConfig;
@@ -31,7 +18,6 @@ export interface FaceSwapFeatureProps {
   onSelectTargetImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
@@ -41,7 +27,6 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
   onSelectTargetImage,
   onSaveImage,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = useFaceSwapFeature({
     config,
@@ -66,7 +51,6 @@ export const FaceSwapFeature: React.FC<FaceSwapFeatureProps> = ({
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ sourceImageUri, targetImageUri, onSelectSource, onSelectTarget, isDisabled }: DualImageInputRenderProps) => (
         <View style={styles.pickerContainer}>
           <DualImagePicker

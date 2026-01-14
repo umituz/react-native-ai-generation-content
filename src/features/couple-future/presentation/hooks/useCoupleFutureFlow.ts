@@ -134,12 +134,24 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
 
   // Trigger generation when step changes to GENERATING
   useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CoupleFutureFlow] 📍 Step changed:", {
+        currentStep: state.step,
+        targetStep: config.steps.GENERATING,
+        isProcessing: state.isProcessing,
+        hasStarted: hasStarted.current,
+      });
+    }
     if (state.step !== config.steps.GENERATING) {
       hasStarted.current = false;
       return;
     }
     if (!state.isProcessing || hasStarted.current) return;
     hasStarted.current = true;
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CoupleFutureFlow] ✅ Step is GENERATING and isProcessing is true, building input...");
+    }
 
     const input = buildGenerationInputFromConfig({
       partnerA: state.partnerA as never,
@@ -191,10 +203,19 @@ export const useCoupleFutureFlow = <TStep, TScenarioId, TResult>(
 
   const handlePartnerBContinue = useCallback(
     (image: UploadedImage, name: string) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[CoupleFutureFlow] 🎬 handlePartnerBContinue called, invoking requireFeature");
+      }
       actions.requireFeature(() => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[CoupleFutureFlow] 🚀 Pending action executing: setPartnerB, setPartnerBName, startGeneration");
+        }
         actions.setPartnerB(image);
         actions.setPartnerBName(name);
         actions.startGeneration();
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[CoupleFutureFlow] ✅ startGeneration called successfully");
+        }
       });
     },
     [actions],

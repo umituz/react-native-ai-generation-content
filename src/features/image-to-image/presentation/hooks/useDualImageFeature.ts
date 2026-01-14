@@ -163,7 +163,7 @@ export function useDualImageFeature<
         : { sourceImageBase64: sourceBase64, targetImageBase64: targetBase64 };
 
       await orchestrator.generate(input);
-    } catch (error) {
+    } catch {
       // Error already handled by orchestrator
     }
   }, [sourceImageUri, targetImageUri, config, options, onBeforeProcess, orchestrator]);

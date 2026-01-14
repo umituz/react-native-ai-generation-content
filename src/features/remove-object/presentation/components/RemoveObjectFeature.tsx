@@ -1,23 +1,11 @@
-/**
- * RemoveObjectFeature Component
- * Self-contained remove object feature UI component
- * Uses centralized SingleImageWithPromptFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { View, Image, StyleSheet, TextInput } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicText,
-} from "@umituz/react-native-design-system";
+import { useAppDesignTokens, AtomicText } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageWithPromptFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps, SingleImageWithPromptInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
+import type { SingleImageWithPromptInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
 import { useRemoveObjectFeature } from "../hooks";
-import type {
-  RemoveObjectTranslations,
-  RemoveObjectFeatureConfig,
-} from "../../domain/types";
+import type { RemoveObjectTranslations, RemoveObjectFeatureConfig } from "../../domain/types";
 
 export interface RemoveObjectFeatureProps {
   config: RemoveObjectFeatureConfig;
@@ -30,7 +18,6 @@ export interface RemoveObjectFeatureProps {
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
@@ -39,7 +26,6 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
   onSelectImage,
   onSaveImage,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -65,7 +51,6 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ imageUri, onSelect, isDisabled, isProcessing, prompt, onPromptChange }: SingleImageWithPromptInputRenderProps) => (
         <>
           <PhotoUploadCard
@@ -88,10 +73,7 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
           />
 
           <View style={styles.promptContainer}>
-            <AtomicText
-              type="labelMedium"
-              style={[styles.promptLabel, { color: tokens.colors.textPrimary }]}
-            >
+            <AtomicText type="labelMedium" style={[styles.promptLabel, { color: tokens.colors.textPrimary }]}>
               {translations.maskTitle}
             </AtomicText>
             <TextInput
@@ -111,10 +93,7 @@ export const RemoveObjectFeature: React.FC<RemoveObjectFeatureProps> = ({
               numberOfLines={3}
               editable={!isProcessing}
             />
-            <AtomicText
-              type="bodySmall"
-              style={[styles.promptHint, { color: tokens.colors.textTertiary }]}
-            >
+            <AtomicText type="bodySmall" style={[styles.promptHint, { color: tokens.colors.textTertiary }]}>
               {translations.maskSubtitle}
             </AtomicText>
           </View>

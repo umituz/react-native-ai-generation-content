@@ -1,23 +1,10 @@
-/**
- * HDTouchUpFeature Component
- * Self-contained HD touch up feature UI component
- * Uses centralized SingleImageFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { Image, StyleSheet } from "react-native";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type {
-  ProcessingModalRenderProps,
-  SingleImageInputRenderProps,
-  ResultRenderProps,
-} from "../../../../presentation/layouts";
+import type { SingleImageInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
 import { useHDTouchUpFeature } from "../hooks";
-import type {
-  HDTouchUpTranslations,
-  HDTouchUpFeatureConfig,
-} from "../../domain/types";
+import type { HDTouchUpTranslations, HDTouchUpFeatureConfig } from "../../domain/types";
 
 export interface HDTouchUpFeatureProps {
   config: HDTouchUpFeatureConfig;
@@ -30,7 +17,6 @@ export interface HDTouchUpFeatureProps {
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const HDTouchUpFeature: React.FC<HDTouchUpFeatureProps> = ({
@@ -39,7 +25,6 @@ export const HDTouchUpFeature: React.FC<HDTouchUpFeatureProps> = ({
   onSelectImage,
   onSaveImage,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = useHDTouchUpFeature({
     config,
@@ -63,7 +48,6 @@ export const HDTouchUpFeature: React.FC<HDTouchUpFeatureProps> = ({
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}

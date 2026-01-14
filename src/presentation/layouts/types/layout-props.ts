@@ -18,11 +18,7 @@ import type {
   DualImageInputRenderProps,
   SingleImageWithPromptInputRenderProps,
 } from "./input-props";
-import type {
-  ResultRenderProps,
-  ProcessingModalRenderProps,
-  CustomResultRenderProps,
-} from "./result-props";
+import type { ResultRenderProps, CustomResultRenderProps } from "./result-props";
 import type {
   DualImageVideoFeatureState,
   SingleImageWithPromptFeatureState,
@@ -30,15 +26,16 @@ import type {
 
 /**
  * Single image feature layout props
+ * Note: No modal - shows fullscreen progress when processing (FutureUS pattern)
  */
 export interface SingleImageFeatureLayoutProps {
   /** Feature hook return */
   feature: BaseSingleImageHookReturn;
   /** UI translations */
   translations: BaseLayoutTranslations & PhotoUploadTranslations;
-  /** Modal translations */
+  /** Progress screen translations */
   modalTranslations: ModalTranslations;
-  /** Modal icon */
+  /** Progress screen icon */
   modalIcon?: string;
   /** Render the input section (photo upload) */
   renderInput: (props: SingleImageInputRenderProps) => ReactNode;
@@ -48,23 +45,22 @@ export interface SingleImageFeatureLayoutProps {
   renderCustomResult?: (props: CustomResultRenderProps) => ReactNode;
   /** Optional description text */
   description?: string;
-  /** Optional custom processing modal */
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => ReactNode;
   /** Optional children to render before the input */
   children?: ReactNode;
 }
 
 /**
  * Dual image feature layout props
+ * Note: No modal - shows fullscreen progress when processing (FutureUS pattern)
  */
 export interface DualImageFeatureLayoutProps {
   /** Feature hook return */
   feature: BaseDualImageHookReturn;
   /** UI translations */
   translations: BaseLayoutTranslations;
-  /** Modal translations */
+  /** Progress screen translations */
   modalTranslations: ModalTranslations;
-  /** Modal icon */
+  /** Progress screen icon */
   modalIcon?: string;
   /** Render the input section (dual image picker) */
   renderInput: (props: DualImageInputRenderProps) => ReactNode;
@@ -72,45 +68,43 @@ export interface DualImageFeatureLayoutProps {
   renderResult: (props: ResultRenderProps) => ReactNode;
   /** Optional description text */
   description?: string;
-  /** Optional custom processing modal */
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => ReactNode;
   /** Optional children to render before the input */
   children?: ReactNode;
 }
 
 /**
  * Dual image video feature layout props
+ * Note: No modal - shows fullscreen progress when processing (FutureUS pattern)
  */
 export interface DualImageVideoFeatureLayoutProps {
   /** Feature hook return */
   feature: DualImageVideoFeatureState;
   /** UI translations */
   translations: BaseLayoutTranslations;
-  /** Modal translations */
+  /** Progress screen translations */
   modalTranslations: ModalTranslations;
-  /** Modal icon */
+  /** Progress screen icon */
   modalIcon?: string;
   /** Render the input section (dual image picker) */
   renderInput: (props: DualImageInputRenderProps) => ReactNode;
   /** Optional description text */
   description?: string;
-  /** Optional custom processing modal */
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => ReactNode;
   /** Optional children to render before the input */
   children?: ReactNode;
 }
 
 /**
  * Single image with prompt feature layout props
+ * Note: No modal - shows fullscreen progress when processing (FutureUS pattern)
  */
 export interface SingleImageWithPromptFeatureLayoutProps {
   /** Feature hook return */
   feature: SingleImageWithPromptFeatureState;
   /** UI translations */
   translations: BaseLayoutTranslations & PhotoUploadTranslations;
-  /** Modal translations */
+  /** Progress screen translations */
   modalTranslations: ModalTranslations;
-  /** Modal icon */
+  /** Progress screen icon */
   modalIcon?: string;
   /** Render the input section (photo upload + prompt) */
   renderInput: (props: SingleImageWithPromptInputRenderProps) => ReactNode;
@@ -118,8 +112,6 @@ export interface SingleImageWithPromptFeatureLayoutProps {
   renderResult: (props: ResultRenderProps) => ReactNode;
   /** Optional description text */
   description?: string;
-  /** Optional custom processing modal */
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => ReactNode;
   /** Optional children to render before the input */
   children?: ReactNode;
 }

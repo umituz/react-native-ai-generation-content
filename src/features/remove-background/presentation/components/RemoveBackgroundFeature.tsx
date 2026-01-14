@@ -1,19 +1,10 @@
-/**
- * RemoveBackgroundFeature Component
- * Self-contained remove background feature UI component
- * Uses centralized SingleImageFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { Image, StyleSheet } from "react-native";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageFeatureLayout } from "../../../../presentation/layouts";
-import type { ProcessingModalRenderProps, SingleImageInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
+import type { SingleImageInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
 import { useRemoveBackgroundFeature } from "../hooks";
-import type {
-  RemoveBackgroundTranslations,
-  RemoveBackgroundFeatureConfig,
-} from "../../domain/types";
+import type { RemoveBackgroundTranslations, RemoveBackgroundFeatureConfig } from "../../domain/types";
 
 export interface RemoveBackgroundFeatureProps {
   config: RemoveBackgroundFeatureConfig;
@@ -26,7 +17,6 @@ export interface RemoveBackgroundFeatureProps {
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const RemoveBackgroundFeature: React.FC<RemoveBackgroundFeatureProps> = ({
@@ -35,7 +25,6 @@ export const RemoveBackgroundFeature: React.FC<RemoveBackgroundFeatureProps> = (
   onSelectImage,
   onSaveImage,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = useRemoveBackgroundFeature({
     config,
@@ -59,7 +48,6 @@ export const RemoveBackgroundFeature: React.FC<RemoveBackgroundFeatureProps> = (
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ imageUri, onSelect, isDisabled, isProcessing }: SingleImageInputRenderProps) => (
         <PhotoUploadCard
           imageUri={imageUri}

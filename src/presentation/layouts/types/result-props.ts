@@ -12,14 +12,6 @@ export interface ResultRenderProps {
 }
 
 /**
- * Processing modal render props
- */
-export interface ProcessingModalRenderProps {
-  visible: boolean;
-  progress: number;
-}
-
-/**
  * Custom result render props (includes feature state for comparison views)
  */
 export interface CustomResultRenderProps {

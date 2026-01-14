@@ -1,22 +1,10 @@
-/**
- * AIKissFeature Component
- * Self-contained AI kiss video feature UI component
- * Uses centralized DualImageVideoFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { DualImagePicker } from "../../../../presentation/components/image-picker/DualImagePicker";
 import { DualImageVideoFeatureLayout } from "../../../../presentation/layouts";
-import type {
-  ProcessingModalRenderProps,
-  DualImageInputRenderProps,
-} from "../../../../presentation/layouts";
+import type { DualImageInputRenderProps } from "../../../../presentation/layouts";
 import { useAIKissFeature } from "../hooks";
-import type {
-  AIKissTranslations,
-  AIKissFeatureConfig,
-} from "../../domain/types";
+import type { AIKissTranslations, AIKissFeatureConfig } from "../../domain/types";
 
 export interface AIKissFeatureProps {
   config: AIKissFeatureConfig;
@@ -30,7 +18,6 @@ export interface AIKissFeatureProps {
   onSelectTargetImage: () => Promise<string | null>;
   onSaveVideo: (videoUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
@@ -40,7 +27,6 @@ export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
   onSelectTargetImage,
   onSaveVideo,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = useAIKissFeature({
     config,
@@ -65,7 +51,6 @@ export const AIKissFeature: React.FC<AIKissFeatureProps> = ({
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ sourceImageUri, targetImageUri, onSelectSource, onSelectTarget, isDisabled }: DualImageInputRenderProps) => (
         <View style={styles.pickerContainer}>
           <DualImagePicker

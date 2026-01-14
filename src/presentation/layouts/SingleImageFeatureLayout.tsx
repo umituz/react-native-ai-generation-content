@@ -1,11 +1,12 @@
 /**
  * SingleImageFeatureLayout
  * Centralized layout for all single-image processing features
- * Handles: Modal, ScrollView, AIGenerationForm, AIGenerationResult
+ * Handles: ScrollView, AIGenerationForm, AIGenerationResult, GenerationProgressContent
+ * Note: No Modal wrapper - shows fullscreen progress when processing (FutureUS pattern)
  */
 
 import React, { useCallback } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
   useResponsive,
@@ -13,7 +14,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { AIGenerationForm } from "../components/AIGenerationForm";
 import { AIGenerationResult } from "../components/display/AIGenerationResult";
-import { GenerationProgressModal } from "../components/GenerationProgressModal";
+import { GenerationProgressContent } from "../components/GenerationProgressContent";
 import type { SingleImageFeatureLayoutProps } from "./types";
 
 export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> = ({
@@ -25,7 +26,6 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
   renderResult,
   renderCustomResult,
   description,
-  renderProcessingModal,
   children,
 }) => {
   const tokens = useAppDesignTokens();
@@ -44,19 +44,29 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
     void feature.selectImage();
   }, [feature]);
 
-  // Default modal
-  const defaultModal = (
-    <GenerationProgressModal
-      visible={feature.isProcessing}
-      progress={feature.progress}
-      icon={modalIcon}
-      title={modalTranslations.title}
-      message={modalTranslations.message}
-      hint={modalTranslations.hint}
-      backgroundHint={modalTranslations.backgroundHint}
-      onClose={() => {}}
-    />
-  );
+  // Processing view - fullscreen (FutureUS pattern, no Modal)
+  if (feature.isProcessing) {
+    return (
+      <View
+        style={[
+          styles.processingContainer,
+          { backgroundColor: tokens.colors.backgroundPrimary },
+        ]}
+      >
+        <GenerationProgressContent
+          progress={feature.progress}
+          icon={modalIcon}
+          title={modalTranslations.title}
+          message={modalTranslations.message}
+          hint={modalTranslations.hint}
+          backgroundHint={modalTranslations.backgroundHint}
+          backgroundColor={tokens.colors.surface}
+          textColor={tokens.colors.textPrimary}
+          progressColor={tokens.colors.primary}
+        />
+      </View>
+    );
+  }
 
   // Custom result view (for comparison sliders, etc.)
   if (feature.processedUrl && renderCustomResult && feature.imageUri) {
@@ -104,46 +114,40 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
 
   // Input view
   return (
-    <>
-      <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
+    <ScrollView
+      style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <AIGenerationForm
+        onGenerate={handleProcess}
+        isGenerating={feature.isProcessing}
+        progress={feature.progress}
+        translations={{
+          generateButton: translations.processButtonText,
+          generatingButton: translations.processingText,
+          progressTitle: translations.processingText,
+        }}
       >
-        <AIGenerationForm
-          onGenerate={handleProcess}
-          isGenerating={feature.isProcessing}
-          progress={feature.progress}
-          translations={{
-            generateButton: translations.processButtonText,
-            generatingButton: translations.processingText,
-            progressTitle: translations.processingText,
-          }}
-        >
-          {description && (
-            <AtomicText
-              type="bodyLarge"
-              style={[styles.description, { color: tokens.colors.textSecondary }]}
-            >
-              {description}
-            </AtomicText>
-          )}
+        {description && (
+          <AtomicText
+            type="bodyLarge"
+            style={[styles.description, { color: tokens.colors.textSecondary }]}
+          >
+            {description}
+          </AtomicText>
+        )}
 
-          {children}
+        {children}
 
-          {renderInput({
-            imageUri: feature.imageUri,
-            onSelect: handleSelectImage,
-            isDisabled: feature.isProcessing,
-            isProcessing: feature.isProcessing,
-          })}
-        </AIGenerationForm>
-      </ScrollView>
-
-      {renderProcessingModal
-        ? renderProcessingModal({ visible: feature.isProcessing, progress: feature.progress })
-        : defaultModal}
-    </>
+        {renderInput({
+          imageUri: feature.imageUri,
+          onSelect: handleSelectImage,
+          isDisabled: feature.isProcessing,
+          isProcessing: feature.isProcessing,
+        })}
+      </AIGenerationForm>
+    </ScrollView>
   );
 };
 
@@ -159,5 +163,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     marginBottom: 24,
     lineHeight: 24,
+  },
+  processingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

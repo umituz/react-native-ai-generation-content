@@ -1,24 +1,11 @@
-/**
- * ReplaceBackgroundFeature Component
- * Self-contained background replacement feature UI component
- * Uses centralized SingleImageWithPromptFeatureLayout for consistent UX
- */
-
 import React, { useMemo } from "react";
 import { View, Image, StyleSheet } from "react-native";
 import { AtomicInput } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components/PhotoUploadCard";
 import { SingleImageWithPromptFeatureLayout } from "../../../../presentation/layouts";
-import type {
-  ProcessingModalRenderProps,
-  SingleImageWithPromptInputRenderProps,
-  ResultRenderProps,
-} from "../../../../presentation/layouts";
+import type { SingleImageWithPromptInputRenderProps, ResultRenderProps } from "../../../../presentation/layouts";
 import { useReplaceBackgroundFeature } from "../hooks";
-import type {
-  ReplaceBackgroundTranslations,
-  ReplaceBackgroundFeatureConfig,
-} from "../../domain/types";
+import type { ReplaceBackgroundTranslations, ReplaceBackgroundFeatureConfig } from "../../domain/types";
 
 export interface ReplaceBackgroundFeatureProps {
   config: ReplaceBackgroundFeatureConfig;
@@ -31,7 +18,6 @@ export interface ReplaceBackgroundFeatureProps {
   onSelectImage: () => Promise<string | null>;
   onSaveImage: (imageUrl: string) => Promise<void>;
   onBeforeProcess?: () => Promise<boolean>;
-  renderProcessingModal?: (props: ProcessingModalRenderProps) => React.ReactNode;
 }
 
 export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> = ({
@@ -40,7 +26,6 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
   onSelectImage,
   onSaveImage,
   onBeforeProcess,
-  renderProcessingModal,
 }) => {
   const feature = useReplaceBackgroundFeature({
     config,
@@ -64,7 +49,6 @@ export const ReplaceBackgroundFeature: React.FC<ReplaceBackgroundFeatureProps> =
       feature={feature}
       translations={translations}
       modalTranslations={modalTranslations}
-      renderProcessingModal={renderProcessingModal}
       renderInput={({ imageUri, onSelect, isDisabled, isProcessing, prompt, onPromptChange }: SingleImageWithPromptInputRenderProps) => (
         <>
           <PhotoUploadCard
