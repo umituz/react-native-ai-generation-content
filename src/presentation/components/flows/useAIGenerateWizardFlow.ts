@@ -82,8 +82,10 @@ export function useAIGenerateWizardFlow({
         duration: selectedDuration,
         images,
       });
-      setResult(output);
-      setCurrentStep(AIGenerateStep.RESULT);
+      if (output) {
+        setResult(output);
+        setCurrentStep(AIGenerateStep.RESULT);
+      }
     } catch (error) {
       console.error("Generation failed", error);
       setCurrentStep(AIGenerateStep.CONFIG);
