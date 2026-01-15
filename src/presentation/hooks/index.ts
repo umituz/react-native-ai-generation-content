@@ -7,6 +7,7 @@ export {
   useGenerationOrchestrator,
   useImageGeneration,
   useVideoGeneration,
+  useAIFeatureGeneration,
   createGenerationError,
   getAlertMessage,
   parseError,

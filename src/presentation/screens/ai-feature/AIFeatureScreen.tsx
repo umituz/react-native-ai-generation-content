@@ -47,6 +47,8 @@ const FEATURE_COMPONENTS: Record<AIFeatureId, React.ComponentType<any>> = {
   "ai-hug": AIHugFeature,
   "ai-kiss": AIKissFeature,
   "meme-generator": MemeGeneratorFeature,
+  "image-to-video": React.Fragment,
+  "text-to-video": React.Fragment,
 };
 
 /**
