@@ -27,6 +27,7 @@ export interface AIGenerateWizardTranslations {
   readonly processingHint: string;
   readonly successTitle: string;
   readonly saveButton: string;
+  readonly shareButton: string;
   readonly tryAgainButton: string;
   readonly fileTooLarge: string;
   readonly maxFileSize: string;
@@ -45,6 +46,7 @@ export interface AIGenerateWizardFlowProps {
     images: { uri: string }[];
   }) => Promise<string | null | void>;
   readonly onBack?: () => void;
-  readonly onSave?: (uri: string) => void;
+  readonly onSave?: (uri: string) => Promise<void>;
+  readonly onShare?: (uri: string) => Promise<void>;
   readonly t: (key: string) => string;
 }

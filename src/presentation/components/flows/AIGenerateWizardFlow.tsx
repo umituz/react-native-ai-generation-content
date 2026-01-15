@@ -28,6 +28,7 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
   onGenerate,
   onBack: onBackProp,
   onSave,
+  onShare,
   t,
 }) => {
   const tokens = useAppDesignTokens();
@@ -114,6 +115,14 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
               onPress: () => setCurrentStep(AIGenerateStep.CONFIG),
               icon: "refresh",
             }}
+            extraActions={[
+              {
+                label: translations.shareButton,
+                onPress: () => result && onShare?.(result),
+                icon: "share-variant",
+                variant: "outline",
+              },
+            ]}
           >
             {isVideo && result ? (
                <VideoResultPlayer uri={result} />
