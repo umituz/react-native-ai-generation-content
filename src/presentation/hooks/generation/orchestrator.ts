@@ -228,6 +228,8 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
       // Handle lifecycle completion
       handleLifecycleComplete("success", result);
+
+      return result;
     },
     [strategy, userId, alertMessages, deductCredit, showSuccess, onSuccess, handleLifecycleComplete],
   );
@@ -361,7 +363,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         }
 
         // 5. Execute generation
-        await executeGeneration(input);
+        return await executeGeneration(input);
       } catch (err) {
         const error = parseError(err);
         if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -375,6 +377,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
         // Handle lifecycle completion for errors
         handleLifecycleComplete("error", undefined, error);
+        throw error; // Re-throw so caller knows it failed
       } finally {
         isGeneratingRef.current = false;
         if (typeof __DEV__ !== "undefined" && __DEV__) {
