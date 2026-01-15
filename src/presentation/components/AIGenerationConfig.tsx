@@ -28,11 +28,13 @@ export const AIGenerationConfig: React.FC<AIGenerationConfigProps> = ({
 
   return (
     <View style={styles.container}>
-      <AIGenerationHero
-        title={heroTitle}
-        subtitle={heroSubtitle}
-        iconName={heroIcon}
-      />
+      {heroTitle && (
+        <AIGenerationHero
+          title={heroTitle}
+          subtitle={heroSubtitle}
+          iconName={heroIcon}
+        />
+      )}
 
       {images.length > 0 && (
         <View style={styles.imagePreviewContainer}>
