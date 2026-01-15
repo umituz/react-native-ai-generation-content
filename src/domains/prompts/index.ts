@@ -91,3 +91,16 @@ export type { ImagePromptResult, ImagePromptBuilderOptions, AnimeSelfiePromptRes
 
 export { DEFAULT_TEXT_TO_IMAGE_PROMPTS, DEFAULT_TEXT_TO_VOICE_PROMPTS } from './domain/entities/sample-prompts';
 export type { PromptSuggestion } from './domain/entities/sample-prompts';
+
+export { 
+  IDENTITY_PRESERVATION_CORE, 
+  PHOTOREALISTIC_RENDERING, 
+  NATURAL_POSE_GUIDELINES, 
+  MASTER_BASE_PROMPT,
+  COUPLE_IDENTITY_PRESERVATION,
+  createEnhancedPrompt,
+  createTransformationPrompt,
+  enhanceExistingPrompt,
+  createCouplePrompt
+} from './domain/entities/BasePromptStructure';
+export type { CreatePromptOptions } from './domain/entities/BasePromptStructure';
