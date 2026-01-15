@@ -17,6 +17,23 @@ import { AIGenerationResult } from "../display/AIGenerationResult";
 import { AIGenerateStep } from "../../hooks/generation/useAIGenerateState";
 import { useAIGenerateWizardFlow } from "./useAIGenerateWizardFlow";
 import { AIGenerateWizardFlowProps } from "./AIGenerateWizardFlow.types";
+import { useVideoPlayer, VideoView } from "expo-video";
+
+const VideoResultPlayer = ({ uri }: { uri: string }) => {
+  const player = useVideoPlayer(uri, player => {
+    player.loop = true;
+    player.play();
+  });
+
+  return (
+    <VideoView
+      style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 16 }}
+      player={player}
+      contentFit="cover"
+      nativeControls
+    />
+  );
+};
 
 export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
   featureType,
@@ -114,16 +131,8 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
               icon: "refresh",
             }}
           >
-            {isVideo ? (
-               // TODO: Use correct video player component if available in design system, 
-               // for now rendering Image with play icon overlay or similar approach is standard if no player passed.
-               // However, ideally we should use <Video> generic component.
-               // Assuming standard <Image> for now but we should address this.
-               // Let's use a conditional or comment.
-               <View style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 16, backgroundColor: "#000", justifyContent: 'center', alignItems: 'center' }}>
-                  <AtomicText style={{ color: "white" }}>Video Result: {result ? "Ready" : "Error"}</AtomicText>
-                  {/* Real implementation should use expo-video or similar */}
-               </View>
+            {isVideo && result ? (
+               <VideoResultPlayer uri={result} />
             ) : (
               <Image source={{ uri: result || "" }} style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 16 }} resizeMode="cover" />
             )}
