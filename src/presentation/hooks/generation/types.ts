@@ -128,7 +128,7 @@ export type GenerationErrorType =
   | "unknown";
 
 export interface UseGenerationOrchestratorReturn<TInput, TResult> {
-  generate: (input: TInput) => Promise<void>;
+  generate: (input: TInput) => Promise<TResult>;
   reset: () => void;
   status: OrchestratorStatus;
   isGenerating: boolean;
