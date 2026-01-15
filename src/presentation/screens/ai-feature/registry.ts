@@ -104,6 +104,22 @@ export const AI_FEATURE_CONFIGS: Record<AIFeatureId, AIFeatureConfig> = {
     creditType: "image",
     translationPrefix: "ai-kiss",
   },
+  
+  // Generic Video Features
+  "image-to-video": {
+    id: "image-to-video",
+    mode: "single-with-prompt",
+    outputType: "video",
+    creditType: "video",
+    translationPrefix: "image-to-video",
+  },
+  "text-to-video": {
+    id: "text-to-video",
+    mode: "text-input",
+    outputType: "video",
+    creditType: "video",
+    translationPrefix: "text-to-video",
+  },
 };
 
 /**

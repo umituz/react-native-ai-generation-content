@@ -19,7 +19,9 @@ export type AIFeatureId =
   | "face-swap"
   | "ai-hug"
   | "ai-kiss"
-  | "meme-generator";
+  | "meme-generator"
+  | "image-to-video"
+  | "text-to-video";
 
 /**
  * Image mode for the feature
