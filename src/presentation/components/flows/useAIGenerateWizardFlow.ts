@@ -5,7 +5,7 @@ import { getAIFeatureConfig, hasAIFeature } from "../../screens/ai-feature/regis
 
 interface UseAIGenerateWizardFlowProps {
   featureType: string;
-  onGenerate: (data: any) => Promise<string | null>;
+  onGenerate: (data: any) => Promise<string | null | void>;
   onBack?: () => void;
 }
 
