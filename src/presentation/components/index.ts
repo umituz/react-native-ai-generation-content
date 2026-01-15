@@ -9,7 +9,9 @@ export * from "./StylePresetsGrid";
 export * from "./AIGenerationForm";
 export * from "./AIGenerationForm.types";
 export * from "./AIGenerationConfig";
+
 export * from "./flows/AIGenerateWizardFlow";
+export * from "./flows/AIGenerateWizardFlow.types";
 
 export type { GenerationProgressContentProps } from "./GenerationProgressContent";
 export type { GenerationProgressBarProps } from "./GenerationProgressBar";
