@@ -26,6 +26,7 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
   durationOptions,
   onGenerate,
   onBack: onBackProp,
+  onSave,
   t,
 }) => {
   const tokens = useAppDesignTokens();
@@ -97,18 +98,35 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
       );
 
     case AIGenerateStep.RESULT:
+      const isVideo = ["image-to-video", "text-to-video", "ai-hug", "ai-kiss"].includes(featureType);
       return (
         <ScreenLayout header={<AIGenScreenHeader title={translations.headerTitle} onNavigationPress={handleBack} />}>
           <AIGenerationResult
             successText={translations.successTitle}
-            primaryAction={{ label: translations.saveButton, onPress: () => {}, icon: "download" }}
+            primaryAction={{ 
+              label: translations.saveButton, 
+              onPress: () => result && onSave?.(result), 
+              icon: "download" 
+            }}
             secondaryAction={{
               label: translations.tryAgainButton,
               onPress: () => setCurrentStep(AIGenerateStep.CONFIG),
               icon: "refresh",
             }}
           >
-            <Image source={{ uri: result || "" }} style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 16 }} resizeMode="cover" />
+            {isVideo ? (
+               // TODO: Use correct video player component if available in design system, 
+               // for now rendering Image with play icon overlay or similar approach is standard if no player passed.
+               // However, ideally we should use <Video> generic component.
+               // Assuming standard <Image> for now but we should address this.
+               // Let's use a conditional or comment.
+               <View style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 16, backgroundColor: "#000", justifyContent: 'center', alignItems: 'center' }}>
+                  <AtomicText style={{ color: "white" }}>Video Result: {result ? "Ready" : "Error"}</AtomicText>
+                  {/* Real implementation should use expo-video or similar */}
+               </View>
+            ) : (
+              <Image source={{ uri: result || "" }} style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 16 }} resizeMode="cover" />
+            )}
           </AIGenerationResult>
         </ScreenLayout>
       );

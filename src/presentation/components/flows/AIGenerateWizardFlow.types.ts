@@ -45,5 +45,6 @@ export interface AIGenerateWizardFlowProps {
     images: { uri: string }[];
   }) => Promise<string | null>;
   readonly onBack?: () => void;
+  readonly onSave?: (uri: string) => void;
   readonly t: (key: string) => string;
 }
