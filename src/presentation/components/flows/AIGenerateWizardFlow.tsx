@@ -17,23 +17,7 @@ import { AIGenerationResult } from "../display/AIGenerationResult";
 import { AIGenerateStep } from "../../hooks/generation/useAIGenerateState";
 import { useAIGenerateWizardFlow } from "./useAIGenerateWizardFlow";
 import { AIGenerateWizardFlowProps } from "./AIGenerateWizardFlow.types";
-import { useVideoPlayer, VideoView } from "expo-video";
-
-const VideoResultPlayer = ({ uri }: { uri: string }) => {
-  const player = useVideoPlayer(uri, player => {
-    player.loop = true;
-    player.play();
-  });
-
-  return (
-    <VideoView
-      style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 16 }}
-      player={player}
-      contentFit="cover"
-      nativeControls
-    />
-  );
-};
+import { VideoResultPlayer } from "../display/VideoResultPlayer";
 
 export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
   featureType,
