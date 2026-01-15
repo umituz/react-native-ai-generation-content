@@ -69,6 +69,7 @@ export type { ModerationResult, ModerationConfig, SynchronousGenerationInput, Sy
 export {
   useGeneration, usePendingJobs, useBackgroundGeneration,
   useGenerationFlow, useAIFeatureCallbacks,
+  useAIGenerateState, AIGenerateStep,
   useGenerationOrchestrator, useImageGeneration, useVideoGeneration,
   createGenerationError, getAlertMessage, parseError,
 } from "./presentation/hooks";
@@ -82,6 +83,7 @@ export type {
   GenerationError, GenerationErrorType, AlertMessages, UseGenerationOrchestratorReturn,
   SingleImageInput, DualImageInput, ImageGenerationInput, ImageGenerationConfig,
   DualImageVideoInput, VideoGenerationConfig,
+  UploadedImage,
 } from "./presentation/hooks";
 
 export {
@@ -92,6 +94,7 @@ export {
   GenerateButton, ResultDisplay, AIGenerationResult, ErrorDisplay, FeatureHeader,
   AIGenScreenHeader, CreditBadge, PhotoUploadCard, SettingsSheet, StyleSelector,
   AspectRatioSelector, DurationSelector, GridSelector, StylePresetsGrid, AIGenerationForm,
+  AIGenerationConfig,
   createAspectRatioOptions, createDurationOptions, createStyleOptions, createStyleOptionsFromConfig,
   ASPECT_RATIO_IDS, COMMON_DURATIONS,
 } from "./presentation/components";
@@ -122,6 +125,7 @@ export type {
   AspectRatioSelectorProps, DurationSelectorProps, GridSelectorProps, GridSelectorOption,
   StyleOption, AspectRatioOption, DurationValue, AspectRatioTranslations, DurationOption,
   StyleTranslations, AIGenerationFormProps, AIGenerationFormTranslations,
+  AIGenerationConfigProps,
 } from "./presentation/components";
 
 export { DEFAULT_SINGLE_PHOTO_FLOW, DEFAULT_DUAL_PHOTO_FLOW } from "./presentation/types/flow-config.types";

@@ -33,6 +33,7 @@ export interface PartnerStepScreenTranslations {
   readonly maxFileSize: string;
   readonly error: string;
   readonly uploadFailed: string;
+  readonly aiDisclosure?: string;
 }
 
 export interface PartnerStepScreenConfig {
@@ -175,6 +176,16 @@ export const PartnerStepScreen: React.FC<PartnerStepScreenProps> = ({
             maxNameLength={config.maxNameLength}
           />
         )}
+        {translations.aiDisclosure && (
+          <View style={styles.disclosureContainer}>
+            <AtomicText
+              type="labelSmall"
+              style={[styles.disclosureText, { color: tokens.colors.textSecondary }]}
+            >
+              {translations.aiDisclosure}
+            </AtomicText>
+          </View>
+        )}
       </ScreenLayout>
     </View>
   );
@@ -204,5 +215,17 @@ const createStyles = (tokens: DesignTokens) =>
     continueText: {
       fontWeight: "800",
       marginRight: 4,
+    },
+    disclosureContainer: {
+      marginTop: 24,
+      marginHorizontal: 24,
+      padding: 16,
+      borderRadius: 12,
+      backgroundColor: tokens.colors.surfaceVariant + "40",
+    },
+    disclosureText: {
+      textAlign: "center",
+      lineHeight: 18,
+      opacity: 0.8,
     },
   });

@@ -59,3 +59,6 @@ export type {
   AIFeatureCallbacks,
   AIFeatureGenerationResult,
 } from "./useAIFeatureCallbacks";
+
+export { useAIGenerateState, AIGenerateStep } from "./generation/useAIGenerateState";
+export type { UploadedImage } from "./generation/useAIGenerateState";

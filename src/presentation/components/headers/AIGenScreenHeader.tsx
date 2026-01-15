@@ -49,6 +49,15 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
   return (
     <View style={styles.header}>
       <View style={styles.headerTop}>
+        {onNavigationPress && (
+          <TouchableOpacity
+            onPress={onNavigationPress}
+            style={[buttonStyle, { marginRight: 12 }]}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <AtomicIcon name={iconName} size="md" color={iconColor} />
+          </TouchableOpacity>
+        )}
         <View style={styles.titleContainer}>
           <AtomicText
             type={titleType}
@@ -62,15 +71,6 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
         </View>
         <View style={styles.headerActions}>
           {rightContent}
-          {onNavigationPress && (
-            <TouchableOpacity
-              onPress={onNavigationPress}
-              style={buttonStyle}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <AtomicIcon name={iconName} size="md" color={iconColor} />
-            </TouchableOpacity>
-          )}
         </View>
       </View>
       {showDescription && description && (
