@@ -5,10 +5,6 @@
 
 import type { ReactNode } from "react";
 import type {
-  BaseSingleImageHookReturn,
-  BaseDualImageHookReturn,
-} from "../../../features/image-to-image/domain/types";
-import type {
   ModalTranslations,
   BaseLayoutTranslations,
   PhotoUploadTranslations,
@@ -23,6 +19,36 @@ import type {
   DualImageVideoFeatureState,
   SingleImageWithPromptFeatureState,
 } from "./feature-states";
+
+/**
+ * Base hook return for single image features
+ */
+export interface BaseSingleImageHookReturn {
+  readonly imageUri: string | null;
+  readonly processedUrl: string | null;
+  readonly isProcessing: boolean;
+  readonly progress: number;
+  selectImage(): Promise<void>;
+  process(): Promise<void>;
+  save(): Promise<void>;
+  reset(): void;
+}
+
+/**
+ * Base hook return for dual image features
+ */
+export interface BaseDualImageHookReturn {
+  readonly sourceImageUri: string | null;
+  readonly targetImageUri: string | null;
+  readonly processedUrl: string | null;
+  readonly isProcessing: boolean;
+  readonly progress: number;
+  selectSourceImage(): Promise<void>;
+  selectTargetImage(): Promise<void>;
+  process(): Promise<void>;
+  save(): Promise<void>;
+  reset(): void;
+}
 
 /**
  * Single image feature layout props

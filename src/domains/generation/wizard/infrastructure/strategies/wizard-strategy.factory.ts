@@ -9,8 +9,6 @@ import type { GenerationStrategy } from "../../../../presentation/hooks/generati
 import type { VideoFeatureType } from "../../../../domain/interfaces";
 import { executeVideoFeature } from "../../../../infrastructure/services/video-feature-executor.service";
 import { createCreationsRepository } from "../../../creations/infrastructure/adapters";
-import { enhanceCouplePrompt } from "../../../../features/couple-future/infrastructure/couplePromptEnhancer";
-import type { CoupleFeatureSelection } from "../../../../features/couple-future/domain/types";
 import type { WizardOutputType, WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 
 declare const __DEV__: boolean;
@@ -179,29 +177,29 @@ async function buildGenerationInput(
 
   // For image generation, enhance prompt with style selections
   if (outputType === "image") {
-    const selections: CoupleFeatureSelection = {};
+    const styleEnhancements: string[] = [];
 
     // Romantic mood (multi-select array)
     const romanticMoods = wizardData.selection_romantic_mood as string[] | undefined;
     if (romanticMoods && romanticMoods.length > 0) {
-      selections.romanticMoods = romanticMoods;
+      styleEnhancements.push(`Mood: ${romanticMoods.join(", ")}`);
     }
 
     // Art style (single select)
     const artStyle = wizardData.selection_art_style as string | undefined;
     if (artStyle && artStyle !== "original") {
-      selections.artStyle = artStyle;
+      styleEnhancements.push(`Art style: ${artStyle}`);
     }
 
     // Artist style (single select)
     const artist = wizardData.selection_artist_style as string | undefined;
     if (artist && artist !== "original") {
-      selections.artist = artist;
+      styleEnhancements.push(`Artist style: ${artist}`);
     }
 
     // Enhance prompt with selected styles
-    if (Object.keys(selections).length > 0) {
-      prompt = enhanceCouplePrompt(prompt, selections);
+    if (styleEnhancements.length > 0) {
+      prompt = `${prompt}. ${styleEnhancements.join(", ")}`;
     }
 
     return {

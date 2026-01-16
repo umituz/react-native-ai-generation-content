@@ -17,8 +17,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components";
 import { FaceDetectionToggle } from "../../../../domains/face-detection";
-import { PhotoTips } from "../../../../features/partner-upload/presentation/components/PhotoTips";
-import type { UploadedImage } from "../../../../features/partner-upload/domain/types";
+import type { UploadedImage } from "../../../../presentation/hooks/generation/useAIGenerateState";
 import { usePhotoUploadState } from "../hooks/usePhotoUploadState";
 
 export interface PhotoUploadScreenTranslations {
@@ -134,16 +133,6 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
         <AtomicText style={[styles.subtitle, { color: tokens.colors.textSecondary }]}>
           {translations.subtitle}
         </AtomicText>
-
-        {/* Photo Tips - InfoGrid version */}
-        {showPhotoTips && (
-          <PhotoTips
-            t={t}
-            titleKey="photoUpload.tips.title"
-            headerIcon="bulb"
-            style={{ marginHorizontal: 24, marginBottom: 20 }}
-          />
-        )}
 
         {showFaceDetection && onFaceDetectionToggle && (
           <FaceDetectionToggle

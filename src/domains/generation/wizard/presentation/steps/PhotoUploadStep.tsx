@@ -6,10 +6,8 @@
 
 import React from "react";
 import type { PhotoUploadStepConfig } from "../../domain/entities/wizard-config.types";
-
-// Use wizard domain's generic photo upload screen - NO feature-specific references!
+import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 import { GenericPhotoUploadScreen } from "../screens/GenericPhotoUploadScreen";
-import type { UploadedImage } from "../../../../features/partner-upload/domain/types";
 
 export interface PhotoUploadStepProps {
   readonly config: PhotoUploadStepConfig;

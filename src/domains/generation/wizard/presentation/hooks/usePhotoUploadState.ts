@@ -7,7 +7,7 @@
 import { useState, useCallback } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
-import type { UploadedImage } from "../../../../features/partner-upload/domain/types";
+import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
 export interface PhotoUploadConfig {
   readonly maxFileSizeMB?: number;

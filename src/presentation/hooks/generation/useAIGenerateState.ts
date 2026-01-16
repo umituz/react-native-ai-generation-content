@@ -12,6 +12,9 @@ export interface UploadedImage {
   uri: string;
   previewUrl?: string;
   name?: string;
+  width?: number;
+  height?: number;
+  fileSize?: number;
 }
 
 import { useState, useCallback } from "react";
