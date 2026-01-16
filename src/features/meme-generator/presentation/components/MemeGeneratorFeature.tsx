@@ -62,11 +62,16 @@ export const MemeGeneratorFeature: React.FC<MemeGeneratorFeatureProps> = ({
       description: s.description
   })), [stylesList]);
 
+  // Validate model is provided from app
+  if (!config.model) {
+    throw new Error(
+      "MemeGeneratorFeature: model is required in config. " +
+      "Please provide model from app's generation config."
+    );
+  }
+
   const { state, setPrompt, generate, reset, isReady } = useTextToImageFeature({
-    config: {
-        ...config,
-        model: config.model || "fal-ai/nano-banana-edit", 
-    },
+    config,
     userId,
   });
 

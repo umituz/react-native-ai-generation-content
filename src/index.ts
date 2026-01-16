@@ -167,6 +167,15 @@ export * from "./features/partner-upload";
 export * from "./features/scenarios";
 export * from "./infrastructure/orchestration";
 
+// Generation Config Provider (App Configuration)
+export {
+  GenerationConfigProvider,
+  useGenerationConfig,
+  type GenerationModels,
+  type GenerationConfigContextValue,
+  type GenerationConfigProviderProps,
+} from "./infrastructure/providers";
+
 // Result Preview Domain
 export * from "./domains/result-preview";
 

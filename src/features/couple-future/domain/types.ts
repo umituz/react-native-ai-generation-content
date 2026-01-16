@@ -38,7 +38,6 @@ export interface CoupleFutureResult {
 }
 
 export const COUPLE_FUTURE_DEFAULTS = {
-  model: "fal-ai/nano-banana/edit",
   aspectRatio: "4:3" as NanoBananaAspectRatio,
   outputFormat: "jpeg" as NanoBananaOutputFormat,
   timeoutMs: 300000,

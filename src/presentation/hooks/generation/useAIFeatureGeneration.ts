@@ -18,6 +18,8 @@ interface FeatureGenerationConfig {
   onError?: (error: GenerationError) => void;
   creditCost?: number;
   onCreditsExhausted?: () => void;
+  /** REQUIRED for video features: Video generation model ID from app config */
+  videoModel?: string;
 }
 
 export function useAIFeatureGeneration({
@@ -28,6 +30,7 @@ export function useAIFeatureGeneration({
   onError,
   creditCost = 1,
   onCreditsExhausted,
+  videoModel,
 }: FeatureGenerationConfig) {
 
   // Hook for standard image features
@@ -58,16 +61,23 @@ export function useAIFeatureGeneration({
   const { generate: generateImageToVideo } = useGenerationOrchestrator(
     {
       execute: async (input: { imageUri: string; prompt: string; duration: number }, onProgress) => {
+        if (!videoModel) {
+          throw new Error(
+            "videoModel is required for image-to-video feature. " +
+            "Please provide videoModel from app's generation config."
+          );
+        }
+
         const result = await executeImageToVideo(
           {
             imageUri: input.imageUri, // Pass URI directly
-            imageBase64: await prepareImage(input.imageUri), 
+            imageBase64: await prepareImage(input.imageUri),
             motionPrompt: input.prompt,
             options: { duration: input.duration },
             userId: userId || "anonymous",
           },
           {
-            model: "kling-video", // Default or hardcoded for now, ideal to get from config
+            model: videoModel,
             buildInput: (image, prompt, opts) => ({
               image,
               prompt,
@@ -88,6 +98,13 @@ export function useAIFeatureGeneration({
   const { generate: generateTextToVideo } = useGenerationOrchestrator(
     {
       execute: async (input: { prompt: string; duration: number }, onProgress) => {
+        if (!videoModel) {
+          throw new Error(
+            "videoModel is required for text-to-video feature. " +
+            "Please provide videoModel from app's generation config."
+          );
+        }
+
         const result = await executeTextToVideo(
           {
             prompt: input.prompt,
@@ -95,7 +112,7 @@ export function useAIFeatureGeneration({
             userId: userId || "anonymous",
           },
           {
-            model: "kling-video", // Default
+            model: videoModel,
             buildInput: (prompt, opts) => ({ prompt, ...opts }),
             onProgress,
           }

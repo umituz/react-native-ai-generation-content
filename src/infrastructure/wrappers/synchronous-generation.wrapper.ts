@@ -20,6 +20,8 @@ export interface SynchronousGenerationConfig<T = unknown> {
   checkCredits?: (userId: string, type: string) => Promise<boolean>;
   deductCredits?: (userId: string, type: string) => Promise<void>;
   execute: (prompt: string, metadata?: Record<string, unknown>) => Promise<T>;
+  /** Model ID for metadata tracking */
+  model?: string;
 }
 
 export async function generateSynchronously<T = string>(
@@ -67,20 +69,21 @@ export async function generateSynchronously<T = string>(
       await config.deductCredits(input.userId, input.type || "generation");
     }
 
-    return createSuccessResult(result);
+    return createSuccessResult(result, config.model || "unknown");
   } catch (error) {
     return createErrorResult(
       error instanceof Error ? error.message : "generation_failed",
+      config.model || "unknown",
     );
   }
 }
 
-function createSuccessResult<T>(data: T): GenerationResult<T> {
+function createSuccessResult<T>(data: T, model: string): GenerationResult<T> {
   return {
     success: true,
     data,
     metadata: {
-      model: "default",
+      model,
       startTime: Date.now(),
       endTime: Date.now(),
       duration: 0,
@@ -88,12 +91,12 @@ function createSuccessResult<T>(data: T): GenerationResult<T> {
   };
 }
 
-function createErrorResult<T>(error: string): GenerationResult<T> {
+function createErrorResult<T>(error: string, model: string): GenerationResult<T> {
   return {
     success: false,
     error,
     metadata: {
-      model: "default",
+      model,
       startTime: Date.now(),
       endTime: Date.now(),
       duration: 0,
