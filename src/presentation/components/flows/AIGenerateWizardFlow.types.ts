@@ -33,7 +33,7 @@ export interface AIGenerateWizardTranslations {
   readonly maxFileSize: string;
 }
 
-export interface StyleOption {
+export interface WizardStyleOption {
   readonly id: string;
   readonly label: string;
   readonly icon?: string;
@@ -49,7 +49,7 @@ export interface PresetOption {
 export interface AIGenerateWizardFlowProps {
   readonly featureType: string;
   readonly translations: AIGenerateWizardTranslations;
-  readonly styleOptions: StyleOption[];
+  readonly styleOptions: WizardStyleOption[];
   readonly presets: PresetOption[];
   readonly durationOptions: number[];
   readonly onGenerate: (data: {

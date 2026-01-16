@@ -32,6 +32,29 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
   t,
 }) => {
   const tokens = useAppDesignTokens();
+
+  // Transform WizardStyleOption[] to StyleOption[] format
+  const transformedStyles = React.useMemo(() =>
+    styleOptions.map((style) => ({
+      id: style.id,
+      name: style.label,
+      description: undefined,
+      icon: style.icon,
+    })),
+    [styleOptions]
+  );
+
+  // Transform PresetOption[] to StylePreset[] format
+  const transformedPresets = React.useMemo(() =>
+    presets.map((preset) => ({
+      id: preset.id,
+      name: preset.label,
+      emoji: preset.icon || "",
+      description: preset.prompt || "",
+    })),
+    [presets]
+  );
+
   const {
     currentStep,
     setCurrentStep,
@@ -183,11 +206,11 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
               heroSubtitle={translations.heroSubtitle}
               isGenerating={isGenerating}
               progress={progress}
-              presets={presets}
+              presets={transformedPresets}
               onPresetPress={() => { void handleGenerate(); }}
               prompt={prompt}
               onPromptChange={setPrompt}
-              styles={styleOptions}
+              styles={transformedStyles}
               selectedStyle={selectedStyle}
               onStyleSelect={setSelectedStyle}
               duration={selectedDuration}
