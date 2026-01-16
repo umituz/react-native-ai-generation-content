@@ -3,7 +3,7 @@
  * Complete wizard component for couple future generation flow
  */
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { useFlow, resetFlowStore } from "../../../../infrastructure/flow";
@@ -39,6 +39,16 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
   );
 
   const flow = useFlow({ steps: stepDefinitions });
+
+  // Auto-advance flow if scenario is pre-selected (from CategoryNavigationContainer)
+  useEffect(() => {
+    const isAtScenarioSelectionStep = flow.currentStep?.type === StepType.SCENARIO_SELECTION;
+    const hasPreSelectedScenario = data.selectedScenario && !flow.selectedCategory;
+
+    if (isAtScenarioSelectionStep && hasPreSelectedScenario) {
+      flow.nextStep();
+    }
+  }, [flow, data.selectedScenario]);
 
   const handleScenarioSelect = useCallback(
     (scenario: WizardScenarioData) => {
