@@ -17,9 +17,12 @@ import type { AlertMessages } from "../../../../presentation/hooks/generation/or
 
 declare const __DEV__: boolean;
 
+export type WizardOutputType = "image" | "video";
+
 export interface WizardScenarioData {
   readonly id: string;
   readonly aiPrompt: string;
+  readonly outputType?: WizardOutputType; // "image" for couple-future, "video" for ai-hug/kiss
   readonly title?: string;
   readonly description?: string;
   [key: string]: unknown;
@@ -30,6 +33,14 @@ interface VideoGenerationInput {
   readonly targetImageBase64: string;
   readonly prompt: string;
 }
+
+interface ImageGenerationInput {
+  readonly partnerABase64: string;
+  readonly partnerBBase64: string;
+  readonly prompt: string;
+}
+
+type GenerationInput = VideoGenerationInput | ImageGenerationInput;
 
 export interface UseWizardGenerationProps {
   readonly scenario: WizardScenarioData;
@@ -60,6 +71,78 @@ function getVideoFeatureType(scenarioId: string): VideoFeatureType {
   return "ai-hug";
 }
 
+async function executeImageGeneration(
+  input: ImageGenerationInput,
+  onProgress?: (progress: number) => void,
+): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
+  const { providerRegistry } = await import("../../../../infrastructure/services/provider-registry.service");
+
+  const provider = providerRegistry.getActiveProvider();
+  if (!provider || !provider.isInitialized()) {
+    return { success: false, error: "AI provider not initialized" };
+  }
+
+  try {
+    onProgress?.(5);
+
+    const formatBase64 = (base64: string): string => {
+      return base64.startsWith("data:") ? base64 : `data:image/jpeg;base64,${base64}`;
+    };
+
+    const imageUrls = [input.partnerABase64, input.partnerBBase64]
+      .filter(Boolean)
+      .map(formatBase64);
+
+    if (imageUrls.length < 2) {
+      return { success: false, error: "Two images required" };
+    }
+
+    onProgress?.(10);
+
+    const enhancedPrompt = `A photorealistic image of a couple. The first person @image1 and the second person @image2. ${input.prompt}. High quality, detailed, professional photography.`;
+
+    const modelInput = {
+      image_urls: imageUrls,
+      prompt: enhancedPrompt,
+      aspect_ratio: "1:1",
+      output_format: "jpeg",
+      num_images: 1,
+    };
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[useWizardGeneration] Starting image generation");
+    }
+
+    let lastStatus = "";
+    const result = await provider.subscribe("fal-ai/nano-banana", modelInput, {
+      timeoutMs: 120000,
+      onQueueUpdate: (status) => {
+        if (status.status === lastStatus) return;
+        lastStatus = status.status;
+        if (status.status === "IN_QUEUE") onProgress?.(20);
+        else if (status.status === "IN_PROGRESS") onProgress?.(50);
+      },
+    });
+
+    onProgress?.(90);
+
+    const rawResult = result as Record<string, unknown>;
+    const data = (rawResult?.data ?? rawResult) as { images?: Array<{ url: string }> };
+    const imageUrl = data?.images?.[0]?.url;
+
+    onProgress?.(100);
+
+    if (!imageUrl) {
+      return { success: false, error: "No image generated" };
+    }
+
+    return { success: true, imageUrl };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Generation failed";
+    return { success: false, error: message };
+  }
+}
+
 async function convertUriToBase64(uri: string): Promise<string> {
   try {
     const base64 = await FileSystem.readAsStringAsync(uri, {
@@ -77,7 +160,7 @@ async function convertUriToBase64(uri: string): Promise<string> {
 async function buildGenerationInput(
   wizardData: Record<string, unknown>,
   scenario: WizardScenarioData,
-): Promise<VideoGenerationInput | null> {
+): Promise<GenerationInput | null> {
   const photo1Key = Object.keys(wizardData).find((k) => k.includes("photo_1"));
   const photo2Key = Object.keys(wizardData).find((k) => k.includes("photo_2"));
 
@@ -110,11 +193,23 @@ async function buildGenerationInput(
     convertUriToBase64(photo2.uri),
   ]);
 
-  return {
-    sourceImageBase64: photo1Base64,
-    targetImageBase64: photo2Base64,
-    prompt: scenario.aiPrompt || `Generate ${scenario.id} scene`,
-  };
+  const prompt = scenario.aiPrompt || `Generate ${scenario.id} scene`;
+  const outputType = scenario.outputType || "video"; // Default to video for backward compatibility
+
+  // Build input based on output type
+  if (outputType === "image") {
+    return {
+      partnerABase64: photo1Base64,
+      partnerBBase64: photo2Base64,
+      prompt,
+    } as ImageGenerationInput;
+  } else {
+    return {
+      sourceImageBase64: photo1Base64,
+      targetImageBase64: photo2Base64,
+      prompt,
+    } as VideoGenerationInput;
+  }
 }
 
 export const useWizardGeneration = (
@@ -133,48 +228,68 @@ export const useWizardGeneration = (
   } = props;
 
   const hasStarted = useRef(false);
-  const lastInputRef = useRef<VideoGenerationInput | null>(null);
+  const lastInputRef = useRef<GenerationInput | null>(null);
   const repository = useMemo(() => createCreationsRepository("creations"), []);
   const videoFeatureType = useMemo(() => getVideoFeatureType(scenario.id), [scenario.id]);
+  const outputType = scenario.outputType || "video";
 
-  const strategy: GenerationStrategy<VideoGenerationInput, { videoUrl: string }> = useMemo(
+  type GenerationResult = { videoUrl: string } | { imageUrl: string };
+
+  const strategy: GenerationStrategy<GenerationInput, GenerationResult> = useMemo(
     () => ({
       execute: async (input, onProgress) => {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[useWizardGeneration] Executing generation", {
             scenarioId: scenario.id,
-            featureType: videoFeatureType,
+            outputType,
           });
         }
 
         lastInputRef.current = input;
 
-        const result = await executeVideoFeature(
-          videoFeatureType,
-          {
-            sourceImageBase64: input.sourceImageBase64,
-            targetImageBase64: input.targetImageBase64,
-            prompt: input.prompt,
-          },
-          { onProgress },
-        );
+        // Execute based on output type
+        if (outputType === "image") {
+          const imageInput = input as ImageGenerationInput;
+          const result = await executeImageGeneration(imageInput, onProgress);
 
-        if (!result.success || !result.videoUrl) {
-          throw new Error(result.error || "Video generation failed");
+          if (!result.success || !result.imageUrl) {
+            throw new Error(result.error || "Image generation failed");
+          }
+
+          return { imageUrl: result.imageUrl };
+        } else {
+          const videoInput = input as VideoGenerationInput;
+          const result = await executeVideoFeature(
+            videoFeatureType,
+            {
+              sourceImageBase64: videoInput.sourceImageBase64,
+              targetImageBase64: videoInput.targetImageBase64,
+              prompt: videoInput.prompt,
+            },
+            { onProgress },
+          );
+
+          if (!result.success || !result.videoUrl) {
+            throw new Error(result.error || "Video generation failed");
+          }
+
+          return { videoUrl: result.videoUrl };
         }
-
-        return { videoUrl: result.videoUrl };
       },
       getCreditCost: () => 1,
       save: async (result, uid) => {
         const input = lastInputRef.current;
-        if (!input || !result.videoUrl) return;
+        if (!input) return;
+
+        const videoResult = result as { videoUrl?: string };
+        const imageResult = result as { imageUrl?: string };
 
         const creation = {
-          videoUrl: result.videoUrl,
+          videoUrl: videoResult.videoUrl,
+          imageUrl: imageResult.imageUrl,
           scenarioId: scenario.id,
           scenarioTitle: scenario.title || scenario.id,
-          prompt: input.prompt,
+          prompt: (input as VideoGenerationInput).prompt,
           createdAt: Date.now(),
         };
 
@@ -185,7 +300,7 @@ export const useWizardGeneration = (
         }
       },
     }),
-    [scenario, videoFeatureType, repository],
+    [scenario, videoFeatureType, repository, outputType],
   );
 
   const { generate, isGenerating, progress } = useGenerationOrchestrator(strategy, {

@@ -12,7 +12,7 @@
  * NO feature-specific code here - everything driven by configuration!
  */
 
-import React, { useMemo, useCallback, useEffect } from "react";
+import React, { useMemo, useCallback, useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { useFlow } from "../../../../infrastructure/flow/useFlow";
@@ -90,6 +90,9 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     onCreditsExhausted,
   });
 
+  // Track previous step ID to prevent infinite loops
+  const prevStepIdRef = useRef<string>();
+
   // DEBUG logging
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[GenericWizardFlow] Render", {
@@ -102,18 +105,23 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   }
 
   // Notify parent when step changes
+  // Only call onStepChange when step ID actually changes (not on every object reference change)
   useEffect(() => {
     if (flow.currentStep && onStepChange) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[GenericWizardFlow] Step changed", {
-          stepId: flow.currentStep.id,
-          stepType: flow.currentStep.type,
-        });
+      const currentStepId = flow.currentStep.id;
+      // Only notify if step ID changed
+      if (prevStepIdRef.current !== currentStepId) {
+        prevStepIdRef.current = currentStepId;
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[GenericWizardFlow] Step changed", {
+            stepId: flow.currentStep.id,
+            stepType: flow.currentStep.type,
+          });
+        }
+        onStepChange(flow.currentStep.id, flow.currentStep.type);
       }
-      onStepChange(flow.currentStep.id, flow.currentStep.type);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flow.currentStep, flow.currentStepIndex]);
+  }, [flow.currentStep, flow.currentStepIndex, onStepChange]);
 
   // Handle step continue
   const handleStepContinue = useCallback(

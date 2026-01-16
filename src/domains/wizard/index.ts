@@ -69,4 +69,5 @@ export type {
   UseWizardGenerationProps,
   UseWizardGenerationReturn,
   WizardScenarioData,
+  WizardOutputType,
 } from "./presentation/hooks/useWizardGeneration";
