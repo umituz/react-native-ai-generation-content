@@ -11,7 +11,7 @@ import type {
   ImageGenerationOutput,
   VideoGenerationOutput,
 } from "../domain/generation.types";
-import { ExecutorFactory } from "../../../infrastructure/executors/executor-factory";
+import { ExecutorFactory } from "../infrastructure/executors/executor-factory";
 import { featureRegistry } from "./feature-registry";
 
 declare const __DEV__: boolean;

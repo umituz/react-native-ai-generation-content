@@ -1,9 +1,3 @@
-/**
- * Generation Domain
- * Generic, feature-agnostic AI generation system
- */
-
-// Presentation Layer
 export {
   useAIGeneration,
   type UseAIGenerationProps,
@@ -11,11 +5,9 @@ export {
   type AlertMessages,
 } from "./presentation/useAIGeneration.hook";
 
-// Application Layer
 export { featureRegistry } from "./application/feature-registry";
 export { createGenerationStrategy } from "./application/generation-strategy.factory";
 
-// Domain Layer
 export type {
   FeatureConfig,
   FeatureRegistration,
@@ -35,3 +27,6 @@ export type {
   MemeGenerationInput,
   MemeGenerationOutput,
 } from "./domain/generation.types";
+
+export * from "./wizard";
+export * from "./infrastructure/flow";

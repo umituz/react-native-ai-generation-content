@@ -9,8 +9,8 @@ import type {
   VideoGenerationOutput,
   GenerationOptions,
   GenerationResult,
-} from "../../domains/generation/domain/generation.types";
-import { providerRegistry } from "../services/provider-registry.service";
+} from "../../domain/generation.types";
+import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 
 declare const __DEV__: boolean;
 
