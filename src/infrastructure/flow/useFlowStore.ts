@@ -7,9 +7,7 @@ import { createStore } from "@umituz/react-native-design-system";
 import type {
   FlowState,
   FlowActions,
-  CategoryData,
-  ScenarioData,
-  UploadedImageData,
+  FlowUploadedImageData,
   StepDefinition,
 } from "../../domain/entities/flow-config.types";
 
@@ -84,10 +82,10 @@ export const createFlowStore = (config: FlowStoreConfig) => {
         }
       },
 
-      setCategory: (category: CategoryData | undefined) => set({ selectedCategory: category }),
-      setScenario: (scenario: ScenarioData | undefined) => set({ selectedScenario: scenario }),
+      setCategory: (category: unknown) => set({ selectedCategory: category }),
+      setScenario: (scenario: unknown) => set({ selectedScenario: scenario }),
 
-      setPartnerImage: (partnerId: string, image: UploadedImageData | undefined) => {
+      setPartnerImage: (partnerId: string, image: FlowUploadedImageData | undefined) => {
         const { partners } = get();
         set({ partners: { ...partners, [partnerId]: image } });
       },

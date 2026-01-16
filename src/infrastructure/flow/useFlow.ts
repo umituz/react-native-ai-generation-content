@@ -5,7 +5,7 @@
 
 import { useRef, useCallback, useMemo } from "react";
 import { createFlowStore, type FlowStoreType } from "./useFlowStore";
-import type { FlowState, FlowActions, StepDefinition } from "../../domain/entities/flow-config.types";
+import type { FlowState, FlowActions, StepDefinition, FlowUploadedImageData } from "../../domain/entities/flow-config.types";
 
 interface UseFlowConfig {
   steps: readonly StepDefinition[];
@@ -20,7 +20,7 @@ interface UseFlowReturn extends FlowState, FlowActions {
   isFirstStep: boolean;
   isLastStep: boolean;
   hasPartner: (partnerId: string) => boolean;
-  getPartnerImage: (partnerId: string) => FlowState["partners"][string];
+  getPartnerImage: (partnerId: string) => FlowUploadedImageData | undefined;
   getPartnerName: (partnerId: string) => string;
 }
 

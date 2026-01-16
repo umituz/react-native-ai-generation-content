@@ -25,31 +25,8 @@ export interface PartnerConfig {
   readonly maxNameLength?: number;
 }
 
-/** Category Data - App provides */
-export interface CategoryData {
-  readonly id: string;
-  readonly titleKey: string;
-  readonly descriptionKey?: string;
-  readonly icon: string;
-  readonly imageUrl?: string;
-  readonly subcategories?: readonly CategoryData[];
-}
-
-/** Scenario Data - App provides */
-export interface ScenarioData {
-  readonly id: string;
-  readonly categoryId?: string;
-  readonly titleKey: string;
-  readonly descriptionKey: string;
-  readonly icon: string;
-  readonly imageUrl?: string;
-  readonly previewImageUrl?: string;
-  readonly aiPrompt: string;
-  readonly storyTemplate?: string;
-}
-
 /** Visual Style Option */
-export interface VisualStyleData {
+export interface FlowVisualStyleData {
   readonly id: string;
   readonly icon: string;
   readonly labelKey: string;
@@ -57,7 +34,7 @@ export interface VisualStyleData {
 }
 
 /** Uploaded Image Data */
-export interface UploadedImageData {
+export interface FlowUploadedImageData {
   readonly uri: string;
   readonly base64: string;
   readonly mimeType: string;
@@ -88,9 +65,9 @@ export interface FlowState {
   readonly currentStepId: string;
   readonly currentStepIndex: number;
   readonly completedSteps: readonly string[];
-  readonly selectedCategory?: CategoryData;
-  readonly selectedScenario?: ScenarioData;
-  readonly partners: Record<string, UploadedImageData | undefined>;
+  readonly selectedCategory?: unknown;
+  readonly selectedScenario?: unknown;
+  readonly partners: Record<string, FlowUploadedImageData | undefined>;
   readonly partnerNames: Record<string, string>;
   readonly textInput?: string;
   readonly visualStyle?: string;
@@ -107,9 +84,9 @@ export interface FlowActions {
   goToStep: (stepId: string) => void;
   nextStep: () => void;
   previousStep: () => void;
-  setCategory: (category: CategoryData | undefined) => void;
-  setScenario: (scenario: ScenarioData | undefined) => void;
-  setPartnerImage: (partnerId: string, image: UploadedImageData | undefined) => void;
+  setCategory: (category: unknown) => void;
+  setScenario: (scenario: unknown) => void;
+  setPartnerImage: (partnerId: string, image: FlowUploadedImageData | undefined) => void;
   setPartnerName: (partnerId: string, name: string) => void;
   setTextInput: (text: string) => void;
   setVisualStyle: (styleId: string) => void;
@@ -148,9 +125,9 @@ export interface FlowCallbacks {
 
 /** Flow Data Provider - App provides data */
 export interface FlowDataProvider {
-  readonly categories?: readonly CategoryData[];
-  readonly scenarios?: readonly ScenarioData[];
-  readonly visualStyles?: readonly VisualStyleData[];
+  readonly categories?: readonly unknown[];
+  readonly scenarios?: readonly unknown[];
+  readonly visualStyles?: readonly FlowVisualStyleData[];
   readonly surprisePrompts?: readonly string[];
 }
 

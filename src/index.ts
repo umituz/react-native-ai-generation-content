@@ -210,9 +210,7 @@ export type {
   StepComponentProps,
   StepTransition,
   PartnerConfig,
-  CategoryData,
-  ScenarioData,
-  VisualStyleData,
-  UploadedImageData,
+  FlowVisualStyleData,
+  FlowUploadedImageData,
   FlowGenerationStatus,
 } from "./domain/entities/flow-config.types";
