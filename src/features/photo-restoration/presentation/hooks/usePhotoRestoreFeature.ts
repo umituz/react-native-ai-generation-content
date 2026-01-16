@@ -4,7 +4,7 @@
  */
 
 import { useSingleImageFeature, type BaseSingleImageHookReturn } from "../../../image-to-image";
-import type { PhotoRestoreFeatureConfig, PhotoRestoreResult } from "../../domain/types";
+import type { PhotoRestoreFeatureConfig } from "../../domain/types";
 
 export interface UsePhotoRestoreFeatureProps {
   config: PhotoRestoreFeatureConfig;

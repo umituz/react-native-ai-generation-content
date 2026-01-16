@@ -4,7 +4,6 @@ import { View, Image, StyleSheet } from "react-native";
 import { AIGenerationHero } from "./AIGenerationHero";
 import { AIGenerationForm } from "./AIGenerationForm";
 import type { AIGenerationFormProps } from "./AIGenerationForm.types";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
 
 export interface AIGenerationConfigProps extends Omit<AIGenerationFormProps, "isGenerating" | "progress"> {
   readonly heroTitle: string;
@@ -24,8 +23,6 @@ export const AIGenerationConfig: React.FC<AIGenerationConfigProps> = ({
   progress = 0,
   ...formProps
 }) => {
-  const tokens = useAppDesignTokens();
-
   return (
     <View style={styles.container}>
       {heroTitle && (

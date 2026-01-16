@@ -3,9 +3,16 @@ import { useMemo, useCallback, useEffect } from "react";
 import { useAIGenerateState, AIGenerateStep } from "../../hooks/generation/useAIGenerateState";
 import { getAIFeatureConfig, hasAIFeature } from "../../screens/ai-feature/registry";
 
+interface GenerationData {
+  prompt: string;
+  style: string;
+  duration: number;
+  images: { uri: string; previewUrl?: string }[];
+}
+
 interface UseAIGenerateWizardFlowProps {
   featureType: string;
-  onGenerate: (data: any) => Promise<string | null | void>;
+  onGenerate: (data: GenerationData) => Promise<string | null | void>;
   onBack?: () => void;
 }
 
@@ -15,15 +22,15 @@ export function useAIGenerateWizardFlow({
   onBack: onBackProp,
 }: UseAIGenerateWizardFlowProps) {
   const state = useAIGenerateState();
-  const { 
-    currentStep, setCurrentStep, isGenerating, setIsGenerating, 
-    setProgress, setResult, images, prompt, selectedStyle, 
-    selectedDuration, setStepImage 
+  const {
+    currentStep, setCurrentStep, setIsGenerating,
+    setProgress, setResult, images, prompt, selectedStyle,
+    selectedDuration
   } = state;
 
   const imageCountRequired = useMemo(() => {
     if (!featureType || !hasAIFeature(featureType)) return 0;
-    const config = getAIFeatureConfig(featureType as any);
+    const config = getAIFeatureConfig(featureType as Parameters<typeof getAIFeatureConfig>[0]);
     if (config.mode === "dual" || config.mode === "dual-video") return 2;
     if (config.mode === "single" || config.mode === "single-with-prompt")
       return 1;

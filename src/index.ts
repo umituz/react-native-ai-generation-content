@@ -194,3 +194,25 @@ export type {
 
 // AIGenerationWizard - Generic wizard for all AI generation flows
 export * from "./features/wizard";
+
+// Flow System - Dynamic multi-step flow management
+export { createFlowStore, useFlow, resetFlowStore } from "./infrastructure/flow";
+export type { FlowStoreType } from "./infrastructure/flow";
+export { StepType } from "./domain/entities/flow-config.types";
+export type {
+  StepDefinition,
+  FlowState,
+  FlowActions,
+  FlowConfiguration,
+  FlowCallbacks,
+  FlowDataProvider,
+  FlowFeatures,
+  StepComponentProps,
+  StepTransition,
+  PartnerConfig,
+  CategoryData,
+  ScenarioData,
+  VisualStyleData,
+  UploadedImageData,
+  FlowGenerationStatus,
+} from "./domain/entities/flow-config.types";

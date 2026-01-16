@@ -61,7 +61,7 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
         <PartnerStepScreen
           t={t}
           onBack={handleBack}
-          onContinue={(img: any) => {
+          onContinue={(img: { uri: string; previewUrl?: string }) => {
             setStepImage(isStep2 ? 1 : 0, { uri: img.uri, previewUrl: img.previewUrl || img.uri });
             handleNext();
           }}
@@ -184,7 +184,7 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
               isGenerating={isGenerating}
               progress={progress}
               presets={presets}
-              onPresetPress={handleGenerate as any}
+              onPresetPress={() => { void handleGenerate(); }}
               prompt={prompt}
               onPromptChange={setPrompt}
               styles={styleOptions}

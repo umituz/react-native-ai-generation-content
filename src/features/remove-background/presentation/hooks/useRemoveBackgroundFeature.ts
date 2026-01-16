@@ -4,7 +4,7 @@
  */
 
 import { useSingleImageFeature, type BaseSingleImageHookReturn } from "../../../image-to-image";
-import type { RemoveBackgroundFeatureConfig, RemoveBackgroundResult } from "../../domain/types";
+import type { RemoveBackgroundFeatureConfig } from "../../domain/types";
 
 export interface UseRemoveBackgroundFeatureProps {
   config: RemoveBackgroundFeatureConfig;

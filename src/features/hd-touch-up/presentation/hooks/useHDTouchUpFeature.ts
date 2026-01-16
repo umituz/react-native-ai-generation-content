@@ -4,7 +4,7 @@
  */
 
 import { useSingleImageFeature, type BaseSingleImageHookReturn } from "../../../image-to-image";
-import type { HDTouchUpFeatureConfig, HDTouchUpResult } from "../../domain/types";
+import type { HDTouchUpFeatureConfig } from "../../domain/types";
 
 export interface UseHDTouchUpFeatureProps {
   config: HDTouchUpFeatureConfig;

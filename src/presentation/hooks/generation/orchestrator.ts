@@ -70,7 +70,10 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
-  const defaultCredits = useDeductCredit({ userId, onCreditsExhausted }) as any;
+  const defaultCredits = useDeductCredit({ userId, onCreditsExhausted }) as {
+    checkCredits: (amount: number) => Promise<boolean>;
+    deductCredit: (amount: number) => Promise<void>;
+  };
 
   // Use provided credit callbacks or default to useDeductCredit hook
   const checkCredits = credits?.checkCredits ?? defaultCredits.checkCredits;

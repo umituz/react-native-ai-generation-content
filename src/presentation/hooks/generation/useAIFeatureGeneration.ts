@@ -9,12 +9,25 @@ import { prepareImage } from "../../../infrastructure/utils";
 import type { AIFeatureId } from "../../screens/ai-feature/types";
 import type { ImageFeatureType, VideoFeatureType } from "../../../domain/interfaces";
 
+interface AlertMessages {
+  success?: string;
+  error?: string;
+  network?: string;
+  credits?: string;
+}
+
+interface GenerationError {
+  type: string;
+  message: string;
+  originalError?: Error;
+}
+
 interface FeatureGenerationConfig {
   featureType: AIFeatureId;
   userId?: string;
-  alertMessages: any;
-  onSuccess?: (result: any) => void;
-  onError?: (error: any) => void;
+  alertMessages: AlertMessages;
+  onSuccess?: (result: string) => void;
+  onError?: (error: GenerationError) => void;
   creditCost?: number;
   onCreditsExhausted?: () => void;
 }

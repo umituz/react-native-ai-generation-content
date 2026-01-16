@@ -4,7 +4,7 @@
  */
 
 import { useSingleImageFeature, type BaseSingleImageHookReturn } from "../../../image-to-image";
-import type { UpscaleFeatureConfig, UpscaleResult } from "../../domain/types";
+import type { UpscaleFeatureConfig } from "../../domain/types";
 
 export interface UseUpscaleFeatureProps {
   config: UpscaleFeatureConfig;
