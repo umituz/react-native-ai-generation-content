@@ -86,15 +86,15 @@ export const detectFeatureType = (scenarioId: string): FeatureType => {
 
 /**
  * Config Factory for COUPLE features (2 photos)
+ * Generic numbered steps - labels come from translations
  */
 const createCoupleConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
   name: scenarioId,
   steps: [
     {
-      id: "photo_a",
+      id: "photo_1",
       type: "photo_upload",
-      label: "First Partner",
       titleKey: "photoUpload.step1.title",
       subtitleKey: "photoUpload.step1.subtitle",
       showFaceDetection: true,
@@ -102,9 +102,8 @@ const createCoupleConfig = (scenarioId: string): WizardFeatureConfig => ({
       required: true,
     },
     {
-      id: "photo_b",
+      id: "photo_2",
       type: "photo_upload",
-      label: "Second Partner",
       titleKey: "photoUpload.step2.title",
       subtitleKey: "photoUpload.step2.subtitle",
       showFaceDetection: true,
@@ -116,15 +115,15 @@ const createCoupleConfig = (scenarioId: string): WizardFeatureConfig => ({
 
 /**
  * Config Factory for SINGLE_PHOTO features (1 photo)
+ * Generic single photo step - label comes from translation
  */
 const createSinglePhotoConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
   name: scenarioId,
   steps: [
     {
-      id: "photo",
+      id: "photo_1",
       type: "photo_upload",
-      label: "Your Photo",
       titleKey: "photoUpload.single.title",
       subtitleKey: "photoUpload.single.subtitle",
       showFaceDetection: false,
@@ -166,15 +165,15 @@ const createTextBasedConfig = (scenarioId: string): WizardFeatureConfig => ({
 
 /**
  * Config Factory for FACE_SWAP features (2 photos, different context)
+ * Generic numbered steps - labels come from translations
  */
 const createFaceSwapConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
   name: scenarioId,
   steps: [
     {
-      id: "source_photo",
+      id: "photo_1",
       type: "photo_upload",
-      label: "Source Face",
       titleKey: "faceSwap.source.title",
       subtitleKey: "faceSwap.source.subtitle",
       showFaceDetection: true,
@@ -182,9 +181,8 @@ const createFaceSwapConfig = (scenarioId: string): WizardFeatureConfig => ({
       required: true,
     },
     {
-      id: "target_photo",
+      id: "photo_2",
       type: "photo_upload",
-      label: "Target Photo",
       titleKey: "faceSwap.target.title",
       subtitleKey: "faceSwap.target.subtitle",
       showFaceDetection: false,
