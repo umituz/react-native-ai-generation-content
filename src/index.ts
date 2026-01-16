@@ -56,11 +56,13 @@ export {
   extractAudioUrl, extractImageUrls, cleanBase64, addBase64Prefix, preparePhoto, preparePhotos,
   isValidBase64, getBase64Size, getBase64SizeMB, prepareImage, createDevCallbacks, createFeatureUtils,
   showVideoGenerationSuccess, handleGenerationError, showContentModerationWarning,
+  saveMediaToGallery, shareMedia, createSaveHandler, createShareHandler, createMediaHandlers,
 } from "./infrastructure/utils";
 
 export type {
   IntervalOptions, ProgressOptions, StatusCheckResult, ResultValidation, ValidateResultOptions,
   PhotoInput, PreparedImage, ImageSelector, VideoSaver, AlertFunction, FeatureUtilsConfig, VideoAlertFunction,
+  MediaActionResult, MediaActionTranslations, ToastConfig,
 } from "./infrastructure/utils";
 
 export { enhancePromptWithLanguage, getSupportedLanguages, getLanguageName, ModerationWrapper, generateSynchronously } from "./infrastructure/wrappers";
@@ -72,6 +74,7 @@ export {
   useAIGenerateState, AIGenerateStep,
   useGenerationOrchestrator, useImageGeneration, useVideoGeneration, useAIFeatureGeneration,
   createGenerationError, getAlertMessage, parseError,
+  useAIGenerateWizard, createWizardTranslations,
 } from "./presentation/hooks";
 
 export type {
@@ -84,6 +87,7 @@ export type {
   SingleImageInput, DualImageInput, ImageGenerationInput, ImageGenerationConfig,
   DualImageVideoInput, VideoGenerationConfig,
   UploadedImage,
+  AIGenerateWizardConfig, AIGenerateWizardTranslations, UseAIGenerateWizardReturn,
 } from "./presentation/hooks";
 
 export {
