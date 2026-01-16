@@ -63,10 +63,3 @@ export type {
 
 export { useAIGenerateState, AIGenerateStep } from "./generation/useAIGenerateState";
 export type { UploadedImage } from "./generation/useAIGenerateState";
-
-export { useAIGenerateWizard, createWizardTranslations } from "./useAIGenerateWizard";
-export type {
-  AIGenerateWizardConfig,
-  AIGenerateWizardTranslations,
-  UseAIGenerateWizardReturn,
-} from "./useAIGenerateWizard";
