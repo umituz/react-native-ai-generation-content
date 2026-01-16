@@ -160,7 +160,7 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   return (
     <View style={styles.container}>
       <NavigationHeader
-        title={t(subCategory.titleKey)}
+        title={subCategory.title}
         onBackPress={onBack}
         rightElement={
           <TouchableOpacity
