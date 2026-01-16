@@ -40,6 +40,7 @@ type WizardGenerationResult = { imageUrl: string } | { videoUrl: string };
 
 async function executeImageGeneration(
   input: ImageGenerationInput,
+  model: string,
   onProgress?: (progress: number) => void,
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
   const { providerRegistry } = await import("../../../../infrastructure/services/provider-registry.service");
@@ -78,11 +79,11 @@ async function executeImageGeneration(
     };
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[WizardStrategy] Starting image generation");
+      console.log("[WizardStrategy] Starting image generation", { model });
     }
 
     let lastStatus = "";
-    const result = await provider.subscribe("fal-ai/nano-banana", modelInput, {
+    const result = await provider.subscribe(model, modelInput, {
       timeoutMs: 120000,
       onQueueUpdate: (status) => {
         if (status.status === lastStatus) return;
@@ -245,6 +246,7 @@ export const createWizardStrategy = (
         console.log("[WizardStrategy] Executing generation", {
           scenarioId: scenario.id,
           outputType,
+          model: scenario.model,
         });
       }
 
@@ -252,8 +254,13 @@ export const createWizardStrategy = (
 
       // Execute based on output type
       if (outputType === "image") {
+        // Validate model is provided by app
+        if (!scenario.model) {
+          throw new Error("Model is required for image generation. Please configure model in app generation.config.ts");
+        }
+
         const imageInput = input as ImageGenerationInput;
-        const result = await executeImageGeneration(imageInput, onProgress);
+        const result = await executeImageGeneration(imageInput, scenario.model, onProgress);
 
         if (!result.success || !result.imageUrl) {
           throw new Error(result.error || "Image generation failed");

@@ -20,6 +20,7 @@ export interface WizardScenarioData {
   readonly id: string;
   readonly aiPrompt: string;
   readonly outputType?: WizardOutputType;
+  readonly model?: string; // AI model from app config
   readonly title?: string;
   readonly description?: string;
   [key: string]: unknown;
