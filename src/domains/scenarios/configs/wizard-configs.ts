@@ -85,7 +85,43 @@ export const detectFeatureType = (scenarioId: string): FeatureType => {
 };
 
 /**
- * Config Factory for COUPLE features (2 photos)
+ * Romantic Mood Options for Couple Scenarios
+ */
+const ROMANTIC_MOOD_OPTIONS = [
+  { id: "romantic", label: "Romantic", icon: "❤️", value: "romantic" },
+  { id: "mysterious", label: "Mysterious", icon: "🌙", value: "mysterious" },
+  { id: "magical", label: "Magical", icon: "✨", value: "magical" },
+  { id: "energetic", label: "Energetic", icon: "⚡", value: "energetic" },
+  { id: "melancholic", label: "Melancholic", icon: "☁️", value: "melancholic" },
+  { id: "passionate", label: "Passionate", icon: "🔥", value: "passionate" },
+  { id: "nostalgic", label: "Nostalgic", icon: "📷", value: "nostalgic" },
+  { id: "futuristic", label: "Futuristic", icon: "🚀", value: "futuristic" },
+];
+
+/**
+ * Art Style Options for Couple Scenarios
+ */
+const ART_STYLE_OPTIONS = [
+  { id: "original", label: "Original", icon: "🖼️", value: "original" },
+  { id: "cubism", label: "Cubism", icon: "🔷", value: "cubism" },
+  { id: "popArt", label: "Pop Art", icon: "🎨", value: "pop_art" },
+  { id: "impressionism", label: "Impressionism", icon: "🖌️", value: "impressionism" },
+  { id: "surrealism", label: "Surrealism", icon: "👁️", value: "surrealism" },
+  { id: "renaissance", label: "Renaissance", icon: "🎭", value: "renaissance" },
+];
+
+/**
+ * Artist Style Options for Couple Scenarios
+ */
+const ARTIST_STYLE_OPTIONS = [
+  { id: "vanGogh", label: "Van Gogh", icon: "🖌️", value: "van_gogh" },
+  { id: "picasso", label: "Picasso", icon: "🔷", value: "picasso" },
+  { id: "fridaKahlo", label: "Frida Kahlo", icon: "🌺", value: "frida_kahlo" },
+  { id: "daVinci", label: "Da Vinci", icon: "🎨", value: "da_vinci" },
+];
+
+/**
+ * Config Factory for COUPLE features (2 photos + style selections)
  * Generic sequential labels for two-person scenarios
  */
 const createCoupleConfig = (scenarioId: string): WizardFeatureConfig => ({
@@ -109,6 +145,36 @@ const createCoupleConfig = (scenarioId: string): WizardFeatureConfig => ({
       showFaceDetection: true,
       showPhotoTips: true,
       required: true,
+    },
+    {
+      id: "romantic_mood",
+      type: "selection",
+      selectionType: "custom",
+      titleKey: "selection.romanticMood.title",
+      subtitleKey: "selection.romanticMood.subtitle",
+      options: ROMANTIC_MOOD_OPTIONS,
+      multiSelect: true,
+      required: false,
+    },
+    {
+      id: "art_style",
+      type: "selection",
+      selectionType: "style",
+      titleKey: "selection.artStyle.title",
+      subtitleKey: "selection.artStyle.subtitle",
+      options: ART_STYLE_OPTIONS,
+      multiSelect: false,
+      required: false,
+    },
+    {
+      id: "artist_style",
+      type: "selection",
+      selectionType: "custom",
+      titleKey: "selection.artistStyle.title",
+      subtitleKey: "selection.artistStyle.subtitle",
+      options: ARTIST_STYLE_OPTIONS,
+      multiSelect: false,
+      required: false,
     },
   ],
 });
