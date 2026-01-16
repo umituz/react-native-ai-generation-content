@@ -60,13 +60,9 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
   );
 
   const handleScenarioPreviewContinue = useCallback(() => {
-    const checkFeature = callbacks?.requireFeature;
-    if (checkFeature) {
-      checkFeature(() => flow.nextStep());
-    } else {
-      flow.nextStep();
-    }
-  }, [flow, callbacks]);
+    // No auth check needed here - just proceed to photo upload
+    flow.nextStep();
+  }, [flow]);
 
   const handlePartnerAContinue = useCallback(
     (image: { uri: string; base64: string; mimeType: string }, name?: string) => {
@@ -83,8 +79,18 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
       flow.setPartnerImage("B", image);
       if (name) flow.setPartnerName("B", name);
       callbacks?.onPartnerUpload?.("B", image);
-      flow.startGeneration();
-      callbacks?.onGenerationStart?.();
+
+      // Check auth/credits BEFORE starting generation (this consumes a credit)
+      const checkFeature = callbacks?.requireFeature;
+      if (checkFeature) {
+        checkFeature(() => {
+          flow.startGeneration();
+          callbacks?.onGenerationStart?.();
+        });
+      } else {
+        flow.startGeneration();
+        callbacks?.onGenerationStart?.();
+      }
     },
     [flow, callbacks],
   );
