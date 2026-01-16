@@ -33,6 +33,15 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
 }) => {
   const tokens = useAppDesignTokens();
 
+  // DEBUG: Log every render
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[CoupleFutureWizard] RENDER", {
+      hasData: !!data,
+      hasSelectedScenario: !!data.selectedScenario,
+      scenarioId: data.selectedScenario?.id,
+    });
+  }
+
   const stepDefinitions = useMemo(
     () => createStepDefinitions(config),
     [config],
@@ -47,6 +56,16 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
     steps: stepDefinitions,
     initialStepIndex,
   });
+
+  // DEBUG: Log flow state
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[CoupleFutureWizard] FLOW STATE", {
+      currentStepIndex: flow.currentStepIndex,
+      currentStepId: flow.currentStep?.id,
+      currentStepType: flow.currentStep?.type,
+      totalSteps: stepDefinitions.length,
+    });
+  }
 
   // Notify parent app when step changes
   // NOTE: Do NOT include callbacks in dependencies - causes infinite loop!

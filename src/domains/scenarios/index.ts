@@ -13,3 +13,13 @@ export { SCENARIOS } from "./infrastructure/ScenariosData";
 
 // Utils
 export { createStoryTemplate } from "./infrastructure/utils/scenario-utils";
+
+// Wizard Configurations - Auto-detects feature type and generates config
+export {
+  FeatureType,
+  SCENARIO_WIZARD_CONFIGS,
+  detectFeatureType,
+  getScenarioWizardConfig,
+  hasExplicitConfig,
+  getScenarioFeatureType,
+} from "./configs/wizard-configs";

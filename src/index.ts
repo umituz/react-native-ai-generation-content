@@ -219,3 +219,6 @@ export type {
   FlowUploadedImageData,
   FlowGenerationStatus,
 } from "./domain/entities/flow-config.types";
+
+// Wizard Domain - Generic, configuration-driven wizard system for ALL features
+export * from "./domains/wizard";
