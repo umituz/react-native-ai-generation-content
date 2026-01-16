@@ -47,7 +47,6 @@ export const PhotoUploadStep: React.FC<PhotoUploadStepProps> = ({
         maxFileSize: t("common.errors.max_file_size"),
         error: t("common.error"),
         uploadFailed: t("common.errors.upload_failed"),
-        aiDisclosure: t("photoUpload.aiDisclosure"),
       }}
       t={t}
       config={{

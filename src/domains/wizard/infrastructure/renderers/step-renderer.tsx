@@ -50,6 +50,7 @@ export const renderStep = (props: StepRendererProps): React.ReactElement | null 
       const photoConfig = wizardConfig as PhotoUploadStepConfig;
       return (
         <PhotoUploadStep
+          key={step.id}
           config={photoConfig}
           onContinue={(imageData) => {
             onContinue({ [`photo_${step.id}`]: imageData });
