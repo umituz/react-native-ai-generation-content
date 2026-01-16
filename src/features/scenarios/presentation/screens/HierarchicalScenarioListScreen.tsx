@@ -122,15 +122,13 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ScenarioData>) => {
-      const title = t(`scenario.${item.id}.title`);
-      const description = t(`scenario.${item.id}.description`);
       const isSelected = selectedId === item.id;
 
       return (
         <AtomicCard
           image={item.previewImageUrl || item.imageUrl || ""}
-          title={title}
-          subtitle={description}
+          title={item.title}
+          subtitle={item.description}
           imageAspectRatio={1.25}
           selected={isSelected}
           style={{ width: cardWidth }}
@@ -139,7 +137,7 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
         />
       );
     },
-    [cardWidth, selectedId, t, handleCardPress]
+    [cardWidth, selectedId, handleCardPress]
   );
 
   const ListEmptyComponent = useMemo(

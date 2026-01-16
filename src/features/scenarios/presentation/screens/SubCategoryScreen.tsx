@@ -83,8 +83,8 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ScenarioSubCategory>) => {
-      const title = t(item.titleKey);
-      const description = item.descriptionKey ? t(item.descriptionKey) : "";
+      const title = item.title;
+      const description = item.description || "";
 
       return (
         <TouchableOpacity
@@ -139,7 +139,7 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
         </TouchableOpacity>
       );
     },
-    [t, tokens, styles, handleSubCategoryPress]
+    [tokens, styles, handleSubCategoryPress]
   );
 
   return (

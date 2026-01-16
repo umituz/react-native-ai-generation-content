@@ -14,18 +14,54 @@ export enum ScenarioCategory {
   CULTURAL = "cultural",
 }
 
+/**
+ * Output type for AI generation
+ */
+export type ScenarioOutputType = 'image' | 'video' | 'both';
+
+/**
+ * Scenario media configuration
+ */
+export interface ScenarioMedia {
+  readonly imageUrl?: string;          // Preview/thumbnail image
+  readonly videoUrl?: string;          // Preview video URL
+  readonly previewImageUrl?: string;   // Smaller thumbnail
+}
+
 export interface ScenarioData {
   readonly id: string;
   readonly category?: ScenarioCategory | string;
+
+  // Content (app provides in target language)
   readonly title: string;
   readonly description: string;
+
+  // AI Configuration
+  readonly outputType: ScenarioOutputType;    // What this scenario generates
+  readonly aiPrompt: string;                  // AI generation prompt
+  readonly storyTemplate?: string;            // Story template with placeholders (optional)
+
+  // Media
   readonly icon: string;
-  readonly imageUrl?: string;
-  readonly previewImageUrl?: string;
-  readonly aiPrompt: string;
-  readonly storyTemplate: string;
-  readonly requiresPhoto?: boolean;
-  readonly hidden?: boolean;
+  readonly imageUrl?: string;                 // Preview image
+  readonly videoUrl?: string;                 // Preview video
+  readonly previewImageUrl?: string;          // Thumbnail
+
+  // Requirements
+  readonly requiresPhoto?: boolean;           // Requires user photo upload
+  readonly requiresMultiplePhotos?: boolean;  // Requires multiple photos (e.g., couples)
+  readonly minPhotos?: number;                // Minimum photos required
+  readonly maxPhotos?: number;                // Maximum photos allowed
+
+  // Display
+  readonly hidden?: boolean;                  // Hide from UI
+  readonly featured?: boolean;                // Featured/promoted scenario
+  readonly order?: number;                    // Display order
+
+  // Metadata
+  readonly tags?: readonly string[];          // Search/filter tags
+  readonly duration?: number;                 // Video duration (for video scenarios)
+  readonly aspectRatio?: string;              // Output aspect ratio (e.g., "16:9", "9:16")
 }
 
 /**
@@ -33,8 +69,8 @@ export interface ScenarioData {
  */
 export interface ScenarioMainCategory {
   readonly id: string;
-  readonly titleKey: string;
-  readonly descriptionKey?: string;
+  readonly title: string;
+  readonly description?: string;
   readonly icon?: string;
   readonly emoji?: string;
   readonly order: number;
@@ -46,8 +82,8 @@ export interface ScenarioMainCategory {
  */
 export interface ScenarioSubCategory {
   readonly id: string;
-  readonly titleKey: string;
-  readonly descriptionKey?: string;
+  readonly title: string;
+  readonly description?: string;
   readonly icon?: string;
   readonly emoji?: string;
   readonly mainCategoryId: string;
