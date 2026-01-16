@@ -28,7 +28,7 @@ export const LoveMessageHeroSection: React.FC = () => {
               <AtomicText type="labelSmall" color="primary" style={styles.quoteTag}>
                 {t("loveMessage.explore.heroTag")}
               </AtomicText>
-              <AtomicIcon name="quote-outline" color="primary" size="xs" />
+              <AtomicIcon name="chatbubble-outline" color="primary" size="xs" />
             </View>
             <AtomicText type="bodyMedium" color="textPrimary" style={styles.quoteText}>
               {`"Love is not about how many days, months, or years you have been together, but about how much you love each other every single day."`}

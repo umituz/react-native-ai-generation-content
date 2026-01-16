@@ -85,7 +85,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     onSuccess: onGenerationComplete,
     onError: onGenerationError,
     onProgressChange: (progress) => {
-      flow.setGenerationProgress(progress);
+      flow.updateProgress(progress);
     },
     onCreditsExhausted,
   });
