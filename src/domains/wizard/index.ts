@@ -63,3 +63,10 @@ export type {
   PhotoUploadConfig,
   PhotoUploadTranslations,
 } from "./presentation/hooks/usePhotoUploadState";
+
+export { useWizardGeneration } from "./presentation/hooks/useWizardGeneration";
+export type {
+  UseWizardGenerationProps,
+  UseWizardGenerationReturn,
+  WizardScenarioData,
+} from "./presentation/hooks/useWizardGeneration";

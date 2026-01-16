@@ -21,11 +21,19 @@ import type { StepDefinition } from "../../../../domain/entities/flow-config.typ
 import { renderStep } from "../../infrastructure/renderers/step-renderer";
 import type { WizardFeatureConfig } from "../../domain/entities/wizard-config.types";
 import { buildFlowStepsFromWizard } from "../../infrastructure/builders/dynamic-step-builder";
+import { useWizardGeneration, type WizardScenarioData } from "../hooks/useWizardGeneration";
+import type { AlertMessages } from "../../../../presentation/hooks/generation/orchestrator.types";
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;
+  readonly scenario?: WizardScenarioData;
+  readonly userId?: string;
+  readonly alertMessages?: AlertMessages;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
   readonly onGenerationStart?: (data: Record<string, unknown>, proceedToGenerating: () => void) => void;
+  readonly onGenerationComplete?: (result: unknown) => void;
+  readonly onGenerationError?: (error: string) => void;
+  readonly onCreditsExhausted?: () => void;
   readonly onBack?: () => void;
   readonly t: (key: string) => string;
   readonly translations?: Record<string, string>;
@@ -36,8 +44,14 @@ export interface GenericWizardFlowProps {
 
 export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   featureConfig,
+  scenario,
+  userId,
+  alertMessages,
   onStepChange,
   onGenerationStart,
+  onGenerationComplete,
+  onGenerationError,
+  onCreditsExhausted,
   onBack,
   t,
   translations,
@@ -59,6 +73,21 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   const flow = useFlow({
     steps: flowSteps,
     initialStepIndex: 0,
+  });
+
+  // Generation hook - handles AI generation automatically
+  const generationHook = useWizardGeneration({
+    scenario: scenario || { id: featureConfig.id, aiPrompt: "" },
+    wizardData: flow.customData,
+    userId,
+    isGeneratingStep: flow.currentStep?.type === StepType.GENERATING,
+    alertMessages,
+    onSuccess: onGenerationComplete,
+    onError: onGenerationError,
+    onProgressChange: (progress) => {
+      flow.setGenerationProgress(progress);
+    },
+    onCreditsExhausted,
   });
 
   // DEBUG logging
