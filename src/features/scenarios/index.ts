@@ -6,7 +6,6 @@
 // Domain types
 export type {
   ScenarioData,
-  ScenarioCategory,
   ScenarioSelectorConfig,
   ScenarioPreviewConfig,
   MagicPromptConfig,
@@ -16,7 +15,10 @@ export type {
   ScenarioSubCategory,
   ScenarioHierarchyConfig,
 } from "./domain/types";
-export { ScenarioCategory as ScenarioCategoryEnum, SCENARIO_DEFAULTS } from "./domain/types";
+export { SCENARIO_DEFAULTS } from "./domain/types";
+
+// Note: ScenarioCategory is now exported from domains/scenarios
+// Import from there instead: import { ScenarioCategory } from '@umituz/react-native-ai-generation-content'
 
 // Components
 export {

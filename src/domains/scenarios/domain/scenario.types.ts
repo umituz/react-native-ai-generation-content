@@ -4,7 +4,13 @@
  */
 
 /**
+ * Output type for AI generation
+ */
+export type ScenarioOutputType = "image" | "video";
+
+/**
  * Scenario represents a pre-configured AI generation template
+ * Used across all AI generation apps (image or video output)
  */
 export interface Scenario {
   readonly id: string;
@@ -19,6 +25,8 @@ export interface Scenario {
   readonly aiPrompt: string;
   readonly storyTemplate?: string;
   readonly requiresPhoto?: boolean;
+  readonly outputType: ScenarioOutputType;
+  readonly enabled?: boolean;
   readonly metadata?: Record<string, unknown>;
 }
 

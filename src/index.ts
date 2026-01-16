@@ -142,6 +142,7 @@ export * from "./domains/prompts";
 export * from "./domains/content-moderation";
 export * from "./domains/creations";
 export * from "./domains/face-detection";
+export * from "./domains/scenarios";
 export * from "./features/image-to-image";
 export * from "./features/replace-background";
 export * from "./features/upscaling";
