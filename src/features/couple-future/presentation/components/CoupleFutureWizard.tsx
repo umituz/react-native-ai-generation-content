@@ -107,10 +107,26 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
 
   const renderCurrentStep = useCallback(() => {
     const step = flow.currentStep;
-    if (!step) return null;
+    if (!step) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[CoupleFutureWizard] renderCurrentStep: NO STEP");
+      }
+      return null;
+    }
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CoupleFutureWizard] renderCurrentStep", {
+        stepId: step.id,
+        stepType: step.type,
+        stepIndex: flow.currentStepIndex,
+      });
+    }
 
     switch (step.type) {
       case StepType.SCENARIO_SELECTION:
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[CoupleFutureWizard] Rendering SCENARIO_SELECTION (null)");
+        }
         return null; // Rendered by parent via CategoryNavigationContainer
 
       case StepType.SCENARIO_PREVIEW:
@@ -139,6 +155,15 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
           ? translations.partnerA
           : translations.partnerB;
         const partnerConfig = isPartnerA ? config.partnerA : config.partnerB;
+
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[CoupleFutureWizard] Rendering PartnerStepScreen", {
+            isPartnerA,
+            stepId: step.id,
+            hasConfig: !!partnerConfig,
+            hasTranslations: !!partnerTranslations,
+          });
+        }
 
         return (
           <PartnerStepScreen
