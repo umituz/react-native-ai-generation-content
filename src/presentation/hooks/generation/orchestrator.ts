@@ -70,9 +70,14 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
-  const defaultCredits = useDeductCredit({ userId, onCreditsExhausted }) as {
-    checkCredits: (amount: number) => Promise<boolean>;
-    deductCredit: (amount: number) => Promise<void>;
+  const creditHook = useDeductCredit({ userId, onCreditsExhausted });
+
+  // Wrap credit hook to match expected interface
+  const defaultCredits = {
+    checkCredits: creditHook.checkCredits,
+    deductCredit: async (amount: number) => {
+      await creditHook.deductCredit(amount);
+    }
   };
 
   // Use provided credit callbacks or default to useDeductCredit hook

@@ -9,7 +9,7 @@ import type {
   FlowActions,
   FlowUploadedImageData,
   StepDefinition,
-} from "../../domain/entities/flow-config.types";
+} from "../../../../domain/entities/flow-config.types";
 
 interface FlowStoreState extends FlowState {
   stepDefinitions: readonly StepDefinition[];

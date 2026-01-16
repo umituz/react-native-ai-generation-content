@@ -48,7 +48,7 @@ export interface UseAIGenerationProps {
 
 export interface UseAIGenerationReturn {
   /** Trigger generation */
-  generate: (input: unknown) => Promise<void>;
+  generate: (input: unknown) => Promise<unknown>;
 
   /** Whether generation is in progress */
   isGenerating: boolean;
@@ -92,9 +92,15 @@ export function useAIGeneration(
   // Use orchestrator for lifecycle management
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
-    alertMessages,
+    alertMessages: alertMessages || {
+      networkError: "No internet connection",
+      policyViolation: "Content policy violation",
+      saveFailed: "Failed to save",
+      creditFailed: "Failed to deduct credits",
+      unknown: "An error occurred",
+    },
     onSuccess,
-    onError,
+    onError: onError ? (error) => onError(error.message) : undefined,
     onCreditsExhausted,
   });
 

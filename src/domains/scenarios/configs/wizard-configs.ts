@@ -4,7 +4,7 @@
  * Supports overrides for customization
  */
 
-import type { WizardFeatureConfig } from "../../wizard/domain/entities/wizard-config.types";
+import type { WizardFeatureConfig } from "../../generation/wizard/domain/entities/wizard-config.types";
 
 /**
  * Feature Type Classification

@@ -5,7 +5,7 @@
 
 import { useRef, useCallback, useMemo } from "react";
 import { createFlowStore, type FlowStoreType } from "./useFlowStore";
-import type { FlowState, FlowActions, StepDefinition, FlowUploadedImageData } from "../../domain/entities/flow-config.types";
+import type { FlowState, FlowActions, StepDefinition, FlowUploadedImageData } from "../../../../domain/entities/flow-config.types";
 
 interface UseFlowConfig {
   steps: readonly StepDefinition[];

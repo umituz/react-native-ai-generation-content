@@ -30,7 +30,7 @@ export async function generateSynchronously<T = string>(
 ): Promise<GenerationResult<T>> {
   // Check user ID if required
   if (config.checkCredits && !input.userId) {
-    return createErrorResult("user_id_required");
+    return createErrorResult("user_id_required", config.model || "unknown");
   }
 
   // Check credits if configured
@@ -40,7 +40,7 @@ export async function generateSynchronously<T = string>(
       input.type || "generation",
     );
     if (!hasCredits) {
-      return createErrorResult("insufficient_credits");
+      return createErrorResult("insufficient_credits", config.model || "unknown");
     }
   }
 
@@ -50,6 +50,7 @@ export async function generateSynchronously<T = string>(
     if (!moderationResult.allowed) {
       return createErrorResult(
         moderationResult.error || "content_policy_violation",
+        config.model || "unknown",
       );
     }
   }

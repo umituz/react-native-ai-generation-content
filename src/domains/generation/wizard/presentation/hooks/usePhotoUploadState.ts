@@ -52,7 +52,7 @@ export const usePhotoUploadState = ({
 
       // Pick image
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: "images" as any,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,

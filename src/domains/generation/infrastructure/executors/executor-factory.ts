@@ -3,7 +3,7 @@
  * Creates appropriate executor based on generation type
  */
 
-import type { GenerationExecutor } from "../../domains/generation/domain/generation.types";
+import type { GenerationExecutor } from "../../domain/generation.types";
 import { ImageExecutor } from "./image-executor";
 import { VideoExecutor } from "./video-executor";
 

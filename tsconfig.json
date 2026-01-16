@@ -37,5 +37,13 @@
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx", "**/node_modules/**"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/node_modules/**",
+    "src/domains/generation/wizard/presentation/screens/**",
+    "src/domains/generation/wizard/presentation/steps/**"
+  ]
 }

@@ -5,11 +5,11 @@
  */
 
 import { readFileAsBase64 } from "@umituz/react-native-design-system";
-import type { GenerationStrategy } from "../../../../presentation/hooks/generation/types";
-import type { VideoFeatureType } from "../../../../domain/interfaces";
-import { executeVideoFeature } from "../../../../infrastructure/services/video-feature-executor.service";
-import { createCreationsRepository } from "../../../creations/infrastructure/adapters";
-import type { WizardOutputType, WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
+import type { GenerationStrategy } from "../../../../../presentation/hooks/generation/types";
+import type { VideoFeatureType } from "../../../../../domain/interfaces";
+import { executeVideoFeature } from "../../../../../infrastructure/services/video-feature-executor.service";
+import { createCreationsRepository } from "../../../../creations/infrastructure/adapters";
+import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 
 declare const __DEV__: boolean;
 
@@ -50,7 +50,7 @@ async function executeImageGeneration(
     });
   }
 
-  const { providerRegistry } = await import("../../../../infrastructure/services/provider-registry.service");
+  const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
 
   const provider = providerRegistry.getActiveProvider();
   if (!provider || !provider.isInitialized()) {
@@ -245,7 +245,7 @@ export interface CreateWizardStrategyOptions {
 export const createWizardStrategy = (
   options: CreateWizardStrategyOptions,
 ): GenerationStrategy<WizardGenerationInput, WizardGenerationResult> => {
-  const { scenario, wizardData, collectionName = "creations" } = options;
+  const { scenario, collectionName = "creations" } = options;
   const repository = createCreationsRepository(collectionName);
   const outputType = scenario.outputType || "video";
   const videoFeatureType = getVideoFeatureType(scenario.id);

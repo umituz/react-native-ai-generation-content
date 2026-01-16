@@ -5,8 +5,8 @@
  */
 
 import React from "react";
-import { StepType } from "../../../../domain/entities/flow-config.types";
-import type { StepDefinition } from "../../../../domain/entities/flow-config.types";
+import { StepType } from "../../../../../domain/entities/flow-config.types";
+import type { StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import type {
   WizardStepConfig,
   PhotoUploadStepConfig,

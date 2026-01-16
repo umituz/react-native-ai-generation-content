@@ -5,7 +5,7 @@
  * All features use these same types - NO feature-specific wizards!
  */
 
-import type { StepType } from "../../../../domain/entities/flow-config.types";
+import type { StepType } from "../../../../../domain/entities/flow-config.types";
 
 /**
  * Generic Step Configuration

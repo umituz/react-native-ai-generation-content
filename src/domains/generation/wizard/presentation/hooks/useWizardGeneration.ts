@@ -4,8 +4,8 @@
  */
 
 import { useEffect, useRef, useMemo } from "react";
-import { useGenerationOrchestrator } from "../../../../presentation/hooks/generation";
-import type { AlertMessages } from "../../../../presentation/hooks/generation/types";
+import { useGenerationOrchestrator } from "../../../../../presentation/hooks/generation";
+import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
 import { createWizardStrategy, buildWizardInput } from "../../infrastructure/strategies";
 
 declare const __DEV__: boolean;

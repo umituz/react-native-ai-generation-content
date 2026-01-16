@@ -3,11 +3,9 @@
  * Creates generation strategies from feature configs
  */
 
-import type { GenerationStrategy } from "../../../presentation/hooks/generation/orchestrator";
+import type { GenerationStrategy } from "../../../presentation/hooks/generation/types";
 import type { FeatureConfig } from "../domain/feature-config.types";
 import type {
-  ImageGenerationInput,
-  VideoGenerationInput,
   ImageGenerationOutput,
   VideoGenerationOutput,
 } from "../domain/generation.types";

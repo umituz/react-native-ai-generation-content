@@ -4,13 +4,12 @@
  * Works with ANY feature - completely generic!
  */
 
-import { StepType } from "../../../../domain/entities/flow-config.types";
-import type { StepDefinition } from "../../../../domain/entities/flow-config.types";
+import { StepType } from "../../../../../domain/entities/flow-config.types";
+import type { StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import type {
   WizardFeatureConfig,
   WizardStepConfig,
   ScenarioBasedConfig,
-  buildWizardConfigFromScenario,
 } from "../../domain/entities/wizard-config.types";
 
 /**

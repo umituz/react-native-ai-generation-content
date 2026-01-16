@@ -3,13 +3,12 @@
  * Builds step definitions from configuration
  */
 
-import { StepType } from "../../domain/entities/flow-config.types";
+import { StepType } from "../../../../domain/entities/flow-config.types";
 import type {
   ScenarioStepConfig,
   DynamicStepDefinition,
-  BuiltStep,
   PhotoUploadStepConfig,
-} from "../../domain/entities/step-config.types";
+} from "../../../../domain/entities/step-config.types";
 
 /**
  * Build steps from scenario configuration
@@ -120,14 +119,6 @@ export const resolveNextStep = (
 ): string | null => {
   const currentStep = steps.find((s) => s.id === currentStepId);
   if (!currentStep) return null;
-
-  // Check if should skip based on skipIf condition
-  const nextStepCandidates = steps.filter((s) => {
-    if (s.skipIf && s.skipIf({ values: context.values })) {
-      return false;
-    }
-    return true;
-  });
 
   // If nextStep is a function, call it
   if (typeof currentStep.nextStep === "function") {

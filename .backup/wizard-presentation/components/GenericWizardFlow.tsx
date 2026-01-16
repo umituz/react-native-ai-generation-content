@@ -15,14 +15,14 @@
 import React, { useMemo, useCallback, useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
-import { useFlow } from "../../../../infrastructure/flow/useFlow";
-import { StepType } from "../../../../domain/entities/flow-config.types";
-import type { StepDefinition } from "../../../../domain/entities/flow-config.types";
+import { useFlow } from "../../../infrastructure/flow/useFlow";
+import { StepType } from "../../../../../domain/entities/flow-config.types";
+import type { StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import { renderStep } from "../../infrastructure/renderers/step-renderer";
 import type { WizardFeatureConfig } from "../../domain/entities/wizard-config.types";
 import { buildFlowStepsFromWizard } from "../../infrastructure/builders/dynamic-step-builder";
 import { useWizardGeneration, type WizardScenarioData } from "../hooks/useWizardGeneration";
-import type { AlertMessages } from "../../../../presentation/hooks/generation/types";
+import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;

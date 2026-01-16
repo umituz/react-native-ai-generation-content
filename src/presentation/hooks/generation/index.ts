@@ -9,7 +9,6 @@ export { useGenerationOrchestrator } from "./orchestrator";
 // Generic feature hooks
 export { useImageGeneration } from "./useImageGeneration";
 export { useVideoGeneration } from "./useVideoGeneration";
-export { useAIFeatureGeneration } from "./useAIFeatureGeneration";
 
 // Types
 export type {

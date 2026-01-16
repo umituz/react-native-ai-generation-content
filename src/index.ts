@@ -72,7 +72,7 @@ export {
   useGeneration, usePendingJobs, useBackgroundGeneration,
   useGenerationFlow, useAIFeatureCallbacks,
   useAIGenerateState, AIGenerateStep,
-  useGenerationOrchestrator, useImageGeneration, useVideoGeneration, useAIFeatureGeneration,
+  useGenerationOrchestrator, useImageGeneration, useVideoGeneration,
   createGenerationError, getAlertMessage, parseError,
 } from "./presentation/hooks";
 
