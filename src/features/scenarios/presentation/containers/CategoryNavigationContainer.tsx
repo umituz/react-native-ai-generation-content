@@ -4,7 +4,7 @@
  * Main Category → Sub Category → Scenario List
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import type {
   ScenarioData,
   ScenarioMainCategory,
@@ -45,22 +45,61 @@ export const CategoryNavigationContainer: React.FC<
   const [selectedMainCategoryId, setSelectedMainCategoryId] = useState<string | null>(null);
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string | null>(null);
 
+  // Debug: Initial mount
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Mounted", {
+        mainCategoriesCount: mainCategories.length,
+        subCategoriesCount: subCategories.length,
+        scenariosCount: scenarios.length,
+        currentStep,
+      });
+    }
+  }, []);
+
+  // Debug: Step changes
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Step changed", {
+        currentStep,
+        selectedMainCategoryId,
+        selectedSubCategoryId,
+      });
+    }
+  }, [currentStep, selectedMainCategoryId, selectedSubCategoryId]);
+
   const handleSelectMainCategory = useCallback((categoryId: string) => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Main category selected", {
+        categoryId,
+      });
+    }
     setSelectedMainCategoryId(categoryId);
     setCurrentStep("sub_category");
   }, []);
 
   const handleSelectSubCategory = useCallback((subCategoryId: string) => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Sub category selected", {
+        subCategoryId,
+      });
+    }
     setSelectedSubCategoryId(subCategoryId);
     setCurrentStep("scenario_list");
   }, []);
 
   const handleBackFromSubCategory = useCallback(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Back from sub category");
+    }
     setSelectedMainCategoryId(null);
     setCurrentStep("main_category");
   }, []);
 
   const handleBackFromScenarioList = useCallback(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Back from scenario list");
+    }
     setSelectedSubCategoryId(null);
     setCurrentStep("sub_category");
   }, []);
@@ -72,6 +111,11 @@ export const CategoryNavigationContainer: React.FC<
   }, [onBack]);
 
   if (currentStep === "main_category") {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Rendering MainCategoryScreen", {
+        mainCategoriesCount: mainCategories.length,
+      });
+    }
     return (
       <MainCategoryScreen
         mainCategories={mainCategories}
@@ -85,6 +129,12 @@ export const CategoryNavigationContainer: React.FC<
   }
 
   if (currentStep === "sub_category" && selectedMainCategoryId) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Rendering SubCategoryScreen", {
+        selectedMainCategoryId,
+        subCategoriesCount: subCategories.length,
+      });
+    }
     return (
       <SubCategoryScreen
         mainCategoryId={selectedMainCategoryId}
@@ -97,6 +147,12 @@ export const CategoryNavigationContainer: React.FC<
   }
 
   if (currentStep === "scenario_list" && selectedSubCategoryId) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CategoryNavigationContainer] Rendering HierarchicalScenarioListScreen", {
+        selectedSubCategoryId,
+        scenariosCount: scenarios.length,
+      });
+    }
     return (
       <HierarchicalScenarioListScreen
         subCategoryId={selectedSubCategoryId}
@@ -108,6 +164,14 @@ export const CategoryNavigationContainer: React.FC<
         numColumns={numColumns}
       />
     );
+  }
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[CategoryNavigationContainer] Rendering NULL - no matching condition", {
+      currentStep,
+      selectedMainCategoryId,
+      selectedSubCategoryId,
+    });
   }
 
   return null;

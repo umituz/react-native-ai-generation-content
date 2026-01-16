@@ -3,7 +3,7 @@
  * Displays main categories for hierarchical scenario selection
  */
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -42,10 +42,22 @@ export const MainCategoryScreen: React.FC<MainCategoryScreenProps> = ({
   const tokens = useAppDesignTokens();
   const insets = useSafeAreaInsets();
 
+  // Debug: Monitor component state
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[MainCategoryScreen] Component mounted/updated", {
+        mainCategoriesCount: mainCategories.length,
+      });
+    }
+  }, [mainCategories]);
+
   const styles = useMemo(() => createStyles(tokens), [tokens]);
 
   const handleCategoryPress = useCallback(
     (categoryId: string) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[MainCategoryScreen] Category pressed", { categoryId });
+      }
       onSelectCategory(categoryId);
     },
     [onSelectCategory]

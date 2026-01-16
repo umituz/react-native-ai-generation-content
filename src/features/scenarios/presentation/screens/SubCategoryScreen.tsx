@@ -3,7 +3,7 @@
  * Displays sub-categories for a selected main category
  */
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -44,15 +44,38 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
   const tokens = useAppDesignTokens();
   const insets = useSafeAreaInsets();
 
-  const filteredSubCategories = useMemo(
-    () => subCategories.filter((sub) => sub.mainCategoryId === mainCategoryId),
-    [subCategories, mainCategoryId]
-  );
+  const filteredSubCategories = useMemo(() => {
+    const filtered = subCategories.filter((sub) => sub.mainCategoryId === mainCategoryId);
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[SubCategoryScreen] Filtered sub-categories", {
+        mainCategoryId,
+        totalSubCategories: subCategories.length,
+        filteredCount: filtered.length,
+        sampleMainCategoryIds: subCategories.slice(0, 5).map(s => s.mainCategoryId),
+      });
+    }
+
+    return filtered;
+  }, [subCategories, mainCategoryId]);
+
+  // Debug: Monitor component state
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[SubCategoryScreen] Component mounted/updated", {
+        mainCategoryId,
+        filteredSubCategoriesCount: filteredSubCategories.length,
+      });
+    }
+  }, [mainCategoryId, filteredSubCategories]);
 
   const styles = useMemo(() => createStyles(tokens), [tokens]);
 
   const handleSubCategoryPress = useCallback(
     (subCategoryId: string) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[SubCategoryScreen] Sub-category pressed", { subCategoryId });
+      }
       onSelectSubCategory(subCategoryId);
     },
     [onSelectSubCategory]

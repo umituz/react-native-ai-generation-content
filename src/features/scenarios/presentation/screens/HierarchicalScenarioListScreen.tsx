@@ -4,7 +4,7 @@
  * PERFORMANCE OPTIMIZED: No FlatList key remounting, memoized calculations
  */
 
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -56,13 +56,44 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   );
 
   const filteredScenarios = useMemo(() => {
-    if (!subCategory) return [];
+    if (!subCategory) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[HierarchicalScenarioListScreen] No subCategory found", {
+          subCategoryId,
+          subCategoriesCount: subCategories.length,
+        });
+      }
+      return [];
+    }
 
-    return scenarios.filter((scenario) => {
+    const filtered = scenarios.filter((scenario) => {
       if (!scenario.category) return false;
       return subCategory.scenarioCategories.includes(scenario.category);
     });
-  }, [scenarios, subCategory]);
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[HierarchicalScenarioListScreen] Filtered scenarios", {
+        subCategoryId: subCategory.id,
+        scenarioCategories: subCategory.scenarioCategories,
+        totalScenarios: scenarios.length,
+        filteredCount: filtered.length,
+        sampleScenarioCategories: scenarios.slice(0, 5).map(s => s.category),
+      });
+    }
+
+    return filtered;
+  }, [scenarios, subCategory, subCategoryId, subCategories]);
+
+  // Debug: Monitor component state
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[HierarchicalScenarioListScreen] Component state", {
+        subCategoryId,
+        hasSubCategory: !!subCategory,
+        filteredScenariosCount: filteredScenarios.length,
+      });
+    }
+  }, [subCategoryId, subCategory, filteredScenarios]);
 
   const horizontalPadding = tokens.spacing.md;
   const cardSpacing = tokens.spacing.md;
