@@ -14,13 +14,13 @@ declare const __DEV__: boolean;
 
 export interface GenerationModels {
   /** Image generation with face identity preservation (couple photos) */
-  readonly imageCoupleMultiRef: string;
+  readonly imageCoupleMultiRef?: string;
   /** Text-to-image generation */
-  readonly imageTextToImage: string;
+  readonly imageTextToImage?: string;
   /** Image-to-video generation */
-  readonly imageToVideo: string;
+  readonly imageToVideo?: string;
   /** Text-to-video generation */
-  readonly textToVideo: string;
+  readonly textToVideo?: string;
   /** AI Kiss video */
   readonly aiKiss?: string;
   /** AI Hug video */
@@ -62,19 +62,30 @@ export const GenerationConfigProvider: React.FC<GenerationConfigProviderProps> =
   models,
 }) => {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
+    const configuredModels = Object.entries(models)
+      .filter(([, value]) => !!value)
+      .map(([key]) => key);
+
     console.log("[GenerationConfigProvider] Initialized with models:", {
-      imageCoupleMultiRef: models.imageCoupleMultiRef,
-      imageTextToImage: models.imageTextToImage,
-      imageToVideo: models.imageToVideo,
-      textToVideo: models.textToVideo,
+      configured: configuredModels,
+      imageCoupleMultiRef: models.imageCoupleMultiRef || "not configured",
+      imageTextToImage: models.imageTextToImage || "not configured",
+      imageToVideo: models.imageToVideo || "not configured",
+      textToVideo: models.textToVideo || "not configured",
     });
   }
 
   const getModel = (featureType: keyof GenerationModels): string => {
     const model = models[featureType];
     if (!model) {
+      const availableModels = Object.keys(models).filter(
+        (key) => models[key as keyof GenerationModels]
+      );
+
       throw new Error(
-        `Model not configured for feature: ${featureType}. Please configure in app's GenerationConfigProvider.`
+        `Model not configured for feature: ${featureType}.\n\n` +
+        `This app only supports: ${availableModels.join(", ") || "none"}.\n` +
+        `Please configure '${featureType}' in your GenerationConfigProvider if you need it.`
       );
     }
     return model;
