@@ -69,24 +69,43 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     });
   }, [featureConfig, renderPreview, renderGenerating]);
 
-  // Initialize flow
+  // Initialize flow and destructure to prevent infinite loops
   const flow = useFlow({
     steps: flowSteps,
     initialStepIndex: 0,
   });
 
+  // Destructure flow to get stable references for useCallback dependencies
+  const {
+    currentStep,
+    currentStepIndex,
+    customData,
+    generationProgress,
+    generationResult,
+    nextStep,
+    previousStep,
+    setCustomData,
+    updateProgress,
+  } = flow;
+
+  // Handle progress change - memoized to prevent infinite loops
+  const handleProgressChange = useCallback(
+    (progress: number) => {
+      updateProgress(progress);
+    },
+    [updateProgress],
+  );
+
   // Generation hook - handles AI generation automatically
   const generationHook = useWizardGeneration({
     scenario: scenario || { id: featureConfig.id, aiPrompt: "" },
-    wizardData: flow.customData,
+    wizardData: customData,
     userId,
-    isGeneratingStep: flow.currentStep?.type === StepType.GENERATING,
+    isGeneratingStep: currentStep?.type === StepType.GENERATING,
     alertMessages,
     onSuccess: onGenerationComplete,
     onError: onGenerationError,
-    onProgressChange: (progress) => {
-      flow.updateProgress(progress);
-    },
+    onProgressChange: handleProgressChange,
     onCreditsExhausted,
   });
 
@@ -97,9 +116,9 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[GenericWizardFlow] Render", {
       featureId: featureConfig.id,
-      currentStepId: flow.currentStep?.id,
-      currentStepType: flow.currentStep?.type,
-      stepIndex: flow.currentStepIndex,
+      currentStepId: currentStep?.id,
+      currentStepType: currentStep?.type,
+      stepIndex: currentStepIndex,
       totalSteps: flowSteps.length,
     });
   }
@@ -107,72 +126,72 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   // Notify parent when step changes
   // Only call onStepChange when step ID actually changes (not on every object reference change)
   useEffect(() => {
-    if (flow.currentStep && onStepChange) {
-      const currentStepId = flow.currentStep.id;
+    if (currentStep && onStepChange) {
+      const currentStepId = currentStep.id;
       // Only notify if step ID changed
       if (prevStepIdRef.current !== currentStepId) {
         prevStepIdRef.current = currentStepId;
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[GenericWizardFlow] Step changed", {
-            stepId: flow.currentStep.id,
-            stepType: flow.currentStep.type,
+            stepId: currentStep.id,
+            stepType: currentStep.type,
           });
         }
-        onStepChange(flow.currentStep.id, flow.currentStep.type);
+        onStepChange(currentStep.id, currentStep.type);
       }
     }
-  }, [flow.currentStep, flow.currentStepIndex, onStepChange]);
+  }, [currentStep, currentStepIndex, onStepChange]);
 
   // Handle step continue
   const handleStepContinue = useCallback(
     (stepData: Record<string, unknown>) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[GenericWizardFlow] Step continue", {
-          stepId: flow.currentStep?.id,
+          stepId: currentStep?.id,
           data: stepData,
         });
       }
 
       // Store step data in custom data
       Object.entries(stepData).forEach(([key, value]) => {
-        flow.setCustomData(key, value);
+        setCustomData(key, value);
       });
 
       // Check if this is the last step before generating
-      if (flow.currentStepIndex === flowSteps.length - 2) {
+      if (currentStepIndex === flowSteps.length - 2) {
         // Next step is GENERATING
         // Notify parent and provide callback to proceed to generating
         // Parent will call proceedToGenerating() after feature gate passes
         if (onGenerationStart) {
-          onGenerationStart(flow.customData, () => {
+          onGenerationStart(customData, () => {
             if (typeof __DEV__ !== "undefined" && __DEV__) {
               console.log("[GenericWizardFlow] Proceeding to GENERATING step");
             }
-            flow.nextStep();
+            nextStep();
           });
         }
-        // DON'T call flow.nextStep() here - parent will call it via proceedToGenerating callback
+        // DON'T call nextStep() here - parent will call it via proceedToGenerating callback
         return;
       }
 
       // Move to next step (for all non-generation steps)
-      flow.nextStep();
+      nextStep();
     },
-    [flow, flowSteps.length, onGenerationStart],
+    [currentStep, currentStepIndex, customData, setCustomData, nextStep, flowSteps.length, onGenerationStart],
   );
 
   // Handle back
   const handleBack = useCallback(() => {
-    if (flow.currentStepIndex === 0) {
+    if (currentStepIndex === 0) {
       onBack?.();
     } else {
-      flow.previousStep();
+      previousStep();
     }
-  }, [flow, onBack]);
+  }, [currentStepIndex, previousStep, onBack]);
 
   // Render current step
   const renderCurrentStep = useCallback(() => {
-    const step = flow.currentStep;
+    const step = currentStep;
     if (!step) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.warn("[GenericWizardFlow] No current step!");
@@ -191,13 +210,13 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     switch (step.type) {
       case StepType.SCENARIO_PREVIEW:
         // Preview continues to next step automatically
-        return renderPreview?.(flow.nextStep) || null;
+        return renderPreview?.(nextStep) || null;
 
       case StepType.GENERATING:
-        return renderGenerating?.(flow.generationProgress) || null;
+        return renderGenerating?.(generationProgress) || null;
 
       case StepType.RESULT_PREVIEW:
-        return renderResult?.(flow.generationResult) || null;
+        return renderResult?.(generationResult) || null;
 
       default:
         // Use generic step renderer
@@ -210,9 +229,10 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
         });
     }
   }, [
-    flow.currentStep,
-    flow.generationProgress,
-    flow.generationResult,
+    currentStep,
+    generationProgress,
+    generationResult,
+    nextStep,
     renderPreview,
     renderGenerating,
     renderResult,
