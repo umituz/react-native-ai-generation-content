@@ -3,8 +3,14 @@
  * Generic wizard for all AI generation flows
  */
 
-// Component
+// Components
 export { AIGenerationWizard, default as AIGenerationWizardDefault } from "./presentation/components/AIGenerationWizard";
+export { AIFeatureWizard, resetAIFeatureWizard } from "./presentation/components/AIFeatureWizard";
+export type {
+  AIFeatureWizardProps,
+  AIFeatureWizardTranslations,
+  AIFeatureWizardCallbacks,
+} from "./presentation/components/AIFeatureWizard";
 
 // Hooks
 export { useWizard, resetWizardStore } from "./presentation/hooks/useWizard";
@@ -12,7 +18,7 @@ export { useWizard, resetWizardStore } from "./presentation/hooks/useWizard";
 // Store
 export { createWizardStore, type WizardStoreType } from "./presentation/store/useWizardStore";
 
-// Types (UploadedImage is already exported from partner-upload)
+// Types
 export type {
   WizardStepId,
   WizardStep,
@@ -23,4 +29,15 @@ export type {
   AIGenerationWizardConfig,
   AIGenerationWizardCallbacks,
   AIGenerationWizardProps,
+  FeatureMode,
+  PrebuiltStepType,
+  FeatureWizardConfig,
+} from "./domain/types";
+
+// Feature mode utilities
+export {
+  FEATURE_MODES,
+  FEATURE_FLOWS,
+  getFeatureMode,
+  getFeatureFlow,
 } from "./domain/types";
