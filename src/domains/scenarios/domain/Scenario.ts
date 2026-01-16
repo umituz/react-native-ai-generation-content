@@ -567,5 +567,6 @@ export interface Scenario {
   requiresPhoto?: boolean;
   hidden?: boolean;
   outputType: ScenarioOutputType;
+  model?: string; // AI model from app config
   enabled?: boolean;
 }

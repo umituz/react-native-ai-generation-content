@@ -43,6 +43,15 @@ async function executeImageGeneration(
   model: string,
   onProgress?: (progress: number) => void,
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[WizardStrategy] executeImageGeneration ENTRY", {
+      receivedModel: model,
+      hasPartnerA: !!input.partnerABase64,
+      hasPartnerB: !!input.partnerBBase64,
+      promptLength: input.prompt.length,
+    });
+  }
+
   const { providerRegistry } = await import("../../../../infrastructure/services/provider-registry.service");
 
   const provider = providerRegistry.getActiveProvider();
@@ -79,7 +88,12 @@ async function executeImageGeneration(
     };
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[WizardStrategy] Starting image generation", { model });
+      console.log("[WizardStrategy] ABOUT TO CALL provider.subscribe", {
+        model,
+        modelType: typeof model,
+        modelLength: model?.length,
+        imageUrlsCount: imageUrls.length,
+      });
     }
 
     let lastStatus = "";
@@ -238,15 +252,25 @@ export const createWizardStrategy = (
   const outputType = scenario.outputType || "video";
   const videoFeatureType = getVideoFeatureType(scenario.id);
 
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[WizardStrategy] createWizardStrategy called", {
+      scenarioId: scenario.id,
+      scenarioModel: scenario.model,
+      outputType,
+      hasModel: !!scenario.model,
+    });
+  }
+
   let lastInputRef: WizardGenerationInput | null = null;
 
   return {
     execute: async (input, onProgress) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[WizardStrategy] Executing generation", {
+        console.log("[WizardStrategy] execute() called", {
           scenarioId: scenario.id,
           outputType,
-          model: scenario.model,
+          scenarioModel: scenario.model,
+          hasModel: !!scenario.model,
         });
       }
 
@@ -257,6 +281,13 @@ export const createWizardStrategy = (
         // Validate model is provided by app
         if (!scenario.model) {
           throw new Error("Model is required for image generation. Please configure model in app generation.config.ts");
+        }
+
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[WizardStrategy] About to call executeImageGeneration", {
+            model: scenario.model,
+            scenarioId: scenario.id,
+          });
         }
 
         const imageInput = input as ImageGenerationInput;
