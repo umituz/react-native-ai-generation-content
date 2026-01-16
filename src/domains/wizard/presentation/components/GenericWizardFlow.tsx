@@ -98,7 +98,25 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
 
   // Ensure scenario has required fields - use feature config as fallback
   const validatedScenario = useMemo(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[GenericWizardFlow] Validating scenario", {
+        hasScenario: !!scenario,
+        scenarioId: scenario?.id,
+        hasAiPrompt: scenario?.aiPrompt !== undefined,
+        hasModel: !!scenario?.model,
+        scenarioModel: scenario?.model,
+        outputType: scenario?.outputType,
+      });
+    }
+
     if (scenario && scenario.id && scenario.aiPrompt !== undefined) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[GenericWizardFlow] Scenario validation passed", {
+          scenarioId: scenario.id,
+          model: scenario.model,
+          outputType: scenario.outputType,
+        });
+      }
       return scenario;
     }
 
