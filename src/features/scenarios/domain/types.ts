@@ -1,6 +1,7 @@
 /**
  * Scenario Domain Types
  * Generic types for scenario selection feature
+ * Supports both flat and hierarchical category systems
  */
 
 export enum ScenarioCategory {
@@ -15,7 +16,7 @@ export enum ScenarioCategory {
 
 export interface ScenarioData {
   readonly id: string;
-  readonly category?: ScenarioCategory;
+  readonly category?: ScenarioCategory | string;
   readonly title: string;
   readonly description: string;
   readonly icon: string;
@@ -25,6 +26,41 @@ export interface ScenarioData {
   readonly storyTemplate: string;
   readonly requiresPhoto?: boolean;
   readonly hidden?: boolean;
+}
+
+/**
+ * Scenario Main Category (Top-level grouping for hierarchical system)
+ */
+export interface ScenarioMainCategory {
+  readonly id: string;
+  readonly titleKey: string;
+  readonly descriptionKey?: string;
+  readonly icon?: string;
+  readonly emoji?: string;
+  readonly order: number;
+  readonly subCategoryIds: readonly string[];
+}
+
+/**
+ * Scenario Sub Category (Second-level grouping for hierarchical system)
+ */
+export interface ScenarioSubCategory {
+  readonly id: string;
+  readonly titleKey: string;
+  readonly descriptionKey?: string;
+  readonly icon?: string;
+  readonly emoji?: string;
+  readonly mainCategoryId: string;
+  readonly scenarioCategories: readonly string[];
+  readonly order: number;
+}
+
+/**
+ * Hierarchical scenario category configuration
+ */
+export interface ScenarioHierarchyConfig {
+  readonly mainCategories: readonly ScenarioMainCategory[];
+  readonly subCategories: readonly ScenarioSubCategory[];
 }
 
 export interface ScenarioSelectorConfig {

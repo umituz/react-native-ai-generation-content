@@ -43,7 +43,6 @@ const createStyles = (tokens: DesignTokens) =>
   StyleSheet.create({
     container: {
       paddingHorizontal: tokens.spacing.md,
-      paddingTop: tokens.spacing.lg,
       paddingBottom: tokens.spacing.md,
       gap: tokens.spacing.xs,
     },

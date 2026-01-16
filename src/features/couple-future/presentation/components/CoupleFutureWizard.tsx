@@ -88,11 +88,20 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
         return null; // Rendered by parent via CategoryNavigationContainer
 
       case StepType.SCENARIO_PREVIEW:
+        const scenario = flow.selectedCategory || data.selectedScenario;
+        const handlePreviewBack = () => {
+          // If we came from CategoryNavigationContainer, reset to SCENARIO step
+          if (data.selectedScenario && !flow.selectedCategory) {
+            callbacks?.onBackToScenarioSelection?.();
+          } else {
+            flow.previousStep();
+          }
+        };
         return (
           <ScenarioPreviewScreen
-            scenario={flow.selectedCategory as never}
+            scenario={scenario as never}
             translations={translations.scenarioPreview as never}
-            onBack={flow.previousStep}
+            onBack={handlePreviewBack}
             onContinue={handleScenarioPreviewContinue}
             t={t}
           />

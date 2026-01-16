@@ -37,7 +37,7 @@ export const ScenarioSelectorScreen: React.FC<ScenarioSelectorScreenProps> = ({
   return (
     <ScreenLayout
       scrollable={false}
-      edges={["top", "left", "right"]}
+      edges={["left", "right"]}
       contentContainerStyle={styles.container}
       backgroundColor={tokens.colors.backgroundPrimary}
     >
@@ -61,5 +61,6 @@ const createStyles = (_tokens: DesignTokens) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      paddingTop: 0,
     },
   });
