@@ -23,3 +23,5 @@ export {
   hasExplicitConfig,
   getScenarioFeatureType,
 } from "./configs/wizard-configs";
+
+export type { WizardConfigOptions } from "./configs/wizard-configs";

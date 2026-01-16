@@ -22,7 +22,7 @@ import { renderStep } from "../../infrastructure/renderers/step-renderer";
 import type { WizardFeatureConfig } from "../../domain/entities/wizard-config.types";
 import { buildFlowStepsFromWizard } from "../../infrastructure/builders/dynamic-step-builder";
 import { useWizardGeneration, type WizardScenarioData } from "../hooks/useWizardGeneration";
-import type { AlertMessages } from "../../../../presentation/hooks/generation/orchestrator.types";
+import type { AlertMessages } from "../../../../presentation/hooks/generation/types";
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;
@@ -96,9 +96,32 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     [updateProgress],
   );
 
+  // Ensure scenario has required fields - use feature config as fallback
+  const validatedScenario = useMemo(() => {
+    if (scenario && scenario.id && scenario.aiPrompt !== undefined) {
+      return scenario;
+    }
+
+    // Fallback to feature config
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.warn("[GenericWizardFlow] Scenario missing required fields, using fallback", {
+        hasScenario: !!scenario,
+        scenarioId: scenario?.id,
+        featureConfigId: featureConfig.id,
+      });
+    }
+
+    return {
+      id: featureConfig.id,
+      aiPrompt: "",
+      outputType: "image" as const, // Default to image for safety
+      title: featureConfig.id,
+    };
+  }, [scenario, featureConfig.id]);
+
   // Generation hook - handles AI generation automatically
   const generationHook = useWizardGeneration({
-    scenario: scenario || { id: featureConfig.id, aiPrompt: "" },
+    scenario: validatedScenario,
     wizardData: customData,
     userId,
     isGeneratingStep: currentStep?.type === StepType.GENERATING,
@@ -110,7 +133,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   });
 
   // Track previous step ID to prevent infinite loops
-  const prevStepIdRef = useRef<string>();
+  const prevStepIdRef = useRef<string | undefined>(undefined);
 
   // DEBUG logging
   if (typeof __DEV__ !== "undefined" && __DEV__) {

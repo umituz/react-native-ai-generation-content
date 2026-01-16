@@ -299,20 +299,60 @@ const mergeConfigOverrides = (
 };
 
 /**
+ * Apply configuration options to filter/modify steps
+ */
+const applyConfigOptions = (
+  config: WizardFeatureConfig,
+  options?: WizardConfigOptions,
+): WizardFeatureConfig => {
+  if (!options) return config;
+
+  let steps = [...config.steps];
+
+  // Filter out style selection steps if disabled
+  if (options.disableStyleSelections) {
+    const styleStepIds = ["romantic_mood", "art_style", "artist_style"];
+    steps = steps.filter((step) => !styleStepIds.includes(step.id));
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[WizardConfig] Style selections disabled", {
+        filteredStepIds: styleStepIds,
+        remainingSteps: steps.map((s) => s.id),
+      });
+    }
+  }
+
+  return {
+    ...config,
+    steps,
+  };
+};
+
+/**
+ * Configuration Options for Wizard Behavior
+ */
+export interface WizardConfigOptions {
+  readonly disableStyleSelections?: boolean; // Disable romantic mood, art style, artist style
+}
+
+/**
  * Get wizard config for a scenario
  * 1. Check for explicit config in SCENARIO_WIZARD_CONFIGS
  * 2. Auto-detect feature type and generate config
  * 3. Apply overrides if provided
+ * 4. Apply options to disable certain steps
  *
  * This means ALL scenarios work automatically!
  */
 export const getScenarioWizardConfig = (
   scenarioId: string,
+  options?: WizardConfigOptions,
   overrides?: Partial<WizardFeatureConfig>,
 ): WizardFeatureConfig => {
   // 1. Explicit config (highest priority)
   if (SCENARIO_WIZARD_CONFIGS[scenarioId]) {
-    return mergeConfigOverrides(SCENARIO_WIZARD_CONFIGS[scenarioId], overrides);
+    const config = mergeConfigOverrides(SCENARIO_WIZARD_CONFIGS[scenarioId], overrides);
+    return applyConfigOptions(config, options);
   }
 
   // 2. Auto-detect feature type
@@ -330,7 +370,10 @@ export const getScenarioWizardConfig = (
   const config = factory(scenarioId);
 
   // 4. Apply overrides
-  return mergeConfigOverrides(config, overrides);
+  const configWithOverrides = mergeConfigOverrides(config, overrides);
+
+  // 5. Apply options (disable steps)
+  return applyConfigOptions(configWithOverrides, options);
 };
 
 /**
