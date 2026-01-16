@@ -9,7 +9,7 @@ import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { useFlow, resetFlowStore } from "../../../../infrastructure/flow";
 import { StepType } from "../../../../domain/entities/flow-config.types";
 import type { StepDefinition } from "../../../../domain/entities/flow-config.types";
-import type { CoupleFutureWizardProps, WizardScenarioData } from "../../domain/wizard.types";
+import type { CoupleFutureWizardProps } from "../../domain/wizard.types";
 import { PartnerStepScreen } from "../../../partner-upload";
 import { ScenarioPreviewScreen } from "../../../scenarios";
 import { GeneratingStepContent } from "./GeneratingStepContent";
@@ -47,15 +47,6 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
     steps: stepDefinitions,
     initialStepIndex,
   });
-
-  const handleScenarioSelect = useCallback(
-    (scenario: WizardScenarioData) => {
-      flow.setCategory(scenario);
-      callbacks?.onScenarioSelect?.(scenario);
-      flow.nextStep();
-    },
-    [flow, callbacks],
-  );
 
   const handleScenarioPreviewContinue = useCallback(() => {
     // No auth check needed here - just proceed to photo upload

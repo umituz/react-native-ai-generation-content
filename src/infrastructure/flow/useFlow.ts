@@ -29,7 +29,24 @@ let flowStoreInstance: FlowStoreType | null = null;
 
 export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
   const storeRef = useRef<FlowStoreType | null>(null);
+  const prevConfigRef = useRef<{ initialStepIndex?: number; initialStepId?: string } | undefined>(undefined);
 
+  // Detect config changes (initialStepIndex or initialStepId changed)
+  const configChanged =
+    prevConfigRef.current !== undefined &&
+    (prevConfigRef.current.initialStepIndex !== config.initialStepIndex ||
+      prevConfigRef.current.initialStepId !== config.initialStepId);
+
+  // If config changed, reset and recreate store
+  if (configChanged) {
+    if (flowStoreInstance) {
+      flowStoreInstance.getState().reset();
+    }
+    flowStoreInstance = null;
+    storeRef.current = null;
+  }
+
+  // Initialize store if needed
   if (!storeRef.current) {
     if (!flowStoreInstance) {
       flowStoreInstance = createFlowStore({
@@ -40,6 +57,12 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
     }
     storeRef.current = flowStoreInstance;
   }
+
+  // Store current config for next render comparison
+  prevConfigRef.current = {
+    initialStepIndex: config.initialStepIndex,
+    initialStepId: config.initialStepId,
+  };
 
   const store = storeRef.current;
   const state = store();
