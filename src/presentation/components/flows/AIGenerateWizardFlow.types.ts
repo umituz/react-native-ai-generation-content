@@ -61,5 +61,6 @@ export interface AIGenerateWizardFlowProps {
   readonly onBack?: () => void;
   readonly onSave?: (uri: string) => Promise<void>;
   readonly onShare?: (uri: string) => Promise<void>;
+  readonly onStepChange?: (stepId: string) => void;
   readonly t: (key: string) => string;
 }

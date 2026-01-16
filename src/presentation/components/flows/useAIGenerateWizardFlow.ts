@@ -14,12 +14,14 @@ interface UseAIGenerateWizardFlowProps {
   featureType: string;
   onGenerate: (data: GenerationData) => Promise<string | null | void>;
   onBack?: () => void;
+  onStepChange?: (stepId: string) => void;
 }
 
 export function useAIGenerateWizardFlow({
   featureType,
   onGenerate,
   onBack: onBackProp,
+  onStepChange,
 }: UseAIGenerateWizardFlowProps) {
   const state = useAIGenerateState();
   const {
@@ -27,6 +29,18 @@ export function useAIGenerateWizardFlow({
     setProgress, setResult, images, prompt, selectedStyle,
     selectedDuration
   } = state;
+
+  // Notify parent app when step changes
+  useEffect(() => {
+    if (onStepChange) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[AIGenerateWizardFlow] Step changed", {
+          currentStep,
+        });
+      }
+      onStepChange(currentStep);
+    }
+  }, [currentStep, onStepChange]);
 
   const imageCountRequired = useMemo(() => {
     if (!featureType || !hasAIFeature(featureType)) return 0;

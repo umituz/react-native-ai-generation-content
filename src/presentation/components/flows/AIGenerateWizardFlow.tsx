@@ -29,6 +29,7 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
   onBack: onBackProp,
   onSave,
   onShare,
+  onStepChange,
   t,
 }) => {
   const tokens = useAppDesignTokens();
@@ -74,7 +75,7 @@ export const AIGenerateWizardFlow: React.FC<AIGenerateWizardFlowProps> = ({
     handleBack,
     handleNext,
     handleGenerate,
-  } = useAIGenerateWizardFlow({ featureType, onGenerate, onBack: onBackProp });
+  } = useAIGenerateWizardFlow({ featureType, onGenerate, onBack: onBackProp, onStepChange });
 
   switch (currentStep) {
     case AIGenerateStep.UPLOAD_1:
