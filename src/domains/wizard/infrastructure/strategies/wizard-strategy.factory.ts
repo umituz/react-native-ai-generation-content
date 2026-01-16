@@ -366,10 +366,9 @@ export const createWizardStrategy = (
           scenarioId: scenario.id,
           scenarioTitle: scenario.title || scenario.id,
         },
-        output: {
-          imageUrl,
-          videoUrl,
-        },
+        output: outputType === "image"
+          ? { imageUrl }
+          : { videoUrl },
       };
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {

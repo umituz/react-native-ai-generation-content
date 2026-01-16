@@ -143,28 +143,6 @@ export * from "./domains/content-moderation";
 export * from "./domains/creations";
 export * from "./domains/face-detection";
 export * from "./domains/scenarios";
-export * from "./features/image-to-image";
-export * from "./features/replace-background";
-export * from "./features/upscaling";
-export * from "./features/script-generator";
-export * from "./features/photo-restoration";
-export type { DualImageVideoProcessingStartData, DualImageVideoResult, DualImageVideoFeatureConfig } from "./features/shared/dual-image-video";
-export * from "./features/ai-hug";
-export * from "./features/ai-kiss";
-export * from "./features/face-swap";
-export * from "./features/anime-selfie";
-export * from "./features/remove-background";
-export * from "./features/remove-object";
-export * from "./features/text-to-video";
-export * from "./features/text-to-image";
-export * from "./features/image-to-video";
-export * from "./features/text-to-voice";
-export * from "./features/hd-touch-up";
-export * from "./features/meme-generator";
-export * from "./features/couple-future";
-export * from "./features/love-message";
-export * from "./features/partner-upload";
-export * from "./features/scenarios";
 export * from "./infrastructure/orchestration";
 
 // Generation Config Provider (App Configuration)
@@ -206,8 +184,6 @@ export type {
   PromptTranslationKeys,
 } from "./presentation/screens/ai-feature";
 
-// AIGenerationWizard - Generic wizard for all AI generation flows
-export * from "./features/wizard";
 
 // Flow System - Dynamic multi-step flow management
 export { createFlowStore, useFlow, resetFlowStore } from "./infrastructure/flow";
@@ -229,5 +205,5 @@ export type {
   FlowGenerationStatus,
 } from "./domain/entities/flow-config.types";
 
-// Wizard Domain - Generic, configuration-driven wizard system for ALL features
 export * from "./domains/wizard";
+export * from "./domains/generation";
