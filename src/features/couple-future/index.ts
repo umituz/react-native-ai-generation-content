@@ -47,6 +47,22 @@ export type {
 } from "./infrastructure/coupleFeatureRegistry";
 export { enhanceCouplePrompt } from "./infrastructure/couplePromptEnhancer";
 
+// Wizard Component
+export { CoupleFutureWizard, resetCoupleFutureWizard } from "./presentation/components/CoupleFutureWizard";
+export { GeneratingStepContent } from "./presentation/components/GeneratingStepContent";
+export type {
+  CoupleFutureWizardProps,
+  CoupleFutureWizardConfig,
+  CoupleFutureWizardTranslations,
+  CoupleFutureWizardData,
+  CoupleFutureWizardCallbacks,
+  CoupleFutureWizardState,
+  WizardScenarioData,
+  WizardVisualStyleOption,
+  WizardPartnerConfig,
+  WizardStepConfig,
+} from "./domain/wizard.types";
+
 // Generation utilities
 export {
   buildGenerationInputFromConfig,
