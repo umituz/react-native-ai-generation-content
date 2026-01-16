@@ -26,7 +26,7 @@ export interface BaseStepConfig {
  */
 export interface PhotoUploadStepConfig extends BaseStepConfig {
   readonly type: "photo_upload";
-  readonly label?: string; // "Partner A", "Your Photo", etc.
+  readonly label?: string; // "Photo 1", "Photo 2", "Your Photo", etc.
   readonly showFaceDetection?: boolean;
   readonly showNameInput?: boolean;
   readonly showPhotoTips?: boolean;
@@ -117,11 +117,12 @@ export const buildWizardConfigFromScenario = (
 ): WizardFeatureConfig => {
   const steps: WizardStepConfig[] = [];
 
-  // Add photo upload steps (dynamic count!)
+  // Add photo upload steps (max 2 photos)
   if (config.photoCount && config.photoCount > 0) {
-    for (let i = 0; i < config.photoCount; i++) {
+    const maxPhotos = Math.min(config.photoCount, 2); // Max 2 photos
+    for (let i = 0; i < maxPhotos; i++) {
       steps.push({
-        id: `photo_${i}`,
+        id: `photo_${i + 1}`,
         type: "photo_upload",
         label: config.photoLabels?.[i] || `Photo ${i + 1}`,
         showFaceDetection: true,
@@ -182,18 +183,17 @@ export const buildWizardConfigFromScenario = (
 
 /**
  * Pre-configured scenarios for common use cases
+ * Labels should be provided from main app via photoLabels parameter
  */
 export const WIZARD_PRESETS = {
-  // Couple/Partner features (2 photos)
-  COUPLE: {
+  // Two photo features (couple, comparison, etc.)
+  TWO_PHOTOS: {
     photoCount: 2,
-    photoLabels: ["First Partner", "Second Partner"],
   },
 
   // Single photo features
   SINGLE_PHOTO: {
     photoCount: 1,
-    photoLabels: ["Your Photo"],
     requireStyleSelection: true,
     requireDurationSelection: true,
   },
@@ -204,11 +204,5 @@ export const WIZARD_PRESETS = {
     requireText: true,
     requireStyleSelection: true,
     requireDurationSelection: true,
-  },
-
-  // Face swap (2 photos, specific requirements)
-  FACE_SWAP: {
-    photoCount: 2,
-    photoLabels: ["Source Face", "Target Face"],
   },
 } as const;
