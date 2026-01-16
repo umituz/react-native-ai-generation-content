@@ -16,8 +16,15 @@ const formatBase64 = (base64: string): string => {
 
 export async function executeCoupleFuture(
   input: CoupleFutureInput,
-  config?: CoupleFutureConfig,
+  config: CoupleFutureConfig,
 ): Promise<CoupleFutureResult> {
+  if (!config || !config.model) {
+    return {
+      success: false,
+      error: "Model is required. Please provide model from app's generation config.",
+    };
+  }
+
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[Executor] ========== COUPLE FUTURE START ==========");
     console.log("[Executor] Input received:", {
@@ -29,6 +36,7 @@ export async function executeCoupleFuture(
       prompt: input.prompt?.slice(0, 300),
     });
     console.log("[Executor] Config:", {
+      model: config.model,
       hasOnProgress: !!config?.onProgress,
       timeoutMs: config?.timeoutMs,
       aspectRatio: config?.aspectRatio,
@@ -99,7 +107,7 @@ export async function executeCoupleFuture(
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[Executor] 📤 FAL AI Request:");
-      console.log("[Executor] Model:", COUPLE_FUTURE_DEFAULTS.model);
+      console.log("[Executor] Model:", config.model);
       console.log("[Executor] Prompt:", enhancedPrompt.slice(0, 400));
       console.log("[Executor] Aspect ratio:", modelInput.aspect_ratio);
       console.log("[Executor] Output format:", modelInput.output_format);
@@ -110,7 +118,7 @@ export async function executeCoupleFuture(
       console.log("[Executor] 📡 Calling provider.subscribe()...");
     }
 
-    const result = await provider.subscribe(COUPLE_FUTURE_DEFAULTS.model, modelInput, {
+    const result = await provider.subscribe(config.model, modelInput, {
       timeoutMs: timeoutMs ?? COUPLE_FUTURE_DEFAULTS.timeoutMs,
       onQueueUpdate: (status) => {
         if (status.status === lastStatus) return;

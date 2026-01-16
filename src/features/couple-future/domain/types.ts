@@ -25,6 +25,8 @@ export interface CoupleFutureInput {
 }
 
 export interface CoupleFutureConfig {
+  /** REQUIRED: AI model ID from app config */
+  model: string;
   timeoutMs?: number;
   aspectRatio?: NanoBananaAspectRatio;
   outputFormat?: NanoBananaOutputFormat;
