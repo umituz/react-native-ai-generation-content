@@ -36,11 +36,20 @@ const createInitialState = (): FlowState => ({
 interface FlowStoreConfig {
   steps: readonly StepDefinition[];
   initialStepId?: string;
+  initialStepIndex?: number;
 }
 
 export const createFlowStore = (config: FlowStoreConfig) => {
-  const initialStepId = config.initialStepId ?? config.steps[0]?.id ?? "";
-  const initialIndex = Math.max(0, config.steps.findIndex((s) => s.id === initialStepId));
+  // Support both initialStepId and initialStepIndex
+  let initialIndex = 0;
+
+  if (config.initialStepIndex !== undefined) {
+    initialIndex = Math.max(0, Math.min(config.initialStepIndex, config.steps.length - 1));
+  } else if (config.initialStepId) {
+    initialIndex = Math.max(0, config.steps.findIndex((s) => s.id === config.initialStepId));
+  }
+
+  const initialStepId = config.steps[initialIndex]?.id ?? "";
 
   const initialState: FlowStoreState = {
     ...createInitialState(),

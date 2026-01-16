@@ -10,6 +10,7 @@ import type { FlowState, FlowActions, StepDefinition, FlowUploadedImageData } fr
 interface UseFlowConfig {
   steps: readonly StepDefinition[];
   initialStepId?: string;
+  initialStepIndex?: number;
 }
 
 interface UseFlowReturn extends FlowState, FlowActions {
@@ -31,7 +32,11 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
 
   if (!storeRef.current) {
     if (!flowStoreInstance) {
-      flowStoreInstance = createFlowStore(config);
+      flowStoreInstance = createFlowStore({
+        steps: config.steps,
+        initialStepId: config.initialStepId,
+        initialStepIndex: config.initialStepIndex,
+      });
     }
     storeRef.current = flowStoreInstance;
   }

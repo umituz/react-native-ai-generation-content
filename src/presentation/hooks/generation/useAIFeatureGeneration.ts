@@ -8,19 +8,7 @@ import { useGenerationOrchestrator } from "./orchestrator";
 import { prepareImage } from "../../../infrastructure/utils";
 import type { AIFeatureId } from "../../screens/ai-feature/types";
 import type { ImageFeatureType, VideoFeatureType } from "../../../domain/interfaces";
-
-interface AlertMessages {
-  success?: string;
-  error?: string;
-  network?: string;
-  credits?: string;
-}
-
-interface GenerationError {
-  type: string;
-  message: string;
-  originalError?: Error;
-}
+import type { AlertMessages, GenerationError } from "./types";
 
 interface FeatureGenerationConfig {
   featureType: AIFeatureId;
