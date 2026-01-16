@@ -17,6 +17,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../presentation/components";
 import { FaceDetectionToggle } from "../../../../domains/face-detection";
+import { PhotoTips } from "../../../../features/partner-upload/presentation/components/PhotoTips";
 import type { UploadedImage } from "../../../../features/partner-upload/domain/types";
 import { usePhotoUploadState } from "../hooks/usePhotoUploadState";
 
@@ -134,13 +135,14 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
           {translations.subtitle}
         </AtomicText>
 
-        {/* Photo Tips - Inline simple version */}
+        {/* Photo Tips - InfoGrid version */}
         {showPhotoTips && (
-          <View style={[styles.tipsContainer, { backgroundColor: tokens.colors.surfaceVariant + "40" }]}>
-            <AtomicText type="labelSmall" style={{ color: tokens.colors.textSecondary, textAlign: "center" }}>
-              {t("photoUpload.tips")}
-            </AtomicText>
-          </View>
+          <PhotoTips
+            t={t}
+            titleKey="photoUpload.tips.title"
+            headerIcon="bulb"
+            style={{ marginHorizontal: 24, marginBottom: 20 }}
+          />
         )}
 
         {showFaceDetection && onFaceDetectionToggle && (
@@ -193,12 +195,6 @@ const createStyles = (tokens: DesignTokens) =>
       textAlign: "center",
       marginHorizontal: 24,
       marginBottom: 24,
-    },
-    tipsContainer: {
-      marginHorizontal: 24,
-      marginBottom: 16,
-      padding: 12,
-      borderRadius: 8,
     },
     continueButton: {
       flexDirection: "row",
