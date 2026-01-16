@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-ai-generation-content",
-  "version": "1.23.5",
+  "version": "1.25.2",
   "description": "Provider-agnostic AI generation orchestration for React Native with result preview components",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -10,7 +10,8 @@
     "./content-moderation": "./src/domains/content-moderation/index.ts",
     "./creations": "./src/domains/creations/index.ts",
     "./face-detection": "./src/domains/face-detection/index.ts",
-    "./feature-background": "./src/domains/feature-background/index.ts"
+    "./feature-background": "./src/domains/feature-background/index.ts",
+    "./wizard": "./src/domains/wizard/index.ts"
   },
   "files": [
     "src"
