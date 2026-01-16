@@ -128,7 +128,7 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
       <AIGenScreenHeader
         title={headerTitleKey ? t(headerTitleKey) : t("scenario.sub_category.title")}
         description={headerDescriptionKey ? t(headerDescriptionKey) : t("scenario.sub_category.subtitle")}
-        onBack={onBack}
+        onNavigationPress={onBack}
       />
       <FlatList
         data={filteredSubCategories}

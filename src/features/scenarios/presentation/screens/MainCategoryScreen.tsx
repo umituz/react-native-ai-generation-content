@@ -121,7 +121,7 @@ export const MainCategoryScreen: React.FC<MainCategoryScreenProps> = ({
       <AIGenScreenHeader
         title={headerTitle || t("scenario.main_category.title")}
         description={headerDescription || t("scenario.main_category.subtitle")}
-        onBack={onBack}
+        onNavigationPress={onBack}
       />
       <FlatList
         data={mainCategories}
