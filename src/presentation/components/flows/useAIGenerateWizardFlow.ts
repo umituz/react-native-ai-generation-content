@@ -31,6 +31,9 @@ export function useAIGenerateWizardFlow({
   } = state;
 
   // Notify parent app when step changes
+  // NOTE: Do NOT include onStepChange in dependencies - causes infinite loop!
+  // Parent app re-renders when callback updates state, recreating the callback,
+  // which would retrigger this effect in an infinite loop.
   useEffect(() => {
     if (onStepChange) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -40,7 +43,8 @@ export function useAIGenerateWizardFlow({
       }
       onStepChange(currentStep);
     }
-  }, [currentStep, onStepChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
 
   const imageCountRequired = useMemo(() => {
     if (!featureType || !hasAIFeature(featureType)) return 0;

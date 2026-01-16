@@ -49,6 +49,9 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
   });
 
   // Notify parent app when step changes
+  // NOTE: Do NOT include callbacks in dependencies - causes infinite loop!
+  // Parent app re-renders when onStepChange updates state, which recreates callbacks,
+  // which would retrigger this effect, creating infinite loop.
   useEffect(() => {
     if (flow.currentStep && callbacks?.onStepChange) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -60,7 +63,8 @@ export const CoupleFutureWizard: React.FC<CoupleFutureWizardProps> = ({
       }
       callbacks.onStepChange(flow.currentStep.id, flow.currentStep.type);
     }
-  }, [flow.currentStep, flow.currentStepIndex, callbacks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flow.currentStep, flow.currentStepIndex]);
 
   const handleScenarioPreviewContinue = useCallback(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
