@@ -86,7 +86,7 @@ export const detectFeatureType = (scenarioId: string): FeatureType => {
 
 /**
  * Config Factory for COUPLE features (2 photos)
- * Context-aware labels for couple/partner scenarios
+ * Generic sequential labels for two-person scenarios
  */
 const createCoupleConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
@@ -164,8 +164,8 @@ const createTextBasedConfig = (scenarioId: string): WizardFeatureConfig => ({
 });
 
 /**
- * Config Factory for FACE_SWAP features (2 photos, different context)
- * Context-aware labels for face swap scenarios
+ * Config Factory for FACE_SWAP features (2 photos)
+ * Specific labels for face replacement scenarios
  */
 const createFaceSwapConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
