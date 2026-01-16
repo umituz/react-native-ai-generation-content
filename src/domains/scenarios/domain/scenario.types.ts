@@ -84,3 +84,42 @@ export interface ScenarioSelection {
   readonly mainCategory: MainCategory;
   readonly subCategory: SubCategory;
 }
+
+/**
+ * Legacy types for presentation components (backward compatibility)
+ * Used by CategoryNavigationContainer and related screens
+ */
+export interface ScenarioMainCategory {
+  readonly id: string;
+  readonly titleKey: string;
+  readonly descriptionKey?: string;
+  readonly icon?: string;
+  readonly emoji?: string;
+  readonly order: number;
+  readonly subCategoryIds: readonly string[];
+}
+
+export interface ScenarioSubCategory {
+  readonly id: string;
+  readonly titleKey: string;
+  readonly descriptionKey?: string;
+  readonly icon?: string;
+  readonly emoji?: string;
+  readonly mainCategoryId: string;
+  readonly scenarioCategories: readonly string[];
+  readonly order: number;
+}
+
+export interface ScenarioData {
+  readonly id: string;
+  readonly category?: string;
+  readonly title: string;
+  readonly description: string;
+  readonly icon: string;
+  readonly imageUrl?: string;
+  readonly previewImageUrl?: string;
+  readonly aiPrompt: string;
+  readonly storyTemplate: string;
+  readonly requiresPhoto?: boolean;
+  readonly hidden?: boolean;
+}

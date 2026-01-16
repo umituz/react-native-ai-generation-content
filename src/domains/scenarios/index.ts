@@ -25,3 +25,26 @@ export {
 } from "./configs/wizard-configs";
 
 export type { WizardConfigOptions } from "./configs/wizard-configs";
+
+// Presentation - Containers
+export { CategoryNavigationContainer } from "./presentation/containers";
+export type { CategoryNavigationContainerProps } from "./presentation/containers";
+
+// Presentation - Screens
+export {
+  ScenarioPreviewScreen,
+  MainCategoryScreen,
+  SubCategoryScreen,
+  HierarchicalScenarioListScreen,
+} from "./presentation/screens";
+export type {
+  MainCategoryScreenProps,
+  SubCategoryScreenProps,
+} from "./presentation/screens";
+
+// Legacy types (backward compatibility)
+export type {
+  ScenarioMainCategory,
+  ScenarioSubCategory,
+  ScenarioData,
+} from "./domain/scenario.types";

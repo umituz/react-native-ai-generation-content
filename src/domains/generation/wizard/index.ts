@@ -42,3 +42,10 @@ export type {
   WizardScenarioData,
   WizardOutputType,
 } from "./presentation/hooks/useWizardGeneration";
+
+// Presentation - Components
+export { GenericWizardFlow } from "./presentation/components";
+export type { GenericWizardFlowProps } from "./presentation/components";
+
+// Presentation - Screens
+export { GeneratingScreen } from "./presentation/screens";
