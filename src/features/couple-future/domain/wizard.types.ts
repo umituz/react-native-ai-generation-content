@@ -93,6 +93,7 @@ export interface CoupleFutureWizardCallbacks extends FlowCallbacks {
   readonly onPartnerUpload?: (partnerId: "A" | "B", image: FlowUploadedImageData) => void;
   readonly onBackToScenarioSelection?: () => void;
   readonly requireFeature?: (callback: () => void) => boolean;
+  readonly onStepChange?: (stepId: string, stepType: StepType) => void;
 }
 
 /** Wizard props */

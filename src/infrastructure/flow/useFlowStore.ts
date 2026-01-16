@@ -79,6 +79,17 @@ export const createFlowStore = (config: FlowStoreConfig) => {
           const newCompleted = completedSteps.includes(currentStepId)
             ? completedSteps
             : [...completedSteps, currentStepId];
+
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[FlowStore] nextStep", {
+              fromIndex: currentStepIndex,
+              toIndex: nextIndex,
+              fromStep: currentStepId,
+              toStep: nextStep.id,
+              toStepType: nextStep.type,
+            });
+          }
+
           set({ currentStepId: nextStep.id, currentStepIndex: nextIndex, completedSteps: newCompleted });
         }
       },
