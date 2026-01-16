@@ -152,35 +152,5 @@ export {
   type GenerationConfigProviderProps,
 } from "./infrastructure/providers";
 
-// Result Preview Domain
 export * from "./domains/result-preview";
-
-// Unified AI Feature Screen
-export {
-  AIFeatureScreen,
-  AI_FEATURE_CONFIGS,
-  getAIFeatureConfig,
-  hasAIFeature,
-  getAllAIFeatureIds,
-  getAIFeaturesByMode,
-  createFeatureTranslations,
-  createSingleImageTranslations,
-  createDualImageTranslations,
-  createComparisonTranslations,
-  createPromptTranslations,
-} from "./presentation/screens/ai-feature";
-export type {
-  AIFeatureId,
-  AIFeatureMode,
-  AIFeatureOutputType,
-  AIFeatureCreditType,
-  AIFeatureConfig,
-  AIFeatureScreenProps,
-  SingleImageTranslationKeys,
-  DualImageTranslationKeys,
-  ComparisonTranslationKeys,
-  PromptTranslationKeys,
-} from "./presentation/screens/ai-feature";
-
-
 export * from "./domains/generation";
