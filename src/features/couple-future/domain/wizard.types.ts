@@ -82,6 +82,7 @@ export interface CoupleFutureWizardTranslations {
 /** Wizard data providers */
 export interface CoupleFutureWizardData {
   readonly scenarios: readonly WizardScenarioData[];
+  readonly selectedScenario?: WizardScenarioData;
   readonly visualStyles?: readonly WizardVisualStyleOption[];
   readonly surprisePrompts?: readonly string[];
 }
@@ -90,6 +91,7 @@ export interface CoupleFutureWizardData {
 export interface CoupleFutureWizardCallbacks extends FlowCallbacks {
   readonly onScenarioSelect?: (scenario: WizardScenarioData) => void;
   readonly onPartnerUpload?: (partnerId: "A" | "B", image: FlowUploadedImageData) => void;
+  readonly onBackToScenarioSelection?: () => void;
   readonly requireFeature?: (callback: () => void) => boolean;
 }
 
