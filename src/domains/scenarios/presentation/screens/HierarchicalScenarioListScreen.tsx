@@ -20,6 +20,7 @@ import {
   ScreenLayout,
   NavigationHeader,
   AtomicIcon,
+  AtomicSpinner,
   type DesignTokens,
 } from "@umituz/react-native-design-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -33,6 +34,7 @@ export interface HierarchicalScenarioListScreenProps {
   readonly onBack: () => void;
   readonly t: (key: string) => string;
   readonly numColumns?: number;
+  readonly isLoading?: boolean;
 }
 
 export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListScreenProps> = ({
@@ -43,6 +45,7 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   onBack,
   t,
   numColumns = 2,
+  isLoading = false,
 }) => {
   const tokens = useAppDesignTokens();
   const insets = useSafeAreaInsets();
@@ -68,7 +71,7 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
 
     const filtered = scenarios.filter((scenario) => {
       if (!scenario.category) return false;
-      return subCategory.scenarioCategories.includes(scenario.category);
+      return subCategory.scenarioCategories?.includes(scenario.category) ?? false;
     });
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -152,6 +155,18 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
     ),
     [t, styles.emptyState]
   );
+  
+  const LoadingComponent = useMemo(
+    () => (
+      <View style={styles.loadingContainer}>
+        <AtomicSpinner size="lg" color="primary" />
+        <AtomicText type="bodyMedium" style={{ marginTop: tokens.spacing.md }}>
+          {t("common.loading")}
+        </AtomicText>
+      </View>
+    ),
+    [tokens, t, styles.loadingContainer]
+  );
 
   if (!subCategory) {
     return null;
@@ -213,7 +228,9 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           ListEmptyComponent={
-            filteredScenarios.length === 0 ? ListEmptyComponent : null
+            isLoading 
+              ? LoadingComponent 
+              : (filteredScenarios.length === 0 ? ListEmptyComponent : null)
           }
           contentContainerStyle={[
             styles.listContent,
@@ -249,6 +266,12 @@ const createStyles = (
       paddingHorizontal: horizontalPadding,
     },
     emptyState: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: tokens.spacing.xl,
+    },
+    loadingContainer: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",

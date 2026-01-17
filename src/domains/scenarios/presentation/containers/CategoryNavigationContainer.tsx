@@ -22,10 +22,13 @@ export interface CategoryNavigationContainerProps {
   readonly scenarios: readonly ScenarioData[];
   readonly onSelectScenario: (scenarioId: string) => void;
   readonly onBack?: () => void;
+  readonly onSelectMainCategory?: (categoryId: string) => void;
+  readonly onSelectSubCategory?: (subCategoryId: string) => void;
   readonly t: (key: string) => string;
   readonly headerTitle?: string;
   readonly headerDescription?: string;
   readonly numColumns?: number;
+  readonly isLoading?: boolean;
 }
 
 export const CategoryNavigationContainer: React.FC<
@@ -36,10 +39,13 @@ export const CategoryNavigationContainer: React.FC<
   scenarios,
   onSelectScenario,
   onBack,
+  onSelectMainCategory,
+  onSelectSubCategory,
   t,
   headerTitle,
   headerDescription,
   numColumns = 2,
+  isLoading = false,
 }) => {
   const [currentStep, setCurrentStep] = useState<NavigationStep>("main_category");
   const [selectedMainCategoryId, setSelectedMainCategoryId] = useState<string | null>(null);
@@ -76,7 +82,10 @@ export const CategoryNavigationContainer: React.FC<
     }
     setSelectedMainCategoryId(categoryId);
     setCurrentStep("sub_category");
-  }, []);
+    if (onSelectMainCategory) {
+      onSelectMainCategory(categoryId);
+    }
+  }, [onSelectMainCategory]);
 
   const handleSelectSubCategory = useCallback((subCategoryId: string) => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -86,7 +95,10 @@ export const CategoryNavigationContainer: React.FC<
     }
     setSelectedSubCategoryId(subCategoryId);
     setCurrentStep("scenario_list");
-  }, []);
+    if (onSelectSubCategory) {
+      onSelectSubCategory(subCategoryId);
+    }
+  }, [onSelectSubCategory]);
 
   const handleBackFromSubCategory = useCallback(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -162,6 +174,7 @@ export const CategoryNavigationContainer: React.FC<
         onBack={handleBackFromScenarioList}
         t={t}
         numColumns={numColumns}
+        isLoading={isLoading}
       />
     );
   }
