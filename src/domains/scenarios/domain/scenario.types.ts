@@ -139,6 +139,55 @@ export interface ScenarioConfig {
   readonly title: string;
 }
 
+/**
+ * Visual style option for prompt customization
+ */
+export interface VisualStyleOption {
+  readonly id: string;
+  readonly icon: string;
+  readonly labelKey: string;
+}
+
+/**
+ * Inspiration chip data for prompt customization
+ */
+export interface InspirationChipData {
+  readonly id: string;
+  readonly labelKey: string;
+  readonly promptKey: string;
+}
+
+/**
+ * Magic prompt configuration
+ */
+export interface MagicPromptConfig {
+  readonly headerKey: string;
+  readonly headlinePart1Key: string;
+  readonly headlinePart2Key: string;
+  readonly subtitleKey: string;
+  readonly inputLabelKey: string;
+  readonly surpriseButtonKey: string;
+  readonly placeholderKey: string;
+  readonly styleTitleKey: string;
+  readonly inspirationTitleKey: string;
+  readonly continueKey: string;
+  readonly maxLength: number;
+  readonly minLength: number;
+}
+
+/**
+ * Couple feature identifier
+ */
+export type CoupleFeatureId = string;
+
+/**
+ * Couple feature selection state
+ */
+export interface CoupleFeatureSelection {
+  readonly featureId: CoupleFeatureId | null;
+  readonly [key: string]: any;
+}
+
 export interface ScenarioData {
   readonly id: string;
   readonly category?: string;

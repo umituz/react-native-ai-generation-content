@@ -50,4 +50,9 @@ export type {
   ScenarioSelectorConfig,
   ScenarioPreviewTranslations,
   ScenarioConfig,
+  VisualStyleOption,
+  InspirationChipData,
+  MagicPromptConfig,
+  CoupleFeatureId,
+  CoupleFeatureSelection,
 } from "./domain/scenario.types";
