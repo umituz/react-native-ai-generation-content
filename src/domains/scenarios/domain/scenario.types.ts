@@ -110,6 +110,35 @@ export interface ScenarioSubCategory {
   readonly order: number;
 }
 
+/**
+ * Scenario selector configuration
+ */
+export interface ScenarioSelectorConfig {
+  readonly titleKey: string;
+  readonly subtitleKey: string;
+  readonly showCategoryFilter: boolean;
+  readonly enableSearch: boolean;
+  readonly pageSize: number;
+}
+
+/**
+ * Scenario preview translations
+ */
+export interface ScenarioPreviewTranslations {
+  readonly continueButton: string;
+  readonly whatToExpect: string;
+}
+
+/**
+ * Scenario application configuration
+ */
+export interface ScenarioConfig {
+  readonly id: string;
+  readonly aiPrompt: string;
+  readonly storyTemplate?: string;
+  readonly title: string;
+}
+
 export interface ScenarioData {
   readonly id: string;
   readonly category?: string;

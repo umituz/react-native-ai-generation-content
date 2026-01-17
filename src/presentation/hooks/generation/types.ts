@@ -136,3 +136,23 @@ export interface UseGenerationOrchestratorReturn<TInput, TResult> {
   result: TResult | null;
   error: GenerationError | null;
 }
+
+/**
+ * Generation error UI configuration
+ */
+export interface GenerationErrorConfig {
+  readonly showCreditInfo?: boolean;
+  readonly iconName?: string;
+  readonly iconSize?: number;
+}
+
+/**
+ * Generation error UI translations
+ */
+export interface GenerationErrorTranslations {
+  readonly title: string;
+  readonly tryAgain: string;
+  readonly chooseAnother: string;
+  readonly noCreditCharged: string;
+}
+

@@ -59,3 +59,10 @@ export interface FeatureRegistration {
   has(featureId: string): boolean;
   unregister(featureId: string): void;
 }
+
+/**
+ * Visual style modifiers for generation
+ */
+export interface VisualStyleConfig {
+  readonly [key: string]: string;
+}
