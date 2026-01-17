@@ -25,6 +25,8 @@ export type {
   ModerationResult,
   CreditCallbacks,
   LifecycleConfig,
+  GenerationErrorConfig,
+  GenerationErrorTranslations,
 } from "./types";
 
 export type {

@@ -47,4 +47,7 @@ export type {
   ScenarioMainCategory,
   ScenarioSubCategory,
   ScenarioData,
+  ScenarioSelectorConfig,
+  ScenarioPreviewTranslations,
+  ScenarioConfig,
 } from "./domain/scenario.types";

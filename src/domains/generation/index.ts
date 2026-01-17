@@ -14,6 +14,7 @@ export type {
   GenerationType,
   InputType,
   OutputType,
+  VisualStyleConfig,
 } from "./domain/feature-config.types";
 
 export type {

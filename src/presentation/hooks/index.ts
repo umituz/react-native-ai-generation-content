@@ -20,6 +20,8 @@ export type {
   GenerationErrorType,
   AlertMessages,
   UseGenerationOrchestratorReturn,
+  GenerationErrorConfig,
+  GenerationErrorTranslations,
   SingleImageInput,
   DualImageInput,
   ImageGenerationInput,
