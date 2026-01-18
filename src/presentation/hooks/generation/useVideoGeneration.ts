@@ -18,6 +18,7 @@ import type { Creation } from "../../../domains/creations/domain/entities/Creati
 export interface DualImageVideoInput {
   sourceImageBase64: string;
   targetImageBase64: string;
+  prompt?: string;
 }
 
 export interface VideoGenerationConfig<TResult> {
@@ -67,6 +68,7 @@ export const useVideoGeneration = <TResult>(
           {
             sourceImageBase64: input.sourceImageBase64,
             targetImageBase64: input.targetImageBase64,
+            prompt: input.prompt,
           },
           { onProgress },
         );
