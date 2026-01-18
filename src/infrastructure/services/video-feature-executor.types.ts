@@ -2,10 +2,7 @@
  * Video Feature Executor Type Definitions
  */
 
-/**
- * Result extractor function type
- */
-export type VideoResultExtractor = (result: unknown) => string | undefined;
+import type { VideoResultExtractor } from "../utils/url-extractor";
 
 /**
  * Execution options

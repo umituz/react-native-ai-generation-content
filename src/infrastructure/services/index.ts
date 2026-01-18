@@ -17,11 +17,11 @@ export {
   hasImageFeatureSupport,
 } from "./image-feature-executor.service";
 export type {
-  ImageResultExtractor,
   ExecuteImageFeatureOptions,
   ImageFeatureResult,
   ImageFeatureRequest,
 } from "./image-feature-executor.service";
+export type { ImageResultExtractor } from "../utils/url-extractor";
 export {
   executeVideoFeature,
   hasVideoFeatureSupport,

@@ -17,10 +17,12 @@ import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { useFlow } from "../../../infrastructure/flow/useFlow";
 import { StepType, type StepDefinition } from "../../../../../domain/entities/flow-config.types";
-import type { WizardFeatureConfig } from "../../domain/entities/wizard-config.types";
+import type { WizardFeatureConfig, WizardStepConfig } from "../../domain/entities/wizard-config.types";
 import { buildFlowStepsFromWizard } from "../../infrastructure/builders/dynamic-step-builder";
 import { useWizardGeneration, type WizardScenarioData } from "../hooks/useWizardGeneration";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
+import { PhotoStep } from "../../../../../presentation/components/photo-step/PhotoStep";
+import { usePhotoUploadState } from "../hooks/usePhotoUploadState";
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;
@@ -232,6 +234,25 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     }
   }, [currentStepIndex, previousStep, onBack]);
 
+  // Photo upload state translations (generic, used for all photo upload steps)
+  const photoUploadTranslations = useMemo(() => ({
+    fileTooLarge: t("common.errors.file_too_large"),
+    maxFileSize: t("common.errors.max_file_size"),
+    error: t("common.error"),
+    uploadFailed: t("common.errors.upload_failed"),
+  }), [t]);
+
+  const photoUploadHook = usePhotoUploadState({
+    translations: photoUploadTranslations,
+  });
+
+  // Save photo when uploaded
+  useEffect(() => {
+    if (photoUploadHook.image && currentStep) {
+      setCustomData(currentStep.id, photoUploadHook.image);
+    }
+  }, [photoUploadHook.image, currentStep, setCustomData]);
+
   // Render current step
   const renderCurrentStep = useCallback(() => {
     const step = currentStep;
@@ -260,6 +281,49 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
 
       case StepType.RESULT_PREVIEW:
         return renderResult?.(generationResult) || null;
+
+      case StepType.PARTNER_UPLOAD: {
+        // Get wizard step config
+        const wizardConfig = step.config as WizardStepConfig;
+
+        // Use titleKey from config, fallback to step-specific translation key
+        const titleKey = wizardConfig?.titleKey || `wizard.steps.${step.id}.title`;
+        const title = t(titleKey);
+
+        // Subtitle is optional
+        const subtitle = wizardConfig?.subtitleKey ? t(wizardConfig.subtitleKey) : undefined;
+
+        // Get existing photo for this step from customData
+        const existingPhoto = customData[step.id];
+        const imageUri = existingPhoto && typeof existingPhoto === "object" && "uri" in existingPhoto
+          ? (existingPhoto.uri as string)
+          : photoUploadHook.image?.uri || null;
+
+        return (
+          <PhotoStep
+            config={{
+              enabled: true,
+              order: currentStepIndex,
+              id: step.id,
+              header: {},
+              photoCard: {},
+              enableValidation: false,
+            }}
+            imageUri={imageUri}
+            isValidating={false}
+            isValid={null}
+            onPhotoSelect={photoUploadHook.handlePickImage}
+            disabled={false}
+            title={title}
+            subtitle={subtitle}
+            translations={{
+              tapToUpload: t("photoUpload.tapToUpload"),
+              selectPhoto: t("photoUpload.selectPhoto"),
+              change: t("common.change"),
+            }}
+          />
+        );
+      }
 
       default:
         // Other step types should be handled by custom render props

@@ -6,7 +6,7 @@
 
 import { providerRegistry } from "./provider-registry.service";
 import { cleanBase64 } from "../utils";
-import { defaultExtractVideoResult } from "../utils/video-result-extractor.util";
+import { extractVideoResult } from "../utils/url-extractor";
 import type { VideoFeatureType, VideoFeatureInputData } from "../../domain/interfaces";
 import type {
   ExecuteVideoFeatureOptions,
@@ -77,7 +77,7 @@ export async function executeVideoFeature(
 
     onProgress?.(90);
 
-    const extractor = extractResult ?? defaultExtractVideoResult;
+    const extractor = extractResult ?? extractVideoResult;
     const videoUrl = extractor(result);
 
     onProgress?.(100);

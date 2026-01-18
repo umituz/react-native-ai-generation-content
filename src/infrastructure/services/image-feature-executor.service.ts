@@ -6,14 +6,11 @@
 
 import { providerRegistry } from "./provider-registry.service";
 import { cleanBase64 } from "../utils";
+import { extractImageResult } from "../utils/url-extractor";
+import type { ImageResultExtractor } from "../utils/url-extractor";
 import type { ImageFeatureType, ImageFeatureInputData } from "../../domain/interfaces";
 
 declare const __DEV__: boolean;
-
-/**
- * Result extractor function type
- */
-export type ImageResultExtractor = (result: unknown) => string | undefined;
 
 /**
  * Execution options
@@ -41,57 +38,6 @@ export interface ImageFeatureRequest {
   targetImageBase64?: string;
   prompt?: string;
   options?: Record<string, unknown>;
-}
-
-/**
- * Default result extractor - handles common response formats
- * Supports both direct response and data-wrapped response (fal.ai)
- */
-function defaultExtractImageResult(result: unknown): string | undefined {
-  if (typeof result !== "object" || result === null) return undefined;
-
-  const r = result as Record<string, unknown>;
-
-  if (__DEV__) {
-    console.log("[ImageExtractor] Result keys:", Object.keys(r));
-    console.log("[ImageExtractor] Has data:", !!r.data);
-    console.log("[ImageExtractor] Has images:", !!r.images);
-  }
-
-  // Handle fal.ai data wrapper
-  const data = (r.data as Record<string, unknown>) ?? r;
-
-  if (__DEV__) {
-    console.log("[ImageExtractor] Data keys:", Object.keys(data));
-  }
-
-  // Direct string values
-  if (typeof data.image === "string") return data.image;
-  if (typeof data.imageUrl === "string") return data.imageUrl;
-  if (typeof data.output === "string") return data.output;
-
-  // Object with url property (birefnet, rembg format: data.image.url)
-  const imageObj = data.image as Record<string, unknown> | undefined;
-  if (imageObj && typeof imageObj === "object" && typeof imageObj.url === "string") {
-    if (__DEV__) {
-      console.log("[ImageExtractor] Found data.image.url:", imageObj.url);
-    }
-    return imageObj.url;
-  }
-
-  // Array format (flux, etc: data.images[0].url)
-  if (Array.isArray(data.images) && typeof data.images[0]?.url === "string") {
-    if (__DEV__) {
-      console.log("[ImageExtractor] Found images[0].url:", data.images[0].url);
-    }
-    return data.images[0].url;
-  }
-
-  if (__DEV__) {
-    console.log("[ImageExtractor] No image URL found in result");
-  }
-
-  return undefined;
 }
 
 /**
@@ -143,7 +89,7 @@ export async function executeImageFeature(
 
     onProgress?.(90);
 
-    const extractor = extractResult ?? defaultExtractImageResult;
+    const extractor = extractResult ?? extractImageResult;
     const imageUrl = extractor(result);
 
     onProgress?.(100);

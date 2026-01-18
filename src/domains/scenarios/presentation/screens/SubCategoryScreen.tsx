@@ -86,12 +86,11 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
       return (
         <AtomicCard
           image={item.image}
-          leftIcon={!item.emoji ? (item.icon as any) : undefined}
+          leftIcon={item.icon}
           badge={item.emoji}
           title={title}
           subtitle={description}
-          // Smaller aspect ratio for subcategories if they have images, or standard if not
-          imageAspectRatio={item.image ? 1.5 : undefined} 
+          imageAspectRatio={item.image ? 1.5 : undefined}
           onPress={() => handleSubCategoryPress(item.id)}
           testID={`sub-category-${item.id}`}
           style={{ marginBottom: tokens.spacing.md }}

@@ -187,7 +187,7 @@ export type CoupleFeatureId = string;
  */
 export interface CoupleFeatureSelection {
   readonly featureId: CoupleFeatureId | null;
-  readonly [key: string]: any;
+  readonly [key: string]: CoupleFeatureId | string | boolean | number | null | undefined;
 }
 
 export interface ScenarioData {

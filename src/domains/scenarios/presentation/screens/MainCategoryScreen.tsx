@@ -69,8 +69,7 @@ export const MainCategoryScreen: React.FC<MainCategoryScreenProps> = ({
       return (
         <AtomicCard
           image={item.image}
-          // Fallback to emoji/icon if no image (though we expect images now)
-          leftIcon={!item.image && !item.emoji ? (item.icon as any) : undefined}
+          leftIcon={item.icon}
           title={title}
           subtitle={description}
           imageAspectRatio={1.5}
