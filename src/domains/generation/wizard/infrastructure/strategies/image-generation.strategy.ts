@@ -14,6 +14,7 @@ import {
   DEFAULT_STYLE_VALUE,
   MODEL_INPUT_DEFAULTS,
 } from "./wizard-strategy.constants";
+import { buildFacePreservationPrompt } from "../../../../prompts/infrastructure/builders/face-preservation-builder";
 
 declare const __DEV__: boolean;
 
@@ -86,7 +87,15 @@ async function executeImageGeneration(
       return { success: false, error: "At least one image required" };
     }
 
-    const enhancedPrompt = `Create a photorealistic image featuring the exact two people from the provided photos. Use the person from @image1 and the person from @image2 exactly as they appear in the reference images - maintain their facial features, expressions, and identity. ${input.prompt}. Professional photography, high quality, detailed, natural lighting, photorealistic rendering.`;
+    // Build face preservation prompt dynamically based on number of people
+    const enhancedPrompt = buildFacePreservationPrompt({
+      scenarioPrompt: input.prompt,
+      personCount: imageUrls.length,
+    });
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[ImageStrategy] Face preservation prompt for", imageUrls.length, "person(s)");
+    }
 
     const modelInput = {
       image_urls: imageUrls,

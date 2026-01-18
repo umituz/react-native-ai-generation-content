@@ -84,15 +84,21 @@ export type { IdentitySegment, AnimeStyleSegment, QualitySegment } from './domai
 export { ImagePromptBuilder, createAnimeSelfiePrompt, createStyleTransferPrompt } from './infrastructure/services/ImagePromptBuilder';
 export type { ImagePromptResult, ImagePromptBuilderOptions, AnimeSelfiePromptResult } from './infrastructure/services/ImagePromptBuilder';
 
-export { 
-  IDENTITY_PRESERVATION_CORE, 
-  PHOTOREALISTIC_RENDERING, 
-  NATURAL_POSE_GUIDELINES, 
+export {
+  IDENTITY_PRESERVATION_CORE,
+  PHOTOREALISTIC_RENDERING,
+  NATURAL_POSE_GUIDELINES,
   MASTER_BASE_PROMPT,
-  COUPLE_IDENTITY_PRESERVATION,
+  MULTI_PERSON_PRESERVATION_RULES,
   createEnhancedPrompt,
   createTransformationPrompt,
   enhanceExistingPrompt,
-  createCouplePrompt
+  createMultiPersonPrompt,
 } from './domain/entities/BasePromptStructure';
 export type { CreatePromptOptions } from './domain/entities/BasePromptStructure';
+
+export {
+  buildFacePreservationPrompt,
+  buildMinimalFacePreservationPrompt,
+} from './infrastructure/builders/face-preservation-builder';
+export type { FacePreservationOptions } from './infrastructure/builders/face-preservation-builder';

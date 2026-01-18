@@ -26,6 +26,7 @@ import type { Creation } from "../../../../creations/domain/entities/Creation";
 import { useResultActions } from "../../../../result-preview/presentation/hooks/useResultActions";
 import { validateScenario } from "../utilities/validateScenario";
 import { WizardStepRenderer } from "./WizardStepRenderer";
+import { StarRatingPicker } from "../../../../result-preview/presentation/components/StarRatingPicker";
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;
@@ -37,6 +38,7 @@ export interface GenericWizardFlowProps {
   readonly onGenerationComplete?: (result: unknown) => void;
   readonly onGenerationError?: (error: string) => void;
   readonly onCreditsExhausted?: () => void;
+  readonly onRate?: (creationId: string, rating: number, description: string) => Promise<boolean>;
   readonly onBack?: () => void;
   readonly onTryAgain?: () => void;
   readonly t: (key: string) => string;
@@ -56,6 +58,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   onGenerationComplete,
   onGenerationError,
   onCreditsExhausted,
+  onRate,
   onBack,
   onTryAgain,
   t,
@@ -66,6 +69,8 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
 }) => {
   const tokens = useAppDesignTokens();
   const [currentCreation, setCurrentCreation] = useState<Creation | null>(null);
+  const [showRatingPicker, setShowRatingPicker] = useState(false);
+  const [hasRated, setHasRated] = useState(false);
   const prevStepIdRef = useRef<string | undefined>(undefined);
 
   const flowSteps = useMemo<StepDefinition[]>(() => {
@@ -155,6 +160,21 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     nextStep();
   }, [currentStepIndex, flowSteps.length, customData, setCustomData, nextStep, onGenerationStart]);
 
+  const handleOpenRatingPicker = useCallback(() => {
+    setShowRatingPicker(true);
+  }, []);
+
+  const handleSubmitRating = useCallback(async (rating: number, description: string) => {
+    if (!currentCreation?.id || !onRate) return;
+    const success = await onRate(currentCreation.id, rating, description);
+    if (success) {
+      setHasRated(true);
+    }
+    setShowRatingPicker(false);
+  }, [currentCreation, onRate]);
+
+  const showRatingButton = Boolean(onRate) && !hasRated;
+
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
       <WizardStepRenderer
@@ -165,16 +185,27 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
         generationResult={generationResult}
         isSaving={isSaving}
         isSharing={isSharing}
+        showRating={showRatingButton}
         onNext={nextStep}
         onBack={handleBack}
         onPhotoContinue={handlePhotoContinue}
         onDownload={handleDownload}
         onShare={handleShare}
+        onRate={handleOpenRatingPicker}
         onTryAgain={onTryAgain}
         t={t}
         renderPreview={renderPreview}
         renderGenerating={renderGenerating}
         renderResult={renderResult}
+      />
+      <StarRatingPicker
+        visible={showRatingPicker}
+        onClose={() => setShowRatingPicker(false)}
+        onRate={handleSubmitRating}
+        title={t("result.rateTitle")}
+        submitLabel={t("common.submit")}
+        cancelLabel={t("common.cancel")}
+        descriptionPlaceholder={t("result.feedbackPlaceholder")}
       />
     </View>
   );

@@ -1,40 +1,14 @@
-/**
- * Wizard Step Renderer Component
- * Renders the appropriate screen based on current step type
- */
-
 import React from "react";
-import { getMediaTypeFromUrl } from "@umituz/react-native-design-system";
-import { StepType, type StepDefinition } from "../../../../../domain/entities/flow-config.types";
-import type { WizardStepConfig } from "../../domain/entities/wizard-config.types";
-import type { WizardScenarioData } from "../hooks/useWizardGeneration";
-import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
+import { getMediaTypeFromUrl, extractMediaUrl } from "@umituz/react-native-design-system";
+import { StepType } from "../../../../../domain/entities/flow-config.types";
 import { GenericPhotoUploadScreen } from "../screens/GenericPhotoUploadScreen";
 import { GeneratingScreen } from "../screens/GeneratingScreen";
 import { ScenarioPreviewScreen } from "../../../../scenarios/presentation/screens/ScenarioPreviewScreen";
-import type { ScenarioData } from "../../../../scenarios/domain/scenario.types";
 import { ResultPreviewScreen } from "../../../../result-preview/presentation/components/ResultPreviewScreen";
-import { extractMediaUrl } from "../../infrastructure/utils/media-url-extractor";
+import { getWizardStepConfig, getUploadedImage } from "./WizardStepRenderer.utils";
+import type { WizardStepRendererProps } from "./WizardStepRenderer.types";
 
-export interface WizardStepRendererProps {
-  readonly step: StepDefinition | undefined;
-  readonly scenario?: WizardScenarioData;
-  readonly customData: Record<string, unknown>;
-  readonly generationProgress: number;
-  readonly generationResult: unknown;
-  readonly isSaving: boolean;
-  readonly isSharing: boolean;
-  readonly onNext: () => void;
-  readonly onBack: () => void;
-  readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;
-  readonly onDownload: () => void;
-  readonly onShare: () => void;
-  readonly onTryAgain?: () => void;
-  readonly t: (key: string) => string;
-  readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
-  readonly renderGenerating?: (progress: number) => React.ReactElement | null;
-  readonly renderResult?: (result: unknown) => React.ReactElement | null;
-}
+export type { WizardStepRendererProps } from "./WizardStepRenderer.types";
 
 export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
   step,
@@ -44,11 +18,13 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
   generationResult,
   isSaving,
   isSharing,
+  showRating = true,
   onNext,
   onBack,
   onPhotoContinue,
   onDownload,
   onShare,
+  onRate,
   onTryAgain,
   t,
   renderPreview,
@@ -64,13 +40,11 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
 
   switch (step.type) {
     case StepType.SCENARIO_PREVIEW: {
-      if (renderPreview) {
-        return renderPreview(onNext);
-      }
+      if (renderPreview) return renderPreview(onNext);
       if (!scenario) return null;
       return (
         <ScenarioPreviewScreen
-          scenario={scenario as unknown as ScenarioData}
+          scenario={scenario}
           translations={{
             continueButton: t("common.continue"),
             whatToExpect: t("scenarioPreview.whatToExpect"),
@@ -83,27 +57,19 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
     }
 
     case StepType.GENERATING: {
-      if (renderGenerating) {
-        return renderGenerating(generationProgress);
-      }
+      if (renderGenerating) return renderGenerating(generationProgress);
       return (
-        <GeneratingScreen
-          progress={generationProgress}
-          scenario={scenario}
-          t={t}
-        />
+        <GeneratingScreen progress={generationProgress} scenario={scenario} t={t} />
       );
     }
 
     case StepType.RESULT_PREVIEW: {
-      if (renderResult) {
-        return renderResult(generationResult);
-      }
+      if (renderResult) return renderResult(generationResult);
       const media = extractMediaUrl(generationResult);
       if (!media) return null;
 
-      const mediaType = getMediaTypeFromUrl(media.url);
-      const isVideo = media.isVideo || mediaType === "video";
+      const isVideo = media.isVideo || getMediaTypeFromUrl(media.url) === "video";
+      const handleTryAgain = onTryAgain ?? onBack;
 
       return (
         <ResultPreviewScreen
@@ -113,11 +79,15 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
           isSharing={isSharing}
           onDownload={onDownload}
           onShare={onShare}
-          onTryAgain={onTryAgain || onBack}
-          onNavigateBack={onTryAgain || onBack}
+          onRate={onRate}
+          onTryAgain={handleTryAgain}
+          onNavigateBack={handleTryAgain}
+          hideLabel
+          iconOnly
+          showTryAgain
+          showRating={showRating}
           translations={{
             title: t("generation.result.title"),
-            yourResult: t("generation.result.yourResult"),
             saveButton: t("generation.result.save"),
             saving: t("generation.result.saving"),
             shareButton: t("generation.result.share"),
@@ -129,10 +99,10 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
     }
 
     case StepType.PARTNER_UPLOAD: {
-      const wizardConfig = step.config as WizardStepConfig;
-      const titleKey = wizardConfig?.titleKey || `wizard.steps.${step.id}.title`;
-      const subtitleKey = wizardConfig?.subtitleKey || `wizard.steps.${step.id}.subtitle`;
-      const existingPhoto = customData[step.id] as UploadedImage | undefined;
+      const wizardConfig = getWizardStepConfig(step.config);
+      const titleKey = wizardConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
+      const subtitleKey = wizardConfig?.subtitleKey ?? `wizard.steps.${step.id}.subtitle`;
+      const existingPhoto = getUploadedImage(customData[step.id]);
 
       return (
         <GenericPhotoUploadScreen

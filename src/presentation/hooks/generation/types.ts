@@ -65,8 +65,8 @@ export interface ModerationCallbacks {
 export interface CreditCallbacks {
   /** Check if user can afford the cost */
   checkCredits: (cost: number) => Promise<boolean>;
-  /** Deduct credits after successful generation */
-  deductCredits: (cost: number) => Promise<void>;
+  /** Deduct credits after successful generation - returns true if successful */
+  deductCredits: (cost: number) => Promise<boolean>;
   /** Called when credits are exhausted */
   onCreditsExhausted?: () => void;
 }

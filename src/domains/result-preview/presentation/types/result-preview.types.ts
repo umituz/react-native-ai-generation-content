@@ -133,8 +133,8 @@ export interface ResultPreviewScreenProps {
 export interface ResultPreviewTranslations {
   /** Screen title */
   title: string;
-  /** Result label */
-  yourResult: string;
+  /** Result label (optional when hideLabel is true) */
+  yourResult?: string;
   /** Save button */
   saveButton: string;
   /** Saving button */
@@ -143,7 +143,7 @@ export interface ResultPreviewTranslations {
   shareButton: string;
   /** Sharing button */
   sharing: string;
-  /** Try again button */
+  /** Try again button text */
   tryAnother: string;
   /** Rate button */
   rateButton?: string;

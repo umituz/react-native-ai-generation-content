@@ -9,6 +9,7 @@ import {
   AtomicIcon,
   AtomicText,
   useAppDesignTokens,
+  useResponsive,
 } from "@umituz/react-native-design-system";
 import type { ResultActionBarProps } from "../types/result-preview.types";
 
@@ -27,6 +28,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
   showRating = false,
 }) => {
   const tokens = useAppDesignTokens();
+  const { minTouchTarget } = useResponsive();
 
   const styles = useMemo(
     () =>
@@ -43,17 +45,17 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          paddingVertical: 12,
-          paddingHorizontal: 20,
-          borderRadius: 16,
-          gap: 8,
+          paddingVertical: tokens.spacing.sm,
+          paddingHorizontal: tokens.spacing.lg,
+          borderRadius: tokens.radius.md,
+          gap: tokens.spacing.xs,
           minWidth: 110,
           backgroundColor: tokens.colors.primary,
         },
         iconButton: {
-          width: 56,
-          height: 56,
-          borderRadius: 28,
+          width: minTouchTarget,
+          height: minTouchTarget,
+          borderRadius: minTouchTarget / 2,
           backgroundColor: tokens.colors.primary,
           justifyContent: "center",
           alignItems: "center",
@@ -67,7 +69,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
           opacity: 0.6,
         },
       }),
-    [tokens],
+    [tokens, minTouchTarget],
   );
 
   if (iconOnly) {
@@ -82,7 +84,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
           {isSaving ? (
             <ActivityIndicator color={tokens.colors.textInverse} size="small" />
           ) : (
-            <AtomicIcon name="download-outline" customSize={24} color="onPrimary" />
+            <AtomicIcon name="download-outline" customSize={20} color="onPrimary" />
           )}
         </TouchableOpacity>
         <TouchableOpacity
@@ -94,7 +96,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
           {isSharing ? (
             <ActivityIndicator color={tokens.colors.textInverse} size="small" />
           ) : (
-            <AtomicIcon name="share-social-outline" customSize={24} color="onPrimary" />
+            <AtomicIcon name="share-social-outline" customSize={20} color="onPrimary" />
           )}
         </TouchableOpacity>
         {showTryAgain && onTryAgain && (
@@ -103,7 +105,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
             onPress={onTryAgain}
             activeOpacity={0.7}
           >
-            <AtomicIcon name="refresh-outline" customSize={24} color="onPrimary" />
+            <AtomicIcon name="refresh-outline" customSize={20} color="onPrimary" />
           </TouchableOpacity>
         )}
         {showRating && onRate && (
@@ -112,7 +114,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
             onPress={onRate}
             activeOpacity={0.7}
           >
-            <AtomicIcon name="star-outline" customSize={24} color="onPrimary" />
+            <AtomicIcon name="star-outline" customSize={20} color="onPrimary" />
           </TouchableOpacity>
         )}
       </View>

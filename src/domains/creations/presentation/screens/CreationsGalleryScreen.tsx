@@ -200,16 +200,15 @@ export function CreationsGalleryScreen({
           onRate={handleOpenRatingPicker}
           hideLabel
           iconOnly
-          showTryAgain={false}
+          showTryAgain
           showRating={!hasRating}
           translations={{
             title: t(config.translations.title),
-            yourResult: "",
             saveButton: t("result.saveButton"),
             saving: t("result.saving"),
             shareButton: t("result.shareButton"),
             sharing: t("result.sharing"),
-            tryAnother: "",
+            tryAnother: t("result.tryAnother"),
           }}
         />
         <StarRatingPicker

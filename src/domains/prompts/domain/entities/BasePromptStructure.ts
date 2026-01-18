@@ -12,15 +12,26 @@
 /**
  * Core identity preservation instruction
  * This is the foundation for maintaining facial consistency
+ * Updated with stricter rules based on AI image generation best practices
  */
-export const IDENTITY_PRESERVATION_CORE = `CRITICAL IDENTITY PRESERVATION:
+export const IDENTITY_PRESERVATION_CORE = `CRITICAL IDENTITY PRESERVATION (HIGHEST PRIORITY):
 {
-  "policy": "MAINTAIN EXACT FACIAL IDENTITY FROM INPUT",
-  "rule_1": "Perfect facial identity preservation - the output MUST depict the EXACT SAME PERSON from the input photo.",
-  "rule_2": "Preserve all unique facial features: bone structure, eye shape, nose, mouth, facial proportions.",
-  "rule_3": "Maintain natural skin texture with pores and realistic details.",
-  "rule_4": "Keep the person's recognizable identity while adapting to the scenario context.",
-  "rule_5": "NEVER alter core facial characteristics that define the person's identity."
+  "policy": "PRESERVE 100% IDENTICAL FACIAL APPEARANCE FROM INPUT",
+  "mandatory_rules": [
+    "The face must be EXACTLY as it appears in the reference photo - 100% identical",
+    "Preserve every facial detail: bone structure, eye shape, eye color, nose shape, lip shape",
+    "Maintain natural skin texture with pores, marks, and realistic details",
+    "Keep the person instantly recognizable - any deviation is NOT acceptable"
+  ],
+  "forbidden_modifications": [
+    "Do NOT change face shape or facial proportions",
+    "Do NOT alter eye color, eye shape, or eye spacing",
+    "Do NOT modify nose shape, size, or position",
+    "Do NOT change lip shape, thickness, or natural expression",
+    "Do NOT alter skin tone or smooth skin texture",
+    "Do NOT remove natural features like freckles, moles, or wrinkles"
+  ],
+  "verification": "Before output: confirm face matches reference photo with 100% accuracy"
 }`;
 
 /**
@@ -162,29 +173,47 @@ ${existingPrompt}`;
 };
 
 /**
- * Couple/duo specific prompt enhancement
- * Ensures both people maintain their identities
+ * Multi-person identity preservation rules
+ * Ensures all people maintain their identities with strict rules
+ * Supports any number of people (1, 2, 3, N)
  */
-export const COUPLE_IDENTITY_PRESERVATION = `COUPLE IDENTITY PRESERVATION:
-{
-  "requirement": "Both individuals must maintain their exact facial identities",
-  "person_a": "Perfect preservation of first person's facial features and identity",
-  "person_b": "Perfect preservation of second person's facial features and identity",
-  "interaction": "Natural, loving interaction between the two people",
-  "positioning": "Standing side-by-side, close together, or in contextually appropriate positions",
-  "eye_contact": "Both looking at the camera with natural expressions"
-}`;
+export const MULTI_PERSON_PRESERVATION_RULES = {
+  requirement: "ALL individuals must have 100% identical facial appearance to their reference photos",
+  perPersonRule: "Use EXACTLY the person from @imageN - preserve 100% identical facial features",
+  forbidden: [
+    "Do NOT swap, mix, or blend facial features between people",
+    "Do NOT idealize or beautify any face",
+    "Do NOT alter facial proportions or characteristics",
+  ],
+  positioning: "Natural positioning, all looking at camera with natural expressions",
+} as const;
 
 /**
- * Creates a couple-specific prompt
- * 
- * @param scenarioPrompt - The scenario description for the couple
- * @returns Complete couple-optimized prompt
+ * Creates a multi-person prompt dynamically
+ *
+ * @param scenarioPrompt - The scenario description
+ * @param personCount - Number of people (1, 2, 3, N)
+ * @returns Complete prompt with identity preservation for all people
  */
-export const createCouplePrompt = (scenarioPrompt: string): string => {
+export const createMultiPersonPrompt = (
+  scenarioPrompt: string,
+  personCount: number,
+): string => {
+  const personRefs = Array.from({ length: personCount }, (_, i) =>
+    `Person ${i + 1}: @image${i + 1} - preserve 100% facial identity`
+  ).join("\n  ");
+
   return `${IDENTITY_PRESERVATION_CORE}
 
-${COUPLE_IDENTITY_PRESERVATION}
+MULTI-PERSON IDENTITY PRESERVATION (${personCount} people):
+{
+  "requirement": "${MULTI_PERSON_PRESERVATION_RULES.requirement}",
+  "references": [
+    ${personRefs}
+  ],
+  "forbidden": ${JSON.stringify(MULTI_PERSON_PRESERVATION_RULES.forbidden)},
+  "positioning": "${MULTI_PERSON_PRESERVATION_RULES.positioning}"
+}
 
 ${PHOTOREALISTIC_RENDERING}
 

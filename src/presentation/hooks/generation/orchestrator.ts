@@ -75,8 +75,8 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   // Wrap credit hook to match expected interface
   const defaultCredits = {
     checkCredits: creditHook.checkCredits,
-    deductCredit: async (amount: number) => {
-      await creditHook.deductCredit(amount);
+    deductCredit: async (amount: number): Promise<boolean> => {
+      return creditHook.deductCredit(amount);
     }
   };
 
@@ -216,7 +216,16 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] 💳 Deducting credit:", creditCost);
       }
-      await deductCredit(creditCost);
+      const creditDeducted = await deductCredit(creditCost);
+      if (!creditDeducted) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] ❌ Credit deduction failed");
+        }
+        throw createGenerationError("credits", "Failed to deduct credits");
+      }
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[Orchestrator] ✅ Credit deducted successfully");
+      }
 
       // Success
       if (isMountedRef.current) {
