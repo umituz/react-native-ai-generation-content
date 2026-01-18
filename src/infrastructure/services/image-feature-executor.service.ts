@@ -7,7 +7,6 @@
 import { providerRegistry } from "./provider-registry.service";
 import { cleanBase64, extractErrorMessage } from "../utils";
 import { extractImageResult } from "../utils/url-extractor";
-import { IMAGE_PROGRESS } from "../constants";
 import type { ImageResultExtractor } from "../utils/url-extractor";
 import type { ImageFeatureType, ImageFeatureInputData } from "../../domain/interfaces";
 
@@ -69,8 +68,6 @@ export async function executeImageFeature(
   }
 
   try {
-    onProgress?.(IMAGE_PROGRESS.START);
-
     const inputData: ImageFeatureInputData = {
       imageBase64: request.imageBase64 ? cleanBase64(request.imageBase64) : "",
       targetImageBase64: request.targetImageBase64
@@ -80,20 +77,13 @@ export async function executeImageFeature(
       options: request.options,
     };
 
-    onProgress?.(IMAGE_PROGRESS.INPUT_PREPARED);
-
     const input = provider.buildImageFeatureInput(featureType, inputData);
-
-    onProgress?.(IMAGE_PROGRESS.REQUEST_SENT);
-
     const result = await provider.run(model, input);
-
-    onProgress?.(IMAGE_PROGRESS.RESULT_RECEIVED);
 
     const extractor = extractResult ?? extractImageResult;
     const imageUrl = extractor(result);
 
-    onProgress?.(IMAGE_PROGRESS.COMPLETE);
+    onProgress?.(100);
 
     if (!imageUrl) {
       return { success: false, error: "No image in response" };

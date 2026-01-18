@@ -18,13 +18,11 @@ export { AIErrorType } from "./domain/entities";
 export type {
   AIErrorInfo, AIErrorMessages, GenerationCapability, GenerationStatus, GenerationMetadata,
   GenerationResult, GenerationProgress, GenerationRequest, PollingConfig, PollingState,
-  PollingOptions, ProgressStageConfig, ProgressConfig, MiddlewareContext, MiddlewareResultContext,
-  BeforeGenerateHook, AfterGenerateHook, GenerationMiddleware, MiddlewareChain,
-  BackgroundJobStatus, BackgroundJob, AddJobInput, UpdateJobInput, JobExecutorConfig,
-  BackgroundQueueConfig, GenerationMode,
+  PollingOptions, BackgroundJobStatus, BackgroundJob, AddJobInput, UpdateJobInput,
+  JobExecutorConfig, BackgroundQueueConfig, GenerationMode,
 } from "./domain/entities";
 
-export { DEFAULT_POLLING_CONFIG, DEFAULT_PROGRESS_STAGES, DEFAULT_QUEUE_CONFIG } from "./domain/entities";
+export { DEFAULT_POLLING_CONFIG, DEFAULT_QUEUE_CONFIG } from "./domain/entities";
 
 export type { ImageProcessingMode, ModeConfig, ModeCatalog } from "./domain/entities/processing-modes.types";
 export { DEFAULT_PROCESSING_MODES, getModeConfig, getFreeModes, getPremiumModes, getPromptRequiredModes } from "./domain/constants/processing-modes.constants";
@@ -35,40 +33,34 @@ export {
 } from "./infrastructure/config";
 
 export {
-  providerRegistry, generationOrchestrator, pollJob, createJobPoller, generationWrapper,
-  createGenerationWrapper, executeImageFeature, hasImageFeatureSupport, executeVideoFeature, hasVideoFeatureSupport,
+  providerRegistry, generationOrchestrator, pollJob, createJobPoller,
+  executeImageFeature, hasImageFeatureSupport, executeVideoFeature, hasVideoFeatureSupport,
 } from "./infrastructure/services";
 
 export type {
-  OrchestratorConfig, PollJobOptions, PollJobResult, WrapperConfig, ImageResultExtractor,
+  OrchestratorConfig, PollJobOptions, PollJobResult, ImageResultExtractor,
   ExecuteImageFeatureOptions, ImageFeatureResult, ImageFeatureRequest,
   ExecuteVideoFeatureOptions, VideoFeatureResult, VideoFeatureRequest,
 } from "./infrastructure/services";
 
-export { createCreditCheckMiddleware, createHistoryTrackingMiddleware } from "./infrastructure/middleware";
-export type { CreditCheckConfig, HistoryConfig, HistoryEntry } from "./infrastructure/middleware";
-
 export {
   classifyError, isTransientError, isPermanentError, isResultNotReady, calculatePollingInterval,
-  createPollingDelay, getProgressForStatus, interpolateProgress, createProgressTracker,
-  calculatePollingProgress, checkStatusForErrors, isJobComplete, isJobProcessing, isJobFailed,
+  createPollingDelay, checkStatusForErrors, isJobComplete, isJobProcessing, isJobFailed,
   validateResult, extractOutputUrl, extractOutputUrls, extractVideoUrl, extractThumbnailUrl,
   extractAudioUrl, extractImageUrls, cleanBase64, addBase64Prefix, preparePhoto, preparePhotos,
   isValidBase64, getBase64Size, getBase64SizeMB, prepareImage, createDevCallbacks, createFeatureUtils,
   showVideoGenerationSuccess, handleGenerationError, showContentModerationWarning,
   saveMediaToGallery, shareMedia, createSaveHandler, createShareHandler, createMediaHandlers,
+  mapJobStatusToGenerationStatus,
 } from "./infrastructure/utils";
 
 export { distinctBy } from "./utils/arrayUtils";
 
 export type {
-  IntervalOptions, ProgressOptions, StatusCheckResult, ResultValidation, ValidateResultOptions,
+  IntervalOptions, StatusCheckResult, ResultValidation, ValidateResultOptions,
   PhotoInput, PreparedImage, ImageSelector, VideoSaver, AlertFunction, FeatureUtilsConfig, VideoAlertFunction,
   MediaActionResult, MediaActionTranslations, ToastConfig,
 } from "./infrastructure/utils";
-
-export { enhancePromptWithLanguage, getSupportedLanguages, getLanguageName, ModerationWrapper, generateSynchronously } from "./infrastructure/wrappers";
-export type { ModerationResult, ModerationConfig, SynchronousGenerationInput, SynchronousGenerationConfig } from "./infrastructure/wrappers";
 
 export {
   useGeneration, usePendingJobs, useBackgroundGeneration,
@@ -145,12 +137,11 @@ export * from "./domains/face-detection";
 export * from "./domains/scenarios";
 export * from "./infrastructure/orchestration";
 
-// Generation Config Provider (App Configuration)
 export {
   GenerationConfigProvider,
   useGenerationConfig,
   type GenerationModels,
-  type GenerationConfigContextValue,
+  type GenerationConfigValue,
   type GenerationConfigProviderProps,
 } from "./infrastructure/providers";
 

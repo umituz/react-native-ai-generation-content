@@ -7,6 +7,6 @@ export {
   GenerationConfigProvider,
   useGenerationConfig,
   type GenerationModels,
-  type GenerationConfigContextValue,
+  type GenerationConfigValue,
   type GenerationConfigProviderProps,
 } from "./generation-config.provider";

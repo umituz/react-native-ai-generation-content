@@ -7,7 +7,7 @@
 import { providerRegistry } from "./provider-registry.service";
 import { cleanBase64, extractErrorMessage } from "../utils";
 import { extractVideoResult } from "../utils/url-extractor";
-import { VIDEO_PROGRESS, VIDEO_TIMEOUT_MS } from "../constants";
+import { VIDEO_TIMEOUT_MS } from "../constants";
 import type { VideoFeatureType, VideoFeatureInputData } from "../../domain/interfaces";
 import type {
   ExecuteVideoFeatureOptions,
@@ -36,7 +36,7 @@ export async function executeVideoFeature(
     return { success: false, error: "AI provider not initialized" };
   }
 
-  const { extractResult, onProgress } = options ?? {};
+  const { extractResult, onProgress, onStatusChange } = options ?? {};
 
   const model = provider.getVideoFeatureModel(featureType);
 
@@ -45,8 +45,6 @@ export async function executeVideoFeature(
   }
 
   try {
-    onProgress?.(VIDEO_PROGRESS.START);
-
     const inputData: VideoFeatureInputData = {
       sourceImageBase64: cleanBase64(request.sourceImageBase64),
       targetImageBase64: cleanBase64(request.targetImageBase64),
@@ -54,36 +52,26 @@ export async function executeVideoFeature(
       options: request.options,
     };
 
-    onProgress?.(VIDEO_PROGRESS.INPUT_PREPARED);
-
     const input = provider.buildVideoFeatureInput(featureType, inputData);
-
-    onProgress?.(VIDEO_PROGRESS.REQUEST_SENT);
 
     const result = await provider.subscribe(model, input, {
       timeoutMs: VIDEO_TIMEOUT_MS,
       onQueueUpdate: (status) => {
         if (__DEV__) {
-          console.log(`[Video:${featureType}] Queue update:`, status.status);
+          console.log(`[Video:${featureType}] Queue status:`, status.status);
         }
-        if (status.status === "IN_QUEUE") {
-          onProgress?.(VIDEO_PROGRESS.IN_QUEUE);
-        } else if (status.status === "IN_PROGRESS") {
-          onProgress?.(VIDEO_PROGRESS.IN_PROGRESS);
-        }
+        onStatusChange?.(status.status);
       },
     });
-
-    onProgress?.(VIDEO_PROGRESS.RESULT_RECEIVED);
 
     const extractor = extractResult ?? extractVideoResult;
     const videoUrl = extractor(result);
 
-    onProgress?.(VIDEO_PROGRESS.COMPLETE);
+    onProgress?.(100);
 
     if (!videoUrl) {
       if (__DEV__) {
-        console.log(`[Video:${featureType}] No video URL found in result:`, JSON.stringify(result, null, 2));
+        console.log(`[Video:${featureType}] No video URL found in result`);
       }
       return { success: false, error: "No video in response" };
     }

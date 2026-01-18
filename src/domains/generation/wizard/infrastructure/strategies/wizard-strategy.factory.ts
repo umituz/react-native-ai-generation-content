@@ -10,6 +10,14 @@ import type { VideoFeatureType } from "../../../../../domain/interfaces";
 import { executeVideoFeature } from "../../../../../infrastructure/services/video-feature-executor.service";
 import { createCreationsRepository } from "../../../../creations/infrastructure/adapters";
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
+import {
+  GENERATION_TIMEOUT_MS,
+  BASE64_IMAGE_PREFIX,
+  PHOTO_KEY_PREFIX,
+  DEFAULT_STYLE_VALUE,
+  MODEL_INPUT_DEFAULTS,
+  VIDEO_FEATURE_PATTERNS,
+} from "./wizard-strategy.constants";
 
 declare const __DEV__: boolean;
 
@@ -56,10 +64,8 @@ async function executeImageGeneration(
   }
 
   try {
-    onProgress?.(5);
-
     const formatBase64 = (base64: string): string => {
-      return base64.startsWith("data:") ? base64 : `data:image/jpeg;base64,${base64}`;
+      return base64.startsWith("data:") ? base64 : `${BASE64_IMAGE_PREFIX}${base64}`;
     };
 
     const imageUrls = input.photos.map(formatBase64);
@@ -68,17 +74,15 @@ async function executeImageGeneration(
       return { success: false, error: "At least one image required" };
     }
 
-    onProgress?.(10);
-
     const enhancedPrompt = `Create a photorealistic image featuring the exact two people from the provided photos. Use the person from @image1 and the person from @image2 exactly as they appear in the reference images - maintain their facial features, expressions, and identity. ${input.prompt}. Professional photography, high quality, detailed, natural lighting, photorealistic rendering.`;
 
     const modelInput = {
       image_urls: imageUrls,
       prompt: enhancedPrompt,
-      aspect_ratio: "1:1",
-      output_format: "jpeg",
-      num_images: 1,
-      enable_safety_checker: false,
+      aspect_ratio: MODEL_INPUT_DEFAULTS.aspectRatio,
+      output_format: MODEL_INPUT_DEFAULTS.outputFormat,
+      num_images: MODEL_INPUT_DEFAULTS.numImages,
+      enable_safety_checker: MODEL_INPUT_DEFAULTS.enableSafetyChecker,
     };
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -92,16 +96,12 @@ async function executeImageGeneration(
 
     let lastStatus = "";
     const result = await provider.subscribe(model, modelInput, {
-      timeoutMs: 120000,
+      timeoutMs: GENERATION_TIMEOUT_MS,
       onQueueUpdate: (status) => {
         if (status.status === lastStatus) return;
         lastStatus = status.status;
-        if (status.status === "IN_QUEUE") onProgress?.(20);
-        else if (status.status === "IN_PROGRESS") onProgress?.(50);
       },
     });
-
-    onProgress?.(90);
 
     const rawResult = result as Record<string, unknown>;
     const data = (rawResult?.data ?? rawResult) as { images?: Array<{ url: string }> };
@@ -129,7 +129,7 @@ async function extractPhotosFromWizardData(
 ): Promise<string[] | null> {
   // Find ALL photo keys dynamically (photo_1, photo_2, photo_3, ...)
   const photoKeys = Object.keys(wizardData)
-    .filter((k) => k.includes("photo_"))
+    .filter((k) => k.includes(PHOTO_KEY_PREFIX))
     .sort(); // Sort to maintain order (photo_1, photo_2, ...)
 
   if (photoKeys.length === 0) {
@@ -214,13 +214,13 @@ async function buildImageGenerationInput(
 
   // Art style (single select)
   const artStyle = wizardData.selection_art_style as string | undefined;
-  if (artStyle && artStyle !== "original") {
+  if (artStyle && artStyle !== DEFAULT_STYLE_VALUE) {
     styleEnhancements.push(`Art style: ${artStyle}`);
   }
 
   // Artist style (single select)
   const artist = wizardData.selection_artist_style as string | undefined;
-  if (artist && artist !== "original") {
+  if (artist && artist !== DEFAULT_STYLE_VALUE) {
     styleEnhancements.push(`Artist style: ${artist}`);
   }
 
@@ -296,13 +296,13 @@ async function buildGenerationInput(
 function getVideoFeatureType(scenarioId: string): VideoFeatureType {
   const id = scenarioId.toLowerCase();
 
-  if (id.includes("kiss")) return "ai-kiss";
-  if (id.includes("hug")) return "ai-hug";
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.warn(`[WizardStrategy] Unknown scenario type "${scenarioId}", defaulting to ai-hug`);
+  for (const [pattern, featureType] of Object.entries(VIDEO_FEATURE_PATTERNS)) {
+    if (id.includes(pattern)) {
+      return featureType;
+    }
   }
-  return "ai-hug";
+
+  throw new Error(`Unknown video feature type for scenario "${scenarioId}". Add pattern to VIDEO_FEATURE_PATTERNS.`);
 }
 
 // ============================================================================

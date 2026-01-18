@@ -35,7 +35,7 @@ export interface GenerationModels {
   readonly textToVoice?: string;
 }
 
-export interface GenerationConfigContextValue {
+export interface GenerationConfigValue {
   /** AI models configuration from app */
   readonly models: GenerationModels;
   /** Get model for specific feature type */
@@ -46,7 +46,7 @@ export interface GenerationConfigContextValue {
 // Context
 // ============================================================================
 
-const GenerationConfigContext = createContext<GenerationConfigContextValue | null>(null);
+const GenerationConfigContext = createContext<GenerationConfigValue | null>(null);
 
 // ============================================================================
 // Provider
@@ -91,7 +91,7 @@ export const GenerationConfigProvider: React.FC<GenerationConfigProviderProps> =
     return model;
   };
 
-  const value: GenerationConfigContextValue = {
+  const value: GenerationConfigValue = {
     models,
     getModel,
   };
@@ -107,7 +107,7 @@ export const GenerationConfigProvider: React.FC<GenerationConfigProviderProps> =
 // Hook
 // ============================================================================
 
-export const useGenerationConfig = (): GenerationConfigContextValue => {
+export const useGenerationConfig = (): GenerationConfigValue => {
   const context = useContext(GenerationConfigContext);
 
   if (!context) {

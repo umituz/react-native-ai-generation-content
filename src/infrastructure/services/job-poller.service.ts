@@ -1,21 +1,15 @@
 /**
  * Job Poller Service
  * Provider-agnostic job polling with exponential backoff
+ * Reports only real status - no fake progress
  */
 
-import type { IAIProvider } from "../../domain/interfaces"; // eslint-disable-line @typescript-eslint/no-unused-vars
-import type { PollingConfig } from "../../domain/entities"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { DEFAULT_POLLING_CONFIG } from "../../domain/entities";
 import { calculatePollingInterval } from "../utils/polling-interval.util";
 import { checkStatusForErrors, isJobComplete } from "../utils/status-checker.util";
 import { validateResult } from "../utils/result-validator.util";
 import { isTransientError } from "../utils/error-classifier.util";
-import { calculateProgressFromJobStatus } from "../utils/progress-calculator.util";
 import type { PollJobOptions, PollJobResult } from "./job-poller.types";
-import { createJobPoller } from "./job-poller-factory"; // eslint-disable-line @typescript-eslint/no-unused-vars
-
-// IAIProvider and PollingConfig are used indirectly through provider methods
-// createJobPoller is re-exported
 
 declare const __DEV__: boolean;
 
@@ -23,6 +17,7 @@ const MAX_CONSECUTIVE_TRANSIENT_ERRORS = 5;
 
 /**
  * Poll job until completion with exponential backoff
+ * Only reports 100% on actual completion
  */
 export async function pollJob<T = unknown>(
   options: PollJobOptions,
@@ -42,7 +37,6 @@ export async function pollJob<T = unknown>(
 
   const startTime = Date.now();
   let consecutiveTransientErrors = 0;
-  let lastProgress = 0;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     if (signal?.aborted) {
@@ -76,15 +70,7 @@ export async function pollJob<T = unknown>(
 
       consecutiveTransientErrors = 0;
 
-      const progress = calculateProgressFromJobStatus(status, attempt, maxAttempts);
-      if (progress > lastProgress) {
-        lastProgress = progress;
-        onProgress?.(progress);
-      }
-
       if (isJobComplete(status)) {
-        onProgress?.(90);
-
         const result = await provider.getJobResult<T>(model, requestId);
 
         const validation = validateResult(result);

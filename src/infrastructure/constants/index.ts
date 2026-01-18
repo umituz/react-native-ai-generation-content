@@ -2,10 +2,8 @@
  * Infrastructure Constants
  */
 
-export {
-  IMAGE_PROGRESS,
-  VIDEO_PROGRESS,
-  POLLING_PROGRESS,
-  VIDEO_TIMEOUT_MS,
-  MAX_TRANSIENT_ERRORS,
-} from "./progress.constants";
+/** Video generation timeout in milliseconds (5 minutes) */
+export const VIDEO_TIMEOUT_MS = 300000;
+
+/** Maximum consecutive transient errors before failing */
+export const MAX_TRANSIENT_ERRORS = 5;

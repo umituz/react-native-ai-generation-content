@@ -1,16 +1,15 @@
 /**
  * Generation Orchestrator Service
  * Provider-agnostic AI generation workflow
+ * Reports only real status - no fake progress
  */
 
 import type {
   GenerationRequest,
   GenerationResult,
-  GenerationProgress,
   PollingConfig,
 } from "../../domain/entities";
 import { classifyError } from "../utils/error-classifier.util";
-import { ProgressManager } from "./progress-manager";
 import { pollJob } from "./job-poller.service";
 import { ProviderValidator } from "./provider-validator";
 
@@ -22,7 +21,6 @@ export interface OrchestratorConfig {
 }
 
 class GenerationOrchestratorService {
-  private progressManager = new ProgressManager();
   private providerValidator = new ProviderValidator();
   private pollingConfig?: Partial<PollingConfig>;
   private onStatusUpdateCallback?: (requestId: string, status: string) => Promise<void>;
@@ -53,19 +51,8 @@ class GenerationOrchestratorService {
       });
     }
 
-    const updateProgress = (
-      stage: GenerationProgress["stage"],
-      subProgress = 0,
-    ) => {
-      this.progressManager.updateProgress(stage, subProgress, request.onProgress);
-    };
-
     try {
-      updateProgress("preparing");
-
       const submission = await provider.submitJob(request.model, request.input);
-
-      updateProgress("submitting");
 
       if (__DEV__) {
         console.log("[Orchestrator] Job submitted:", {
@@ -74,33 +61,24 @@ class GenerationOrchestratorService {
         });
       }
 
-      updateProgress("generating");
-
       const pollResult = await pollJob<T>({
         provider,
         model: request.model,
         requestId: submission.requestId,
         config: this.pollingConfig,
         onStatusChange: async (status) => {
-           if (this.onStatusUpdateCallback) {
-             await this.onStatusUpdateCallback(submission.requestId, status.status);
-           }
+          if (this.onStatusUpdateCallback) {
+            await this.onStatusUpdateCallback(submission.requestId, status.status);
+          }
         },
-        onProgress: (progress: number) => {
-           // We map polling progress (0-100) to our "generating" stage progress
-           // Since we can't easily access the internal 'status' and 'attempt' here nicely without changing pollJob signature to pass them to onProgress
-           // But pollJob onProgress passes a number.
-           // The original code used: this.progressManager.updateProgressFromStatus(status, attempt, config...)
-           // pollJob calculates progress internally. 
-           // We can just use the numeric progress directly for the converting.
-           
-           // Actually, the original code had access to `status` object inside the callback.
-           // pollJob abstracts that away.
-           // However, progressManager.updateProgress takes (stage, subProgress).
-           // So we can just pass 'generating' and the percentage.
-           
-           this.progressManager.updateProgress("generating", progress, request.onProgress);
-        }
+        onProgress: request.onProgress
+          ? (progress: number) => {
+              request.onProgress!({
+                stage: progress === 100 ? "completed" : "generating",
+                progress,
+              });
+            }
+          : undefined,
       });
 
       if (!pollResult.success) {
@@ -108,9 +86,6 @@ class GenerationOrchestratorService {
       }
 
       const result = pollResult.data as T;
-
-      updateProgress("completed");
-
       const duration = Date.now() - startTime;
 
       if (__DEV__) {

@@ -54,11 +54,6 @@ export { TextGenerationService } from './infrastructure/services/TextGenerationS
 export { ColorizationService } from './infrastructure/services/ColorizationService';
 export { FuturePredictionService } from './infrastructure/services/FuturePredictionService';
 
-export type { ThemeColors, ThemeSpacing, ThemeTypography, Theme } from './presentation/theme/types';
-export { createTheme, defaultTheme } from './presentation/theme/types';
-export { useTheme, setTheme, getTheme, resetTheme } from './presentation/theme/theme';
-export { createStyleSheet, spacing, color, typography } from './presentation/theme/utils';
-
 export type { AsyncState, AsyncActions } from './presentation/hooks/useAsyncState';
 export { useAsyncState } from './presentation/hooks/useAsyncState';
 
@@ -88,9 +83,6 @@ export type { IdentitySegment, AnimeStyleSegment, QualitySegment } from './domai
 
 export { ImagePromptBuilder, createAnimeSelfiePrompt, createStyleTransferPrompt } from './infrastructure/services/ImagePromptBuilder';
 export type { ImagePromptResult, ImagePromptBuilderOptions, AnimeSelfiePromptResult } from './infrastructure/services/ImagePromptBuilder';
-
-export { DEFAULT_TEXT_TO_IMAGE_PROMPTS, DEFAULT_TEXT_TO_VOICE_PROMPTS } from './domain/entities/sample-prompts';
-export type { PromptSuggestion } from './domain/entities/sample-prompts';
 
 export { 
   IDENTITY_PRESERVATION_CORE, 
