@@ -12,7 +12,7 @@
  * NO feature-specific code here - everything driven by configuration!
  */
 
-import React, { useMemo, useCallback, useEffect, useRef } from "react";
+import React, { useMemo, useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { useFlow } from "../../../infrastructure/flow/useFlow";
@@ -23,6 +23,11 @@ import { useWizardGeneration, type WizardScenarioData } from "../hooks/useWizard
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 import { GenericPhotoUploadScreen } from "../screens/GenericPhotoUploadScreen";
+import { GeneratingScreen } from "../screens/GeneratingScreen";
+import { ScenarioPreviewScreen } from "../../../../scenarios/presentation/screens/ScenarioPreviewScreen";
+import { ResultPreviewScreen } from "../../../../result-preview/presentation/components/ResultPreviewScreen";
+import { useResultActions } from "../../../../result-preview/presentation/hooks/useResultActions";
+import type { Creation } from "../../../../creations/domain/entities/Creation";
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;
@@ -35,6 +40,7 @@ export interface GenericWizardFlowProps {
   readonly onGenerationError?: (error: string) => void;
   readonly onCreditsExhausted?: () => void;
   readonly onBack?: () => void;
+  readonly onTryAgain?: () => void;
   readonly t: (key: string) => string;
   readonly translations?: Record<string, string>;
   readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
@@ -53,6 +59,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   onGenerationError,
   onCreditsExhausted,
   onBack,
+  onTryAgain,
   t,
   translations: _translations,
   renderPreview,
@@ -60,14 +67,14 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   renderResult,
 }) => {
   const tokens = useAppDesignTokens();
+  const [currentCreation, setCurrentCreation] = useState<Creation | null>(null);
 
-  // Build flow steps from wizard config
   const flowSteps = useMemo<StepDefinition[]>(() => {
     return buildFlowStepsFromWizard(featureConfig, {
-      includePreview: !!renderPreview,
-      includeGenerating: !!renderGenerating,
+      includePreview: true,
+      includeGenerating: true,
     });
-  }, [featureConfig, renderPreview, renderGenerating]);
+  }, [featureConfig]);
 
   // Initialize flow and destructure to prevent infinite loops
   const flow = useFlow({
@@ -89,7 +96,11 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     setResult,
   } = flow;
 
-  // Handle progress change - memoized to prevent infinite loops
+  const resultImageUrl = currentCreation?.output?.imageUrl || currentCreation?.uri || "";
+  const { isSaving, isSharing, handleDownload, handleShare } = useResultActions({
+    imageUrl: resultImageUrl,
+  });
+
   const handleProgressChange = useCallback(
     (progress: number) => {
       updateProgress(progress);
@@ -97,17 +108,14 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     [updateProgress],
   );
 
-  // Handle generation complete - saves result and advances to result preview
   const handleGenerationComplete = useCallback(
     (result: unknown) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[GenericWizardFlow] Generation completed, saving result and advancing to result preview");
       }
-      // Save result in flow state
       setResult(result);
-      // Advance to result preview step
+      setCurrentCreation(result as Creation);
       nextStep();
-      // Notify parent
       onGenerationComplete?.(result);
     },
     [setResult, nextStep, onGenerationComplete],
@@ -251,17 +259,66 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
       });
     }
 
-    // Special steps with custom renderers
     switch (step.type) {
-      case StepType.SCENARIO_PREVIEW:
-        // Preview continues to next step automatically
-        return renderPreview?.(nextStep) || null;
+      case StepType.SCENARIO_PREVIEW: {
+        if (renderPreview) {
+          return renderPreview(nextStep);
+        }
+        return (
+          <ScenarioPreviewScreen
+            scenario={scenario}
+            translations={{
+              continueButton: t("common.continue"),
+              whatToExpect: t("scenarioPreview.whatToExpect"),
+            }}
+            onContinue={nextStep}
+            onBack={handleBack}
+            t={t}
+          />
+        );
+      }
 
-      case StepType.GENERATING:
-        return renderGenerating?.(generationProgress) || null;
+      case StepType.GENERATING: {
+        if (renderGenerating) {
+          return renderGenerating(generationProgress);
+        }
+        return (
+          <GeneratingScreen
+            progress={generationProgress}
+            scenario={scenario}
+            t={t}
+          />
+        );
+      }
 
-      case StepType.RESULT_PREVIEW:
-        return renderResult?.(generationResult) || null;
+      case StepType.RESULT_PREVIEW: {
+        if (renderResult) {
+          return renderResult(generationResult);
+        }
+        const creation = generationResult as Creation;
+        const imageUrl = creation?.output?.imageUrl || creation?.uri || "";
+        if (!imageUrl) return null;
+        return (
+          <ResultPreviewScreen
+            imageUrl={imageUrl}
+            isSaving={isSaving}
+            isSharing={isSharing}
+            onDownload={handleDownload}
+            onShare={handleShare}
+            onTryAgain={onTryAgain || onBack || (() => {})}
+            onNavigateBack={onTryAgain || onBack || (() => {})}
+            translations={{
+              title: t("generation.result.title"),
+              yourResult: t("generation.result.yourResult"),
+              saveButton: t("generation.result.save"),
+              saving: t("generation.result.saving"),
+              shareButton: t("generation.result.share"),
+              sharing: t("generation.result.sharing"),
+              tryAnother: t("generation.result.tryAnother"),
+            }}
+          />
+        );
+      }
 
       case StepType.PARTNER_UPLOAD: {
         // Get wizard step config
@@ -318,6 +375,13 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     renderResult,
     handlePhotoContinue,
     handleBack,
+    isSaving,
+    isSharing,
+    handleDownload,
+    handleShare,
+    onTryAgain,
+    onBack,
+    scenario,
     t,
   ]);
 
