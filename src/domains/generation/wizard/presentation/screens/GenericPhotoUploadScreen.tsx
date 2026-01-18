@@ -48,6 +48,7 @@ export interface PhotoUploadScreenProps {
   readonly onBack: () => void;
   readonly onContinue: (image: UploadedImage) => void;
   readonly existingImage?: UploadedImage | null;
+  readonly stepId?: string;
 }
 
 const DEFAULT_CONFIG: PhotoUploadScreenConfig = {
@@ -62,6 +63,7 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
   onBack,
   onContinue,
   existingImage,
+  stepId,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -74,6 +76,7 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
       uploadFailed: translations.uploadFailed,
     },
     initialImage: existingImage || undefined,
+    stepId,
   });
 
   const handleContinuePress = () => {
@@ -87,10 +90,10 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
   // Build photo tips items from translations
   const photoTipsItems: InfoGridItem[] = useMemo(() => {
     const tipKeys = [
-      { key: "photoUpload.tips.clearFace", icon: "Smile" },
-      { key: "photoUpload.tips.goodLighting", icon: "Sun" },
-      { key: "photoUpload.tips.recentPhoto", icon: "Clock" },
-      { key: "photoUpload.tips.noFilters", icon: "Image" },
+      { key: "photoUpload.tips.clearFace", icon: "happy-outline" },
+      { key: "photoUpload.tips.goodLighting", icon: "sunny-outline" },
+      { key: "photoUpload.tips.recentPhoto", icon: "time-outline" },
+      { key: "photoUpload.tips.noFilters", icon: "image-outline" },
     ];
     return tipKeys.map(({ key, icon }) => ({
       text: t(key),
@@ -126,7 +129,7 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
               {translations.continue}
             </AtomicText>
             <AtomicIcon
-              name="ChevronRight"
+              name="chevron-forward-outline"
               size="sm"
               color={canContinue && image ? "onPrimary" : "textSecondary"}
             />
@@ -152,7 +155,7 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
               items={photoTipsItems}
               columns={2}
               title={t("photoUpload.tips.title")}
-              headerIcon="Lightbulb"
+              headerIcon="bulb-outline"
             />
           </View>
         )}

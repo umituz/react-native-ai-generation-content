@@ -131,6 +131,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
 
       return (
         <GenericPhotoUploadScreen
+          stepId={step.id}
           translations={{
             title: t(titleKey),
             subtitle: t(subtitleKey),

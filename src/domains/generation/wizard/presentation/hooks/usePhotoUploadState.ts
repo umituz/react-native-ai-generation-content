@@ -1,12 +1,12 @@
 /**
  * Generic Photo Upload State Hook
  * Manages photo upload state for wizard steps
- * NO feature-specific logic - works for ANY photo upload
+ * Uses design system's useMedia hook for media picking with built-in validation
  */
 
 import { useState, useCallback, useEffect } from "react";
-import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
+import { useMedia, MediaValidationError, MediaQuality, MEDIA_CONSTANTS } from "@umituz/react-native-design-system";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
 export interface PhotoUploadConfig {
@@ -18,72 +18,78 @@ export interface PhotoUploadTranslations {
   readonly maxFileSize: string;
   readonly error: string;
   readonly uploadFailed: string;
+  readonly permissionDenied?: string;
 }
 
 export interface UsePhotoUploadStateProps {
   readonly config?: PhotoUploadConfig;
   readonly translations: PhotoUploadTranslations;
   readonly initialImage?: UploadedImage;
+  readonly stepId?: string;
 }
 
 export interface UsePhotoUploadStateReturn {
   readonly image: UploadedImage | null;
   readonly handlePickImage: () => Promise<void>;
   readonly canContinue: boolean;
+  readonly clearImage: () => void;
 }
-
-const DEFAULT_MAX_FILE_SIZE_MB = 10;
 
 export const usePhotoUploadState = ({
   config,
   translations,
   initialImage,
+  stepId,
 }: UsePhotoUploadStateProps): UsePhotoUploadStateReturn => {
   const [image, setImage] = useState<UploadedImage | null>(initialImage || null);
+  const { pickImage, isLoading } = useMedia();
 
-  // Sync state with initialImage prop when it changes
-  // This handles cases where the same component is reused for different steps
+  const maxFileSizeMB = config?.maxFileSizeMB ?? MEDIA_CONSTANTS.MAX_IMAGE_SIZE_MB;
+
+  // Reset state when stepId changes (new step = new photo)
   useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[usePhotoUploadState] Step changed, resetting image", { stepId, hasInitialImage: !!initialImage });
+    }
     setImage(initialImage || null);
-  }, [initialImage]);
+  }, [stepId, initialImage]);
 
-  const maxFileSizeMB = config?.maxFileSizeMB ?? DEFAULT_MAX_FILE_SIZE_MB;
+  const clearImage = useCallback(() => {
+    setImage(null);
+  }, []);
 
   const handlePickImage = useCallback(async () => {
     try {
-      // Request permission
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(translations.error, "Permission to access media library is required");
+      // Design system handles validation with maxFileSizeMB
+      const result = await pickImage({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: MediaQuality.MEDIUM,
+        maxFileSizeMB,
+      });
+
+      // Handle validation errors from design system
+      if (result.error) {
+        if (result.error === MediaValidationError.FILE_TOO_LARGE) {
+          Alert.alert(
+            translations.fileTooLarge,
+            translations.maxFileSize.replace("{size}", maxFileSizeMB.toString()),
+          );
+        } else if (result.error === MediaValidationError.PERMISSION_DENIED) {
+          Alert.alert(
+            translations.error,
+            translations.permissionDenied || "Permission to access media library is required",
+          );
+        }
         return;
       }
 
-      // Pick image
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
-
-      if (result.canceled) {
+      if (result.canceled || !result.assets || result.assets.length === 0) {
         return;
       }
 
       const selectedAsset = result.assets[0];
       if (!selectedAsset) {
-        return;
-      }
-
-      // Check file size
-      const fileSize = selectedAsset.fileSize || 0;
-      const fileSizeMB = fileSize / (1024 * 1024);
-
-      if (fileSizeMB > maxFileSizeMB) {
-        Alert.alert(
-          translations.fileTooLarge,
-          translations.maxFileSize.replace("{size}", maxFileSizeMB.toString()),
-        );
         return;
       }
 
@@ -93,12 +99,13 @@ export const usePhotoUploadState = ({
         previewUrl: selectedAsset.uri,
         width: selectedAsset.width,
         height: selectedAsset.height,
-        fileSize,
+        fileSize: selectedAsset.fileSize,
       };
 
       setImage(uploadedImage);
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
+        const fileSizeMB = (selectedAsset.fileSize || 0) / (1024 * 1024);
         console.log("[usePhotoUploadState] Image selected", {
           width: uploadedImage.width,
           height: uploadedImage.height,
@@ -111,13 +118,14 @@ export const usePhotoUploadState = ({
       }
       Alert.alert(translations.error, translations.uploadFailed);
     }
-  }, [maxFileSizeMB, translations]);
+  }, [pickImage, maxFileSizeMB, translations]);
 
-  const canContinue = image !== null;
+  const canContinue = image !== null && !isLoading;
 
   return {
     image,
     handlePickImage,
     canContinue,
+    clearImage,
   };
 };
