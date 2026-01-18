@@ -8,7 +8,6 @@ import { StepType, type StepDefinition } from "../../../../../domain/entities/fl
 import type { WizardStepConfig } from "../../domain/entities/wizard-config.types";
 import type { WizardScenarioData } from "../hooks/useWizardGeneration";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
-import type { Creation } from "../../../../creations/domain/entities/Creation";
 import { GenericPhotoUploadScreen } from "../screens/GenericPhotoUploadScreen";
 import { GeneratingScreen } from "../screens/GeneratingScreen";
 import { ScenarioPreviewScreen } from "../../../../scenarios/presentation/screens/ScenarioPreviewScreen";
@@ -98,9 +97,10 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
       if (renderResult) {
         return renderResult(generationResult);
       }
-      const creation = generationResult as Creation;
-      const imageUrl = creation?.output?.imageUrl || creation?.uri || "";
-      if (!imageUrl) return null;
+      const creation = generationResult as Record<string, unknown>;
+      const output = creation?.output as Record<string, unknown> | undefined;
+      const imageUrl = output?.imageUrl || creation?.uri || creation?.imageUrl || "";
+      if (!imageUrl || typeof imageUrl !== "string") return null;
       return (
         <ResultPreviewScreen
           imageUrl={imageUrl}
