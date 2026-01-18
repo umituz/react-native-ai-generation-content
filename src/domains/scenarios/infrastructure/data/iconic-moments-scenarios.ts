@@ -22,7 +22,7 @@ export const ICONIC_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "Celebration of victory",
     icon: "⚓",
     imageUrl:
-      "https://images.unsplash.com/photo-1533230408708-8f9f91d12344?w=800",
+      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800",
     aiPrompt:
       "A couple recreating the iconic V-J Day in Times Square photo, man in a black sailor uniform dipping a woman in a white nurse outfit for a passionate kiss, historic Times Square in 1945 with crowds and flags in background, high-contrast black and white photography style, legendary and historic",
     storyTemplate: createStoryTemplate(
@@ -36,7 +36,7 @@ export const ICONIC_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "Classic duo pose",
     icon: "👩‍🌾",
     imageUrl:
-      "https://images.unsplash.com/photo-1495143134241-66df1796c671?w=800",
+      "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=800",
     aiPrompt:
       "A couple recreating the 'American Gothic' painting, standing side-by-side with serious expressions, man holding a pitchfork, woman wearing a patterned apron and white collar, background is a simple wooden house with a gothic window, painting-like texture, classic and iconic",
     storyTemplate: createStoryTemplate(
@@ -50,7 +50,7 @@ export const ICONIC_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "The Fab Four style",
     icon: "🚶",
     imageUrl:
-      "https://images.unsplash.com/photo-1526313043232-0691e8461877?w=800",
+      "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800",
     aiPrompt:
       "A couple walking across a zebra crossing in London, in the style of the Beatles Abbey Road album cover, both looking at camera with cool expressions, wearing 60s London fashion, white Volkswagen Beetle and street in background, vintage film look, musical and iconic",
     storyTemplate: createStoryTemplate(
@@ -64,7 +64,7 @@ export const ICONIC_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "Give peace a chance",
     icon: "✌️",
     imageUrl:
-      "https://images.unsplash.com/photo-1531746790731-6c087fecd05a?w=800",
+      "https://images.unsplash.com/photo-1482424917728-d82d29662023?w=800",
     aiPrompt:
       "A couple in a bed-in for peace, sitting in bed surrounded by flowers and 'Peace' signs, wearing simple white pyjamas, looking at camera with gentle peaceful smiles, sunlight through large windows, 70s grain photography vibe, intimate and world-changing",
     storyTemplate: createStoryTemplate(
@@ -78,7 +78,7 @@ export const ICONIC_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "High-flying duo",
     icon: "🏗️",
     imageUrl:
-      "https://images.unsplash.com/photo-1449156003946-3197ae0107cb?w=800",
+      "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800",
     aiPrompt:
       "A couple sitting together on a steel beam high above a city skyline, recreating the iconic 1932 photo, both looking at camera with relaxed daring smiles, legs dangling over the edge, misty city and skyscrapers in background, sepia-toned vintage photography, adventurous and brave",
     storyTemplate: createStoryTemplate(

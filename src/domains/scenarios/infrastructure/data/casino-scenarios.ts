@@ -8,7 +8,7 @@ export const CASINO_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "All on red",
     icon: "🎰",
     imageUrl:
-      "https://images.unsplash.com/photo-1541278107931-e00652309623?w=800",
+      "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=800",
     aiPrompt:
       "A couple at a high-end roulette table in a glamorous casino, man in a sharp black tuxedo, woman in a shimmering evening gown and diamonds, everyone watching as the wheel spins, both looking at each other with intense daring smiles, luxury lighting, cinematic and high-stakes",
     storyTemplate: createStoryTemplate(

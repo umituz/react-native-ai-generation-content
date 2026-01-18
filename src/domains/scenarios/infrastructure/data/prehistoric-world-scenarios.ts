@@ -8,7 +8,7 @@ export const PREHISTORIC_WORLD_SCENARIOS: Omit<Scenario, 'outputType' | 'categor
     description: "Prehistoric speed",
     icon: "🦖",
     imageUrl:
-      "https://images.unsplash.com/photo-154447677768-be436bb09401?w=800",
+      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800",
     aiPrompt:
       "A couple riding on the back of a large friendly-looking Velociraptor through a lush prehistoric jungle, man holding the reins, woman looking at the camera with an ecstatic laugh, wearing rugged primitive furs and leather, massive ferns and trees in background, sunny and vibrant adventure",
     storyTemplate: createStoryTemplate(

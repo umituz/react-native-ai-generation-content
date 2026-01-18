@@ -13,7 +13,7 @@ export const EDUCATION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     description: "Academic achievement together",
     icon: "🎓",
     imageUrl:
-      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=60",
     aiPrompt:
       "A couple on graduation day, both looking at the camera with proud smiles, dressed in graduation gowns and caps, holding diplomas, university campus with historic buildings in background, accomplished and joyful",
     storyTemplate: createStoryTemplate(

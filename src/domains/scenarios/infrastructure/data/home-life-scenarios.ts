@@ -63,7 +63,7 @@ export const HOME_LIFE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     title: "Bedtime Cuddles",
     description: "Goodnight romance",
     icon: "🌙",
-    imageUrl: "https://images.unsplash.com/photo-1550133730-695473e510b0?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=800",
     aiPrompt:
       "A couple lying in bed, both looking at the camera with peaceful sleepy smiles, head on shoulder, soft dim moonlight or warm bedside lamp lighting, white silky sheets, intimate and tranquil atmosphere",
     storyTemplate: createStoryTemplate(

@@ -8,7 +8,7 @@ export const DAILY_ESSENCE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     description: "Moving in together",
     icon: "📦",
     imageUrl:
-      "https://images.unsplash.com/photo-1583214532529-65d194759083?w=800",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
     aiPrompt:
       "A couple in an empty living room surrounded by cardboard boxes, both looking at the camera with exhausted but happy smiles, eating pizza directly from the box on the floor, messy hair, sunlight streaming through bare windows, sense of new beginnings and shared excitement",
     storyTemplate: createStoryTemplate(
@@ -22,7 +22,7 @@ export const DAILY_ESSENCE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     description: "Fun in the mundane",
     icon: "🧺",
     imageUrl:
-      "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?w=800",
+      "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=800",
     aiPrompt:
       "A couple doing laundry together in a bright laundry room, both looking at the camera with playful laughs, throwing a clean sock at each other, piles of colorful clothes around, warm domestic atmosphere, authentic joy in a daily chore",
     storyTemplate: createStoryTemplate(
@@ -77,7 +77,7 @@ export const DAILY_ESSENCE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     description: "Building a life (and a shelf)",
     icon: "🔧",
     imageUrl:
-      "https://images.unsplash.com/photo-1581785501704-c5a47e62d476?w=800",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800",
     aiPrompt:
       "A couple in the middle of building flat-pack furniture, both looking at the camera with confused but laughing expressions, holding a manual and a screwdriver, surrounded by wooden pieces and screws, a partially built shelf in the foreground, relatable and funny",
     storyTemplate: createStoryTemplate(

@@ -261,6 +261,7 @@ export enum ScenarioId {
   NEW_YEARS = "new_years",
   VALENTINES = "valentines",
   BIRTHDAY = "birthday",
+  HALLOWEEN_DUO = "halloween_duo",
 
   // Home Life
   MORNING_COFFEE = "morning_coffee",
@@ -554,6 +555,12 @@ export enum ScenarioId {
 
 export type ScenarioOutputType = "image" | "video";
 
+export interface GeneratingMessages {
+  title?: string;
+  waitMessage?: string;
+  hint?: string;
+}
+
 export interface Scenario {
   id: ScenarioId;
   category?: ScenarioCategory;
@@ -569,4 +576,6 @@ export interface Scenario {
   outputType: ScenarioOutputType;
   model?: string; // AI model from app config
   enabled?: boolean;
+  // Optional custom generating screen messages
+  generatingMessages?: GeneratingMessages;
 }

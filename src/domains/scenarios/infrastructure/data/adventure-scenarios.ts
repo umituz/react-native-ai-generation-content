@@ -7,7 +7,7 @@ export const ADVENTURE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     title: "Treasure Hunters",
     description: "Search for the legendary",
     icon: "🏺",
-    imageUrl: "https://images.unsplash.com/photo-1547402633-911be24e164c?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
     aiPrompt:
       "A couple in a dusty ancient Egyptian tomb, looking at the camera with excited adventurous smiles, holding a map and a flashlight, wearing khaki explorer outfits with brimmed hats, ancient hieroglyphics and a golden sarcophagus in background, cinematic and daring",
     storyTemplate: createStoryTemplate(
@@ -49,7 +49,7 @@ export const ADVENTURE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     description: "Defenders of the deep",
     icon: "🐉",
     imageUrl:
-      "https://images.unsplash.com/photo-1500077423678-25eead4ec51e?w=800",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800",
     aiPrompt:
       "A couple on the deck of an old wooden ship during a storm, man with a harpoon, woman looking through a brass telescope at the camera with a fierce smile, giant dark shape moving under the waves in background, crashing waves and stormy sky, epic and perilous",
     storyTemplate: createStoryTemplate(

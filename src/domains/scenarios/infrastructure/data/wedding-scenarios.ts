@@ -41,7 +41,7 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "The perfect gown",
     icon: "👗",
     imageUrl:
-      "https://images.unsplash.com/photo-1594552072238-b8c8b3d6c1bf?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&auto=format&fit=crop&q=60",
     aiPrompt:
       "A bride trying on wedding dress in a bridal boutique, looking at camera with excited smile, wearing stunning white wedding gown, groom watching admiringly in background, elegant bridal shop with mirrors and soft lighting, dreamy and romantic",
     storyTemplate: createStoryTemplate(

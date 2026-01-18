@@ -4,7 +4,7 @@
  */
 
 // Types
-export type { ScenarioOutputType } from "./domain/Scenario";
+export type { ScenarioOutputType, GeneratingMessages } from "./domain/Scenario";
 export { ScenarioCategory, ScenarioId } from "./domain/Scenario";
 export type { Scenario } from "./domain/Scenario";
 

@@ -22,7 +22,7 @@ export const PIRATE_ERA_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     description: "Found the jackpot",
     icon: "💎",
     imageUrl:
-      "https://images.unsplash.com/photo-1541278107931-e00652309623?w=800",
+      "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=800",
     aiPrompt:
       "A couple in a dark limestone cavern filled with overflowing chests of gold coins, jewels, and ancient artifacts, man holding a flaming torch, both looking at a massive ruby in their hands with ecstatic smiles, wearing rugged pirate clothing, warm flickering firelight, mystery and triumph",
     storyTemplate: createStoryTemplate(

@@ -4,7 +4,7 @@
  * NO feature-specific logic - works for ANY photo upload
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
@@ -23,6 +23,7 @@ export interface PhotoUploadTranslations {
 export interface UsePhotoUploadStateProps {
   readonly config?: PhotoUploadConfig;
   readonly translations: PhotoUploadTranslations;
+  readonly initialImage?: UploadedImage;
 }
 
 export interface UsePhotoUploadStateReturn {
@@ -36,8 +37,15 @@ const DEFAULT_MAX_FILE_SIZE_MB = 10;
 export const usePhotoUploadState = ({
   config,
   translations,
+  initialImage,
 }: UsePhotoUploadStateProps): UsePhotoUploadStateReturn => {
-  const [image, setImage] = useState<UploadedImage | null>(null);
+  const [image, setImage] = useState<UploadedImage | null>(initialImage || null);
+
+  // Sync state with initialImage prop when it changes
+  // This handles cases where the same component is reused for different steps
+  useEffect(() => {
+    setImage(initialImage || null);
+  }, [initialImage]);
 
   const maxFileSizeMB = config?.maxFileSizeMB ?? DEFAULT_MAX_FILE_SIZE_MB;
 

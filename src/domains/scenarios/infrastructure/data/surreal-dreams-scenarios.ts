@@ -36,7 +36,7 @@ export const SURREAL_DREAMS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "Symmetry of love",
     icon: "🪞",
     imageUrl:
-      "https://images.unsplash.com/photo-1481349518771-2dc0feed76ad?w=800",
+      "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800",
     aiPrompt:
       "A couple standing on a perfectly reflective black crystal floor, surrounded by giant floating mirrors that show different versions of their future together, looking at their reflections with profound smiles, dark void environment with glowing crystalline structures, highly artistic and surreal",
     storyTemplate: createStoryTemplate(

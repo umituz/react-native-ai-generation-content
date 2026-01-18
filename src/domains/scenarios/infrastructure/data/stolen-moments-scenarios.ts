@@ -36,7 +36,7 @@ export const STOLEN_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "Close enough to touch",
     icon: "🛗",
     imageUrl:
-      "https://images.unsplash.com/photo-1449156003946-3197ae0107cb?w=800",
+      "https://images.unsplash.com/photo-1527684651001-731c474bbb5a?w=800",
     aiPrompt:
       "A couple standing very close in a modern glass elevator, man behind woman leaning in towards her neck, woman looking at the camera through the mirror reflection with a breathless expression, silver metal surfaces and digital floor numbers in background, high-tension proximity",
     storyTemplate: createStoryTemplate(

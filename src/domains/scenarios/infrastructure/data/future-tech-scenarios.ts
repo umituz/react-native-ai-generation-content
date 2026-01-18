@@ -35,7 +35,7 @@ export const FUTURE_TECH_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] 
     description: "Architects of tomorrow",
     icon: "🤖",
     imageUrl:
-      "https://images.unsplash.com/photo-151877066fe63-c6d1a4947271?w=800",
+      "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800",
     aiPrompt:
       "A couple in a high-tech holographic command center, both looking at the camera with intelligent smiles, interacting with blue floating digital interfaces, wearing pristine white uniforms, panoramic view of a future smart city through window in background, visionary and technical",
     storyTemplate: createStoryTemplate(

@@ -35,7 +35,7 @@ export const WELLNESS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Dive into fitness",
     icon: "🏊",
     imageUrl:
-      "https://images.unsplash.com/photo-1519046460591-94943f5509fd?w=800",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",
     aiPrompt:
       "A couple at an infinity pool, both looking at the camera with joyful smiles, halfway in crystal blue water, dressed in elegant swimwear and goggles, luxury resort and ocean sunset in background, fit and refreshed",
     storyTemplate: createStoryTemplate(
@@ -48,7 +48,7 @@ export const WELLNESS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     title: "Healthy Cooking",
     description: "Fueling love and health",
     icon: "🥗",
-    imageUrl: "https://images.unsplash.com/photo-1547592166-23ac45744abd?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800",
     aiPrompt:
       "A couple in a bright modern kitchen, both looking at the camera with warm smiles, preparing a fresh colorful salad, dressed in casual stylish aprons, wooden cutting board with fresh organic vegetables, vibrant and healthy atmosphere",
     storyTemplate: createStoryTemplate(

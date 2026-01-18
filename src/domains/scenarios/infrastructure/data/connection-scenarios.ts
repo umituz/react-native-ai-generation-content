@@ -22,7 +22,7 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     description: "A gaze that says everything",
     icon: "👁️",
     imageUrl:
-      "https://images.unsplash.com/photo-1516589174184-c6a6de9e09d1?w=800",
+      "https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=800",
     aiPrompt:
       "A couple in a close intimate embrace, foreheads touching, eyes locked with deep soulful expressions, looking at each other with pure unconditional love, soft cinematic lighting, minimalist neutral background to focus on facial expressions, raw emotional connection",
     storyTemplate: createStoryTemplate(
@@ -50,7 +50,7 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     description: "Connecting through words",
     icon: "💬",
     imageUrl:
-      "https://images.unsplash.com/photo-1515023115689-589c3f47b3fd?w=800",
+      "https://images.unsplash.com/photo-1543807535-eceef0bc6599?w=800",
     aiPrompt:
       "A couple sitting across from each other at a small rustic cafe table, leaning in, engaged in an intense but loving conversation, looking at each other with deep interest and empathy, warm cafe atmosphere, cinematic focus on facial expressions",
     storyTemplate: createStoryTemplate(
@@ -92,7 +92,7 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     description: "Love that deepens with time",
     icon: "🌳",
     imageUrl:
-      "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800",
+      "https://images.unsplash.com/photo-1447005497901-b3e9ee359928?w=800",
     aiPrompt:
       "A couple in their older years but with the same spark in their eyes, looking at a photo album of their younger selves, looking at the camera with wise and deeply happy smiles, warm sun-drenched living room with mementos, celebrating a lifetime of growth",
     storyTemplate: createStoryTemplate(

@@ -82,6 +82,14 @@ export class CreationsRepository
     return this.writer.delete(userId, creationId);
   }
 
+  async hardDelete(userId: string, creationId: string): Promise<boolean> {
+    return this.writer.hardDelete(userId, creationId);
+  }
+
+  async restore(userId: string, creationId: string): Promise<boolean> {
+    return this.writer.restore(userId, creationId);
+  }
+
   async updateShared(
     userId: string,
     creationId: string,

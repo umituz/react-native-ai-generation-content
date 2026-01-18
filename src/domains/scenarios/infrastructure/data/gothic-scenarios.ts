@@ -49,7 +49,7 @@ export const GOTHIC_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     title: "Gothic Sanctuary",
     description: "Dark architectural beauty",
     icon: "⛪",
-    imageUrl: "https://images.unsplash.com/photo-1547402633-911be24e164c?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
     aiPrompt:
       "A couple in a vast gothic cathedral, both looking at the camera with serene expressions, wearing long black coats and silver jewelry, standing before high stained glass windows, cinematic lighting with long shadows, majestic and moody",
     storyTemplate: createStoryTemplate(

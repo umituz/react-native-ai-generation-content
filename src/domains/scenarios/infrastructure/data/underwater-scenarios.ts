@@ -20,7 +20,7 @@ export const UNDERWATER_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     title: "Sunken Library",
     description: "Lost knowledge",
     icon: "📖",
-    imageUrl: "https://images.unsplash.com/photo-1544208062-35925507204b?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800",
     aiPrompt:
       "A couple in an ancient library inside a sunken marble temple underwater, both looking at a stone tablet while floating weightlessly, bubbles rising from their lips, wearing flowing ethereal garments, ancient statues covered in sea plants, soft blue-green lighting, mystery and discovery",
     storyTemplate: createStoryTemplate(
@@ -34,7 +34,7 @@ export const UNDERWATER_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     description: "Bioluminescent wonder",
     icon: "✨",
     imageUrl:
-      "https://images.unsplash.com/photo-1512140411829-2b6fe684be4d?w=800",
+      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800",
     aiPrompt:
       "A couple swimming in the pitch-black deep sea, surrounded by millions of glowing bioluminescent plankton and deep-sea creatures, their faces lit by the soft ethereal glow, looking into each other's eyes, beautiful and surreal underwater environment, cosmic-like underwater photography",
     storyTemplate: createStoryTemplate(

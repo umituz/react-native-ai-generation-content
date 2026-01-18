@@ -7,7 +7,7 @@ export const ARABIAN_NIGHTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     title: "Flying Carpet Ride",
     description: "A whole new world",
     icon: "🧞",
-    imageUrl: "https://images.unsplash.com/photo-1542312167-731339870199?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1482575832494-771f74bf6857?w=800",
     aiPrompt:
       "A couple sitting on a richly embroidered flying carpet, soaring high above a city of white domes and gold minarets at night, giant full moon in background, both looking at each other with romantic smiles, wearing elaborate 1001 nights style silk clothing, magical stardust in the air, nostalgic and grand",
     storyTemplate: createStoryTemplate(
@@ -21,7 +21,7 @@ export const ARABIAN_NIGHTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "Luxury in the desert",
     icon: "🕌",
     imageUrl:
-      "https://images.unsplash.com/photo-1493246507139-91e8bef99c02?w=800",
+      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800",
     aiPrompt:
       "A couple in a lush palace courtyard with a turquoise pool, reclining on silk floor cushions under a grand archway, serving each other exotic fruits, both looking at the camera with blissful royal smiles, wearing sheer silk and gold jewelry, warm evening light, atmosphere of luxury and peace",
     storyTemplate: createStoryTemplate(
@@ -35,7 +35,7 @@ export const ARABIAN_NIGHTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "Dunes and stars",
     icon: "🐪",
     imageUrl:
-      "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=800",
+      "https://images.unsplash.com/photo-1542401886-65d6c61db217?w=800",
     aiPrompt:
       "A couple standing on the peak of a massive golden sand dune at sunset, a caravan of camels in the distance, both looking at the horizon with hopeful smiles, wearing travel-worn but elegant desert robes, incredibly vibrant orange and purple sky, epic and adventurous",
     storyTemplate: createStoryTemplate(

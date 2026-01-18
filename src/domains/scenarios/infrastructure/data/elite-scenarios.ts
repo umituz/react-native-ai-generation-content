@@ -7,7 +7,7 @@ export const ELITE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     title: "Private Island",
     description: "Your own piece of heaven",
     icon: "🏝️",
-    imageUrl: "https://images.unsplash.com/photo-1540202404-a2f29036bb5e?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800",
     aiPrompt:
       "A couple on an exclusive private island beach, both looking at the camera with blissful smiles, dressed in high-end designer resort wear, infinity pool and luxury villa in background, crystal blue ocean and sunset, opulent and secluded",
     storyTemplate: createStoryTemplate(

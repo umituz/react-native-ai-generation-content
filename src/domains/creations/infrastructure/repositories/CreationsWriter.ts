@@ -94,6 +94,9 @@ export class CreationsWriter {
             if (updates.isFavorite !== undefined) {
                 updateData.isFavorite = updates.isFavorite;
             }
+            if (updates.deletedAt !== undefined) {
+                updateData.deletedAt = updates.deletedAt;
+            }
 
             await updateDoc(docRef, updateData);
             return true;
@@ -111,7 +114,33 @@ export class CreationsWriter {
         if (!docRef) return false;
 
         try {
+            // Soft delete: set deletedAt timestamp instead of hard delete
+            await updateDoc(docRef, { deletedAt: new Date() });
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    async hardDelete(userId: string, creationId: string): Promise<boolean> {
+        const docRef = this.pathResolver.getDocRef(userId, creationId);
+        if (!docRef) return false;
+
+        try {
             await deleteDoc(docRef);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    async restore(userId: string, creationId: string): Promise<boolean> {
+        const docRef = this.pathResolver.getDocRef(userId, creationId);
+        if (!docRef) return false;
+
+        try {
+            // Remove deletedAt to restore the creation
+            await updateDoc(docRef, { deletedAt: null });
             return true;
         } catch {
             return false;

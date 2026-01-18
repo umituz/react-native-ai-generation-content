@@ -7,7 +7,7 @@ export const CELEBRATION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] 
     title: "Christmas Together",
     description: "Magic of the holidays",
     icon: "🎄",
-    imageUrl: "https://images.unsplash.com/photo-1543589077-47d81606c1af?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800",
     aiPrompt:
       "A couple standing by a beautiful Christmas tree, both looking at the camera with warm happy smiles, dressed in cozy festive sweaters, soft glowing holiday lights and ornaments, snow visible through window in background, magical and warm",
     storyTemplate: createStoryTemplate(
@@ -21,7 +21,7 @@ export const CELEBRATION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] 
     description: "Counting down to forever",
     icon: "🎆",
     imageUrl:
-      "https://images.unsplash.com/photo-1514525253344-073cda4b8966?w=800",
+      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800",
     aiPrompt:
       "A couple at a glamorous New Year's Eve party, both looking at the camera with ecstatic smiles, dressed in elegant evening attire, holding champagne glasses, fireworks and city lights in background, celebratory and bright",
     storyTemplate: createStoryTemplate(
@@ -58,7 +58,7 @@ export const CELEBRATION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] 
     ),
   },
   {
-    id: ScenarioId.HALLOWEEN,
+    id: ScenarioId.HALLOWEEN_DUO,
     title: "Halloween Duo",
     description: "Spooky and sweet",
     icon: "🎃",

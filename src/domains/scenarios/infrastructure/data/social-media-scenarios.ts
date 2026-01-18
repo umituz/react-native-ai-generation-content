@@ -50,7 +50,7 @@ export const SOCIAL_MEDIA_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[]
     description: "Documenting our journey",
     icon: "📹",
     imageUrl:
-      "https://images.unsplash.com/photo-1521791136064-7986c2959213?w=800",
+      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800",
     aiPrompt:
       "A couple recording a travel vlog, both looking at the camera with energetic smiles, holding a vlogging camera on a gimbal, dressed in practical yet stylish travel gear, stunning exotic location or chaotic airport in background, authentic and engaging",
     storyTemplate: createStoryTemplate(

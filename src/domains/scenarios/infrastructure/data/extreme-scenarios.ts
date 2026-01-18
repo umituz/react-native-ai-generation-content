@@ -13,7 +13,7 @@ export const EXTREME_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Ultimate adrenaline rush",
     icon: "🪂",
     imageUrl:
-      "https://images.unsplash.com/photo-1512331484446-258312d27a1e?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&auto=format&fit=crop&q=60",
     aiPrompt:
       "A couple skydiving together, both looking at the camera with exhilarated expressions, dressed in matching skydiving suits and helmets, clouds and earth far below in background, thrilling and epic",
     storyTemplate: createStoryTemplate(

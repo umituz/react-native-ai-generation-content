@@ -8,7 +8,7 @@ export const SULTRY_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "The spark of attraction",
     icon: "🧲",
     imageUrl:
-      "https://images.unsplash.com/photo-1516589174184-c6a6de9e09d1?w=800",
+      "https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=800",
     aiPrompt:
       "Extreme close-up of a couple's faces, almost touching, looking into each other's eyes with intense magnetic attraction, shallow depth of field, warm cinematic lighting, soft focus on the background, feeling of high romantic tension and undeniable chemistry",
     storyTemplate: createStoryTemplate(
@@ -21,7 +21,7 @@ export const SULTRY_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     title: "The Secret Whisper",
     description: "Close and personal",
     icon: "👂",
-    imageUrl: "https://images.unsplash.com/photo-1544273677-277d73970224?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1485872299829-c673f5194813?w=800",
     aiPrompt:
       "Close-up of a man whispering into a woman's ear, his lips almost touching her skin, woman closing her eyes with a faint blissful smile, low-key dramatic lighting with high contrast, elegant semi-formal attire, intimate and sultry atmosphere",
     storyTemplate: createStoryTemplate(
@@ -62,7 +62,7 @@ export const SULTRY_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     title: "Midnight Embers",
     description: "Warmth and desire",
     icon: "🔥",
-    imageUrl: "https://images.unsplash.com/photo-1542312167-731339870199?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1482575832494-771f74bf6857?w=800",
     aiPrompt:
       "A couple sitting closely in front of a roaring fireplace late at night, man's hand gently caressing woman's neck, both looking at each other with intense loving expressions, warm amber light reflecting on their skin, cozy but highly romantic and sultry atmosphere",
     storyTemplate: createStoryTemplate(

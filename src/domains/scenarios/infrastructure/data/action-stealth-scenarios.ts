@@ -21,7 +21,7 @@ export const ACTION_STEALTH_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     description: "Need for speed",
     icon: "✈️",
     imageUrl:
-      "https://images.unsplash.com/photo-1564613311141-94754409395f?w=800",
+      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800",
     aiPrompt:
       "A couple as fighter pilots, both looking at the camera with heroic smiles, wearing olive green flight suits and holding helmets, standing in front of a modern fighter jet on an aircraft carrier deck, sunrise sky in background, powerful and patriotic",
     storyTemplate: createStoryTemplate(

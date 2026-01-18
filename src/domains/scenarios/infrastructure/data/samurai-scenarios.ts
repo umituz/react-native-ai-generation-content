@@ -8,7 +8,7 @@ export const SAMURAI_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Cherry blossom walk",
     icon: "🌸",
     imageUrl:
-      "https://images.unsplash.com/photo-1522383225053-ed111181a951?w=800",
+      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800",
     aiPrompt:
       "A couple in traditional Japanese Kimonos and Hakamas walking through a path of blooming cherry blossom (Sakura) trees, pink petals falling like snow, ancient stone lanterns in background, soft morning light, looking at each other with deep respect and love, ethereal and peaceful",
     storyTemplate: createStoryTemplate(

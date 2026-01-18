@@ -7,7 +7,7 @@ export const BUCKET_LIST_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] 
     title: "Hot Air Balloon",
     description: "Soaring above the world",
     icon: "🎈",
-    imageUrl: "https://images.unsplash.com/photo-1544015759-42b7899c7178?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=800",
     aiPrompt:
       "A couple in a hot air balloon basket, both looking at the camera with thrilled smiles, holding champagne glasses, stunning panoramic views of Cappadocia or green valleys far below in background, golden sunrise lighting, epic and magical",
     storyTemplate: createStoryTemplate(

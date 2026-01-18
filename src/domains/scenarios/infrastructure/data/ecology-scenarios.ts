@@ -34,7 +34,7 @@ export const ECOLOGY_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Guardians of the reef",
     icon: "🌊",
     imageUrl:
-      "https://images.unsplash.com/photo-1524316325922-77b31ebee784?w=800",
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800",
     aiPrompt:
       "A couple on a research vessel at sea, both looking at the camera with passionate smiles, wearing professional marine biology gear, holding underwater cameras, crystal blue ocean and coral reefs visible below in background, bright tropical sun, committed and adventurous",
     storyTemplate: createStoryTemplate(

@@ -22,7 +22,7 @@ export const DARK_ACADEMIA_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     description: "Classic scholarly stroll",
     icon: "🎓",
     imageUrl:
-      "https://images.unsplash.com/photo-1510076857177-74700760be49?w=800",
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=800",
     aiPrompt:
       "A couple walking through the courtyard of a historic university (Oxford style), ancient stone buildings and gothic arches, both dressed in classic scholarly fashion, holding leather satchels, autumn leaves on the ground, overcast soft lighting, sophisticated and timeless",
     storyTemplate: createStoryTemplate(

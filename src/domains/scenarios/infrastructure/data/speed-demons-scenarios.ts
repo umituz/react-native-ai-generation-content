@@ -35,7 +35,7 @@ export const SPEED_DEMONS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[]
     description: "Victory is sweet",
     icon: "🏆",
     imageUrl:
-      "https://images.unsplash.com/photo-1541278107931-e00652309623?w=800",
+      "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=800",
     aiPrompt:
       "A couple on a winner's podium at a racing circuit, both holding a massive gold trophy together, man popping a bottle of champagne with spray in the air, both looking at the camera with pure ecstatic joy, wearing racing suits, blurred crowd and flags in background, triumphant and glorious",
     storyTemplate: createStoryTemplate(

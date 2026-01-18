@@ -8,7 +8,7 @@ export const MOVIE_LEGENDS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     description: "I'm flying, Jack!",
     icon: "🚢",
     imageUrl:
-      "https://images.unsplash.com/photo-1500077423678-25eead4ec51e?w=800",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800",
     aiPrompt:
       "A couple recreating the iconic Titanic pose at the bow of a grand ship, man holding woman from behind with her arms outstretched, both looking at the camera with blissful romantic smiles, wearing elegant 1910s period clothing, orange sunset ocean horizon in background, cinematic and legendary",
     storyTemplate: createStoryTemplate(
@@ -35,7 +35,7 @@ export const MOVIE_LEGENDS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     title: "Twist Contest",
     description: "Classic 50s diner dance",
     icon: "💃",
-    imageUrl: "https://images.unsplash.com/photo-1547402633-911be24e164c?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
     aiPrompt:
       "A couple recreating the iconic Pulp Fiction dance scene in a 50s diner, both looking at the camera with cool deadpan expressions, man in black suit, woman in white shirt and black trousers with bob haircut, doing the 'twist' hand gesture over eyes, checkered floor and neon signs in background, cult classic style",
     storyTemplate: createStoryTemplate(
@@ -77,7 +77,7 @@ export const MOVIE_LEGENDS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     description: "Love at first sight",
     icon: "🐠",
     imageUrl:
-      "https://images.unsplash.com/photo-1524316325922-77b31ebee784?w=800",
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800",
     aiPrompt:
       "A couple looking at each other through a large fish tank, both looking at the camera through the glass with mesmerized expressions, wearing 90s era party clothing, colorful tropical fish and blue water between them, soft ethereal lighting, romantic and symbolic",
     storyTemplate: createStoryTemplate(
@@ -105,7 +105,7 @@ export const MOVIE_LEGENDS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     description: "Unchained melody",
     icon: "🏺",
     imageUrl:
-      "https://images.unsplash.com/photo-1565193998941-8656113e11f1?w=800",
+      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800",
     aiPrompt:
       "A couple at a pottery wheel, man behind woman with his hands over hers as they shape wet clay, both looking at the camera with intimate warm smiles, soft warm indoor lighting, rustic studio background, deeply romantic and legendary",
     storyTemplate: createStoryTemplate(
@@ -132,7 +132,7 @@ export const MOVIE_LEGENDS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[
     title: "The Time of My Life",
     description: "That legendary lift",
     icon: "🕺",
-    imageUrl: "https://images.unsplash.com/photo-1547402633-911be24e164c?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
     aiPrompt:
       "A couple recreating the iconic Dirty Dancing lift, man holding woman high above his head with straight arms, woman with back arched and arms spread wide, both looking at camera with triumphant joyful smiles, 80s resort ballroom background with lights and audience, energetic and iconic",
     storyTemplate: createStoryTemplate(

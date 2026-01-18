@@ -50,7 +50,7 @@ export const FOLKLORE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Surreal tea party",
     icon: "☕",
     imageUrl:
-      "https://images.unsplash.com/photo-1534073828943-f801091bb2cd?w=800",
+      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800",
     aiPrompt:
       "A couple at a long eccentric tea table in a surreal garden, both looking at the camera with whimsical and quirky expressions, various mismatched teapots and giant mushrooms in background, wearing extravagant victorian-inspired quirky fashion, colorful and dreamlike",
     storyTemplate: createStoryTemplate(

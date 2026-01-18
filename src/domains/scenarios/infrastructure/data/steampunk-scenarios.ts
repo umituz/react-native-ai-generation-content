@@ -8,7 +8,7 @@ export const STEAMPUNK_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     description: "Commanders of the clouds",
     icon: "🎈",
     imageUrl:
-      "https://images.unsplash.com/photo-1449156003946-3197ae0107cb?w=800",
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800",
     aiPrompt:
       "A couple as captains on the bridge of a massive brass-plated airship, looking at the camera with confident adventurous smiles, wearing leather aviator coats and intricate brass goggles, steering wheels and glowing pressure gauges in background, clouds and sunset outside the windows, cinematic steampunk aesthetic",
     storyTemplate: createStoryTemplate(

@@ -8,7 +8,7 @@ export const ROMANTIC_KISSES_SCENARIOS: Omit<Scenario, 'outputType' | 'category'
     description: "That nervous magic",
     icon: "🎇",
     imageUrl:
-      "https://images.unsplash.com/photo-1516589174184-c6a6de9e09d1?w=800",
+      "https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=800",
     aiPrompt:
       "A couple in a park at twilight, standing close under a blossoming cherry tree, just as their lips are about to touch for their first kiss, both looking at each other with closed eyes and nervous happy smiles, soft magical lighting, fireflies in background, pure and sweet",
     storyTemplate: createStoryTemplate(

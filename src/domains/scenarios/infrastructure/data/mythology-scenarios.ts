@@ -7,7 +7,7 @@ export const MYTHOLOGY_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     title: "Olympian Royalty",
     description: "Rule from the divine heights",
     icon: "🔱",
-    imageUrl: "https://images.unsplash.com/photo-1549416878-b9ca35c2d47a?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800",
     aiPrompt:
       "A couple as Greek God and Goddess on Mount Olympus, both looking at the camera with divine authority, wearing flowing white silk chitons with gold laurel wreaths, holding a golden trident and scepter, marble architecture and clouds in background, epic and ethereal",
     storyTemplate: createStoryTemplate(

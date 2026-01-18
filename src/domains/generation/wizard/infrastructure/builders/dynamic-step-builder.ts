@@ -68,6 +68,13 @@ export const buildFlowStepsFromWizard = (
       type: StepType.GENERATING,
       required: true,
     });
+
+    // Always add result preview after generating
+    steps.push({
+      id: "RESULT_PREVIEW",
+      type: StepType.RESULT_PREVIEW,
+      required: true,
+    });
   }
 
   return steps;

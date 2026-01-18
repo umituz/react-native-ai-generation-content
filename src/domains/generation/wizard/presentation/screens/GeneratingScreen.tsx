@@ -1,10 +1,10 @@
 /**
  * Generic Generating Screen
  * Shows progress while AI generates content
- * Used by ALL features - NO feature-specific code!
+ * Uses scenario-specific messages with fallback to generic messages
  */
 
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useAppDesignTokens, AtomicText } from "@umituz/react-native-design-system";
 
@@ -13,6 +13,12 @@ export interface GeneratingScreenProps {
   readonly scenario?: {
     readonly id: string;
     readonly title?: string;
+    readonly category?: string;
+    readonly generatingMessages?: {
+      readonly title?: string;
+      readonly waitMessage?: string;
+      readonly hint?: string;
+    };
   };
   readonly t: (key: string) => string;
   readonly onCancel?: () => void;
@@ -33,17 +39,26 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
     });
   }
 
+  const messages = useMemo(() => {
+    const custom = scenario?.generatingMessages;
+    return {
+      title: custom?.title || t("generator.title"),
+      waitMessage: custom?.waitMessage || t("generator.waitMessage"),
+      hint: custom?.hint || t("generator.hint"),
+    };
+  }, [scenario, t]);
+
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
       <View style={styles.content}>
         <ActivityIndicator size="large" color={tokens.colors.primary} />
 
         <AtomicText type="headlineMedium" style={styles.title}>
-          {t("generator.title")}
+          {messages.title}
         </AtomicText>
 
         <AtomicText type="bodyMedium" style={[styles.message, { color: tokens.colors.textSecondary }]}>
-          {t("generator.waitMessage")}
+          {messages.waitMessage}
         </AtomicText>
 
         {/* Progress Bar */}
@@ -73,7 +88,7 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
 
         {/* Hint */}
         <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary }]}>
-          {t("generator.hint")}
+          {messages.hint}
         </AtomicText>
       </View>
     </View>

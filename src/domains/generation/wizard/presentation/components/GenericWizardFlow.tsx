@@ -21,8 +21,8 @@ import type { WizardFeatureConfig, WizardStepConfig } from "../../domain/entitie
 import { buildFlowStepsFromWizard } from "../../infrastructure/builders/dynamic-step-builder";
 import { useWizardGeneration, type WizardScenarioData } from "../hooks/useWizardGeneration";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
-import { PhotoStep } from "../../../../../presentation/components/photo-step/PhotoStep";
-import { usePhotoUploadState } from "../hooks/usePhotoUploadState";
+import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
+import { GenericPhotoUploadScreen } from "../screens/GenericPhotoUploadScreen";
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;
@@ -54,7 +54,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   onCreditsExhausted,
   onBack,
   t,
-  translations,
+  translations: _translations,
   renderPreview,
   renderGenerating,
   renderResult,
@@ -86,6 +86,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     previousStep,
     setCustomData,
     updateProgress,
+    setResult,
   } = flow;
 
   // Handle progress change - memoized to prevent infinite loops
@@ -94,6 +95,22 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
       updateProgress(progress);
     },
     [updateProgress],
+  );
+
+  // Handle generation complete - saves result and advances to result preview
+  const handleGenerationComplete = useCallback(
+    (result: unknown) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[GenericWizardFlow] Generation completed, saving result and advancing to result preview");
+      }
+      // Save result in flow state
+      setResult(result);
+      // Advance to result preview step
+      nextStep();
+      // Notify parent
+      onGenerationComplete?.(result);
+    },
+    [setResult, nextStep, onGenerationComplete],
   );
 
   // Validate scenario - NO FALLBACK, aiPrompt is REQUIRED
@@ -148,7 +165,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     userId,
     isGeneratingStep: currentStep?.type === StepType.GENERATING,
     alertMessages,
-    onSuccess: onGenerationComplete,
+    onSuccess: handleGenerationComplete,
     onError: onGenerationError,
     onProgressChange: handleProgressChange,
     onCreditsExhausted,
@@ -187,44 +204,6 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     }
   }, [currentStep, currentStepIndex, onStepChange]);
 
-  // Handle step continue
-  const handleStepContinue = useCallback(
-    (stepData: Record<string, unknown>) => {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[GenericWizardFlow] Step continue", {
-          stepId: currentStep?.id,
-          data: stepData,
-        });
-      }
-
-      // Store step data in custom data
-      Object.entries(stepData).forEach(([key, value]) => {
-        setCustomData(key, value);
-      });
-
-      // Check if this is the last step before generating
-      if (currentStepIndex === flowSteps.length - 2) {
-        // Next step is GENERATING
-        // Notify parent and provide callback to proceed to generating
-        // Parent will call proceedToGenerating() after feature gate passes
-        if (onGenerationStart) {
-          onGenerationStart(customData, () => {
-            if (typeof __DEV__ !== "undefined" && __DEV__) {
-              console.log("[GenericWizardFlow] Proceeding to GENERATING step");
-            }
-            nextStep();
-          });
-        }
-        // DON'T call nextStep() here - parent will call it via proceedToGenerating callback
-        return;
-      }
-
-      // Move to next step (for all non-generation steps)
-      nextStep();
-    },
-    [currentStep, currentStepIndex, customData, setCustomData, nextStep, flowSteps.length, onGenerationStart],
-  );
-
   // Handle back
   const handleBack = useCallback(() => {
     if (currentStepIndex === 0) {
@@ -234,24 +213,26 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     }
   }, [currentStepIndex, previousStep, onBack]);
 
-  // Photo upload state translations (generic, used for all photo upload steps)
-  const photoUploadTranslations = useMemo(() => ({
-    fileTooLarge: t("common.errors.file_too_large"),
-    maxFileSize: t("common.errors.max_file_size"),
-    error: t("common.error"),
-    uploadFailed: t("common.errors.upload_failed"),
-  }), [t]);
+  // Handle photo continue - saves photo and moves to next step
+  const handlePhotoContinue = useCallback((stepId: string, image: UploadedImage) => {
+    setCustomData(stepId, image);
 
-  const photoUploadHook = usePhotoUploadState({
-    translations: photoUploadTranslations,
-  });
-
-  // Save photo when uploaded
-  useEffect(() => {
-    if (photoUploadHook.image && currentStep) {
-      setCustomData(currentStep.id, photoUploadHook.image);
+    // Check if this is the last step before generating
+    if (currentStepIndex === flowSteps.length - 2) {
+      // Next step is GENERATING - call onGenerationStart
+      if (onGenerationStart) {
+        onGenerationStart({ ...customData, [stepId]: image }, () => {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[GenericWizardFlow] Proceeding to GENERATING step");
+          }
+          nextStep();
+        });
+      }
+      return;
     }
-  }, [photoUploadHook.image, currentStep, setCustomData]);
+
+    nextStep();
+  }, [currentStepIndex, flowSteps.length, customData, setCustomData, nextStep, onGenerationStart]);
 
   // Render current step
   const renderCurrentStep = useCallback(() => {
@@ -290,37 +271,31 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
         const titleKey = wizardConfig?.titleKey || `wizard.steps.${step.id}.title`;
         const title = t(titleKey);
 
-        // Subtitle is optional
-        const subtitle = wizardConfig?.subtitleKey ? t(wizardConfig.subtitleKey) : undefined;
+        // Subtitle from config
+        const subtitleKey = wizardConfig?.subtitleKey || `wizard.steps.${step.id}.subtitle`;
+        const subtitle = t(subtitleKey);
 
         // Get existing photo for this step from customData
-        const existingPhoto = customData[step.id];
-        const imageUri = existingPhoto && typeof existingPhoto === "object" && "uri" in existingPhoto
-          ? (existingPhoto.uri as string)
-          : photoUploadHook.image?.uri || null;
+        const existingPhoto = customData[step.id] as UploadedImage | undefined;
 
         return (
-          <PhotoStep
-            config={{
-              enabled: true,
-              order: currentStepIndex,
-              id: step.id,
-              header: {},
-              photoCard: {},
-              enableValidation: false,
-            }}
-            imageUri={imageUri}
-            isValidating={false}
-            isValid={null}
-            onPhotoSelect={photoUploadHook.handlePickImage}
-            disabled={false}
-            title={title}
-            subtitle={subtitle}
+          <GenericPhotoUploadScreen
             translations={{
+              title,
+              subtitle,
+              continue: t("common.continue"),
               tapToUpload: t("photoUpload.tapToUpload"),
               selectPhoto: t("photoUpload.selectPhoto"),
               change: t("common.change"),
+              fileTooLarge: t("common.errors.file_too_large"),
+              maxFileSize: t("common.errors.max_file_size"),
+              error: t("common.error"),
+              uploadFailed: t("common.errors.upload_failed"),
             }}
+            t={t}
+            onBack={handleBack}
+            onContinue={(image) => handlePhotoContinue(step.id, image)}
+            existingImage={existingPhoto}
           />
         );
       }
@@ -334,16 +309,16 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     }
   }, [
     currentStep,
+    customData,
     generationProgress,
     generationResult,
     nextStep,
     renderPreview,
     renderGenerating,
     renderResult,
-    handleStepContinue,
+    handlePhotoContinue,
     handleBack,
     t,
-    translations,
   ]);
 
   return (

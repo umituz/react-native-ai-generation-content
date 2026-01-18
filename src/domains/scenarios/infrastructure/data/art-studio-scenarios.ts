@@ -36,7 +36,7 @@ export const ART_STUDIO_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     description: "Shaping destiny",
     icon: "🏺",
     imageUrl:
-      "https://images.unsplash.com/photo-1565193998941-8656113e11f1?w=800",
+      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800",
     aiPrompt:
       "A couple working together on a large clay sculpture, hands covered in grey clay and intertwined as they shape the figure, both looking at the camera with focused warm smiles, rustic studio with pottery wheels in background, soft natural lighting, tactile and intimate",
     storyTemplate: createStoryTemplate(
@@ -50,7 +50,7 @@ export const ART_STUDIO_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     description: "Our own exhibition",
     icon: "🖼️",
     imageUrl:
-      "https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8?w=800",
+      "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=800",
     aiPrompt:
       "A couple in a sleek modern art gallery, walking hand-in-hand past their own paintings on the walls, both looking at the camera with proud sophisticated smiles, man in a sharp blazer, woman in an elegant minimalist dress, bright clean lighting, achievement and shared pride",
     storyTemplate: createStoryTemplate(

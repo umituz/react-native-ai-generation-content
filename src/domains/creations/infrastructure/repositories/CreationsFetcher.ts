@@ -33,10 +33,13 @@ export class CreationsFetcher {
                 console.log("[CreationsRepository] Fetched:", snapshot.docs.length);
             }
 
-            return snapshot.docs.map((docSnap) => {
+            const allCreations = snapshot.docs.map((docSnap) => {
                 const data = docSnap.data() as CreationDocument;
                 return this.documentMapper(docSnap.id, data);
             });
+
+            // Filter out soft-deleted creations
+            return allCreations.filter((creation) => !creation.deletedAt);
         } catch (error) {
             if (__DEV__) {
                  

@@ -8,7 +8,7 @@ export const VILLAINOUS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     description: "Architects of chaos",
     icon: "🦹",
     imageUrl:
-      "https://images.unsplash.com/photo-151877066fe63-c6d1a4947271?w=800",
+      "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800",
     aiPrompt:
       "A couple as sophisticated villains in a high-tech lair, both looking at the camera with confident villainous smirks, wearing elegant dark designer suits, petting a white cat or holding a glass of wine, massive wall of monitors showing global data in background, powerful and mysterious",
     storyTemplate: createStoryTemplate(

@@ -21,7 +21,7 @@ export const COZY_PLUSH_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     title: "Giant Teddy Hug",
     description: "The ultimate soft nest",
     icon: "🧸",
-    imageUrl: "https://images.unsplash.com/photo-1544208062-35925507204b?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800",
     aiPrompt:
       "A couple nestled together on a giant 2-meter tall soft teddy bear on a living room floor, watching a movie (glow reflecting on faces), both looking at the camera with sleepy contented smiles, wrapped in a fluffy blanket, soft fairy lights in background, ultra-cozy",
     storyTemplate: createStoryTemplate(

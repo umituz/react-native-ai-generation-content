@@ -36,7 +36,7 @@ export const MYSTICAL_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Turning lead to gold",
     icon: "🧪",
     imageUrl:
-      "https://images.unsplash.com/photo-1532187863486-abf9d3c32230?w=800",
+      "https://images.unsplash.com/photo-1502224562085-639556652f33?w=800",
     aiPrompt:
       "A couple as alchemists in a smoky rustic laboratory, both looking at the camera with intense focus, wearing leather aprons and stained shirts, surrounded by glass beakers with colorful bubbling liquids and old scrolls, golden sunset light through a small window, mysterious and scientific",
     storyTemplate: createStoryTemplate(

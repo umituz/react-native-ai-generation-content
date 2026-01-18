@@ -35,6 +35,8 @@ export interface Creation {
   // Extended fields for job-based creations
   readonly status?: CreationStatus;
   readonly output?: CreationOutput;
+  // Soft delete - if set, the creation is considered deleted
+  readonly deletedAt?: Date;
 }
 
 export interface CreationDocument {
@@ -55,6 +57,7 @@ export interface CreationDocument {
   readonly ratedAt?: FirebaseTimestamp | Date;
   readonly createdAt: FirebaseTimestamp | Date;
   readonly completedAt?: FirebaseTimestamp | Date;
+  readonly deletedAt?: FirebaseTimestamp | Date;
 }
 
 interface FirebaseTimestamp {
@@ -89,6 +92,13 @@ export function mapDocumentToCreation(
     ratedAtDate = data.ratedAt.toDate();
   }
 
+  let deletedAtDate: Date | undefined;
+  if (data.deletedAt instanceof Date) {
+    deletedAtDate = data.deletedAt;
+  } else if (data.deletedAt && typeof data.deletedAt === "object" && "toDate" in data.deletedAt && typeof data.deletedAt.toDate === "function") {
+    deletedAtDate = data.deletedAt.toDate();
+  }
+
   return {
     id,
     uri,
@@ -103,5 +113,6 @@ export function mapDocumentToCreation(
     ratedAt: ratedAtDate,
     status: data.status as CreationStatus | undefined,
     output: data.output ?? undefined,
+    deletedAt: deletedAtDate,
   };
 }

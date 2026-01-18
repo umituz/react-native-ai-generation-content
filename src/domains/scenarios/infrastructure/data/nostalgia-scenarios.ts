@@ -8,7 +8,7 @@ export const NOSTALGIA_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     description: "Peace, love, and music",
     icon: "🌸",
     imageUrl:
-      "https://images.unsplash.com/photo-1523456720240-276632c020f0?w=800",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
     aiPrompt:
       "A couple in the 1960s hippie era, both looking at the camera with carefree smiles, wearing colorful paisley shirts and bell-bottom jeans, flower crowns, vintage VW van and sunny meadow in background, film grain and warm vintage lighting, peaceful and free",
     storyTemplate: createStoryTemplate(
@@ -34,7 +34,7 @@ export const NOSTALGIA_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     title: "90s Grunge",
     description: "Authentic and edgy",
     icon: "🎸",
-    imageUrl: "https://images.unsplash.com/photo-1542013858-69389be90709?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1485217988980-11786ced9454?w=800",
     aiPrompt:
       "A couple in the 1990s grunge era, both looking at the camera with edgy nonchalant expressions, wearing flannel shirts and combat boots, city alley or underground music venue in background, raw film texture and moody lighting, authentic and cool",
     storyTemplate: createStoryTemplate(

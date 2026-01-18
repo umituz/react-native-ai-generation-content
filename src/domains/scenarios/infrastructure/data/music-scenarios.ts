@@ -35,7 +35,7 @@ export const MUSIC_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     title: "Tour Bus Vibes",
     description: "Life on the road",
     icon: "🚌",
-    imageUrl: "https://images.unsplash.com/photo-1542332213-31f873480e7f?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800",
     aiPrompt:
       "A couple sitting on a cozy bunk in a luxury tour bus, both looking at the camera with relaxed tired smiles, surrounded by guitars and notebooks, city lights passing by through the bus window, intimate and adventurous",
     storyTemplate: createStoryTemplate(
@@ -49,7 +49,7 @@ export const MUSIC_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Old-school cool",
     icon: "📻",
     imageUrl:
-      "https://images.unsplash.com/photo-1539375665275-f9ad415bd9ac?w=800",
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800",
     aiPrompt:
       "A couple in a dusty nostalgic vinyl record shop, both looking at the camera with cool smiles, holding an old record album, rows of vinyl records in background, warm vintage lighting, wearing indie fashion, hip and timeless",
     storyTemplate: createStoryTemplate(
@@ -63,7 +63,7 @@ export const MUSIC_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Soulful rhythm",
     icon: "🎷",
     imageUrl:
-      "https://images.unsplash.com/photo-1415202354747-405cbdec5de7?w=800",
+      "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800",
     aiPrompt:
       "A couple in a smoky dark jazz club, man playing a saxophone, woman leaning against a piano looking at camera with a soulful expression, wearing elegant evening attire, blue and amber spotlight lighting, intimate and moody",
     storyTemplate: createStoryTemplate(

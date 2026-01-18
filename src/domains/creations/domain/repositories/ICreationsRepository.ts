@@ -14,7 +14,12 @@ export interface ICreationsRepository {
     id: string,
     updates: Partial<Creation>,
   ): Promise<boolean>;
+  /** Soft delete - sets deletedAt timestamp */
   delete(userId: string, creationId: string): Promise<boolean>;
+  /** Hard delete - permanently removes from database */
+  hardDelete(userId: string, creationId: string): Promise<boolean>;
+  /** Restore a soft-deleted creation */
+  restore(userId: string, creationId: string): Promise<boolean>;
   updateShared(
     userId: string,
     creationId: string,

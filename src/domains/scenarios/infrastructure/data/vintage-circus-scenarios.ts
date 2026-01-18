@@ -21,7 +21,7 @@ export const VINTAGE_CIRCUS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     title: "High Wire Trust",
     description: "Perfect balance",
     icon: "🎪",
-    imageUrl: "https://images.unsplash.com/photo-1544208062-35925507204b?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800",
     aiPrompt:
       "A couple standing on a thin wire high above a circus floor, man holding woman's hands for balance, both looking at each other with intense trust and loving smiles, wearing shimmering acrobatic outfits, dramatic spotlight from above, atmosphere of tension and absolute connection",
     storyTemplate: createStoryTemplate(
