@@ -20,7 +20,6 @@ export type {
   GenerationErrorType,
   AlertMessages,
   UseGenerationOrchestratorReturn,
-  AuthCallbacks,
   ModerationCallbacks,
   ModerationResult,
   CreditCallbacks,
