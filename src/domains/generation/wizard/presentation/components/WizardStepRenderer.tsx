@@ -1,5 +1,5 @@
 import React from "react";
-import { getMediaTypeFromUrl, extractMediaUrl } from "@umituz/react-native-design-system";
+import { extractMediaUrl, getMediaTypeFromUrl } from "@umituz/react-native-design-system";
 import { StepType } from "../../../../../domain/entities/flow-config.types";
 import { GenericPhotoUploadScreen } from "../screens/GenericPhotoUploadScreen";
 import { GeneratingScreen } from "../screens/GeneratingScreen";

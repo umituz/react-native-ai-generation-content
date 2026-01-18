@@ -22,7 +22,6 @@ export type {
   UseGenerationOrchestratorReturn,
   ModerationCallbacks,
   ModerationResult,
-  CreditCallbacks,
   LifecycleConfig,
   GenerationErrorConfig,
   GenerationErrorTranslations,

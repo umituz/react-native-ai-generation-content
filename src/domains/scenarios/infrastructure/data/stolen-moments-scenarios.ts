@@ -1,5 +1,5 @@
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const STOLEN_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -9,8 +9,10 @@ export const STOLEN_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     icon: "🤝",
     imageUrl:
       "https://images.unsplash.com/photo-1516939884455-1445c8652f83?w=800",
-    aiPrompt:
-      "A couple at a formal dinner party, faces calm and detached as they look at other guests, but underneath the white-clothed table, their hands are tightly and passionately intertwined, man's fingers laced with woman's, wedding bands reflecting dim light, high emotional tension in a public setting",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple at an elegant formal dinner party, split composition showing their composed calm faces above white linen tablecloth while talking to other guests, and below the table their hands are secretly and passionately intertwined with fingers interlaced, wedding bands catching soft light, man in dark suit, woman in elegant dress, crystal glassware on table",
+      "warm ambient dining room lighting, soft candlelight, sophisticated formal atmosphere with hidden tension"
+    ),
     storyTemplate: createStoryTemplate(
       "share a secret connection amidst a crowd",
       "While the world talks around them, their most important conversation is happening in silence under the table. A bond that doesn't need an audience.",
@@ -23,8 +25,10 @@ export const STOLEN_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     icon: "👁️",
     imageUrl:
       "https://images.unsplash.com/photo-1519741497674-611481863552?w=800",
-    aiPrompt:
-      "A crowded high-end party, blurred guests moving in background, focus on a couple at opposite ends of the room locking eyes with intense desire, woman holding a cocktail glass, man leaning against a pillar, the world between them is a blur, high-tension gaze",
+    aiPrompt: createPhotorealisticPrompt(
+      "a crowded upscale cocktail party, blurred elegantly dressed guests moving in background, sharp focus on a couple at opposite ends of the room locking eyes with intense desire, woman in red dress holding a champagne flute, man in tailored dark suit leaning against marble pillar, everything between them softly blurred, magnetic eye contact",
+      "warm golden ambient party lighting, bokeh from background lights, high-tension romantic atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "connect across a crowded room",
       "In a sea of faces, there is only one that matters. Their eyes meet, and the noise of the party fades into a distant hum.",
@@ -37,8 +41,10 @@ export const STOLEN_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     icon: "🛗",
     imageUrl:
       "https://images.unsplash.com/photo-1527684651001-731c474bbb5a?w=800",
-    aiPrompt:
-      "A couple standing very close in a modern glass elevator, man behind woman leaning in towards her neck, woman looking at the camera through the mirror reflection with a breathless expression, silver metal surfaces and digital floor numbers in background, high-tension proximity",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple standing very close together in a modern sleek glass and steel elevator, man standing behind woman leaning in close towards her neck, woman looking at camera through the mirrored wall reflection with breathless anticipation, polished metal surfaces, glowing digital floor numbers, business professional attire",
+      "cool modern elevator lighting with warm skin tones, reflective surfaces, intimate high-tension atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "feel the electricity of being close",
       "Thirty floors of silence, and a tension that feels like it could break the cables. Every second in this small space is a world of its own.",
@@ -51,8 +57,10 @@ export const STOLEN_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     icon: "📚",
     imageUrl:
       "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
-    aiPrompt:
-      "A couple hidden between tall dark wooden library shelves, woman pressed against the books, man leaning in to kiss her, both looking at camera with secretive mischievous smiles, soft dust motes in sunbeams filtering through shelves, intimate and intellectual",
+    aiPrompt: createPhotorealisticPrompt(
+      "a romantic couple hidden between tall dark wooden library bookshelves filled with leather-bound books, woman gently pressed against the books, man leaning in for a kiss, both facing camera with secretive mischievous playful smiles, soft dust particles visible in golden sunbeams filtering through the stacks, academic casual attire",
+      "soft golden light filtering through bookshelves, dust motes in sunbeams, intimate intellectual atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "steal a kiss where the world is quiet",
       "Between the pages of ancient stories, they're writing a chapter of their own. A secret shared in the hush of a thousand books.",
@@ -65,8 +73,10 @@ export const STOLEN_MOMENTS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>
     icon: "🎭",
     imageUrl:
       "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=800",
-    aiPrompt:
-      "A couple in the dark wings of a theater stage, heavy red curtains in background, man in a tuxedo, woman in a shimmering performance dress, leaning into each other with intense expressions just before going on stage, dramatic spotlight spill from off-camera, electric anticipation",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in the dark backstage wings of a grand theater, heavy red velvet curtains visible in background, man in classic black tuxedo with bow tie, woman in shimmering sequined silver performance gown, leaning into each other with intense expressions moments before going on stage, dramatic warm spotlight spilling from offstage",
+      "dramatic theatrical lighting with warm spotlight spill, deep shadows backstage, electric anticipation atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "share a moment of passion before the spotlight",
       "The crowd is waiting, the lights are up, but for this one heartbeat in the shadows, they are the only audience that matters.",

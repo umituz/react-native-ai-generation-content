@@ -4,7 +4,7 @@
  */
 
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const FASHION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -14,8 +14,10 @@ export const FASHION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🪩",
     imageUrl:
       "https://images.unsplash.com/photo-1545128485-c400e7702796?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple dancing in 70s disco fashion, both looking at the camera with energetic smiles, dressed in sequins and bell bottoms, vibrant disco dance floor with reflections in background, groovy styling, fun and energetic",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple dancing together in authentic 70s disco fashion, both facing camera with energetic joyful smiles mid-dance, man in tight white polyester suit with wide lapels and gold chain necklace and platform shoes with pompadour hair, woman in shimmering silver halter jumpsuit with flared bell bottoms and chunky platform heels with feathered Farrah hair, vibrant light-up dance floor with colored squares and giant spinning mirror ball scattering rainbow reflections in background",
+      "dynamic disco lighting with colorful rotating spots and rainbow reflections from mirror ball"
+    ),
     storyTemplate: createStoryTemplate(
       "boogie all night long",
       "Under the disco ball, their love shines brighter than the sequins on the dance floor.",
@@ -28,8 +30,10 @@ export const FASHION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "⚙️",
     imageUrl:
       "https://images.unsplash.com/photo-1616790876844-97c0c6057364?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple in steampunk fashion, both looking at the camera with intriguing expressions, dressed in Victorian clothes with brass gears and goggles, clockwork industrial setting with steam in background, industrial accessories, innovative and retro-future",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in elaborate steampunk fashion, both facing camera with intriguing mysterious expressions, man in brown leather waistcoat over white high-collar shirt with brass pocket watch and welding goggles on top hat with gear decorations, woman in corseted burgundy velvet dress with bustle and brass clockwork jewelry and aviator goggles around neck, industrial Victorian workshop with massive brass gears and copper pipes releasing steam and glowing vacuum tubes in background",
+      "warm amber lighting with dramatic steam atmosphere and copper metallic highlights"
+    ),
     storyTemplate: createStoryTemplate(
       "engineer a future of steam and gears",
       "In a world of clockwork innovation, their hearts beat with the precision of destiny.",
@@ -42,8 +46,10 @@ export const FASHION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "👠",
     imageUrl:
       "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple in a high fashion editorial, both standing with dramatic poses and looking at the camera, dressed in avant-garde couture outfits, minimalist architectural setting with harsh studio lighting in background, chic and sophisticated",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in high fashion editorial photoshoot, both striking dramatic confident poses facing camera with fierce model expressions, man in deconstructed Comme des Garcons asymmetric black suit with architectural silhouette, woman in avant-garde Iris van Herpen sculptural white gown with geometric 3D elements, minimalist white concrete architectural setting with dramatic harsh directional studio lighting creating sharp shadows",
+      "high-contrast editorial studio lighting with stark white and deep shadows creating dramatic shapes"
+    ),
     storyTemplate: createStoryTemplate(
       "grace the cover of life",
       "Every street is a runway, and every moment is a cover shot when they are together.",
@@ -56,8 +62,10 @@ export const FASHION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🎸",
     imageUrl:
       "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple in 90s grunge style leaning against a wall, both looking at the camera with cool edgy expressions, dressed in flannel shirts and ripped jeans, messy hair, urban brick wall with moody lighting in background, raw and edgy",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in authentic 90s Seattle grunge style leaning against brick wall, both facing camera with cool disaffected expressions, man in oversized red flannel shirt over band tee and ripped baggy jeans with combat boots and messy chin-length hair, woman in black slip dress over thermal undershirt with Doc Martens and choker necklace and smudged eyeliner, urban alley with weathered brick wall and band posters and moody overcast sky",
+      "moody desaturated lighting with cool gray tones and gritty urban atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "rock their own rhythm",
       "Raw, real, and unfiltered. Their love is the anthem of a generation.",

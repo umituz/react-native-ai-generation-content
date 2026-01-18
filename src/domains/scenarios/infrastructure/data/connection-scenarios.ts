@@ -1,5 +1,5 @@
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -9,8 +9,10 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     icon: "📱",
     imageUrl:
       "https://images.unsplash.com/photo-1516724562728-afc824a36e84?w=800",
-    aiPrompt:
-      "A couple sitting closely on a sofa, one holding a smartphone and showing the screen to the other with a look of pure joy and excitement, the partner reacting with a wide amazed smile and teary eyes, a moment of deep connection and wonder, soft domestic evening lighting, blurred living room background",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple sitting closely together on a modern gray sofa, one partner holding a smartphone showing the screen to the other with a look of pure joy and excitement, the other partner reacting with wide amazed smile and happy tears, both in comfortable casual home attire, cozy modern living room with soft lamps and plants",
+      "soft warm evening domestic lighting, intimate cozy atmosphere, emotional connection moment"
+    ),
     storyTemplate: createStoryTemplate(
       "see a glimpse of their future together",
       "One look at the screen, and the world stands still. Seeing their future self together makes every moment of the present feel infinitely more precious.",
@@ -23,8 +25,10 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     icon: "👁️",
     imageUrl:
       "https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=800",
-    aiPrompt:
-      "A couple in a close intimate embrace, foreheads touching, eyes locked with deep soulful expressions, looking at each other with pure unconditional love, soft cinematic lighting, minimalist neutral background to focus on facial expressions, raw emotional connection",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in a close intimate embrace, foreheads gently touching, eyes locked gazing at each other with deep soulful expressions of pure unconditional love, man in dark henley shirt, woman in soft cream sweater, minimalist neutral soft background",
+      "soft cinematic lighting with warm tones, intimate shallow depth of field, raw emotional connection atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "connect on a soul-deep level",
       "Words aren't needed when two souls recognize each other. In this silent moment, they promise a lifetime of understanding.",
@@ -37,8 +41,10 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     icon: "🌠",
     imageUrl:
       "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",
-    aiPrompt:
-      "A couple standing on a high balcony overlooking a vast sunset horizon, pointing towards the distance, both looking at the camera with hopeful visionary smiles, imagining their shared future, golden hour lighting, epic and inspiring",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple standing together on a high modern penthouse balcony overlooking a vast sunset horizon, man pointing towards the distance, both facing camera with hopeful visionary smiles, man in casual blazer, woman in flowing dress, city skyline and mountains visible in distance",
+      "golden hour sunset lighting, warm orange and pink sky tones, epic inspiring atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "dream of the thousand paths ahead",
       "Hand in hand, they look towards the horizon. Whatever the future holds, they know they'll face it together with courage and love.",
@@ -51,8 +57,10 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     icon: "💬",
     imageUrl:
       "https://images.unsplash.com/photo-1543807535-eceef0bc6599?w=800",
-    aiPrompt:
-      "A couple sitting across from each other at a small rustic cafe table, leaning in, engaged in an intense but loving conversation, looking at each other with deep interest and empathy, warm cafe atmosphere, cinematic focus on facial expressions",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple sitting across from each other at a small rustic wooden cafe table, leaning in engaged in an intense but loving conversation, looking at each other with deep interest and empathy, coffee cups on table, cozy cafe interior with exposed brick and warm decor",
+      "warm cafe ambient lighting, soft natural window light, intimate conversational atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "share their deepest thoughts",
       "Every word builds a bridge, every secret shared strengthens the foundation of their life together.",
@@ -65,8 +73,10 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     icon: "⚓",
     imageUrl:
       "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800",
-    aiPrompt:
-      "A couple in a supportive embrace, one partner resting their head on the other's shoulder with a look of relief and peace, the other partner looking at the camera with a protective and loving smile, standing in a peaceful quiet garden, soft natural lighting",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in a supportive embrace in a peaceful garden, one partner resting their head on the other's shoulder with a look of relief and peace, the other partner facing camera with a protective loving smile, surrounded by green hedges and flowering roses, casual comfortable clothing",
+      "soft natural outdoor lighting, gentle dappled sunlight, peaceful comforting atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "find strength in each other",
       "In a world that can be loud and chaotic, they are each other's peace. A safe harbor for every storm.",
@@ -79,8 +89,10 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     icon: "🤝",
     imageUrl:
       "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800",
-    aiPrompt:
-      "A couple sitting side by side watching a sunset, not speaking but holding hands firmly, both looking at the camera with content tranquil smiles, the light reflecting in their eyes, peaceful natural landscape background, serene and profound",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple sitting side by side on a wooden bench watching a spectacular sunset, holding hands firmly without speaking, both facing camera with content tranquil smiles, golden sunset light reflecting in their eyes, peaceful rolling hills and wildflower meadow in background",
+      "warm golden sunset lighting, natural outdoor atmosphere, serene peaceful romantic mood"
+    ),
     storyTemplate: createStoryTemplate(
       "share a moment of perfect harmony",
       "They don't need much to be happy - just a quiet moment and the knowledge that they are exactly where they are supposed to be.",
@@ -93,8 +105,10 @@ export const CONNECTION_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] =
     icon: "🌳",
     imageUrl:
       "https://images.unsplash.com/photo-1447005497901-b3e9ee359928?w=800",
-    aiPrompt:
-      "A couple in their older years but with the same spark in their eyes, looking at a photo album of their younger selves, looking at the camera with wise and deeply happy smiles, warm sun-drenched living room with mementos, celebrating a lifetime of growth",
+    aiPrompt: createPhotorealisticPrompt(
+      "a loving elderly couple in their 70s with gray hair but the same spark in their eyes, sitting together looking at an old leather photo album of their younger selves, both facing camera with wise deeply happy smiles showing laugh lines, warm cozy living room with family photos and mementos on shelves",
+      "warm sun-drenched living room lighting, nostalgic golden afternoon light, celebrating a lifetime of love"
+    ),
     storyTemplate: createStoryTemplate(
       "honor the journey of a lifetime",
       "Like wine or a great forest, their love has only grown richer, deeper, and more beautiful with every passing year.",

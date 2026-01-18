@@ -6,7 +6,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { Alert } from "react-native";
-import { useMedia, MediaValidationError, MediaQuality, MEDIA_CONSTANTS } from "@umituz/react-native-design-system";
+import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
 export interface PhotoUploadConfig {
@@ -60,7 +60,6 @@ export const usePhotoUploadState = ({
 
   const handlePickImage = useCallback(async () => {
     try {
-      // Design system handles validation with maxFileSizeMB
       const result = await pickImage({
         allowsEditing: true,
         aspect: [1, 1],
@@ -78,7 +77,7 @@ export const usePhotoUploadState = ({
         } else if (result.error === MediaValidationError.PERMISSION_DENIED) {
           Alert.alert(
             translations.error,
-            translations.permissionDenied || "Permission to access media library is required",
+            translations.permissionDenied ?? "Permission to access media library is required",
           );
         }
         return;
@@ -93,7 +92,6 @@ export const usePhotoUploadState = ({
         return;
       }
 
-      // Create uploaded image object
       const uploadedImage: UploadedImage = {
         uri: selectedAsset.uri,
         previewUrl: selectedAsset.uri,
@@ -105,7 +103,7 @@ export const usePhotoUploadState = ({
       setImage(uploadedImage);
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        const fileSizeMB = (selectedAsset.fileSize || 0) / (1024 * 1024);
+        const fileSizeMB = (selectedAsset.fileSize ?? 0) / (1024 * 1024);
         console.log("[usePhotoUploadState] Image selected", {
           width: uploadedImage.width,
           height: uploadedImage.height,

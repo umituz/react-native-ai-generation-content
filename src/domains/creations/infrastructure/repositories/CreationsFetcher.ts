@@ -17,7 +17,7 @@ export class CreationsFetcher {
 
     async getAll(userId: string): Promise<Creation[]> {
         if (__DEV__) {
-             
+
             console.log("[CreationsRepository] getAll()", { userId });
         }
 
@@ -29,20 +29,32 @@ export class CreationsFetcher {
             const snapshot = await getDocs(q);
 
             if (__DEV__) {
-                 
+
                 console.log("[CreationsRepository] Fetched:", snapshot.docs.length);
             }
 
             const allCreations = snapshot.docs.map((docSnap) => {
                 const data = docSnap.data() as CreationDocument;
-                return this.documentMapper(docSnap.id, data);
+                const creation = this.documentMapper(docSnap.id, data);
+
+                // Ensure deletedAt is always mapped from raw data (custom mappers may omit it)
+                if (creation.deletedAt === undefined && data.deletedAt) {
+                    const deletedAt = data.deletedAt instanceof Date
+                        ? data.deletedAt
+                        : (data.deletedAt && typeof data.deletedAt === "object" && "toDate" in data.deletedAt)
+                            ? (data.deletedAt as { toDate: () => Date }).toDate()
+                            : undefined;
+                    return { ...creation, deletedAt };
+                }
+
+                return creation;
             });
 
             // Filter out soft-deleted creations
             return allCreations.filter((creation) => !creation.deletedAt);
         } catch (error) {
             if (__DEV__) {
-                 
+
                 console.error("[CreationsRepository] getAll() ERROR", error);
             }
             return [];

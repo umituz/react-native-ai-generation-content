@@ -4,7 +4,7 @@
  */
 
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -14,8 +14,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "💍",
     imageUrl:
       "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple during a romantic proposal moment, man on one knee holding a ring box, woman with hands over mouth in surprise, both looking at camera with emotional expressions, dressed in elegant evening attire, romantic setting with candles and rose petals in background, magical and emotional",
+    aiPrompt: createPhotorealisticPrompt(
+      "a romantic proposal moment, man on one knee holding an open velvet ring box with sparkling diamond ring, woman with hands over her mouth in surprise showing happy tears, both facing camera with emotional expressions, man in tailored dark suit, woman in elegant cocktail dress, romantic restaurant terrace with candlelit tables and rose petals scattered on floor",
+      "warm romantic candlelight, soft golden ambient glow, magical emotional atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "ask the most important question",
       "In this perfect moment, one question changes everything. The answer is written in their eyes.",
@@ -28,8 +30,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🎉",
     imageUrl:
       "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A newly engaged couple at their engagement party, both looking at camera with joyful smiles, showing off engagement ring, dressed in elegant party attire, champagne glasses in hand, festive party with balloons and decorations in background, celebratory and joyful",
+    aiPrompt: createPhotorealisticPrompt(
+      "a newly engaged couple at their elegant engagement party, both facing camera with joyful smiles, woman showing off sparkling engagement ring on extended hand, man in navy blazer with pocket square, woman in champagne colored cocktail dress, holding crystal champagne flutes, festive venue with gold balloons and floral centerpieces",
+      "warm festive party lighting, soft golden ambient glow, celebratory joyful atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "celebrate their engagement",
       "Surrounded by loved ones, they toast to forever. The journey to 'I do' has officially begun.",
@@ -42,8 +46,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "👗",
     imageUrl:
       "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A bride trying on wedding dress in a bridal boutique, looking at camera with excited smile, wearing stunning white wedding gown, groom watching admiringly in background, elegant bridal shop with mirrors and soft lighting, dreamy and romantic",
+    aiPrompt: createPhotorealisticPrompt(
+      "a bride trying on wedding dress in an elegant bridal boutique, facing camera with excited beaming smile, wearing stunning white A-line wedding gown with delicate lace details, groom visible in background watching admiringly, floor-to-ceiling mirrors and plush seating, crystal chandelier overhead",
+      "soft flattering boutique lighting, diffused natural light from windows, dreamy romantic atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "find the perfect dress",
       "When she sees herself in THE dress, she knows. This is the one she'll wear to marry her soulmate.",
@@ -56,8 +62,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "📸",
     imageUrl:
       "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple during engagement photoshoot, both looking at camera with loving smiles, dressed in coordinated elegant casual outfits, holding hands, beautiful outdoor location with golden hour lighting in background, romantic and professional",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple during professional engagement photoshoot, both facing camera with loving genuine smiles, dressed in coordinated elegant casual outfits in neutral tones, holding hands with fingers interlaced, standing in beautiful outdoor location with trees and open field",
+      "golden hour backlighting, warm sun flare, professional romantic photography atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "capture their love story",
       "Every photo tells their story - from the first glance to this moment, ready to say forever.",
@@ -70,8 +78,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "💐",
     imageUrl:
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A bride at her bridal shower party, both bride and groom looking at camera with happy smiles, dressed in elegant party attire, surrounded by gifts and decorations, beautiful party venue with flowers and balloons in background, festive and joyful",
+    aiPrompt: createPhotorealisticPrompt(
+      "a bride at her elegant bridal shower party, bride in beautiful white lace dress with groom in smart casual attire, both facing camera with happy radiant smiles, surrounded by wrapped gifts with white ribbon bows, venue decorated with pink and white flowers, rose gold balloons",
+      "soft warm party lighting, natural daylight through windows, festive joyful celebration atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "celebrate with loved ones",
       "Laughter, tears of joy, and endless love. Her closest friends gather to celebrate the bride-to-be.",
@@ -84,8 +94,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🎊",
     imageUrl:
       "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple celebrating their bachelor and bachelorette parties, both looking at camera with excited smiles, dressed in fun party outfits, party atmosphere with friends in background, energetic and celebratory",
+    aiPrompt: createPhotorealisticPrompt(
+      "a fun couple celebrating their bachelor and bachelorette parties, both facing camera with excited energetic smiles, man wearing party sash and fun accessories, woman in sparkly dress with bride-to-be tiara, upscale venue with friends cheering in background, confetti in air",
+      "vibrant party lighting, colorful ambient glow, energetic celebratory nightlife atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "celebrate their last night of freedom",
       "One last adventure before the biggest adventure of all. Tomorrow, everything changes for the better.",
@@ -98,8 +110,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "⛪",
     imageUrl:
       "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple at their church wedding ceremony, both looking at camera with emotional smiles, bride in stunning white wedding gown with veil, groom in classic black tuxedo, beautiful church interior with stained glass windows and flowers in background, sacred and elegant",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple at their traditional church wedding ceremony, both facing camera with emotional joyful smiles, bride in stunning white wedding gown with delicate lace veil, groom in classic black tuxedo with white boutonniere, beautiful historic church interior with ornate stained glass windows casting colorful light, white floral arrangements along the aisle",
+      "soft natural light through stained glass, warm ambient church lighting, sacred elegant atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "exchange sacred vows",
       "In this holy place, before God and witnesses, they promise forever. Two souls become one.",
@@ -112,8 +126,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🌸",
     imageUrl:
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple at their garden wedding ceremony, both looking at camera with radiant smiles, bride in flowing white gown, groom in light-colored suit, lush garden with blooming flowers and floral arch in background, natural and romantic",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple at their beautiful garden wedding ceremony, both facing camera with radiant joyful smiles, bride in flowing white chiffon gown with flower crown, groom in light beige linen suit, standing under a lush floral arch covered in pink and white roses, manicured garden with blooming peonies and hedges",
+      "natural golden afternoon sunlight, dappled light through trees, romantic outdoor garden atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "marry in nature's cathedral",
       "Surrounded by blooming flowers and gentle breezes, nature itself celebrates their union.",
@@ -126,8 +142,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🏖️",
     imageUrl:
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple at their beach wedding ceremony, both looking at camera with joyful smiles, bride in flowing beach wedding dress, groom in linen suit, barefoot on sand, ocean sunset and beach ceremony setup in background, tropical and romantic",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple at their romantic beach wedding ceremony, both facing camera with joyful genuine smiles, bride in flowing white bohemian beach wedding dress with windswept hair, groom in cream linen suit, both barefoot on pristine white sand, turquoise ocean waves and stunning sunset sky, bamboo wedding arch with white fabric and tropical flowers",
+      "warm golden sunset backlighting, ocean breeze atmosphere, tropical romantic beach wedding ambiance"
+    ),
     storyTemplate: createStoryTemplate(
       "say I do by the ocean",
       "With the waves as their witness and the sunset painting the sky, they begin their forever.",
@@ -140,8 +158,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🏰",
     imageUrl:
       "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple at their castle wedding, both looking at camera with regal smiles, bride in princess-style ball gown, groom in formal tuxedo, grand castle interior with chandeliers and ornate decorations in background, majestic and fairytale",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple at their fairytale castle wedding, both facing camera with regal elegant smiles, bride in princess-style ball gown with sweetheart neckline and long train, groom in formal black and white tuxedo with tails, grand castle great hall with massive crystal chandeliers, stone walls with tapestries, ornate gold decorations",
+      "warm golden chandelier lighting, dramatic castle interior ambiance, majestic fairytale atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "live their fairytale",
       "In a castle fit for royalty, their love story becomes the stuff of legends.",
@@ -154,8 +174,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🎆",
     imageUrl:
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple at their wedding reception, both looking at camera with ecstatic smiles, bride and groom in wedding attire, surrounded by guests and decorations, elegant reception venue with lights and flowers in background, festive and joyful",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple at their wedding reception celebration, both facing camera with ecstatic joyful smiles, bride in elegant white reception dress, groom in formal suit, surrounded by cheering guests in formal attire, elegant ballroom venue with string lights, white draping, and elaborate floral centerpieces",
+      "warm festive reception lighting, soft string lights and candles, joyful celebration atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "celebrate with everyone they love",
       "The ceremony is over, the party begins. Tonight, love is the only thing that matters.",
@@ -168,8 +190,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "💃",
     imageUrl:
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple during their first dance as married couple, both looking at camera while dancing, bride in wedding gown, groom in tuxedo, romantic dance floor with soft lighting and guests watching in background, intimate and romantic",
+    aiPrompt: createPhotorealisticPrompt(
+      "a newlywed couple sharing their first dance as husband and wife, both facing camera while dancing elegantly, bride in flowing white wedding gown, groom in classic black tuxedo, romantic dance floor with soft spotlight, guests watching adoringly from surrounding tables with candles",
+      "soft romantic spotlight, warm ambient dance floor lighting, intimate magical first dance atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "share their first dance",
       "In each other's arms, they dance as husband and wife for the first time. The world fades away.",
@@ -182,8 +206,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🍰",
     imageUrl:
       "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple cutting their wedding cake together, both looking at camera with playful smiles, hands together on knife, bride and groom in wedding attire, beautiful multi-tier wedding cake and reception venue in background, sweet and joyful",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple cutting their elegant wedding cake together, both facing camera with playful loving smiles, hands together on silver cake knife, bride in white gown, groom in tuxedo, beautiful four-tier white wedding cake with sugar flowers and gold accents on decorated table",
+      "soft warm reception lighting, romantic ambient glow, sweet celebratory moment"
+    ),
     storyTemplate: createStoryTemplate(
       "cut their wedding cake",
       "A sweet moment, a playful tradition. The first of many things they'll share as one.",
@@ -196,8 +222,10 @@ export const WEDDING_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🌅",
     imageUrl:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A newlywed couple on their honeymoon, both looking at camera with blissful smiles, dressed in elegant resort wear, relaxing in tropical paradise, luxury resort with ocean view in background, romantic and dreamy",
+    aiPrompt: createPhotorealisticPrompt(
+      "a blissful newlywed couple on their honeymoon vacation, both facing camera with relaxed happy smiles, man in white linen shirt and shorts, woman in elegant flowing tropical maxi dress, relaxing by infinity pool at luxury resort, stunning turquoise ocean view and palm trees in background",
+      "warm tropical sunlight, golden hour glow, romantic paradise honeymoon atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "begin their honeymoon",
       "Just the two of them, in paradise. The wedding is over, but the adventure of marriage has just begun.",

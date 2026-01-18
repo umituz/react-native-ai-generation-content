@@ -19,72 +19,73 @@ export interface GenerationStrategy<TInput, TResult> {
 }
 
 export interface AlertMessages {
-  networkError: string;
-  policyViolation: string;
-  saveFailed: string;
-  creditFailed: string;
-  unknown: string;
-  success?: string;
+  readonly networkError: string;
+  readonly policyViolation: string;
+  readonly saveFailed: string;
+  readonly creditFailed: string;
+  readonly unknown: string;
+  readonly success?: string;
 }
 
 export interface ModerationResult {
-  allowed: boolean;
-  warnings: string[];
+  readonly allowed: boolean;
+  readonly warnings: string[];
 }
 
 export interface ModerationCallbacks {
-  checkContent: (input: unknown) => Promise<ModerationResult>;
-  onShowWarning?: (warnings: string[], onCancel: () => void, onContinue: () => void) => void;
-}
-
-export interface CreditCallbacks {
-  checkCredits: (cost: number) => Promise<boolean>;
-  deductCredits: (cost: number) => Promise<boolean>;
-  onCreditsExhausted?: () => void;
+  readonly checkContent: (input: unknown) => Promise<ModerationResult>;
+  readonly onShowWarning?: (
+    warnings: string[],
+    onCancel: () => void,
+    onContinue: () => void
+  ) => void;
 }
 
 export interface LifecycleConfig {
-  onComplete?: (status: "success" | "error", result?: unknown, error?: GenerationError) => void;
-  completeDelay?: number;
-  autoReset?: boolean;
-  resetDelay?: number;
+  readonly onComplete?: (
+    status: "success" | "error",
+    result?: unknown,
+    error?: GenerationError
+  ) => void;
+  readonly completeDelay?: number;
+  readonly autoReset?: boolean;
+  readonly resetDelay?: number;
 }
 
 export interface GenerationConfig {
-  userId: string | undefined;
-  alertMessages: AlertMessages;
-  onCreditsExhausted?: () => void;
-  onSuccess?: (result: unknown) => void;
-  onError?: (error: GenerationError) => void;
-  moderation?: ModerationCallbacks;
-  credits?: CreditCallbacks;
-  lifecycle?: LifecycleConfig;
+  readonly userId: string | undefined;
+  readonly alertMessages: AlertMessages;
+  readonly onCreditsExhausted?: () => void;
+  readonly onSuccess?: (result: unknown) => void;
+  readonly onError?: (error: GenerationError) => void;
+  readonly moderation?: ModerationCallbacks;
+  readonly lifecycle?: LifecycleConfig;
 }
 
 export interface GenerationState<TResult> {
-  status: OrchestratorStatus;
-  isGenerating: boolean;
-  progress: number;
-  result: TResult | null;
-  error: GenerationError | null;
+  readonly status: OrchestratorStatus;
+  readonly isGenerating: boolean;
+  readonly progress: number;
+  readonly result: TResult | null;
+  readonly error: GenerationError | null;
 }
 
 export interface GenerationError {
-  type: GenerationErrorType;
-  message: string;
-  originalError?: Error;
+  readonly type: GenerationErrorType;
+  readonly message: string;
+  readonly originalError?: Error;
 }
 
 export type GenerationErrorType = "network" | "credits" | "policy" | "save" | "unknown";
 
 export interface UseGenerationOrchestratorReturn<TInput, TResult> {
-  generate: (input: TInput) => Promise<TResult | void>;
-  reset: () => void;
-  status: OrchestratorStatus;
-  isGenerating: boolean;
-  progress: number;
-  result: TResult | null;
-  error: GenerationError | null;
+  readonly generate: (input: TInput) => Promise<TResult | void>;
+  readonly reset: () => void;
+  readonly status: OrchestratorStatus;
+  readonly isGenerating: boolean;
+  readonly progress: number;
+  readonly result: TResult | null;
+  readonly error: GenerationError | null;
 }
 
 export interface GenerationErrorConfig {

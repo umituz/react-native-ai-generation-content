@@ -1,14 +1,14 @@
 /**
  * Generation Orchestrator
- * Feature-agnostic hook for AI generation with:
- * - Network check (via design system's useOfflineStore)
+ * Handles AI generation execution with:
+ * - Network check
  * - Content moderation (optional)
- * - Credit management (via subscription package)
- * - Error handling & alerts
  * - Progress tracking
- * - Lifecycle management
+ * - Credit deduction (after success)
+ * - Error handling
  *
- * NOTE: Auth is handled by useFeatureGate before generation starts
+ * NOTE: Credit CHECK is handled by useFeatureGate before generation starts.
+ * This orchestrator only DEDUCTS credits after successful generation.
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
@@ -33,9 +33,6 @@ const INITIAL_STATE = {
   error: null,
 };
 
-const DEFAULT_COMPLETE_DELAY = 500;
-const DEFAULT_RESET_DELAY = 1000;
-
 export const useGenerationOrchestrator = <TInput, TResult>(
   strategy: GenerationStrategy<TInput, TResult>,
   config: GenerationConfig,
@@ -47,76 +44,35 @@ export const useGenerationOrchestrator = <TInput, TResult>(
     onSuccess,
     onError,
     moderation,
-    credits,
     lifecycle,
   } = config;
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[Orchestrator] 🎬 Hook initialized:", {
-      userId,
-      hasModeration: !!moderation,
-      hasCreditsCallbacks: !!credits,
-      hasLifecycle: !!lifecycle,
-    });
+    console.log("[Orchestrator] Hook initialized:", { userId });
   }
 
   const [state, setState] = useState<GenerationState<TResult>>(INITIAL_STATE);
   const isGeneratingRef = useRef(false);
-  const pendingInputRef = useRef<TInput | null>(null);
-  const completeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
 
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
-  const creditHook = useDeductCredit({ userId, onCreditsExhausted });
-
-  const defaultCredits = {
-    checkCredits: creditHook.checkCredits,
-    deductCredit: async (amount: number): Promise<boolean> => {
-      return creditHook.deductCredit(amount);
-    },
-  };
-
-  const checkCredits = credits?.checkCredits ?? defaultCredits.checkCredits;
-  const deductCredit = credits?.deductCredits ?? defaultCredits.deductCredit;
-  const handleCreditsExhausted = credits?.onCreditsExhausted ?? onCreditsExhausted;
+  const { deductCredit } = useDeductCredit({ userId, onCreditsExhausted });
 
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
-      if (completeTimeoutRef.current) clearTimeout(completeTimeoutRef.current);
-      if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] 🧹 Cleanup");
-      }
     };
   }, []);
 
   const handleLifecycleComplete = useCallback(
     (status: "success" | "error", result?: TResult, error?: GenerationError) => {
       if (!lifecycle?.onComplete) return;
-
-      const delay = lifecycle.completeDelay ?? DEFAULT_COMPLETE_DELAY;
-
-      if (completeTimeoutRef.current) clearTimeout(completeTimeoutRef.current);
-
-      completeTimeoutRef.current = setTimeout(() => {
-        if (!isMountedRef.current) return;
-
-        lifecycle.onComplete?.(status, result, error);
-
-        if (lifecycle.autoReset) {
-          const resetDelay = lifecycle.resetDelay ?? DEFAULT_RESET_DELAY;
-          if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-
-          resetTimeoutRef.current = setTimeout(() => {
-            if (isMountedRef.current) {
-              setState(INITIAL_STATE);
-              isGeneratingRef.current = false;
-            }
-          }, resetDelay);
+      const delay = lifecycle.completeDelay ?? 500;
+      setTimeout(() => {
+        if (isMountedRef.current) {
+          lifecycle.onComplete?.(status, result, error);
         }
       }, delay);
     },
@@ -125,11 +81,10 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
   const executeGeneration = useCallback(
     async (input: TInput) => {
-      const creditCost = strategy.getCreditCost();
-
       setState((prev) => ({ ...prev, status: "generating", progress: 10 }));
+
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] 🎨 Starting generation");
+        console.log("[Orchestrator] Starting generation");
       }
 
       const result = await strategy.execute(input, (progress) => {
@@ -145,7 +100,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         } catch (saveErr) {
           throw createGenerationError(
             "save",
-            "Failed to save",
+            alertMessages.saveFailed,
             saveErr instanceof Error ? saveErr : undefined,
           );
         }
@@ -153,9 +108,10 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
       if (isMountedRef.current) setState((prev) => ({ ...prev, progress: 90 }));
 
+      const creditCost = strategy.getCreditCost();
       const creditDeducted = await deductCredit(creditCost);
       if (!creditDeducted) {
-        throw createGenerationError("credits", "Failed to deduct credits");
+        throw createGenerationError("credits", alertMessages.creditFailed);
       }
 
       if (isMountedRef.current) {
@@ -163,10 +119,12 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       }
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] 🎉 Generation SUCCESS");
+        console.log("[Orchestrator] Generation SUCCESS");
       }
 
-      if (alertMessages.success) void showSuccess("Success", alertMessages.success);
+      if (alertMessages.success) {
+        showSuccess("Success", alertMessages.success);
+      }
       onSuccess?.(result);
       handleLifecycleComplete("success", result);
 
@@ -178,27 +136,17 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   const generate = useCallback(
     async (input: TInput) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] 🚀 generate() called");
+        console.log("[Orchestrator] generate() called");
       }
 
       if (isGeneratingRef.current) return;
 
       isGeneratingRef.current = true;
-      pendingInputRef.current = input;
       setState({ ...INITIAL_STATE, status: "checking", isGenerating: true });
 
       try {
         if (!offlineStore.isOnline) {
-          throw createGenerationError("network", "No internet connection");
-        }
-
-        const creditCost = strategy.getCreditCost();
-        const hasCredits = await checkCredits(creditCost);
-        if (!hasCredits) {
-          isGeneratingRef.current = false;
-          setState(INITIAL_STATE);
-          handleCreditsExhausted?.();
-          return;
+          throw createGenerationError("network", alertMessages.networkError);
         }
 
         if (moderation) {
@@ -221,7 +169,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
                     if (isMountedRef.current) {
                       setState({ status: "error", isGenerating: false, progress: 0, result: null, error });
                     }
-                    void showError("Error", getAlertMessage(error, alertMessages));
+                    showError("Error", getAlertMessage(error, alertMessages));
                     onError?.(error);
                     handleLifecycleComplete("error", undefined, error);
                   } finally {
@@ -231,7 +179,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
               );
               return;
             }
-            throw createGenerationError("policy", "Content policy violation");
+            throw createGenerationError("policy", alertMessages.policyViolation);
           }
         }
 
@@ -239,12 +187,12 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       } catch (err) {
         const error = parseError(err);
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] ❌ Error:", error);
+          console.log("[Orchestrator] Error:", error);
         }
         if (isMountedRef.current) {
           setState({ status: "error", isGenerating: false, progress: 0, result: null, error });
         }
-        void showError("Error", getAlertMessage(error, alertMessages));
+        showError("Error", getAlertMessage(error, alertMessages));
         onError?.(error);
         handleLifecycleComplete("error", undefined, error);
         throw error;
@@ -254,11 +202,8 @@ export const useGenerationOrchestrator = <TInput, TResult>(
     },
     [
       moderation,
-      strategy,
       alertMessages,
       offlineStore.isOnline,
-      checkCredits,
-      handleCreditsExhausted,
       executeGeneration,
       showError,
       onError,

@@ -1,5 +1,5 @@
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const ADVENTURE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -8,8 +8,10 @@ export const ADVENTURE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     description: "Search for the legendary",
     icon: "🏺",
     imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-    aiPrompt:
-      "A couple in a dusty ancient Egyptian tomb, looking at the camera with excited adventurous smiles, holding a map and a flashlight, wearing khaki explorer outfits with brimmed hats, ancient hieroglyphics and a golden sarcophagus in background, cinematic and daring",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple as treasure hunters in ancient Egyptian tomb, both facing camera with excited adventurous grins, man in khaki safari shirt with leather belt and worn explorer hat holding weathered parchment map, woman in tan cargo vest with compass around neck holding bright LED flashlight, dusty hieroglyphic-covered walls and golden sarcophagus with turquoise inlays in background",
+      "warm amber torchlight mixed with cool flashlight beam creating dramatic shadows on ancient stone walls"
+    ),
     storyTemplate: createStoryTemplate(
       "discover secrets hidden for millennia",
       "They spent years hunting for lost gold, only to find that the real treasure was the adventurer standing right beside them.",
@@ -22,8 +24,10 @@ export const ADVENTURE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     icon: "🌿",
     imageUrl:
       "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",
-    aiPrompt:
-      "A couple hacking through thick jungle vines, both looking at the camera with determined smiles, wearing rugged field gear, sunlight filtering through the dense canopy, a hidden stone temple overgrown with plants in the background, misty and adventurous vibe",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple exploring dense rainforest jungle, both facing camera with determined adventurous smiles, man in olive green moisture-wicking shirt with machete and canvas backpack, woman in khaki hiking pants and breathable tank top with binoculars, cutting through thick emerald vines with ancient moss-covered Mayan temple ruins visible through parting foliage in background",
+      "dappled golden sunlight filtering through dense jungle canopy creating god rays through morning mist"
+    ),
     storyTemplate: createStoryTemplate(
       "navigate the wild heart of the world",
       "No path is too difficult, no mountain too high, as long as they're cutting through the brush hand in hand.",
@@ -36,8 +40,10 @@ export const ADVENTURE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     icon: "❄️",
     imageUrl:
       "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800",
-    aiPrompt:
-      "A couple in heavy insulated parkas with fur hoods, both looking at the camera with confident happy smiles, standing on a vast ice shelf, snow blowing in the wind, a bright blue glacier and aurora borealis in background, high-contrast crisp lighting, heroic and cold",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple on Arctic expedition, both facing camera with confident joyful smiles, man in bright orange insulated expedition parka with fur-lined hood and snow goggles on forehead, woman in red down jacket with thermal gloves holding trekking poles, standing on vast white ice shelf with bright blue glacial ice formations and vibrant green aurora borealis dancing across dark polar sky in background",
+      "crisp high-contrast lighting with cool blue tones from ice reflections and green aurora glow"
+    ),
     storyTemplate: createStoryTemplate(
       "conquer the coldest reaches of the earth",
       "In a world of ice and snow, their love provides all the warmth they'll ever need. Pioneers of the great white void.",
@@ -50,8 +56,10 @@ export const ADVENTURE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = 
     icon: "🐉",
     imageUrl:
       "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800",
-    aiPrompt:
-      "A couple on the deck of an old wooden ship during a storm, man with a harpoon, woman looking through a brass telescope at the camera with a fierce smile, giant dark shape moving under the waves in background, crashing waves and stormy sky, epic and perilous",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple as legendary sea monster hunters on wooden sailing ship deck during fierce storm, man gripping iron harpoon with rope coiled at feet wearing weathered brown leather coat, woman facing camera with fierce determined smile looking through antique brass telescope wearing navy blue captain coat with gold buttons, massive dark tentacled shape visible beneath churning gray-green waves with lightning illuminating stormy clouds in background",
+      "dramatic storm lighting with flashes of lightning and blue-gray atmospheric tones"
+    ),
     storyTemplate: createStoryTemplate(
       "face the legends and myths of the deep",
       "The sea may be vast and full of monsters, but they've never been ones to stay in safe waters. Together, they are legends of the high seas.",

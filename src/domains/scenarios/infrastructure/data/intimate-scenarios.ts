@@ -4,7 +4,7 @@
  */
 
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -14,8 +14,10 @@ export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "💆",
     imageUrl:
       "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple relaxing together in a luxury spa, both looking at the camera with serene smiles, dressed in elegant white bathrobes, soft steam and warm lighting, infinity pool with candles and rose petals in background, romantic and luxurious",
+    aiPrompt: createPhotorealisticPrompt(
+      "a sophisticated couple relaxing together in a luxury spa resort, both facing camera with serene genuine smiles, wearing pristine white plush bathrobes, seated by an infinity pool with floating candles and scattered red rose petals, soft steam rising, marble floors and tropical plants visible",
+      "warm soft ambient spa lighting, gentle steam diffusion, golden hour glow"
+    ),
     storyTemplate: createStoryTemplate(
       "escape to pure relaxation",
       "In this sanctuary of serenity, they find peace in each other's presence, letting the world fade away.",
@@ -28,8 +30,10 @@ export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🛁",
     imageUrl:
       "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple in a romantic bubble bath, both looking at the camera with loving smiles, surrounded by candles and rose petals, champagne glasses nearby, luxury bathroom with marble and gold accents in background, intimate and elegant",
+    aiPrompt: createPhotorealisticPrompt(
+      "a romantic couple in a luxurious freestanding bathtub filled with bubbles, both looking at camera with loving genuine smiles, surrounded by dozens of lit candles and fresh rose petals, crystal champagne flutes nearby, elegant marble bathroom with gold fixtures and large mirror",
+      "warm candlelight creating soft shadows, intimate golden ambient glow"
+    ),
     storyTemplate: createStoryTemplate(
       "soak in pure romance",
       "Surrounded by candlelight and bubbles, every moment becomes a celebration of their love.",
@@ -42,8 +46,10 @@ export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🌅",
     imageUrl:
       "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple in bed during sunrise, both looking at the camera with warm morning smiles, dressed in elegant sleepwear, soft golden sunlight streaming through sheer curtains, white linen sheets, luxury bedroom with minimalist decor in background, intimate and dreamy",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple lying in a luxurious king bed during early morning, both facing camera with warm sleepy genuine smiles, wearing elegant silk pajamas, crisp white linen sheets slightly rumpled, soft golden sunlight streaming through sheer white curtains, minimalist modern bedroom with neutral tones",
+      "golden hour morning sunlight, natural soft window light, warm intimate atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "wake up to a new day together",
       "As the first rays of sun paint the room gold, they realize every morning with each other is a gift.",
@@ -56,8 +62,10 @@ export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🍷",
     imageUrl:
       "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple wine tasting in an elegant wine cellar, both looking at the camera with sophisticated smiles, dressed in upscale evening attire, holding wine glasses, rustic wine barrels and dim romantic lighting in background, classy and romantic",
+    aiPrompt: createPhotorealisticPrompt(
+      "a sophisticated couple wine tasting in an authentic stone wine cellar, both facing camera with genuine warm smiles showing natural joy, man wearing tailored navy blue suit with white shirt, woman wearing elegant burgundy velvet dress, each holding crystal wine glasses with deep red wine, aged oak wine barrels stacked behind them, cobblestone floor, arched stone ceiling",
+      "warm amber candlelight and wall sconces, romantic dim atmospheric lighting, soft shadows on stone walls"
+    ),
     storyTemplate: createStoryTemplate(
       "savor the finest moments",
       "Like a perfectly aged wine, their love only grows richer and more complex with time.",
@@ -70,8 +78,10 @@ export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🌹",
     imageUrl:
       "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple in a luxury hotel suite covered in rose petals, both looking at the camera with romantic smiles, dressed in elegant evening wear, champagne and candles, opulent bedroom with city view through floor-to-ceiling windows in background, luxurious and romantic",
+    aiPrompt: createPhotorealisticPrompt(
+      "a romantic couple in a luxury hotel suite bedroom covered in hundreds of fresh red rose petals, both facing camera with romantic genuine smiles, man in dark suit, woman in elegant black evening dress, champagne bottle in ice bucket and lit candles on bedside table, opulent king bed with white silk sheets, floor-to-ceiling windows showing city skyline at twilight",
+      "soft romantic ambient lighting, warm candlelight glow, city lights through windows"
+    ),
     storyTemplate: createStoryTemplate(
       "celebrate love in luxury",
       "In a room adorned with a thousand roses, they create memories as beautiful as the petals around them.",
@@ -84,8 +94,10 @@ export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🏖️",
     imageUrl:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple on a private beach at sunset, both looking at the camera with joyful smiles, dressed in elegant beach resort wear, lounging on luxury beach beds with champagne, golden sunset over turquoise ocean in background, exclusive and romantic",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple on a private tropical beach at sunset, both facing camera with joyful genuine smiles, man in linen shirt and shorts, woman in flowing white beach dress, lounging on luxury daybed with white canopy, champagne glasses in hand, pristine white sand, turquoise ocean waves, palm trees silhouetted against golden orange sunset sky",
+      "golden hour sunset lighting, warm orange and pink sky tones, natural beach atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "escape to their private paradise",
       "On this secluded shore, with only the waves as witness, they write their own love story in the sand.",
@@ -98,8 +110,10 @@ export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🎭",
     imageUrl:
       "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple at an elegant masquerade ball, both looking at the camera with mysterious alluring smiles, wearing ornate Venetian masks and formal evening attire, grand ballroom with chandeliers and candlelight in background, mysterious and elegant",
+    aiPrompt: createPhotorealisticPrompt(
+      "a elegant couple at a venetian masquerade ball, both facing camera with mysterious alluring genuine smiles, wearing ornate handcrafted venetian masks with gold and feather details, man in black tuxedo with bow tie, woman in stunning red ball gown, grand ballroom with crystal chandeliers, marble columns, other masked guests dancing in background",
+      "warm golden chandelier lighting, candlelit ambiance, dramatic theatrical atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "dance behind the masks",
       "In a world of mystery and elegance, they find that true intimacy needs no disguise.",
@@ -112,8 +126,10 @@ export const INTIMATE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🌙",
     imageUrl:
       "https://images.unsplash.com/photo-1444723121867-7a241cacace9?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple on a moonlit balcony, both looking at the camera with tender smiles, dressed in elegant evening wear, champagne glasses in hand, city skyline with twinkling lights and full moon in background, romantic and enchanting",
+    aiPrompt: createPhotorealisticPrompt(
+      "a romantic couple standing on a luxury penthouse balcony at night, both facing camera with tender genuine smiles, man in dark blazer, woman in elegant cocktail dress, holding crystal champagne flutes, wrought iron railing with string lights, sprawling city skyline with twinkling lights, large full moon in clear night sky",
+      "soft moonlight combined with warm city glow, romantic night atmosphere, subtle string light illumination"
+    ),
     storyTemplate: createStoryTemplate(
       "dance under the moonlight",
       "High above the city, under the watchful moon, they find their own piece of heaven.",

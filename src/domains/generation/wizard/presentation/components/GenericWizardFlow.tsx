@@ -138,20 +138,35 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     }
   }, [currentStepIndex, previousStep, onBack]);
 
-  const handlePhotoContinue = useCallback((stepId: string, image: UploadedImage) => {
-    setCustomData(stepId, image);
+  // Wrapper for nextStep that checks onGenerationStart before transitioning to GENERATING
+  const handleNextStep = useCallback(() => {
+    const nextIndex = currentStepIndex + 1;
+    const nextStepDef = flowSteps[nextIndex];
 
-    if (currentStepIndex === flowSteps.length - 2) {
+    // If next step is GENERATING, we must call onGenerationStart for feature gating
+    if (nextStepDef?.type === StepType.GENERATING) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[GenericWizardFlow] About to enter GENERATING step, calling onGenerationStart");
+      }
       if (onGenerationStart) {
-        onGenerationStart({ ...customData, [stepId]: image }, () => {
+        onGenerationStart(customData, () => {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[GenericWizardFlow] onGenerationStart callback invoked, proceeding to generation");
+          }
           nextStep();
         });
+        return;
       }
-      return;
     }
 
     nextStep();
-  }, [currentStepIndex, flowSteps.length, customData, setCustomData, nextStep, onGenerationStart]);
+  }, [currentStepIndex, flowSteps, customData, onGenerationStart, nextStep]);
+
+  const handlePhotoContinue = useCallback((stepId: string, image: UploadedImage) => {
+    setCustomData(stepId, image);
+    // Use handleNextStep which handles onGenerationStart check
+    handleNextStep();
+  }, [setCustomData, handleNextStep]);
 
   const handleOpenRatingPicker = useCallback(() => {
     setShowRatingPicker(true);
@@ -177,7 +192,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
         isSaving={isSaving}
         isSharing={isSharing}
         showRating={showRatingButton}
-        onNext={nextStep}
+        onNext={handleNextStep}
         onBack={handleBack}
         onPhotoContinue={handlePhotoContinue}
         onDownload={handleDownload}
