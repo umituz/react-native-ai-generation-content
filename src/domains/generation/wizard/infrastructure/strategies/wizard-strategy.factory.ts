@@ -183,7 +183,7 @@ async function buildGenerationInput(
     throw new Error(`Scenario "${scenario.id}" must have aiPrompt field`);
   }
 
-  const prompt = scenario.aiPrompt;
+  let prompt = scenario.aiPrompt;
   const outputType = scenario.outputType || "video";
 
   // For image generation, enhance prompt with style selections

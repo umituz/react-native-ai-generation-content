@@ -59,6 +59,8 @@ export {
   saveMediaToGallery, shareMedia, createSaveHandler, createShareHandler, createMediaHandlers,
 } from "./infrastructure/utils";
 
+export { distinctBy } from "./utils/arrayUtils";
+
 export type {
   IntervalOptions, ProgressOptions, StatusCheckResult, ResultValidation, ValidateResultOptions,
   PhotoInput, PreparedImage, ImageSelector, VideoSaver, AlertFunction, FeatureUtilsConfig, VideoAlertFunction,
