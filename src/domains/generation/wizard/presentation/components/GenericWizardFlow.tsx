@@ -1,15 +1,6 @@
 /**
  * Generic Wizard Flow Component
- * ONE wizard to rule them all!
- *
- * Works for:
- * - Couple features (romantic-kiss, ai-hug, etc.)
- * - Face swap
- * - Image-to-video
- * - Text-to-video
- * - ANY future feature!
- *
- * NO feature-specific code here - everything driven by configuration!
+ * Config-driven wizard for AI generation features
  */
 
 import React, { useMemo, useCallback, useEffect, useRef, useState } from "react";
@@ -27,6 +18,8 @@ import { useResultActions } from "../../../../result-preview/presentation/hooks/
 import { validateScenario } from "../utilities/validateScenario";
 import { WizardStepRenderer } from "./WizardStepRenderer";
 import { StarRatingPicker } from "../../../../result-preview/presentation/components/StarRatingPicker";
+
+declare const __DEV__: boolean;
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;
@@ -167,9 +160,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
   const handleSubmitRating = useCallback(async (rating: number, description: string) => {
     if (!currentCreation?.id || !onRate) return;
     const success = await onRate(currentCreation.id, rating, description);
-    if (success) {
-      setHasRated(true);
-    }
+    if (success) setHasRated(true);
     setShowRatingPicker(false);
   }, [currentCreation, onRate]);
 

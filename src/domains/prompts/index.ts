@@ -102,3 +102,11 @@ export {
   buildMinimalFacePreservationPrompt,
 } from './infrastructure/builders/face-preservation-builder';
 export type { FacePreservationOptions } from './infrastructure/builders/face-preservation-builder';
+
+export {
+  buildInteractionStylePrompt,
+  buildMinimalInteractionStylePrompt,
+  getInteractionRules,
+  getInteractionForbidden,
+} from './infrastructure/builders/interaction-style-builder';
+export type { InteractionStyle, InteractionStyleOptions } from './infrastructure/builders/interaction-style-builder';

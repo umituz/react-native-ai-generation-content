@@ -1,29 +1,25 @@
 /**
  * Face Preservation Prompt Builder
  * Dynamic prompt builder for AI image generation with strict face identity preservation
- * Supports any number of people (1, 2, 3, N) and interaction styles
+ * Supports any number of people (1, 2, 3, N)
  *
- * Based on best practices:
+ * SINGLE RESPONSIBILITY: Face identity preservation ONLY
  * - Face identity lock techniques
  * - @imageN reference anchors
- * - Interaction style rules (romantic, friendly, etc.)
  * - Explicit preservation and negative constraints
+ *
+ * For interaction/positioning rules, use interaction-style-builder.ts
  */
 
 // =============================================================================
 // Types
 // =============================================================================
 
-/** Interaction style between people in the image */
-export type InteractionStyle = "romantic" | "friendly" | "professional" | "neutral";
-
 export interface FacePreservationOptions {
   /** The scenario/scene description */
   scenarioPrompt: string;
   /** Number of people in the generation */
   personCount: number;
-  /** Interaction style between people (default: neutral) */
-  interactionStyle?: InteractionStyle;
   /** Optional custom preservation rules from main app */
   customRules?: string[];
   /** Optional custom forbidden actions from main app */
@@ -48,48 +44,6 @@ const FORBIDDEN_ACTIONS = [
   "Do NOT smooth skin or remove natural features",
   "Do NOT change eye color or shape",
 ] as const;
-
-/** Interaction style rules - what TO DO for each style */
-const INTERACTION_RULES: Record<InteractionStyle, readonly string[]> = {
-  romantic: [
-    "Close physical proximity - touching, holding hands, arms around each other",
-    "Warm, genuine, loving smiles showing happiness",
-    "Affectionate eye contact or looking at camera together happily",
-    "Natural romantic body language - leaning into each other",
-    "Intimate connection visible between the two people",
-  ],
-  friendly: [
-    "Casual comfortable proximity",
-    "Genuine friendly smiles",
-    "Relaxed natural poses",
-    "Warm friendly body language",
-  ],
-  professional: [
-    "Appropriate professional distance",
-    "Confident pleasant expressions",
-    "Professional posture and positioning",
-  ],
-  neutral: [],
-};
-
-/** Interaction style forbidden - what NOT to do for each style */
-const INTERACTION_FORBIDDEN: Record<InteractionStyle, readonly string[]> = {
-  romantic: [
-    "Do NOT position people far apart or distant from each other",
-    "Do NOT use cold, serious, stern, or angry expressions",
-    "Do NOT create stiff, awkward, or unnatural poses",
-    "Do NOT have people looking away from each other coldly",
-    "Do NOT show disconnection or emotional distance between people",
-  ],
-  friendly: [
-    "Do NOT use cold or unfriendly expressions",
-    "Do NOT create awkward distancing",
-  ],
-  professional: [
-    "Do NOT use overly casual or intimate positioning",
-  ],
-  neutral: [],
-};
 
 // =============================================================================
 // Builder Functions

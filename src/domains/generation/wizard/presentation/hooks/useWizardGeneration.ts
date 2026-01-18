@@ -10,17 +10,13 @@ import { createWizardStrategy, buildWizardInput } from "../../infrastructure/str
 
 declare const __DEV__: boolean;
 
-// ============================================================================
-// Types
-// ============================================================================
-
 export type WizardOutputType = "image" | "video";
 
 export interface WizardScenarioData {
   readonly id: string;
   readonly aiPrompt: string;
   readonly outputType?: WizardOutputType;
-  readonly model?: string; // AI model from app config
+  readonly model?: string;
   readonly title?: string;
   readonly description?: string;
   [key: string]: unknown;
@@ -43,10 +39,6 @@ export interface UseWizardGenerationReturn {
   readonly progress: number;
 }
 
-// ============================================================================
-// Hook
-// ============================================================================
-
 export const useWizardGeneration = (
   props: UseWizardGenerationProps,
 ): UseWizardGenerationReturn => {
@@ -64,18 +56,15 @@ export const useWizardGeneration = (
 
   const hasStarted = useRef(false);
 
-  // Log output type on mount
   useEffect(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[useWizardGeneration] Initialized", {
         scenarioId: scenario.id,
         outputType: scenario.outputType || "video",
-        hasOutputType: !!scenario.outputType,
       });
     }
   }, [scenario.id, scenario.outputType]);
 
-  // Create strategy using factory
   const strategy = useMemo(() => {
     return createWizardStrategy({
       scenario,
@@ -84,7 +73,6 @@ export const useWizardGeneration = (
     });
   }, [scenario, wizardData]);
 
-  // Use orchestrator with strategy
   const { generate, isGenerating, progress } = useGenerationOrchestrator(
     strategy,
     {
@@ -112,14 +100,10 @@ export const useWizardGeneration = (
     },
   );
 
-  // Sync progress to parent
   useEffect(() => {
-    if (onProgressChange) {
-      onProgressChange(progress);
-    }
+    if (onProgressChange) onProgressChange(progress);
   }, [progress, onProgressChange]);
 
-  // Auto-start generation when entering generating step
   useEffect(() => {
     if (isGeneratingStep && !hasStarted.current && !isGenerating) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -129,37 +113,30 @@ export const useWizardGeneration = (
         });
       }
 
-      // Build input and start generation
+      hasStarted.current = true;
+
       buildWizardInput(wizardData, scenario)
         .then((input) => {
           if (!input) {
-            const error = "Failed to build generation input";
-            if (typeof __DEV__ !== "undefined" && __DEV__) {
-              console.error("[useWizardGeneration]", error);
-            }
-            onError?.(error);
+            hasStarted.current = false;
+            onError?.("Failed to build generation input");
             return;
           }
-
           generate(input);
-          hasStarted.current = true;
         })
         .catch((error) => {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
             console.error("[useWizardGeneration] Input build error:", error);
           }
+          hasStarted.current = false;
           onError?.(error.message || "Failed to prepare generation");
         });
     }
 
-    // Reset hasStarted when leaving generating step
     if (!isGeneratingStep && hasStarted.current) {
       hasStarted.current = false;
     }
   }, [isGeneratingStep, scenario, wizardData, isGenerating, generate, onError]);
 
-  return {
-    isGenerating,
-    progress,
-  };
+  return { isGenerating, progress };
 };

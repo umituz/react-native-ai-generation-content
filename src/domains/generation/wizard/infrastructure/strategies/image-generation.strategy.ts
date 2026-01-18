@@ -15,6 +15,7 @@ import {
   MODEL_INPUT_DEFAULTS,
 } from "./wizard-strategy.constants";
 import { buildFacePreservationPrompt } from "../../../../prompts/infrastructure/builders/face-preservation-builder";
+import { buildInteractionStylePrompt, type InteractionStyle } from "../../../../prompts/infrastructure/builders/interaction-style-builder";
 
 declare const __DEV__: boolean;
 
@@ -25,6 +26,8 @@ declare const __DEV__: boolean;
 export interface ImageGenerationInput {
   readonly photos: readonly string[];
   readonly prompt: string;
+  /** Optional interaction style for multi-person images */
+  readonly interactionStyle?: InteractionStyle;
 }
 
 export interface ImageGenerationResult {
@@ -88,13 +91,26 @@ async function executeImageGeneration(
     }
 
     // Build face preservation prompt dynamically based on number of people
-    const enhancedPrompt = buildFacePreservationPrompt({
+    const facePrompt = buildFacePreservationPrompt({
       scenarioPrompt: input.prompt,
       personCount: imageUrls.length,
     });
 
+    // Build interaction style prompt for multi-person images
+    const interactionPrompt = buildInteractionStylePrompt({
+      style: input.interactionStyle ?? "romantic",
+      personCount: imageUrls.length,
+    });
+
+    // Combine prompts: face preservation + interaction style
+    const enhancedPrompt = interactionPrompt
+      ? `${facePrompt}\n\n${interactionPrompt}`
+      : facePrompt;
+
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[ImageStrategy] Face preservation prompt for", imageUrls.length, "person(s)");
+      console.log("[ImageStrategy] Prompt built for", imageUrls.length, "person(s)", {
+        interactionStyle: input.interactionStyle ?? "romantic",
+      });
     }
 
     const modelInput = {
@@ -164,7 +180,10 @@ export async function buildImageInput(
     prompt = `${prompt}. ${styleEnhancements.join(", ")}`;
   }
 
-  return { photos, prompt };
+  // Get interaction style from scenario (default: romantic for couple apps)
+  const interactionStyle = (scenario.interactionStyle as InteractionStyle) ?? "romantic";
+
+  return { photos, prompt, interactionStyle };
 }
 
 // ============================================================================

@@ -6,7 +6,6 @@
 export type OrchestratorStatus =
   | "idle"
   | "checking"
-  | "authenticating"
   | "moderating"
   | "generating"
   | "saving"
@@ -14,14 +13,8 @@ export type OrchestratorStatus =
   | "error";
 
 export interface GenerationStrategy<TInput, TResult> {
-  /** Execute the generation */
-  execute: (
-    input: TInput,
-    onProgress?: (progress: number) => void,
-  ) => Promise<TResult>;
-  /** Credit cost for this generation */
+  execute: (input: TInput, onProgress?: (progress: number) => void) => Promise<TResult>;
   getCreditCost: () => number;
-  /** Optional: Save result to storage */
   save?: (result: TResult, userId: string) => Promise<void>;
 }
 
@@ -32,61 +25,28 @@ export interface AlertMessages {
   creditFailed: string;
   unknown: string;
   success?: string;
-  authRequired?: string;
 }
 
-/** Content moderation result */
 export interface ModerationResult {
   allowed: boolean;
   warnings: string[];
 }
 
-/** Auth callbacks for features that need authentication */
-export interface AuthCallbacks {
-  /** Check if user is authenticated */
-  isAuthenticated: () => boolean;
-  /** Called when auth is required */
-  onAuthRequired?: () => void;
-}
-
-/** Moderation callbacks for content filtering */
 export interface ModerationCallbacks {
-  /** Check content for policy violations */
   checkContent: (input: unknown) => Promise<ModerationResult>;
-  /** Show moderation warning with continue/cancel options */
-  onShowWarning?: (
-    warnings: string[],
-    onCancel: () => void,
-    onContinue: () => void,
-  ) => void;
+  onShowWarning?: (warnings: string[], onCancel: () => void, onContinue: () => void) => void;
 }
 
-/** Credit callbacks for features that manage credits via callbacks */
 export interface CreditCallbacks {
-  /** Check if user can afford the cost */
   checkCredits: (cost: number) => Promise<boolean>;
-  /** Deduct credits after successful generation - returns true if successful */
   deductCredits: (cost: number) => Promise<boolean>;
-  /** Called when credits are exhausted */
   onCreditsExhausted?: () => void;
 }
 
-/**
- * Lifecycle configuration for generation flow
- * Centralizes post-generation behavior (navigation, cleanup, etc.)
- */
 export interface LifecycleConfig {
-  /** Callback after generation completes (success or error) - for navigation, state updates */
-  onComplete?: (
-    status: "success" | "error",
-    result?: unknown,
-    error?: GenerationError,
-  ) => void;
-  /** Delay before calling onComplete (ms) - allows UI to show success state */
+  onComplete?: (status: "success" | "error", result?: unknown, error?: GenerationError) => void;
   completeDelay?: number;
-  /** Auto-reset state after completion */
   autoReset?: boolean;
-  /** Delay before auto-reset (ms) */
   resetDelay?: number;
 }
 
@@ -96,13 +56,8 @@ export interface GenerationConfig {
   onCreditsExhausted?: () => void;
   onSuccess?: (result: unknown) => void;
   onError?: (error: GenerationError) => void;
-  /** Optional auth callbacks - if not provided, auth is skipped */
-  auth?: AuthCallbacks;
-  /** Optional moderation callbacks - if not provided, moderation is skipped */
   moderation?: ModerationCallbacks;
-  /** Optional credit callbacks - if provided, overrides default useDeductCredit */
   credits?: CreditCallbacks;
-  /** Lifecycle configuration for post-generation behavior */
   lifecycle?: LifecycleConfig;
 }
 
@@ -120,12 +75,7 @@ export interface GenerationError {
   originalError?: Error;
 }
 
-export type GenerationErrorType =
-  | "network"
-  | "credits"
-  | "policy"
-  | "save"
-  | "unknown";
+export type GenerationErrorType = "network" | "credits" | "policy" | "save" | "unknown";
 
 export interface UseGenerationOrchestratorReturn<TInput, TResult> {
   generate: (input: TInput) => Promise<TResult | void>;
@@ -137,22 +87,15 @@ export interface UseGenerationOrchestratorReturn<TInput, TResult> {
   error: GenerationError | null;
 }
 
-/**
- * Generation error UI configuration
- */
 export interface GenerationErrorConfig {
   readonly showCreditInfo?: boolean;
   readonly iconName?: string;
   readonly iconSize?: number;
 }
 
-/**
- * Generation error UI translations
- */
 export interface GenerationErrorTranslations {
   readonly title: string;
   readonly tryAgain: string;
   readonly chooseAnother: string;
   readonly noCreditCharged: string;
 }
-

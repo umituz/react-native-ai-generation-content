@@ -1,13 +1,14 @@
 /**
  * Generation Orchestrator
- * Feature-agnostic hook for AI generation with centralized:
- * - Auth checking (optional)
+ * Feature-agnostic hook for AI generation with:
+ * - Network check (via design system's useOfflineStore)
  * - Content moderation (optional)
- * - Credit management
- * - Error handling
- * - Alert display
+ * - Credit management (via subscription package)
+ * - Error handling & alerts
  * - Progress tracking
- * - Lifecycle management (navigation, cleanup)
+ * - Lifecycle management
+ *
+ * NOTE: Auth is handled by useFeatureGate before generation starts
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
@@ -45,7 +46,6 @@ export const useGenerationOrchestrator = <TInput, TResult>(
     onCreditsExhausted,
     onSuccess,
     onError,
-    auth,
     moderation,
     credits,
     lifecycle,
@@ -54,7 +54,6 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[Orchestrator] 🎬 Hook initialized:", {
       userId,
-      hasAuth: !!auth,
       hasModeration: !!moderation,
       hasCreditsCallbacks: !!credits,
       hasLifecycle: !!lifecycle,
@@ -72,84 +71,48 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   const { showError, showSuccess } = useAlert();
   const creditHook = useDeductCredit({ userId, onCreditsExhausted });
 
-  // Wrap credit hook to match expected interface
   const defaultCredits = {
     checkCredits: creditHook.checkCredits,
     deductCredit: async (amount: number): Promise<boolean> => {
       return creditHook.deductCredit(amount);
-    }
+    },
   };
 
-  // Use provided credit callbacks or default to useDeductCredit hook
   const checkCredits = credits?.checkCredits ?? defaultCredits.checkCredits;
   const deductCredit = credits?.deductCredits ?? defaultCredits.deductCredit;
   const handleCreditsExhausted = credits?.onCreditsExhausted ?? onCreditsExhausted;
 
-  // Cleanup on unmount
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
-      if (completeTimeoutRef.current) {
-        clearTimeout(completeTimeoutRef.current);
-        completeTimeoutRef.current = null;
-      }
-      if (resetTimeoutRef.current) {
-        clearTimeout(resetTimeoutRef.current);
-        resetTimeoutRef.current = null;
-      }
+      if (completeTimeoutRef.current) clearTimeout(completeTimeoutRef.current);
+      if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] 🧹 Cleanup: cleared all timeouts");
+        console.log("[Orchestrator] 🧹 Cleanup");
       }
     };
   }, []);
 
-  // Handle lifecycle completion
   const handleLifecycleComplete = useCallback(
     (status: "success" | "error", result?: TResult, error?: GenerationError) => {
       if (!lifecycle?.onComplete) return;
 
       const delay = lifecycle.completeDelay ?? DEFAULT_COMPLETE_DELAY;
 
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] ⏱️ Scheduling lifecycle.onComplete:", { status, delay });
-      }
-
-      // Clear any existing timeout
-      if (completeTimeoutRef.current) {
-        clearTimeout(completeTimeoutRef.current);
-      }
+      if (completeTimeoutRef.current) clearTimeout(completeTimeoutRef.current);
 
       completeTimeoutRef.current = setTimeout(() => {
-        if (!isMountedRef.current) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ⚠️ Component unmounted, skipping onComplete");
-          }
-          return;
-        }
-
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] 📍 Calling lifecycle.onComplete:", status);
-        }
+        if (!isMountedRef.current) return;
 
         lifecycle.onComplete?.(status, result, error);
 
-        // Auto-reset if configured
         if (lifecycle.autoReset) {
           const resetDelay = lifecycle.resetDelay ?? DEFAULT_RESET_DELAY;
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] 🔄 Scheduling auto-reset in:", resetDelay);
-          }
-
-          if (resetTimeoutRef.current) {
-            clearTimeout(resetTimeoutRef.current);
-          }
+          if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
 
           resetTimeoutRef.current = setTimeout(() => {
             if (isMountedRef.current) {
-              if (typeof __DEV__ !== "undefined" && __DEV__) {
-                console.log("[Orchestrator] 🔄 Auto-reset triggered");
-              }
               setState(INITIAL_STATE);
               isGeneratingRef.current = false;
             }
@@ -160,74 +123,41 @@ export const useGenerationOrchestrator = <TInput, TResult>(
     [lifecycle],
   );
 
-  // Core execution logic (after all checks pass)
   const executeGeneration = useCallback(
     async (input: TInput) => {
       const creditCost = strategy.getCreditCost();
 
       setState((prev) => ({ ...prev, status: "generating", progress: 10 }));
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] 🎨 Starting strategy.execute()");
+        console.log("[Orchestrator] 🎨 Starting generation");
       }
 
       const result = await strategy.execute(input, (progress) => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] 📊 Progress update:", progress);
-        }
-        if (isMountedRef.current) {
-          setState((prev) => ({ ...prev, progress }));
-        }
+        if (isMountedRef.current) setState((prev) => ({ ...prev, progress }));
       });
 
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] ✅ strategy.execute() completed");
-      }
+      if (isMountedRef.current) setState((prev) => ({ ...prev, progress: 70 }));
 
-      if (isMountedRef.current) {
-        setState((prev) => ({ ...prev, progress: 70 }));
-      }
-
-      // Save result
       if (strategy.save && userId) {
-        if (isMountedRef.current) {
-          setState((prev) => ({ ...prev, status: "saving" }));
-        }
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] 💾 Saving result...");
-        }
+        if (isMountedRef.current) setState((prev) => ({ ...prev, status: "saving" }));
         try {
           await strategy.save(result, userId);
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ✅ Save completed");
-          }
         } catch (saveErr) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ❌ Save failed:", saveErr);
-          }
-          throw createGenerationError("save", "Failed to save", saveErr instanceof Error ? saveErr : undefined);
+          throw createGenerationError(
+            "save",
+            "Failed to save",
+            saveErr instanceof Error ? saveErr : undefined,
+          );
         }
       }
 
-      if (isMountedRef.current) {
-        setState((prev) => ({ ...prev, progress: 90 }));
-      }
+      if (isMountedRef.current) setState((prev) => ({ ...prev, progress: 90 }));
 
-      // Deduct credit
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] 💳 Deducting credit:", creditCost);
-      }
       const creditDeducted = await deductCredit(creditCost);
       if (!creditDeducted) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] ❌ Credit deduction failed");
-        }
         throw createGenerationError("credits", "Failed to deduct credits");
       }
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] ✅ Credit deducted successfully");
-      }
 
-      // Success
       if (isMountedRef.current) {
         setState({ status: "success", isGenerating: false, progress: 100, result, error: null });
       }
@@ -236,14 +166,8 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         console.log("[Orchestrator] 🎉 Generation SUCCESS");
       }
 
-      if (alertMessages.success) {
-        void showSuccess("Success", alertMessages.success);
-      }
-
-      // Call onSuccess callback
+      if (alertMessages.success) void showSuccess("Success", alertMessages.success);
       onSuccess?.(result);
-
-      // Handle lifecycle completion
       handleLifecycleComplete("success", result);
 
       return result;
@@ -255,105 +179,41 @@ export const useGenerationOrchestrator = <TInput, TResult>(
     async (input: TInput) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] 🚀 generate() called");
-        console.log("[Orchestrator] Input:", JSON.stringify(input, null, 2).slice(0, 500));
       }
 
-      if (isGeneratingRef.current) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] ⚠️ Already generating, skipping");
-        }
-        return;
-      }
+      if (isGeneratingRef.current) return;
 
       isGeneratingRef.current = true;
       pendingInputRef.current = input;
       setState({ ...INITIAL_STATE, status: "checking", isGenerating: true });
 
       try {
-        // 1. Auth check (optional)
-        if (auth) {
-          setState((prev) => ({ ...prev, status: "authenticating" }));
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] 🔐 Checking authentication...");
-          }
-
-          if (!auth.isAuthenticated()) {
-            if (typeof __DEV__ !== "undefined" && __DEV__) {
-              console.log("[Orchestrator] ❌ Not authenticated");
-            }
-            isGeneratingRef.current = false;
-            setState(INITIAL_STATE);
-            auth.onAuthRequired?.();
-            return;
-          }
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ✅ Authentication passed");
-          }
-        }
-
-        // 2. Network check
         if (!offlineStore.isOnline) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ❌ Network check failed - offline");
-          }
           throw createGenerationError("network", "No internet connection");
         }
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] ✅ Network check passed");
-        }
 
-        // 3. Credit check
         const creditCost = strategy.getCreditCost();
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] 💳 Credit cost:", creditCost);
-        }
-
         const hasCredits = await checkCredits(creditCost);
         if (!hasCredits) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ❌ No credits, opening paywall");
-          }
           isGeneratingRef.current = false;
           setState(INITIAL_STATE);
           handleCreditsExhausted?.();
           return;
         }
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] ✅ Credit check passed");
-        }
 
-        // 4. Content moderation (optional)
         if (moderation) {
           setState((prev) => ({ ...prev, status: "moderating" }));
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] 🛡️ Checking content moderation...");
-          }
-
           const moderationResult = await moderation.checkContent(input);
-          if (!moderationResult.allowed && moderationResult.warnings.length > 0) {
-            if (typeof __DEV__ !== "undefined" && __DEV__) {
-              console.log("[Orchestrator] ⚠️ Moderation warnings:", moderationResult.warnings);
-            }
 
+          if (!moderationResult.allowed && moderationResult.warnings.length > 0) {
             if (moderation.onShowWarning) {
-              // Show warning and let user decide
               moderation.onShowWarning(
                 moderationResult.warnings,
                 () => {
-                  // User cancelled
-                  if (typeof __DEV__ !== "undefined" && __DEV__) {
-                    console.log("[Orchestrator] User cancelled after moderation warning");
-                  }
                   isGeneratingRef.current = false;
-                  if (isMountedRef.current) {
-                    setState(INITIAL_STATE);
-                  }
+                  if (isMountedRef.current) setState(INITIAL_STATE);
                 },
                 async () => {
-                  // User continued - execute generation
-                  if (typeof __DEV__ !== "undefined" && __DEV__) {
-                    console.log("[Orchestrator] User continued after moderation warning");
-                  }
                   try {
                     await executeGeneration(input);
                   } catch (err) {
@@ -369,41 +229,30 @@ export const useGenerationOrchestrator = <TInput, TResult>(
                   }
                 },
               );
-              return; // Exit here - callback will handle the rest
+              return;
             }
-            // No warning handler - block the request
             throw createGenerationError("policy", "Content policy violation");
-          }
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ✅ Moderation passed");
           }
         }
 
-        // 5. Execute generation
         return await executeGeneration(input);
       } catch (err) {
         const error = parseError(err);
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] ❌ Generation ERROR:", error);
+          console.log("[Orchestrator] ❌ Error:", error);
         }
         if (isMountedRef.current) {
           setState({ status: "error", isGenerating: false, progress: 0, result: null, error });
         }
         void showError("Error", getAlertMessage(error, alertMessages));
         onError?.(error);
-
-        // Handle lifecycle completion for errors
         handleLifecycleComplete("error", undefined, error);
-        throw error; // Re-throw so caller knows it failed
+        throw error;
       } finally {
         isGeneratingRef.current = false;
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] 🏁 generate() finished");
-        }
       }
     },
     [
-      auth,
       moderation,
       strategy,
       alertMessages,
@@ -418,9 +267,6 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   );
 
   const reset = useCallback(() => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[Orchestrator] 🔄 reset() called");
-    }
     setState(INITIAL_STATE);
     isGeneratingRef.current = false;
   }, []);
