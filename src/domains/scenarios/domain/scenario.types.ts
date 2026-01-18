@@ -95,6 +95,7 @@ export interface ScenarioMainCategory {
   readonly descriptionKey?: string;
   readonly icon?: string;
   readonly emoji?: string;
+  readonly image?: string;
   readonly order: number;
   readonly subCategoryIds: readonly string[];
 }
@@ -105,6 +106,7 @@ export interface ScenarioSubCategory {
   readonly descriptionKey?: string;
   readonly icon?: string;
   readonly emoji?: string;
+  readonly image?: string;
   readonly mainCategoryId: string;
   readonly scenarioCategories: readonly string[];
   readonly order: number;

@@ -5,15 +5,12 @@
 
 import React, { useMemo, useCallback, useEffect } from "react";
 import {
-  View,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
   type ListRenderItemInfo,
 } from "react-native";
 import {
-  AtomicText,
-  AtomicIcon,
+  AtomicCard,
   useAppDesignTokens,
   ScreenLayout,
   type DesignTokens,
@@ -87,59 +84,21 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
       const description = item.descriptionKey ? t(item.descriptionKey) : "";
 
       return (
-        <TouchableOpacity
-          style={[
-            styles.card,
-            {
-              backgroundColor: tokens.colors.surface,
-              borderColor: tokens.colors.border,
-            },
-          ]}
+        <AtomicCard
+          image={item.image}
+          leftIcon={!item.emoji ? (item.icon as any) : undefined}
+          badge={item.emoji}
+          title={title}
+          subtitle={description}
+          // Smaller aspect ratio for subcategories if they have images, or standard if not
+          imageAspectRatio={item.image ? 1.5 : undefined} 
           onPress={() => handleSubCategoryPress(item.id)}
-          activeOpacity={0.7}
           testID={`sub-category-${item.id}`}
-        >
-          <View style={styles.cardContent}>
-            <View
-              style={[
-                styles.iconContainer,
-                { backgroundColor: tokens.colors.surfaceVariant },
-              ]}
-            >
-              {item.emoji ? (
-                <AtomicText style={styles.emoji}>{item.emoji}</AtomicText>
-              ) : (
-                <AtomicIcon name={item.icon as never} size="lg" color="primary" />
-              )}
-            </View>
-            <View style={styles.textContent}>
-              <AtomicText
-                style={[styles.title, { color: tokens.colors.textPrimary }]}
-              >
-                {title}
-              </AtomicText>
-              {description ? (
-                <AtomicText
-                  style={[
-                    styles.description,
-                    { color: tokens.colors.textSecondary },
-                  ]}
-                  numberOfLines={2}
-                >
-                  {description}
-                </AtomicText>
-              ) : null}
-            </View>
-            <AtomicIcon
-              name="chevron-forward"
-              size="md"
-              color="textSecondary"
-            />
-          </View>
-        </TouchableOpacity>
+          style={{ marginBottom: tokens.spacing.md }}
+        />
       );
     },
-    [t, tokens, styles, handleSubCategoryPress]
+    [t, tokens, handleSubCategoryPress]
   );
 
   return (
@@ -178,39 +137,5 @@ const createStyles = (tokens: DesignTokens) =>
       paddingHorizontal: tokens.spacing.md,
       paddingBottom: tokens.spacing.xl,
       gap: tokens.spacing.sm,
-    },
-    card: {
-      borderRadius: tokens.borders.radius.lg,
-      borderWidth: 1,
-      overflow: "hidden",
-    },
-    cardContent: {
-      flexDirection: "row",
-      alignItems: "center",
-      padding: tokens.spacing.md,
-    },
-    iconContainer: {
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      justifyContent: "center",
-      alignItems: "center",
-      marginRight: tokens.spacing.md,
-    },
-    emoji: {
-      fontSize: 28,
-    },
-    textContent: {
-      flex: 1,
-      marginRight: tokens.spacing.sm,
-    },
-    title: {
-      fontSize: 17,
-      fontWeight: "700",
-      marginBottom: 2,
-    },
-    description: {
-      fontSize: 14,
-      lineHeight: 18,
     },
   });
