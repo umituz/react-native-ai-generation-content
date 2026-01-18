@@ -172,7 +172,18 @@ async function buildGenerationInput(
     return null;
   }
 
-  let prompt = scenario.aiPrompt || `Generate ${scenario.id} scene`;
+  // NO FALLBACK - scenario.aiPrompt is REQUIRED
+  if (!scenario.aiPrompt || scenario.aiPrompt.trim() === "") {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.error("[WizardStrategy] CRITICAL: scenario.aiPrompt is missing or empty!", {
+        scenarioId: scenario.id,
+        aiPrompt: scenario.aiPrompt,
+      });
+    }
+    throw new Error(`Scenario "${scenario.id}" must have aiPrompt field`);
+  }
+
+  const prompt = scenario.aiPrompt;
   const outputType = scenario.outputType || "video";
 
   // For image generation, enhance prompt with style selections

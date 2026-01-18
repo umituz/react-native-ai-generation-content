@@ -94,46 +94,49 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = ({
     [updateProgress],
   );
 
-  // Ensure scenario has required fields - use feature config as fallback
+  // Validate scenario - NO FALLBACK, aiPrompt is REQUIRED
   const validatedScenario = useMemo(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[GenericWizardFlow] Validating scenario", {
         hasScenario: !!scenario,
         scenarioId: scenario?.id,
-        hasAiPrompt: scenario?.aiPrompt !== undefined,
+        hasAiPrompt: !!scenario?.aiPrompt,
+        aiPromptValue: scenario?.aiPrompt,
+        aiPromptLength: scenario?.aiPrompt?.length,
         hasModel: !!scenario?.model,
         scenarioModel: scenario?.model,
         outputType: scenario?.outputType,
+        fullScenario: JSON.stringify(scenario, null, 2),
       });
     }
 
-    if (scenario && scenario.id && scenario.aiPrompt !== undefined) {
+    if (!scenario || !scenario.id) {
+      throw new Error("[GenericWizardFlow] Scenario is required");
+    }
+
+    if (!scenario.aiPrompt || scenario.aiPrompt.trim() === "") {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[GenericWizardFlow] Scenario validation passed", {
+        console.error("[GenericWizardFlow] CRITICAL: Scenario missing aiPrompt!", {
           scenarioId: scenario.id,
-          model: scenario.model,
-          outputType: scenario.outputType,
+          aiPrompt: scenario.aiPrompt,
+          fullScenario: scenario,
         });
       }
-      return scenario;
+      throw new Error(`[GenericWizardFlow] Scenario "${scenario.id}" must have aiPrompt field`);
     }
 
-    // Fallback to feature config
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.warn("[GenericWizardFlow] Scenario missing required fields, using fallback", {
-        hasScenario: !!scenario,
-        scenarioId: scenario?.id,
-        featureConfigId: featureConfig.id,
+      console.log("[GenericWizardFlow] ✅ Scenario validation passed", {
+        scenarioId: scenario.id,
+        model: scenario.model,
+        outputType: scenario.outputType,
+        promptLength: scenario.aiPrompt.length,
+        promptPreview: scenario.aiPrompt.substring(0, 100),
       });
     }
 
-    return {
-      id: featureConfig.id,
-      aiPrompt: "",
-      outputType: "image" as const, // Default to image for safety
-      title: featureConfig.id,
-    };
-  }, [scenario, featureConfig.id]);
+    return scenario;
+  }, [scenario]);
 
   // Generation hook - handles AI generation automatically
   // Note: Hook is used for its side effects (automatic generation)
