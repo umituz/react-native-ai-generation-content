@@ -5,8 +5,9 @@
  */
 
 import { providerRegistry } from "./provider-registry.service";
-import { cleanBase64 } from "../utils";
+import { cleanBase64, extractErrorMessage } from "../utils";
 import { extractImageResult } from "../utils/url-extractor";
+import { IMAGE_PROGRESS } from "../constants";
 import type { ImageResultExtractor } from "../utils/url-extractor";
 import type { ImageFeatureType, ImageFeatureInputData } from "../../domain/interfaces";
 
@@ -68,7 +69,7 @@ export async function executeImageFeature(
   }
 
   try {
-    onProgress?.(10);
+    onProgress?.(IMAGE_PROGRESS.START);
 
     const inputData: ImageFeatureInputData = {
       imageBase64: request.imageBase64 ? cleanBase64(request.imageBase64) : "",
@@ -79,20 +80,20 @@ export async function executeImageFeature(
       options: request.options,
     };
 
-    onProgress?.(30);
+    onProgress?.(IMAGE_PROGRESS.INPUT_PREPARED);
 
     const input = provider.buildImageFeatureInput(featureType, inputData);
 
-    onProgress?.(40);
+    onProgress?.(IMAGE_PROGRESS.REQUEST_SENT);
 
     const result = await provider.run(model, input);
 
-    onProgress?.(90);
+    onProgress?.(IMAGE_PROGRESS.RESULT_RECEIVED);
 
     const extractor = extractResult ?? extractImageResult;
     const imageUrl = extractor(result);
 
-    onProgress?.(100);
+    onProgress?.(IMAGE_PROGRESS.COMPLETE);
 
     if (!imageUrl) {
       return { success: false, error: "No image in response" };
@@ -104,26 +105,7 @@ export async function executeImageFeature(
       requestId: (result as { requestId?: string })?.requestId,
     };
   } catch (error) {
-    // Extract detailed error message from FAL API errors
-    let message = "Processing failed";
-    if (error instanceof Error) {
-      message = error.message;
-    } else if (typeof error === "object" && error !== null) {
-      const errObj = error as Record<string, unknown>;
-      // FAL API error format: {detail: [{msg, type, loc}]} or {message}
-      if (Array.isArray(errObj.detail) && errObj.detail[0]?.msg) {
-        message = String(errObj.detail[0].msg);
-      } else if (errObj.detail) {
-        message = JSON.stringify(errObj.detail);
-      } else if (errObj.message) {
-        message = String(errObj.message);
-      } else if (errObj.msg) {
-        message = String(errObj.msg);
-      }
-    }
-    if (__DEV__) {
-      console.error(`[Image:${featureType}] Error:`, message, error);
-    }
+    const message = extractErrorMessage(error, "Processing failed", `Image:${featureType}`);
     return { success: false, error: message };
   }
 }

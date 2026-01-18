@@ -3,6 +3,7 @@
  */
 
 export * from "./error-classifier.util";
+export * from "./error-message-extractor.util";
 export * from "./polling-interval.util";
 export * from "./progress-calculator.util";
 export * from "./status-checker.util";

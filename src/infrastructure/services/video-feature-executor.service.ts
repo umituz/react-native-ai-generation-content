@@ -5,8 +5,9 @@
  */
 
 import { providerRegistry } from "./provider-registry.service";
-import { cleanBase64 } from "../utils";
+import { cleanBase64, extractErrorMessage } from "../utils";
 import { extractVideoResult } from "../utils/url-extractor";
+import { VIDEO_PROGRESS, VIDEO_TIMEOUT_MS } from "../constants";
 import type { VideoFeatureType, VideoFeatureInputData } from "../../domain/interfaces";
 import type {
   ExecuteVideoFeatureOptions,
@@ -44,7 +45,7 @@ export async function executeVideoFeature(
   }
 
   try {
-    onProgress?.(5);
+    onProgress?.(VIDEO_PROGRESS.START);
 
     const inputData: VideoFeatureInputData = {
       sourceImageBase64: cleanBase64(request.sourceImageBase64),
@@ -53,34 +54,32 @@ export async function executeVideoFeature(
       options: request.options,
     };
 
-    onProgress?.(10);
+    onProgress?.(VIDEO_PROGRESS.INPUT_PREPARED);
 
     const input = provider.buildVideoFeatureInput(featureType, inputData);
 
-    onProgress?.(15);
+    onProgress?.(VIDEO_PROGRESS.REQUEST_SENT);
 
-    // Use subscribe for video features - provides queue updates and handles long-running tasks
     const result = await provider.subscribe(model, input, {
-      timeoutMs: 300000, // 5 minutes timeout for video generation
+      timeoutMs: VIDEO_TIMEOUT_MS,
       onQueueUpdate: (status) => {
         if (__DEV__) {
           console.log(`[Video:${featureType}] Queue update:`, status.status);
         }
-        // Map queue status to progress percentage
         if (status.status === "IN_QUEUE") {
-          onProgress?.(20);
+          onProgress?.(VIDEO_PROGRESS.IN_QUEUE);
         } else if (status.status === "IN_PROGRESS") {
-          onProgress?.(50);
+          onProgress?.(VIDEO_PROGRESS.IN_PROGRESS);
         }
       },
     });
 
-    onProgress?.(90);
+    onProgress?.(VIDEO_PROGRESS.RESULT_RECEIVED);
 
     const extractor = extractResult ?? extractVideoResult;
     const videoUrl = extractor(result);
 
-    onProgress?.(100);
+    onProgress?.(VIDEO_PROGRESS.COMPLETE);
 
     if (!videoUrl) {
       if (__DEV__) {
@@ -95,33 +94,9 @@ export async function executeVideoFeature(
       requestId: (result as { requestId?: string })?.requestId,
     };
   } catch (error) {
-    const message = extractErrorMessage(error, featureType);
+    const message = extractErrorMessage(error, "Processing failed", `Video:${featureType}`);
     return { success: false, error: message };
   }
-}
-
-/**
- * Extract error message from various error formats
- */
-function extractErrorMessage(error: unknown, featureType: VideoFeatureType): string {
-  let message = "Processing failed";
-
-  if (error instanceof Error) {
-    message = error.message;
-  } else if (typeof error === "object" && error !== null) {
-    const errObj = error as Record<string, unknown>;
-    if (errObj.detail) {
-      message = JSON.stringify(errObj.detail);
-    } else if (errObj.message) {
-      message = String(errObj.message);
-    }
-  }
-
-  if (__DEV__) {
-    console.error(`[Video:${featureType}] Error:`, message, error);
-  }
-
-  return message;
 }
 
 /**
