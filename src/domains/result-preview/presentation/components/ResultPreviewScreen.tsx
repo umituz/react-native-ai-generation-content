@@ -14,10 +14,12 @@ import {
 import { ResultImageCard } from "./ResultImageCard";
 import { ResultActionBar } from "./ResultActionBar";
 import { RecentCreationsSection } from "./RecentCreationsSection";
+import { VideoResultPlayer } from "../../../../presentation/components/display/VideoResultPlayer";
 import type { ResultPreviewScreenProps } from "../types/result-preview.types";
 
 export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   imageUrl,
+  videoUrl,
   isSaving,
   isSharing,
   onDownload,
@@ -36,6 +38,7 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   showRating = false,
 }) => {
   const tokens = useAppDesignTokens();
+  const isVideo = Boolean(videoUrl);
 
   const styles = useMemo(
     () =>
@@ -57,15 +60,16 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
     [tokens],
   );
 
-  const displayImageUrl = useMemo(() => {
-    if (!imageUrl) return null;
-    if (!imageUrl.startsWith("http") && !imageUrl.startsWith("data:image")) {
-      return `data:image/jpeg;base64,${imageUrl}`;
+  const displayMediaUrl = useMemo(() => {
+    const url = videoUrl || imageUrl;
+    if (!url) return null;
+    if (!isVideo && !url.startsWith("http") && !url.startsWith("data:image")) {
+      return `data:image/jpeg;base64,${url}`;
     }
-    return imageUrl;
-  }, [imageUrl]);
+    return url;
+  }, [imageUrl, videoUrl, isVideo]);
 
-  if (!displayImageUrl) return null;
+  if (!displayMediaUrl) return null;
 
   return (
     <ScreenLayout scrollable edges={["left", "right"]} backgroundColor={tokens.colors.backgroundPrimary}>
@@ -75,7 +79,11 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
           {!hideLabel && (
             <AtomicText style={styles.title}>{translations.yourResult}</AtomicText>
           )}
-          <ResultImageCard imageUrl={displayImageUrl} />
+          {isVideo ? (
+            <VideoResultPlayer uri={displayMediaUrl} />
+          ) : (
+            <ResultImageCard imageUrl={displayMediaUrl} />
+          )}
           <ResultActionBar
             isSaving={isSaving}
             isSharing={isSharing}

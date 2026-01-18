@@ -94,8 +94,10 @@ export interface RecentCreation {
  * Result preview screen props
  */
 export interface ResultPreviewScreenProps {
-  /** Result data to display */
-  imageUrl: string;
+  /** Image URL to display */
+  imageUrl?: string;
+  /** Video URL to display */
+  videoUrl?: string;
   /** Result display state */
   isSaving: boolean;
   isSharing: boolean;
@@ -157,6 +159,8 @@ export interface ResultPreviewTranslations {
 export interface UseResultActionsOptions {
   /** Image URL to save/share */
   imageUrl?: string;
+  /** Video URL to save/share */
+  videoUrl?: string;
   /** Callback on save success */
   onSaveSuccess?: () => void;
   /** Callback on save error */

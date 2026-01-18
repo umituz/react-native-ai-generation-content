@@ -4,6 +4,7 @@
  */
 
 import React from "react";
+import { getMediaTypeFromUrl } from "@umituz/react-native-design-system";
 import { StepType, type StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import type { WizardStepConfig } from "../../domain/entities/wizard-config.types";
 import type { WizardScenarioData } from "../hooks/useWizardGeneration";
@@ -13,6 +14,7 @@ import { GeneratingScreen } from "../screens/GeneratingScreen";
 import { ScenarioPreviewScreen } from "../../../../scenarios/presentation/screens/ScenarioPreviewScreen";
 import type { ScenarioData } from "../../../../scenarios/domain/scenario.types";
 import { ResultPreviewScreen } from "../../../../result-preview/presentation/components/ResultPreviewScreen";
+import { extractMediaUrl } from "../../infrastructure/utils/media-url-extractor";
 
 export interface WizardStepRendererProps {
   readonly step: StepDefinition | undefined;
@@ -97,13 +99,16 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
       if (renderResult) {
         return renderResult(generationResult);
       }
-      const creation = generationResult as Record<string, unknown>;
-      const output = creation?.output as Record<string, unknown> | undefined;
-      const imageUrl = output?.imageUrl || creation?.uri || creation?.imageUrl || "";
-      if (!imageUrl || typeof imageUrl !== "string") return null;
+      const media = extractMediaUrl(generationResult);
+      if (!media) return null;
+
+      const mediaType = getMediaTypeFromUrl(media.url);
+      const isVideo = media.isVideo || mediaType === "video";
+
       return (
         <ResultPreviewScreen
-          imageUrl={imageUrl}
+          imageUrl={isVideo ? undefined : media.url}
+          videoUrl={isVideo ? media.url : undefined}
           isSaving={isSaving}
           isSharing={isSharing}
           onDownload={onDownload}
