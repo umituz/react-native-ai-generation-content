@@ -103,26 +103,8 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
       return { success: false, error: "Prompt is required" };
     }
 
-    // Auth check BEFORE generation
-    if (!callbacks.isAuthenticated()) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[TextToImage] Auth required");
-      }
-      // Pass retry callback to resume generation after auth
-      callbacks.onAuthRequired?.(() => {
-        void handleGenerate();
-      });
-      return { success: false, error: "Authentication required" };
-    }
-
-    // Credit check BEFORE generation
-    if (!callbacks.canAfford(totalCost)) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[TextToImage] Insufficient credits", { totalCost });
-      }
-      callbacks.onCreditsRequired?.(totalCost);
-      return { success: false, error: "Insufficient credits" };
-    }
+    // Auth and credit checks should be handled by useFeatureGate before calling this
+    // Only keeping prompt validation here
 
     const request: TextToImageGenerationRequest = {
       prompt: trimmedPrompt,
@@ -144,7 +126,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
 
     // Return result based on orchestrator state
     return null; // Result handled via callbacks
-  }, [formState, generate, callbacks, totalCost]);
+  }, [formState, generate, callbacks]);
 
   return {
     generationState: {

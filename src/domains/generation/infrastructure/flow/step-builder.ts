@@ -77,7 +77,7 @@ export const buildStepsFromScenario = (
       type: StepType.FEATURE_SELECTION,
       config: {
         id: "DURATION_SELECTION",
-        durations: config.durationSelection.durations ?? [5, 10, 15],
+        durations: config.durationSelection.durations ?? [4, 8, 12],
         required: config.durationSelection.required ?? false,
       },
       required: config.durationSelection.required ?? false,

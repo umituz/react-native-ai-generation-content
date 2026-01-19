@@ -12,7 +12,8 @@ export const IMAGE_TO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
     {
       id: "photo_1",
       type: "photo_upload",
-      label: "Your Photo",
+      titleKey: "imageToVideo.selectPhoto",
+      subtitleKey: "imageToVideo.selectPhotoHint",
       showFaceDetection: false,
       showPhotoTips: true,
       required: true,
@@ -20,20 +21,23 @@ export const IMAGE_TO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
     {
       id: "motion_prompt",
       type: "text_input",
-      required: false,
+      titleKey: "imageToVideo.motionPrompt",
       placeholderKey: "imageToVideo.motionPromptPlaceholder",
+      required: false,
       maxLength: 200,
     },
     {
       id: "duration",
       type: "selection",
+      titleKey: "generation.duration.title",
       selectionType: "duration",
       options: [
-        { id: "5s", label: "5 seconds", value: 5 },
-        { id: "10s", label: "10 seconds", value: 10 },
+        { id: "4s", label: "4 seconds", value: 4 },
+        { id: "8s", label: "8 seconds", value: 8 },
+        { id: "12s", label: "12 seconds", value: 12 },
       ],
       required: true,
-      defaultValue: "5s",
+      defaultValue: "4s",
     },
   ],
 };

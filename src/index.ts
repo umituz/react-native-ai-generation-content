@@ -152,3 +152,11 @@ export * from "./domains/generation";
 export * from "./features/text-to-image";
 export * from "./features/text-to-video";
 export * from "./features/image-to-video";
+
+// Wizard Flows - Direct exports
+export { TextToImageWizardFlow } from "./features/text-to-image/presentation/screens/TextToImageWizardFlow";
+export type { TextToImageWizardFlowProps } from "./features/text-to-image/presentation/screens/TextToImageWizardFlow";
+export { TextToVideoWizardFlow } from "./features/text-to-video/presentation/screens/TextToVideoWizardFlow";
+export type { TextToVideoWizardFlowProps } from "./features/text-to-video/presentation/screens/TextToVideoWizardFlow";
+export { ImageToVideoWizardFlow } from "./features/image-to-video/presentation/screens/ImageToVideoWizardFlow";
+export type { ImageToVideoWizardFlowProps } from "./features/image-to-video/presentation/screens/ImageToVideoWizardFlow";

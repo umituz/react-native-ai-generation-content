@@ -16,6 +16,7 @@ import {
 } from "./wizard-strategy.constants";
 import { buildFacePreservationPrompt } from "../../../../prompts/infrastructure/builders/face-preservation-builder";
 import { buildInteractionStylePrompt, type InteractionStyle } from "../../../../prompts/infrastructure/builders/interaction-style-builder";
+import { extractPrompt, extractSelection } from "../utils";
 
 declare const __DEV__: boolean;
 
@@ -165,9 +166,8 @@ export async function buildImageInput(
 ): Promise<ImageGenerationInput | null> {
   const photos = await extractPhotosFromWizardData(wizardData);
 
-  // Get prompt from wizardData (text_input step) OR scenario.aiPrompt
-  const userPrompt = wizardData.prompt as string | undefined;
-  const prompt = userPrompt?.trim() || scenario.aiPrompt?.trim();
+  // Extract prompt using type-safe extractor with fallback
+  const prompt = extractPrompt(wizardData, scenario.aiPrompt);
 
   if (!prompt) {
     throw new Error("Prompt is required for image generation");
@@ -178,18 +178,19 @@ export async function buildImageInput(
   if (photos.length > 0) {
     const styleEnhancements: string[] = [];
 
-    const romanticMoods = wizardData.selection_romantic_mood as string[] | undefined;
-    if (romanticMoods?.length) {
+    // Extract selections using type-safe extractor
+    const romanticMoods = extractSelection(wizardData.selection_romantic_mood);
+    if (Array.isArray(romanticMoods) && romanticMoods.length > 0) {
       styleEnhancements.push(`Mood: ${romanticMoods.join(", ")}`);
     }
 
-    const artStyle = wizardData.selection_art_style as string | undefined;
-    if (artStyle && artStyle !== DEFAULT_STYLE_VALUE) {
+    const artStyle = extractSelection(wizardData.selection_art_style);
+    if (typeof artStyle === "string" && artStyle !== DEFAULT_STYLE_VALUE) {
       styleEnhancements.push(`Art style: ${artStyle}`);
     }
 
-    const artist = wizardData.selection_artist_style as string | undefined;
-    if (artist && artist !== DEFAULT_STYLE_VALUE) {
+    const artist = extractSelection(wizardData.selection_artist_style);
+    if (typeof artist === "string" && artist !== DEFAULT_STYLE_VALUE) {
       styleEnhancements.push(`Artist style: ${artist}`);
     }
 
@@ -198,8 +199,9 @@ export async function buildImageInput(
     }
   }
 
-  // Get style from wizard selection (for text-to-image)
-  const style = wizardData.style as string | undefined;
+  // Extract style using type-safe extractor (for text-to-image)
+  const styleValue = extractSelection(wizardData.style);
+  const style = typeof styleValue === "string" ? styleValue : undefined;
 
   // Get interaction style from scenario (default: romantic for couple apps)
   const interactionStyle = (scenario.interactionStyle as InteractionStyle) ?? "romantic";

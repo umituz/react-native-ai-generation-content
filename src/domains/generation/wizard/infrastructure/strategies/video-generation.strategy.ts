@@ -10,6 +10,7 @@ import { createCreationsRepository } from "../../../../creations/infrastructure/
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { PHOTO_KEY_PREFIX, VIDEO_FEATURE_PATTERNS } from "./wizard-strategy.constants";
+import { extractPrompt, extractDuration } from "../utils";
 
 // ============================================================================
 // Types
@@ -86,17 +87,15 @@ export async function buildVideoInput(
 ): Promise<VideoGenerationInput | null> {
   const photos = await extractPhotosFromWizardData(wizardData);
 
-  // Get prompt from wizardData or scenario
-  const userPrompt = wizardData.prompt as string | undefined;
-  const motionPrompt = wizardData.motion_prompt as string | undefined;
-  const prompt = userPrompt?.trim() || motionPrompt?.trim() || scenario.aiPrompt?.trim();
+  // Extract prompt using type-safe extractor with fallback
+  const prompt = extractPrompt(wizardData, scenario.aiPrompt);
 
   if (!prompt) {
     throw new Error("Prompt is required for video generation");
   }
 
-  // Get duration from wizardData
-  const duration = wizardData.duration as number | undefined;
+  // Extract duration using type-safe extractor (required from wizard step)
+  const duration = extractDuration(wizardData);
 
   return {
     sourceImageBase64: photos[0],
@@ -133,6 +132,9 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
           sourceImageBase64: videoInput.sourceImageBase64 || "",
           targetImageBase64: videoInput.targetImageBase64 || videoInput.sourceImageBase64 || "",
           prompt: videoInput.prompt,
+          options: {
+            duration: videoInput.duration,
+          },
         },
         { onProgress },
       );

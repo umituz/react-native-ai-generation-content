@@ -5,3 +5,5 @@
 
 export * from "./hooks";
 export * from "./components";
+export { TextToVideoWizardFlow } from "./screens/TextToVideoWizardFlow";
+export type { TextToVideoWizardFlowProps } from "./screens/TextToVideoWizardFlow";

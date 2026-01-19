@@ -50,7 +50,12 @@ export { GenericWizardFlow } from "./presentation/components";
 export type { GenericWizardFlowProps } from "./presentation/components";
 
 // Presentation - Screens
-export { GeneratingScreen } from "./presentation/screens";
+export { GeneratingScreen, TextInputScreen } from "./presentation/screens";
+export type {
+  TextInputScreenTranslations,
+  TextInputScreenConfig,
+  TextInputScreenProps,
+} from "./presentation/screens";
 
 // Feature Configs
 export * from "./configs";

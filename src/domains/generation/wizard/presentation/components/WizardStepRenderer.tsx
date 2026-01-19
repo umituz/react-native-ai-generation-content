@@ -3,9 +3,11 @@ import { extractMediaUrl, getMediaTypeFromUrl } from "@umituz/react-native-desig
 import { StepType } from "../../../../../domain/entities/flow-config.types";
 import { GenericPhotoUploadScreen } from "../screens/GenericPhotoUploadScreen";
 import { GeneratingScreen } from "../screens/GeneratingScreen";
+import { TextInputScreen } from "../screens/TextInputScreen";
+import { SelectionScreen } from "../screens/SelectionScreen";
 import { ScenarioPreviewScreen } from "../../../../scenarios/presentation/screens/ScenarioPreviewScreen";
 import { ResultPreviewScreen } from "../../../../result-preview/presentation/components/ResultPreviewScreen";
-import { getWizardStepConfig, getUploadedImage } from "./WizardStepRenderer.utils";
+import { getWizardStepConfig, getTextInputConfig, getSelectionConfig, getUploadedImage } from "./WizardStepRenderer.utils";
 import type { WizardStepRendererProps } from "./WizardStepRenderer.types";
 
 export type { WizardStepRendererProps } from "./WizardStepRenderer.types";
@@ -123,6 +125,81 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
           onBack={onBack}
           onContinue={(image) => onPhotoContinue(step.id, image)}
           existingImage={existingPhoto}
+        />
+      );
+    }
+
+    case StepType.TEXT_INPUT: {
+      const textConfig = getTextInputConfig(step.config);
+      const titleKey = textConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
+      const subtitleKey = textConfig?.subtitleKey ?? `wizard.steps.${step.id}.subtitle`;
+      const placeholderKey = textConfig?.placeholderKey ?? `wizard.steps.${step.id}.placeholder`;
+      const existingData = customData[step.id];
+      const existingText = typeof existingData === "string"
+        ? existingData
+        : typeof existingData === "object" && existingData !== null && "text" in existingData
+          ? String((existingData as { text: string }).text)
+          : "";
+
+      return (
+        <TextInputScreen
+          stepId={step.id}
+          translations={{
+            title: t(titleKey),
+            subtitle: subtitleKey ? t(subtitleKey) : undefined,
+            placeholder: t(placeholderKey),
+            continueButton: t("common.continue"),
+            backButton: t("common.back"),
+            examplesTitle: t("textInput.examplesTitle"),
+          }}
+          config={{
+            minLength: textConfig?.minLength ?? 3,
+            maxLength: textConfig?.maxLength ?? 1000,
+            multiline: textConfig?.multiline ?? true,
+          }}
+          initialValue={existingText}
+          onBack={onBack}
+          onContinue={(text) => {
+            // Store text in a structure compatible with existing handlers
+            onPhotoContinue(step.id, { uri: text, text, previewUrl: "" } as any);
+          }}
+        />
+      );
+    }
+
+    case StepType.FEATURE_SELECTION: {
+      const selectionConfig = getSelectionConfig(step.config);
+      const titleKey = selectionConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
+      const subtitleKey = selectionConfig?.subtitleKey ?? `wizard.steps.${step.id}.subtitle`;
+      const existingValue = customData[step.id] as string | string[] | undefined;
+
+      const options = selectionConfig?.options ?? [];
+
+      return (
+        <SelectionScreen
+          stepId={step.id}
+          translations={{
+            title: t(titleKey),
+            subtitle: subtitleKey ? t(subtitleKey) : undefined,
+            continueButton: t("common.continue"),
+            backButton: t("common.back"),
+          }}
+          options={options.map((opt) => ({
+            id: opt.id,
+            label: opt.label,
+            icon: opt.icon,
+            value: opt.value,
+          }))}
+          config={{
+            multiSelect: selectionConfig?.multiSelect ?? false,
+            required: step.required ?? true,
+          }}
+          initialValue={existingValue}
+          onBack={onBack}
+          onContinue={(value) => {
+            // Store selection value
+            onPhotoContinue(step.id, { uri: String(value), selection: value, previewUrl: "" } as any);
+          }}
         />
       );
     }
