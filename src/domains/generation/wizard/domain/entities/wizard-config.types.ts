@@ -51,7 +51,7 @@ export interface TextInputStepConfig extends BaseStepConfig {
  */
 export interface SelectionStepConfig extends BaseStepConfig {
   readonly type: "selection";
-  readonly selectionType: "style" | "duration" | "aspect_ratio" | "quality" | "custom";
+  readonly selectionType: "style" | "duration" | "aspect_ratio" | "quality" | "resolution" | "custom";
   readonly options: readonly {
     readonly id: string;
     readonly label: string;

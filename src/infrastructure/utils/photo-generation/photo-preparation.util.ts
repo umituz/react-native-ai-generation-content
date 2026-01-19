@@ -17,8 +17,10 @@ export interface PreparedImage {
 
 /**
  * Clean base64 string by removing data URI prefix
+ * Returns empty string if input is undefined or empty
  */
-export const cleanBase64 = (base64: string): string => {
+export const cleanBase64 = (base64: string | undefined): string => {
+  if (!base64) return "";
   return base64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
 };
 

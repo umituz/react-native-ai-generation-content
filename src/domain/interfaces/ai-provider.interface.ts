@@ -141,9 +141,13 @@ export interface ImageFeatureInputData {
 }
 
 export interface VideoFeatureInputData {
-  sourceImageBase64: string;
-  targetImageBase64: string;
+  /** Source image (required for image-to-video, optional for text-to-video) */
+  sourceImageBase64?: string;
+  /** Target image (optional, used for dual-image features like ai-kiss, ai-hug) */
+  targetImageBase64?: string;
+  /** Generation prompt (required for text-to-video) */
   prompt?: string;
+  /** Additional generation options */
   options?: Record<string, unknown>;
 }
 

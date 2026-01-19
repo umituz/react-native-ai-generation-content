@@ -194,3 +194,39 @@ export function extractDuration(
 
   return undefined;
 }
+
+// ============================================================================
+// Aspect Ratio Extractor (Specialized)
+// ============================================================================
+
+/**
+ * Extracts aspect ratio from wizard data
+ * Common values: "16:9", "9:16", "1:1", "4:3"
+ *
+ * @param wizardData - The wizard data object
+ * @returns The extracted aspect ratio or undefined
+ */
+export function extractAspectRatio(
+  wizardData: Record<string, unknown>,
+): string | undefined {
+  const aspectRatioData = wizardData.aspect_ratio;
+  return extractTrimmedString(aspectRatioData);
+}
+
+// ============================================================================
+// Resolution Extractor (Specialized)
+// ============================================================================
+
+/**
+ * Extracts resolution from wizard data
+ * Common values: "720p", "1080p", "default"
+ *
+ * @param wizardData - The wizard data object
+ * @returns The extracted resolution or undefined
+ */
+export function extractResolution(
+  wizardData: Record<string, unknown>,
+): string | undefined {
+  const resolutionData = wizardData.resolution;
+  return extractTrimmedString(resolutionData);
+}

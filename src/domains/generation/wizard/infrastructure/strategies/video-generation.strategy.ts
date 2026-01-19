@@ -10,7 +10,7 @@ import { createCreationsRepository } from "../../../../creations/infrastructure/
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { PHOTO_KEY_PREFIX, VIDEO_FEATURE_PATTERNS } from "./wizard-strategy.constants";
-import { extractPrompt, extractDuration } from "../utils";
+import { extractPrompt, extractDuration, extractAspectRatio, extractResolution } from "../utils";
 
 // ============================================================================
 // Types
@@ -24,6 +24,10 @@ export interface VideoGenerationInput {
   readonly prompt: string;
   /** Video duration in seconds */
   readonly duration?: number;
+  /** Aspect ratio (e.g., "16:9", "9:16") */
+  readonly aspectRatio?: string;
+  /** Video resolution (e.g., "720p", "1080p") */
+  readonly resolution?: string;
 }
 
 export interface VideoGenerationResult {
@@ -94,14 +98,18 @@ export async function buildVideoInput(
     throw new Error("Prompt is required for video generation");
   }
 
-  // Extract duration using type-safe extractor (required from wizard step)
+  // Extract video generation parameters
   const duration = extractDuration(wizardData);
+  const aspectRatio = extractAspectRatio(wizardData);
+  const resolution = extractResolution(wizardData);
 
   return {
     sourceImageBase64: photos[0],
     targetImageBase64: photos[1] || photos[0],
     prompt,
     duration,
+    aspectRatio,
+    resolution,
   };
 }
 
@@ -129,11 +137,13 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
       const result = await executeVideoFeature(
         videoFeatureType,
         {
-          sourceImageBase64: videoInput.sourceImageBase64 || "",
-          targetImageBase64: videoInput.targetImageBase64 || videoInput.sourceImageBase64 || "",
+          sourceImageBase64: videoInput.sourceImageBase64,
+          targetImageBase64: videoInput.targetImageBase64,
           prompt: videoInput.prompt,
           options: {
             duration: videoInput.duration,
+            aspect_ratio: videoInput.aspectRatio,
+            resolution: videoInput.resolution,
           },
         },
         { onProgress },

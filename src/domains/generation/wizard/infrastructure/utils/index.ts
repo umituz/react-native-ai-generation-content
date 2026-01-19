@@ -5,4 +5,6 @@ export {
   extractSelection,
   extractPrompt,
   extractDuration,
+  extractAspectRatio,
+  extractResolution,
 } from "./wizard-data-extractors";
