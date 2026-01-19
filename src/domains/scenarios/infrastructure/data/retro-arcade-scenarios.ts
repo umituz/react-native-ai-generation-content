@@ -1,5 +1,5 @@
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const RETRO_ARCADE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -9,8 +9,10 @@ export const RETRO_ARCADE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[]
     icon: "🕹️",
     imageUrl:
       "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800",
-    aiPrompt:
-      "A couple playing a classic arcade machine together, intense focused expressions, man's hand on the joystick, woman pressing buttons, neon lights from the machine reflecting on their faces, colorful retro arcade background, 80s fashion and vibes",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple playing classic arcade machine together, both facing camera with intense focused competitive expressions, man gripping joystick, woman mashing buttons, wearing 80s fashion with bright colors, neon lights from machine reflecting on their faces, rows of glowing arcade cabinets in background",
+      "colorful neon arcade lighting with retro 80s atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "battle for the top spot on the leaderboard",
       "They may be rivals on the screen, but they're the ultimate team in life. A relationship built on joy, competition, and shared high scores.",
@@ -22,8 +24,10 @@ export const RETRO_ARCADE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[]
     description: "Glowing tokens and fun",
     icon: "👾",
     imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800",
-    aiPrompt:
-      "A couple in a late-night retro arcade, both looking at the camera with wide playful smiles, holding plastic cups filled with game tokens, surrounded by glowing neon signs and rows of arcade cabinets, vibrant purple and blue lighting, nostalgic and fun",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in late-night retro arcade, both facing camera with wide playful smiles, holding plastic cups overflowing with golden game tokens, surrounded by glowing neon signs and vintage arcade cabinets, wearing casual 80s outfits with neon accents",
+      "vibrant purple and blue neon lighting with nostalgic atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "experience the vibrant magic of an 80s night out",
       "In a world of pixels and neon, their connection is the only thing that's real. A night of pure, unadulterated fun.",
@@ -36,8 +40,10 @@ export const RETRO_ARCADE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[]
     icon: "🍕",
     imageUrl:
       "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800",
-    aiPrompt:
-      "A couple in a nostalgic 1980s pizza parlor, sitting in a red vinyl booth, sharing a pizza and a large soda, wearing oversized denim jackets and 80s hairstyles, an arcade machine in the corner, warm yellow indoor lighting, cozy and retro",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in nostalgic 1980s pizza parlor sitting in red vinyl booth, both facing camera with happy relaxed smiles, sharing large pepperoni pizza and tall sodas with striped straws, wearing oversized denim jackets with big hair, vintage arcade machine and checkered floor in background",
+      "warm yellow retro indoor lighting with cozy 80s atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "hang out like it's the 80s all over again",
       "No phones, no distractions, just good pizza and better company. They've found the ultimate throwback to a time of simple joys.",

@@ -14,13 +14,18 @@ export { SCENARIOS } from "./infrastructure/ScenariosData";
 // Utils
 export { createStoryTemplate } from "./infrastructure/utils/scenario-utils";
 
-// Wizard Configurations - Auto-detects feature type and generates config
+// Wizard Configurations - App-agnostic, classifies by INPUT REQUIREMENTS
 export {
-  FeatureType,
+  WizardInputType,
   SCENARIO_WIZARD_CONFIGS,
-  detectFeatureType,
+  detectWizardInputType,
   getScenarioWizardConfig,
   hasExplicitConfig,
+  getScenarioWizardInputType,
+  registerWizardConfig,
+  // Deprecated (backward compatibility)
+  FeatureType,
+  detectFeatureType,
   getScenarioFeatureType,
 } from "./configs/wizard-configs";
 

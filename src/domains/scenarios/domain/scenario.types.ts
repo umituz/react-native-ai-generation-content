@@ -198,7 +198,8 @@ export interface ScenarioData {
   readonly icon?: string;
   readonly imageUrl?: string;
   readonly previewImageUrl?: string;
-  readonly aiPrompt: string;
+  /** AI prompt - optional if prompt comes from wizard data */
+  readonly aiPrompt?: string;
   readonly storyTemplate?: string;
   readonly requiresPhoto?: boolean;
   readonly hidden?: boolean;

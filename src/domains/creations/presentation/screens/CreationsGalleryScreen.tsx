@@ -142,9 +142,18 @@ export function CreationsGalleryScreen({
     return buttons;
   }, [showStatusFilter, showMediaFilter, filters, t, config.translations]);
 
+  const getScenarioTitle = useCallback((type: string): string => {
+    const typeConfig = config.types?.find((tc) => tc.id === type);
+    if (typeConfig?.labelKey) {
+      return t(typeConfig.labelKey);
+    }
+    return type.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  }, [config.types, t]);
+
   const renderItem = useCallback(({ item }: { item: Creation }) => (
     <CreationCard
       creation={item}
+      titleText={getScenarioTitle(item.type)}
       callbacks={{
         onPress: () => handleCardPress(item),
         onShare: async () => handleShareCard(item),
@@ -152,7 +161,7 @@ export function CreationsGalleryScreen({
         onFavorite: () => handleFavorite(item, !item.isFavorite),
       }}
     />
-  ), [handleShareCard, handleDelete, handleFavorite, handleCardPress]);
+  ), [handleShareCard, handleDelete, handleFavorite, handleCardPress, getScenarioTitle]);
 
   const renderHeader = useMemo(() => {
     if ((!creations || creations.length === 0) && !isLoading) return null;

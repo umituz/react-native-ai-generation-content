@@ -1,9 +1,12 @@
 /**
  * Scenario validation utility
  * Validates that scenario has required fields for wizard generation
+ * NOTE: aiPrompt is optional - can come from wizard data (text_input step)
  */
 
 import type { WizardScenarioData } from "../hooks/useWizardGeneration";
+
+declare const __DEV__: boolean;
 
 export interface ScenarioValidationResult {
   isValid: boolean;
@@ -13,6 +16,7 @@ export interface ScenarioValidationResult {
 
 /**
  * Validates scenario data for wizard generation
+ * aiPrompt is optional - for TEXT_INPUT scenarios, prompt comes from wizard data
  * @throws Error if scenario is invalid
  */
 export const validateScenario = (
@@ -23,8 +27,6 @@ export const validateScenario = (
       hasScenario: !!scenario,
       scenarioId: scenario?.id,
       hasAiPrompt: !!scenario?.aiPrompt,
-      aiPromptLength: scenario?.aiPrompt?.length,
-      hasModel: !!scenario?.model,
       outputType: scenario?.outputType,
     });
   }
@@ -33,22 +35,12 @@ export const validateScenario = (
     throw new Error("[validateScenario] Scenario is required");
   }
 
-  if (!scenario.aiPrompt || scenario.aiPrompt.trim() === "") {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.error("[validateScenario] CRITICAL: Scenario missing aiPrompt!", {
-        scenarioId: scenario.id,
-        aiPrompt: scenario.aiPrompt,
-      });
-    }
-    throw new Error(`[validateScenario] Scenario "${scenario.id}" must have aiPrompt field`);
-  }
-
+  // aiPrompt is optional - for TEXT_INPUT scenarios, prompt comes from wizard data
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[validateScenario] Validation passed", {
       scenarioId: scenario.id,
-      model: scenario.model,
       outputType: scenario.outputType,
-      promptLength: scenario.aiPrompt.length,
+      hasPrompt: !!scenario.aiPrompt,
     });
   }
 

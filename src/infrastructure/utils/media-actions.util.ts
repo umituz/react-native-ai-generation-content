@@ -3,6 +3,8 @@
  * Provides save to gallery and share functionality for generated media
  */
 
+declare const __DEV__: boolean;
+
 export interface MediaActionResult {
   readonly success: boolean;
   readonly error?: string;
@@ -85,12 +87,8 @@ export const saveMediaToGallery = async (
     return { success: true };
   } catch (error) {
     // Debug logging in development
-    try {
-      if ((global as Record<string, unknown>).__DEV__) {
-        console.error("[MediaActions] Save failed:", error);
-      }
-    } catch {
-      // Ignore if __DEV__ check fails
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.error("[MediaActions] Save failed:", error);
     }
     const errorMsg = translations?.saveFailed || "Failed to save media";
     toast?.show({
@@ -139,12 +137,8 @@ export const shareMedia = async (
     return { success: true };
   } catch (error) {
     // Debug logging in development
-    try {
-      if ((global as Record<string, unknown>).__DEV__) {
-        console.error("[MediaActions] Share failed:", error);
-      }
-    } catch {
-      // Ignore if __DEV__ check fails
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.error("[MediaActions] Share failed:", error);
     }
     const errorMsg = translations?.shareFailed || "Failed to share media";
     toast?.show({

@@ -14,7 +14,8 @@ export type WizardOutputType = "image" | "video";
 
 export interface WizardScenarioData {
   readonly id: string;
-  readonly aiPrompt: string;
+  /** AI prompt - optional if prompt comes from wizard data (text_input step) */
+  readonly aiPrompt?: string;
   readonly outputType?: WizardOutputType;
   readonly model?: string;
   readonly title?: string;

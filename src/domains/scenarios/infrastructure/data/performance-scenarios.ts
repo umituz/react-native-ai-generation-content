@@ -4,7 +4,7 @@
  */
 
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const PERFORMANCE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -14,8 +14,10 @@ export const PERFORMANCE_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] 
     icon: "🎤",
     imageUrl:
       "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&auto=format&fit=crop&q=60",
-    aiPrompt:
-      "A couple performing on a concert stage, both looking at the camera with passionate expressions, dressed in stylish stage outfits, holding microphones, massive crowd and stage lights in background, electric and powerful",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple performing on massive concert stage, both facing camera with passionate electrifying expressions, man in black leather jacket and chains with microphone raised, woman in sparkly stage costume with wireless mic and windswept hair, sea of phone lights and cheering crowd silhouettes with dramatic stage lighting and pyrotechnics in background",
+      "dramatic concert lighting with colorful spotlights and atmospheric smoke"
+    ),
     storyTemplate: createStoryTemplate(
       "perform for thousands",
       "Under the spotlight, their voices blend into one, creating magic that resonates with every heart.",

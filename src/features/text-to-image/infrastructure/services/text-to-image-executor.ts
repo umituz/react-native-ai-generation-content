@@ -1,0 +1,147 @@
+/**
+ * Text-to-Image Executor
+ * Provider-agnostic text-to-image execution using active AI provider
+ */
+
+import { providerRegistry } from "../../../../infrastructure/services";
+import type {
+  TextToImageRequest,
+  TextToImageResult,
+  TextToImageInputBuilder,
+  TextToImageResultExtractor,
+} from "../../domain/types";
+
+declare const __DEV__: boolean;
+
+export interface ExecuteTextToImageOptions {
+  model: string;
+  buildInput: TextToImageInputBuilder;
+  extractResult?: TextToImageResultExtractor;
+  onProgress?: (progress: number) => void;
+}
+
+function extractImagesFromObject(
+  obj: Record<string, unknown>,
+): string[] | null {
+  // Direct images array
+  if (Array.isArray(obj.images)) {
+    const urls = obj.images
+      .map((img) => {
+        if (typeof img === "string") return img;
+        if (img && typeof img === "object" && "url" in img) {
+          return (img as { url: string }).url;
+        }
+        return null;
+      })
+      .filter((url): url is string => url !== null);
+
+    if (urls.length > 0) return urls;
+  }
+  return null;
+}
+
+function defaultExtractResult(
+  result: unknown,
+): { imageUrl?: string; imageUrls?: string[] } | undefined {
+  if (typeof result !== "object" || result === null) {
+    return undefined;
+  }
+
+  const r = result as Record<string, unknown>;
+
+  // Check nested 'data' object first (common API wrapper format)
+  if (r.data && typeof r.data === "object") {
+    const dataObj = r.data as Record<string, unknown>;
+    const urls = extractImagesFromObject(dataObj);
+    if (urls) {
+      return { imageUrl: urls[0], imageUrls: urls };
+    }
+  }
+
+  // Check direct 'images' array
+  const directUrls = extractImagesFromObject(r);
+  if (directUrls) {
+    return { imageUrl: directUrls[0], imageUrls: directUrls };
+  }
+
+  // Check for imageUrl (data URL)
+  if (typeof r.imageUrl === "string") {
+    return { imageUrl: r.imageUrl, imageUrls: [r.imageUrl] };
+  }
+
+  // Fallback: construct data URL from imageBase64
+  if (typeof r.imageBase64 === "string") {
+    const mimeType = typeof r.mimeType === "string" ? r.mimeType : "image/png";
+    const dataUrl = `data:${mimeType};base64,${r.imageBase64}`;
+    return { imageUrl: dataUrl, imageUrls: [dataUrl] };
+  }
+
+  // Legacy: check for 'image' field
+  if (typeof r.image === "string") {
+    return { imageUrl: r.image, imageUrls: [r.image] };
+  }
+
+  return undefined;
+}
+
+export async function executeTextToImage(
+  request: TextToImageRequest,
+  options: ExecuteTextToImageOptions,
+): Promise<TextToImageResult> {
+  const provider = providerRegistry.getActiveProvider();
+
+  if (!provider) {
+    return { success: false, error: "No AI provider configured" };
+  }
+
+  if (!provider.isInitialized()) {
+    return { success: false, error: "AI provider not initialized" };
+  }
+
+  if (!request.prompt) {
+    return { success: false, error: "Prompt is required" };
+  }
+
+  const { model, buildInput, extractResult, onProgress } = options;
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+     
+    console.log(`[TextToImage] Provider: ${provider.providerId}, Model: ${model}`);
+  }
+
+  try {
+    onProgress?.(10);
+
+    const input = buildInput(request.prompt, request.options);
+    onProgress?.(20);
+
+    const result = await provider.run(model, input);
+    onProgress?.(90);
+
+    const extractor = extractResult || defaultExtractResult;
+    const extracted = extractor(result);
+    onProgress?.(100);
+
+    if (!extracted?.imageUrl) {
+      return { success: false, error: "No image in response" };
+    }
+
+    return {
+      success: true,
+      imageUrl: extracted.imageUrl,
+      imageUrls: extracted.imageUrls,
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+       
+      console.error("[TextToImage] Error:", message);
+    }
+    return { success: false, error: message };
+  }
+}
+
+export function hasTextToImageSupport(): boolean {
+  const provider = providerRegistry.getActiveProvider();
+  return provider !== null && provider.isInitialized();
+}

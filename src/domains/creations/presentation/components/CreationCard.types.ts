@@ -49,6 +49,8 @@ export interface CreationCardProps {
   readonly statusText?: string;
   /** Custom type text (for i18n) */
   readonly typeText?: string;
+  /** Custom title text - overrides prompt-based title */
+  readonly titleText?: string;
   /** Date formatter function */
   readonly formatDate?: (date: Date) => string;
   /** Is sharing in progress */

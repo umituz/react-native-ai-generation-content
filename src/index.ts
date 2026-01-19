@@ -147,3 +147,8 @@ export {
 
 export * from "./domains/result-preview";
 export * from "./domains/generation";
+
+// Features - Standalone generation features (no wizard/scenario)
+export * from "./features/text-to-image";
+export * from "./features/text-to-video";
+export * from "./features/image-to-video";

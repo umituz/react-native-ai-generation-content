@@ -26,6 +26,7 @@ export function CreationCard({
   showActions = true,
   statusText,
   typeText,
+  titleText,
   formatDate,
   isSharing = false,
   isDownloadAvailable = true,
@@ -43,7 +44,7 @@ export function CreationCard({
   }
 
   const previewUrl = getPreviewUrl(creation.output) || creation.uri;
-  const title = getCreationTitle(creation.prompt, creation.type as CreationTypeId);
+  const title = titleText || getCreationTitle(creation.prompt, creation.type as CreationTypeId);
   const formattedDate = useCreationDateFormatter(creation.createdAt, formatDate);
   const actions = useCreationCardActions({
     callbacks,

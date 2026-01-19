@@ -1,138 +1,104 @@
 /**
- * Wizard Configurations for ALL Scenarios
- * Auto-detects feature type and generates appropriate config
- * Supports overrides for customization
+ * Wizard Configurations - App-Agnostic
+ * Classifies features by INPUT REQUIREMENTS, not app-specific scenarios
+ * Apps can override inputType or provide custom step configurations
  */
 
 import type { WizardFeatureConfig } from "../../generation/wizard/domain/entities/wizard-config.types";
 
+declare const __DEV__: boolean;
+
 /**
- * Feature Type Classification
- * Determines wizard flow based on scenario characteristics
+ * Input Type Classification
+ * Based on what inputs the wizard needs (photos, text)
+ * NOT based on app-specific scenario names
  */
-export enum FeatureType {
-  COUPLE = "couple",               // 2 photos - romantic/partner scenarios
-  SINGLE_PHOTO = "single_photo",   // 1 photo - editing/transformation
-  FACE_SWAP = "face_swap",         // 2 photos - face replacement
-  TEXT_BASED = "text_based",       // 0 photos - text-to-media
+export enum WizardInputType {
+  /** Two images required (any two-person/two-image scenario) */
+  DUAL_IMAGE = "dual_image",
+  /** Single image required */
+  SINGLE_IMAGE = "single_image",
+  /** Text input only, no images */
+  TEXT_INPUT = "text_input",
+  /** Two images with face detection (face swap scenarios) */
+  DUAL_IMAGE_FACE = "dual_image_face",
 }
 
+/** @deprecated Use WizardInputType instead */
+export const FeatureType = WizardInputType;
+
 /**
- * Feature Detection Patterns
- * Regex patterns to auto-detect feature type from scenario ID
+ * Generic Input Detection Patterns
+ * Only patterns that describe input/output, NOT app-specific scenarios
  */
-const FEATURE_PATTERNS: Record<FeatureType, RegExp[]> = {
-  [FeatureType.COUPLE]: [
-    /kiss/i,           // romantic-kiss, ai-kiss, first-kiss, etc.
-    /hug/i,            // ai-hug, back-hug, bear-hug, etc.
-    /couple/i,         // couple-future, couple-ai-baby
-    /partner/i,        // partner scenarios
-    /wedding/i,        // wedding scenarios
-    /anniversary/i,
-    /dance/i,          // first-dance, etc.
-    /together/i,
-    /embrace/i,
-    /romance/i,
-    /love/i,
-    /relationship/i,
-    /years/i,          // 5-years, 10-years (couple-future)
-    /age/i,            // old-age (couple-future)
-    /future.*child/i,  // future-child
-    /parenthood/i,
-    /proposal/i,
-    /engagement/i,
+const INPUT_PATTERNS: Record<WizardInputType, RegExp[]> = {
+  [WizardInputType.DUAL_IMAGE]: [
+    // Empty - app must specify explicitly for dual image scenarios
+    // This prevents accidental matches with app-specific terms
   ],
 
-  [FeatureType.SINGLE_PHOTO]: [
-    /background.*remove/i,
-    /remove.*background/i,
-    /photo.*restore/i,
-    /restore.*photo/i,
+  [WizardInputType.SINGLE_IMAGE]: [
+    /^image-to-video$/i,
     /upscale/i,
-    /hd.*touch/i,
-    /touch.*up/i,
+    /restore/i,
     /enhance/i,
-    /anime.*selfie/i,
-    /selfie.*anime/i,
-    /image.*to.*video/i,
-    /remove.*object/i,
-    /object.*remove/i,
+    /remove-background/i,
+    /background-remove/i,
+    /remove-object/i,
+    /hd-touch/i,
+    /anime-selfie/i,
   ],
 
-  [FeatureType.TEXT_BASED]: [
-    /text.*to.*video/i,
-    /text.*to.*image/i,
-    /prompt.*to/i,
+  [WizardInputType.TEXT_INPUT]: [
+    /^text-to-video$/i,
+    /^text-to-image$/i,
+    /prompt-to/i,
   ],
 
-  [FeatureType.FACE_SWAP]: [
-    /face.*swap/i,
-    /swap.*face/i,
+  [WizardInputType.DUAL_IMAGE_FACE]: [
+    /face-swap/i,
+    /swap-face/i,
   ],
 };
 
 /**
- * Detect feature type from scenario ID
+ * Detect input type from scenario ID
+ * Only matches generic I/O patterns
+ * Returns SINGLE_IMAGE as safe default
  */
-export const detectFeatureType = (scenarioId: string): FeatureType => {
-  for (const [type, patterns] of Object.entries(FEATURE_PATTERNS)) {
+export const detectWizardInputType = (scenarioId: string): WizardInputType => {
+  // Check patterns in priority order: TEXT_INPUT, SINGLE_IMAGE, DUAL_IMAGE_FACE
+  // DUAL_IMAGE has no patterns - must be explicitly specified
+  const checkOrder: WizardInputType[] = [
+    WizardInputType.TEXT_INPUT,
+    WizardInputType.DUAL_IMAGE_FACE,
+    WizardInputType.SINGLE_IMAGE,
+  ];
+
+  for (const type of checkOrder) {
+    const patterns = INPUT_PATTERNS[type];
     if (patterns.some((pattern) => pattern.test(scenarioId))) {
-      return type as FeatureType;
+      return type;
     }
   }
-  // Default: COUPLE (most common in AI video generation apps)
-  return FeatureType.COUPLE;
+
+  // Safe default: SINGLE_IMAGE (most common use case)
+  return WizardInputType.SINGLE_IMAGE;
 };
 
 /**
- * Romantic Mood Options for Couple Scenarios
+ * Config Factory: DUAL_IMAGE (2 photos required)
+ * Generic labels - apps provide translations
  */
-const ROMANTIC_MOOD_OPTIONS = [
-  { id: "romantic", label: "Romantic", icon: "❤️", value: "romantic" },
-  { id: "mysterious", label: "Mysterious", icon: "🌙", value: "mysterious" },
-  { id: "magical", label: "Magical", icon: "✨", value: "magical" },
-  { id: "energetic", label: "Energetic", icon: "⚡", value: "energetic" },
-  { id: "melancholic", label: "Melancholic", icon: "☁️", value: "melancholic" },
-  { id: "passionate", label: "Passionate", icon: "🔥", value: "passionate" },
-  { id: "nostalgic", label: "Nostalgic", icon: "📷", value: "nostalgic" },
-  { id: "futuristic", label: "Futuristic", icon: "🚀", value: "futuristic" },
-];
-
-/**
- * Art Style Options for Couple Scenarios
- */
-const ART_STYLE_OPTIONS = [
-  { id: "original", label: "Original", icon: "🖼️", value: "original" },
-  { id: "cubism", label: "Cubism", icon: "🔷", value: "cubism" },
-  { id: "popArt", label: "Pop Art", icon: "🎨", value: "pop_art" },
-  { id: "impressionism", label: "Impressionism", icon: "🖌️", value: "impressionism" },
-  { id: "surrealism", label: "Surrealism", icon: "👁️", value: "surrealism" },
-  { id: "renaissance", label: "Renaissance", icon: "🎭", value: "renaissance" },
-];
-
-/**
- * Artist Style Options for Couple Scenarios
- */
-const ARTIST_STYLE_OPTIONS = [
-  { id: "vanGogh", label: "Van Gogh", icon: "🖌️", value: "van_gogh" },
-  { id: "picasso", label: "Picasso", icon: "🔷", value: "picasso" },
-  { id: "fridaKahlo", label: "Frida Kahlo", icon: "🌺", value: "frida_kahlo" },
-  { id: "daVinci", label: "Da Vinci", icon: "🎨", value: "da_vinci" },
-];
-
-/**
- * Config Factory for COUPLE features (2 photos + style selections)
- * Generic sequential labels for two-person scenarios
- */
-const createCoupleConfig = (scenarioId: string): WizardFeatureConfig => ({
+const createDualImageConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
   name: scenarioId,
   steps: [
     {
       id: "photo_1",
       type: "photo_upload",
-      titleKey: "photoUpload.couple.step1.title",
-      subtitleKey: "photoUpload.couple.step1.subtitle",
+      titleKey: "photoUpload.first.title",
+      subtitleKey: "photoUpload.first.subtitle",
       showFaceDetection: true,
       showPhotoTips: true,
       required: true,
@@ -140,50 +106,19 @@ const createCoupleConfig = (scenarioId: string): WizardFeatureConfig => ({
     {
       id: "photo_2",
       type: "photo_upload",
-      titleKey: "photoUpload.couple.step2.title",
-      subtitleKey: "photoUpload.couple.step2.subtitle",
+      titleKey: "photoUpload.second.title",
+      subtitleKey: "photoUpload.second.subtitle",
       showFaceDetection: true,
       showPhotoTips: true,
       required: true,
-    },
-    {
-      id: "romantic_mood",
-      type: "selection",
-      selectionType: "custom",
-      titleKey: "selection.romanticMood.title",
-      subtitleKey: "selection.romanticMood.subtitle",
-      options: ROMANTIC_MOOD_OPTIONS,
-      multiSelect: true,
-      required: false,
-    },
-    {
-      id: "art_style",
-      type: "selection",
-      selectionType: "style",
-      titleKey: "selection.artStyle.title",
-      subtitleKey: "selection.artStyle.subtitle",
-      options: ART_STYLE_OPTIONS,
-      multiSelect: false,
-      required: false,
-    },
-    {
-      id: "artist_style",
-      type: "selection",
-      selectionType: "custom",
-      titleKey: "selection.artistStyle.title",
-      subtitleKey: "selection.artistStyle.subtitle",
-      options: ARTIST_STYLE_OPTIONS,
-      multiSelect: false,
-      required: false,
     },
   ],
 });
 
 /**
- * Config Factory for SINGLE_PHOTO features (1 photo)
- * Generic single photo step - label comes from translation
+ * Config Factory: SINGLE_IMAGE (1 photo required)
  */
-const createSinglePhotoConfig = (scenarioId: string): WizardFeatureConfig => ({
+const createSingleImageConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
   name: scenarioId,
   steps: [
@@ -200,9 +135,9 @@ const createSinglePhotoConfig = (scenarioId: string): WizardFeatureConfig => ({
 });
 
 /**
- * Config Factory for TEXT_BASED features (0 photos, text input)
+ * Config Factory: TEXT_INPUT (text only, no photos)
  */
-const createTextBasedConfig = (scenarioId: string): WizardFeatureConfig => ({
+const createTextInputConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
   name: scenarioId,
   steps: [
@@ -217,31 +152,21 @@ const createTextBasedConfig = (scenarioId: string): WizardFeatureConfig => ({
       multiline: true,
       required: true,
     },
-    {
-      id: "style_selection",
-      type: "selection",
-      selectionType: "style",
-      titleKey: "styleSelection.title",
-      subtitleKey: "styleSelection.subtitle",
-      options: [], // Provided by app/feature
-      required: false,
-    },
   ],
 });
 
 /**
- * Config Factory for FACE_SWAP features (2 photos)
- * Specific labels for face replacement scenarios
+ * Config Factory: DUAL_IMAGE_FACE (2 photos with face detection)
  */
-const createFaceSwapConfig = (scenarioId: string): WizardFeatureConfig => ({
+const createDualImageFaceConfig = (scenarioId: string): WizardFeatureConfig => ({
   id: scenarioId,
   name: scenarioId,
   steps: [
     {
       id: "photo_1",
       type: "photo_upload",
-      titleKey: "photoUpload.faceSwap.step1.title",
-      subtitleKey: "photoUpload.faceSwap.step1.subtitle",
+      titleKey: "photoUpload.source.title",
+      subtitleKey: "photoUpload.source.subtitle",
       showFaceDetection: true,
       showPhotoTips: true,
       required: true,
@@ -249,8 +174,8 @@ const createFaceSwapConfig = (scenarioId: string): WizardFeatureConfig => ({
     {
       id: "photo_2",
       type: "photo_upload",
-      titleKey: "photoUpload.faceSwap.step2.title",
-      subtitleKey: "photoUpload.faceSwap.step2.subtitle",
+      titleKey: "photoUpload.target.title",
+      subtitleKey: "photoUpload.target.subtitle",
       showFaceDetection: false,
       showPhotoTips: true,
       required: true,
@@ -261,36 +186,27 @@ const createFaceSwapConfig = (scenarioId: string): WizardFeatureConfig => ({
 /**
  * Config Factories Registry
  */
-const FEATURE_CONFIG_FACTORIES: Record<FeatureType, (id: string) => WizardFeatureConfig> = {
-  [FeatureType.COUPLE]: createCoupleConfig,
-  [FeatureType.SINGLE_PHOTO]: createSinglePhotoConfig,
-  [FeatureType.TEXT_BASED]: createTextBasedConfig,
-  [FeatureType.FACE_SWAP]: createFaceSwapConfig,
+const CONFIG_FACTORIES: Record<WizardInputType, (id: string) => WizardFeatureConfig> = {
+  [WizardInputType.DUAL_IMAGE]: createDualImageConfig,
+  [WizardInputType.SINGLE_IMAGE]: createSingleImageConfig,
+  [WizardInputType.TEXT_INPUT]: createTextInputConfig,
+  [WizardInputType.DUAL_IMAGE_FACE]: createDualImageFaceConfig,
 };
 
 /**
  * Explicit Wizard Configs (Optional)
- * Define specific configs for scenarios that need custom flows
- * Most scenarios will use auto-generated configs from factories
+ * Apps can register custom configs for specific scenario IDs
  */
-export const SCENARIO_WIZARD_CONFIGS: Record<string, WizardFeatureConfig> = {
-  // Add custom configs here only if needed
-  // Example:
-  // "special-scenario": {
-  //   id: "special-scenario",
-  //   steps: [...custom steps]
-  // }
-};
+export const SCENARIO_WIZARD_CONFIGS: Record<string, WizardFeatureConfig> = {};
 
 /**
- * Merge config overrides
+ * Merge config with overrides
  */
 const mergeConfigOverrides = (
   config: WizardFeatureConfig,
   overrides?: Partial<WizardFeatureConfig>,
 ): WizardFeatureConfig => {
   if (!overrides) return config;
-
   return {
     ...config,
     ...overrides,
@@ -299,81 +215,97 @@ const mergeConfigOverrides = (
 };
 
 /**
- * Apply configuration options to filter/modify steps
- */
-const applyConfigOptions = (
-  config: WizardFeatureConfig,
-  options?: WizardConfigOptions,
-): WizardFeatureConfig => {
-  if (!options) return config;
-
-  let steps = [...config.steps];
-
-  // Filter out style selection steps if disabled
-  if (options.disableStyleSelections) {
-    const styleStepIds = ["romantic_mood", "art_style", "artist_style"];
-    steps = steps.filter((step) => !styleStepIds.includes(step.id));
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[WizardConfig] Style selections disabled", {
-        filteredStepIds: styleStepIds,
-        remainingSteps: steps.map((s) => s.id),
-      });
-    }
-  }
-
-  return {
-    ...config,
-    steps,
-  };
-};
-
-/**
- * Configuration Options for Wizard Behavior
+ * Configuration Options
  */
 export interface WizardConfigOptions {
-  readonly disableStyleSelections?: boolean; // Disable romantic mood, art style, artist style
+  /** Explicit input type - highest priority */
+  readonly inputType?: WizardInputType;
+  /** Additional steps to append */
+  readonly additionalSteps?: WizardFeatureConfig["steps"];
+  /** Custom overrides */
+  readonly overrides?: Partial<WizardFeatureConfig>;
 }
 
 /**
  * Get wizard config for a scenario
- * 1. Check for explicit config in SCENARIO_WIZARD_CONFIGS
- * 2. Auto-detect feature type and generate config
- * 3. Apply overrides if provided
- * 4. Apply options to disable certain steps
  *
- * This means ALL scenarios work automatically!
+ * Priority:
+ * 1. Explicit inputType in options (highest)
+ * 2. Explicit config in SCENARIO_WIZARD_CONFIGS
+ * 3. Auto-detect from scenario ID patterns
+ *
+ * @example
+ * // Auto-detect from ID
+ * getScenarioWizardConfig("text-to-video")
+ *
+ * // Explicit input type for app-specific scenarios
+ * getScenarioWizardConfig("ai-kiss", { inputType: WizardInputType.DUAL_IMAGE })
  */
 export const getScenarioWizardConfig = (
   scenarioId: string,
   options?: WizardConfigOptions,
-  overrides?: Partial<WizardFeatureConfig>,
 ): WizardFeatureConfig => {
-  // 1. Explicit config (highest priority)
-  if (SCENARIO_WIZARD_CONFIGS[scenarioId]) {
-    const config = mergeConfigOverrides(SCENARIO_WIZARD_CONFIGS[scenarioId], overrides);
-    return applyConfigOptions(config, options);
+  // 1. Explicit inputType (highest priority)
+  if (options?.inputType) {
+    const factory = CONFIG_FACTORIES[options.inputType];
+    let config = factory(scenarioId);
+    config = mergeConfigOverrides(config, options.overrides);
+
+    if (options.additionalSteps) {
+      config = { ...config, steps: [...config.steps, ...options.additionalSteps] };
+    }
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[WizardConfig] Using explicit inputType", {
+        scenarioId,
+        inputType: options.inputType,
+      });
+    }
+
+    return config;
   }
 
-  // 2. Auto-detect feature type
-  const featureType = detectFeatureType(scenarioId);
+  // 2. Explicit config in registry
+  if (SCENARIO_WIZARD_CONFIGS[scenarioId]) {
+    let config = SCENARIO_WIZARD_CONFIGS[scenarioId];
+    config = mergeConfigOverrides(config, options?.overrides);
+
+    if (options?.additionalSteps) {
+      config = { ...config, steps: [...config.steps, ...options.additionalSteps] };
+    }
+
+    return config;
+  }
+
+  // 3. Auto-detect from scenario ID
+  const inputType = detectWizardInputType(scenarioId);
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[WizardConfig] Auto-detected feature type", {
+    console.log("[WizardConfig] Auto-detected inputType", {
       scenarioId,
-      featureType,
+      inputType,
     });
   }
 
-  // 3. Generate config from factory
-  const factory = FEATURE_CONFIG_FACTORIES[featureType];
-  const config = factory(scenarioId);
+  const factory = CONFIG_FACTORIES[inputType];
+  let config = factory(scenarioId);
+  config = mergeConfigOverrides(config, options?.overrides);
 
-  // 4. Apply overrides
-  const configWithOverrides = mergeConfigOverrides(config, overrides);
+  if (options?.additionalSteps) {
+    config = { ...config, steps: [...config.steps, ...options.additionalSteps] };
+  }
 
-  // 5. Apply options (disable steps)
-  return applyConfigOptions(configWithOverrides, options);
+  return config;
+};
+
+/**
+ * Register a custom wizard config for a scenario
+ */
+export const registerWizardConfig = (
+  scenarioId: string,
+  config: WizardFeatureConfig,
+): void => {
+  SCENARIO_WIZARD_CONFIGS[scenarioId] = config;
 };
 
 /**
@@ -384,8 +316,14 @@ export const hasExplicitConfig = (scenarioId: string): boolean => {
 };
 
 /**
- * Get feature type for a scenario
+ * Get input type for a scenario
  */
-export const getScenarioFeatureType = (scenarioId: string): FeatureType => {
-  return detectFeatureType(scenarioId);
+export const getScenarioWizardInputType = (scenarioId: string): WizardInputType => {
+  return detectWizardInputType(scenarioId);
 };
+
+/** @deprecated Use getScenarioWizardInputType instead */
+export const getScenarioFeatureType = getScenarioWizardInputType;
+
+/** @deprecated Use detectWizardInputType instead */
+export const detectFeatureType = detectWizardInputType;

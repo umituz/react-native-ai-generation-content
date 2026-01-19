@@ -1,5 +1,5 @@
 import { Scenario, ScenarioId } from "../../domain/Scenario";
-import { createStoryTemplate } from "../utils/scenario-utils";
+import { createPhotorealisticPrompt, createStoryTemplate } from "../utils/scenario-utils";
 
 export const WELLNESS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
   {
@@ -8,8 +8,10 @@ export const WELLNESS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Balance and harmony",
     icon: "🧘",
     imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800",
-    aiPrompt:
-      "A couple in a high-end yoga studio, both looking at the camera with serene smiles, in a graceful yoga pose side-by-side, dressed in matching stylish athletic wear, soft natural lighting and calm minimalist studio background",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in high-end yoga studio, both facing camera with serene peaceful smiles while holding graceful tree pose side-by-side, wearing matching stylish athletic wear in earth tones, minimalist studio with large windows and natural wood floors in background",
+      "soft natural window lighting with calm zen atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "find their inner peace together",
       "Breathing in sync, finding balance not just on the mat, but in every part of their shared life.",
@@ -22,8 +24,10 @@ export const WELLNESS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🏃",
     imageUrl:
       "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800",
-    aiPrompt:
-      "A couple running together in a scenic park trail, both looking at the camera with energetic smiles, dressed in professional running gear, morning mist and sun rays through trees in background, dynamic and fit",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple running together on scenic park trail, both facing camera with energetic healthy smiles, wearing professional running gear with fitness watches, morning mist and golden sun rays streaming through tree canopy in background",
+      "golden morning light with misty energetic outdoor atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "push their limits together",
       "Step by step, mile after mile. They are each other's strongest motivation and greatest support.",
@@ -36,8 +40,10 @@ export const WELLNESS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     icon: "🏊",
     imageUrl:
       "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",
-    aiPrompt:
-      "A couple at an infinity pool, both looking at the camera with joyful smiles, halfway in crystal blue water, dressed in elegant swimwear and goggles, luxury resort and ocean sunset in background, fit and refreshed",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple at infinity pool edge, both facing camera with joyful refreshed smiles, halfway submerged in crystal blue water, man in sleek swim trunks, woman in elegant one-piece swimsuit with goggles on head, luxury resort with ocean sunset visible over infinity edge in background",
+      "warm golden sunset lighting with refreshing resort atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "dive into health together",
       "In the water, they move as one. A refreshing way to stay strong and connected in their fitness journey.",
@@ -49,8 +55,10 @@ export const WELLNESS_SCENARIOS: Omit<Scenario, 'outputType' | 'category'>[] = [
     description: "Fueling love and health",
     icon: "🥗",
     imageUrl: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800",
-    aiPrompt:
-      "A couple in a bright modern kitchen, both looking at the camera with warm smiles, preparing a fresh colorful salad, dressed in casual stylish aprons, wooden cutting board with fresh organic vegetables, vibrant and healthy atmosphere",
+    aiPrompt: createPhotorealisticPrompt(
+      "a couple in bright modern white kitchen, both facing camera with warm happy smiles while preparing colorful fresh salad together, wearing casual stylish aprons, wooden cutting board with vibrant organic vegetables like tomatoes peppers and greens visible on marble counter",
+      "bright natural kitchen lighting with vibrant healthy atmosphere"
+    ),
     storyTemplate: createStoryTemplate(
       "nourish their bodies and souls",
       "They say you are what you eat. They choose to be healthy, vibrant, and deeply in love.",
