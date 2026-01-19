@@ -21,10 +21,3 @@ export type {
   UseTextToImageFormOptions,
   UseTextToImageFormReturn,
 } from "./useTextToImageForm";
-
-// Provider-based Feature Hook
-export { useTextToImageFeature } from "./useTextToImageFeature";
-export type {
-  UseTextToImageFeatureProps,
-  UseTextToImageFeatureReturn,
-} from "./useTextToImageFeature";

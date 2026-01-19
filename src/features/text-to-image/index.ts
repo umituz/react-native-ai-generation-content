@@ -83,13 +83,6 @@ export type {
   UseTextToImageFormReturn,
 } from "./presentation";
 
-// Provider-based Feature Hook
-export { useTextToImageFeature } from "./presentation";
-export type {
-  UseTextToImageFeatureProps,
-  UseTextToImageFeatureReturn,
-} from "./presentation";
-
 // =============================================================================
 // PRESENTATION LAYER - Components
 // =============================================================================
