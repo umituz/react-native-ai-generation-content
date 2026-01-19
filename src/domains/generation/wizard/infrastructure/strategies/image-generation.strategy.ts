@@ -24,10 +24,13 @@ declare const __DEV__: boolean;
 // ============================================================================
 
 export interface ImageGenerationInput {
+  /** Photos are optional for text-to-image */
   readonly photos: readonly string[];
   readonly prompt: string;
   /** Optional interaction style for multi-person images */
   readonly interactionStyle?: InteractionStyle;
+  /** Optional style from wizard selection */
+  readonly style?: string;
 }
 
 export interface ImageGenerationResult {
@@ -40,29 +43,29 @@ export interface ImageGenerationResult {
 
 async function extractPhotosFromWizardData(
   wizardData: Record<string, unknown>,
-): Promise<string[] | null> {
+): Promise<string[]> {
   const photoKeys = Object.keys(wizardData)
     .filter((k) => k.includes(PHOTO_KEY_PREFIX))
     .sort();
 
   if (photoKeys.length === 0) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.error("[ImageStrategy] No photos found", { keys: Object.keys(wizardData) });
-    }
-    return null;
+    return [];
   }
 
   const photoUris: string[] = [];
   for (const key of photoKeys) {
     const photo = wizardData[key] as { uri?: string };
-    if (!photo?.uri) return null;
-    photoUris.push(photo.uri);
+    if (photo?.uri) {
+      photoUris.push(photo.uri);
+    }
+  }
+
+  if (photoUris.length === 0) {
+    return [];
   }
 
   const photosBase64 = await Promise.all(photoUris.map((uri) => readFileAsBase64(uri)));
-  const validPhotos = photosBase64.filter(Boolean) as string[];
-
-  return validPhotos.length > 0 ? validPhotos : null;
+  return photosBase64.filter(Boolean) as string[];
 }
 
 // ============================================================================
@@ -85,42 +88,52 @@ async function executeImageGeneration(
     const formatBase64 = (base64: string): string =>
       base64.startsWith("data:") ? base64 : `${BASE64_IMAGE_PREFIX}${base64}`;
 
-    const imageUrls = input.photos.map(formatBase64);
-    if (imageUrls.length === 0) {
-      return { success: false, error: "At least one image required" };
-    }
+    const hasPhotos = input.photos.length > 0;
+    const imageUrls = hasPhotos ? input.photos.map(formatBase64) : [];
 
-    // Build face preservation prompt dynamically based on number of people
-    const facePrompt = buildFacePreservationPrompt({
-      scenarioPrompt: input.prompt,
-      personCount: imageUrls.length,
-    });
+    let finalPrompt = input.prompt;
 
-    // Build interaction style prompt for multi-person images
-    const interactionPrompt = buildInteractionStylePrompt({
-      style: input.interactionStyle ?? "romantic",
-      personCount: imageUrls.length,
-    });
-
-    // Combine prompts: face preservation + interaction style
-    const enhancedPrompt = interactionPrompt
-      ? `${facePrompt}\n\n${interactionPrompt}`
-      : facePrompt;
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[ImageStrategy] Prompt built for", imageUrls.length, "person(s)", {
-        interactionStyle: input.interactionStyle ?? "romantic",
+    if (hasPhotos) {
+      // Photo-based: Build face preservation prompt
+      const facePrompt = buildFacePreservationPrompt({
+        scenarioPrompt: input.prompt,
+        personCount: imageUrls.length,
       });
+
+      const interactionPrompt = buildInteractionStylePrompt({
+        style: input.interactionStyle ?? "romantic",
+        personCount: imageUrls.length,
+      });
+
+      finalPrompt = interactionPrompt
+        ? `${facePrompt}\n\n${interactionPrompt}`
+        : facePrompt;
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[ImageStrategy] Photo-based generation for", imageUrls.length, "person(s)");
+      }
+    } else {
+      // Text-to-image: Use prompt with optional style
+      if (input.style && input.style !== DEFAULT_STYLE_VALUE) {
+        finalPrompt = `${input.prompt}. Style: ${input.style}`;
+      }
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[ImageStrategy] Text-to-image generation");
+      }
     }
 
-    const modelInput = {
-      image_urls: imageUrls,
-      prompt: enhancedPrompt,
+    const modelInput: Record<string, unknown> = {
+      prompt: finalPrompt,
       aspect_ratio: MODEL_INPUT_DEFAULTS.aspectRatio,
       output_format: MODEL_INPUT_DEFAULTS.outputFormat,
       num_images: MODEL_INPUT_DEFAULTS.numImages,
       enable_safety_checker: MODEL_INPUT_DEFAULTS.enableSafetyChecker,
     };
+
+    if (hasPhotos) {
+      modelInput.image_urls = imageUrls;
+    }
 
     let lastStatus = "";
     const result = await provider.subscribe(model, modelInput, {
@@ -151,39 +164,47 @@ export async function buildImageInput(
   scenario: WizardScenarioData,
 ): Promise<ImageGenerationInput | null> {
   const photos = await extractPhotosFromWizardData(wizardData);
-  if (!photos) return null;
 
-  if (!scenario.aiPrompt?.trim()) {
-    throw new Error(`Scenario "${scenario.id}" must have aiPrompt field`);
+  // Get prompt from wizardData (text_input step) OR scenario.aiPrompt
+  const userPrompt = wizardData.prompt as string | undefined;
+  const prompt = userPrompt?.trim() || scenario.aiPrompt?.trim();
+
+  if (!prompt) {
+    throw new Error("Prompt is required for image generation");
   }
 
-  let prompt = scenario.aiPrompt;
+  // For photo-based generation, apply style enhancements
+  let finalPrompt = prompt;
+  if (photos.length > 0) {
+    const styleEnhancements: string[] = [];
 
-  const styleEnhancements: string[] = [];
+    const romanticMoods = wizardData.selection_romantic_mood as string[] | undefined;
+    if (romanticMoods?.length) {
+      styleEnhancements.push(`Mood: ${romanticMoods.join(", ")}`);
+    }
 
-  const romanticMoods = wizardData.selection_romantic_mood as string[] | undefined;
-  if (romanticMoods?.length) {
-    styleEnhancements.push(`Mood: ${romanticMoods.join(", ")}`);
+    const artStyle = wizardData.selection_art_style as string | undefined;
+    if (artStyle && artStyle !== DEFAULT_STYLE_VALUE) {
+      styleEnhancements.push(`Art style: ${artStyle}`);
+    }
+
+    const artist = wizardData.selection_artist_style as string | undefined;
+    if (artist && artist !== DEFAULT_STYLE_VALUE) {
+      styleEnhancements.push(`Artist style: ${artist}`);
+    }
+
+    if (styleEnhancements.length > 0) {
+      finalPrompt = `${prompt}. ${styleEnhancements.join(", ")}`;
+    }
   }
 
-  const artStyle = wizardData.selection_art_style as string | undefined;
-  if (artStyle && artStyle !== DEFAULT_STYLE_VALUE) {
-    styleEnhancements.push(`Art style: ${artStyle}`);
-  }
-
-  const artist = wizardData.selection_artist_style as string | undefined;
-  if (artist && artist !== DEFAULT_STYLE_VALUE) {
-    styleEnhancements.push(`Artist style: ${artist}`);
-  }
-
-  if (styleEnhancements.length > 0) {
-    prompt = `${prompt}. ${styleEnhancements.join(", ")}`;
-  }
+  // Get style from wizard selection (for text-to-image)
+  const style = wizardData.style as string | undefined;
 
   // Get interaction style from scenario (default: romantic for couple apps)
   const interactionStyle = (scenario.interactionStyle as InteractionStyle) ?? "romantic";
 
-  return { photos, prompt, interactionStyle };
+  return { photos, prompt: finalPrompt, style, interactionStyle };
 }
 
 // ============================================================================

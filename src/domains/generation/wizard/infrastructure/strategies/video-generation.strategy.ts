@@ -11,16 +11,18 @@ import type { WizardScenarioData } from "../../presentation/hooks/useWizardGener
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { PHOTO_KEY_PREFIX, VIDEO_FEATURE_PATTERNS } from "./wizard-strategy.constants";
 
-declare const __DEV__: boolean;
-
 // ============================================================================
 // Types
 // ============================================================================
 
 export interface VideoGenerationInput {
-  readonly sourceImageBase64: string;
-  readonly targetImageBase64: string;
+  /** Source image (optional for text-to-video) */
+  readonly sourceImageBase64?: string;
+  /** Target image (optional, uses source if not provided) */
+  readonly targetImageBase64?: string;
   readonly prompt: string;
+  /** Video duration in seconds */
+  readonly duration?: number;
 }
 
 export interface VideoGenerationResult {
@@ -33,29 +35,29 @@ export interface VideoGenerationResult {
 
 async function extractPhotosFromWizardData(
   wizardData: Record<string, unknown>,
-): Promise<string[] | null> {
+): Promise<string[]> {
   const photoKeys = Object.keys(wizardData)
     .filter((k) => k.includes(PHOTO_KEY_PREFIX))
     .sort();
 
   if (photoKeys.length === 0) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.error("[VideoStrategy] No photos found", { keys: Object.keys(wizardData) });
-    }
-    return null;
+    return [];
   }
 
   const photoUris: string[] = [];
   for (const key of photoKeys) {
     const photo = wizardData[key] as { uri?: string };
-    if (!photo?.uri) return null;
-    photoUris.push(photo.uri);
+    if (photo?.uri) {
+      photoUris.push(photo.uri);
+    }
+  }
+
+  if (photoUris.length === 0) {
+    return [];
   }
 
   const photosBase64 = await Promise.all(photoUris.map((uri) => readFileAsBase64(uri)));
-  const validPhotos = photosBase64.filter(Boolean) as string[];
-
-  return validPhotos.length > 0 ? validPhotos : null;
+  return photosBase64.filter(Boolean) as string[];
 }
 
 // ============================================================================
@@ -83,16 +85,24 @@ export async function buildVideoInput(
   scenario: WizardScenarioData,
 ): Promise<VideoGenerationInput | null> {
   const photos = await extractPhotosFromWizardData(wizardData);
-  if (!photos || photos.length < 1) return null;
 
-  if (!scenario.aiPrompt?.trim()) {
-    throw new Error(`Scenario "${scenario.id}" must have aiPrompt field`);
+  // Get prompt from wizardData or scenario
+  const userPrompt = wizardData.prompt as string | undefined;
+  const motionPrompt = wizardData.motion_prompt as string | undefined;
+  const prompt = userPrompt?.trim() || motionPrompt?.trim() || scenario.aiPrompt?.trim();
+
+  if (!prompt) {
+    throw new Error("Prompt is required for video generation");
   }
+
+  // Get duration from wizardData
+  const duration = wizardData.duration as number | undefined;
 
   return {
     sourceImageBase64: photos[0],
     targetImageBase64: photos[1] || photos[0],
-    prompt: scenario.aiPrompt,
+    prompt,
+    duration,
   };
 }
 
@@ -120,8 +130,8 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
       const result = await executeVideoFeature(
         videoFeatureType,
         {
-          sourceImageBase64: videoInput.sourceImageBase64,
-          targetImageBase64: videoInput.targetImageBase64,
+          sourceImageBase64: videoInput.sourceImageBase64 || "",
+          targetImageBase64: videoInput.targetImageBase64 || videoInput.sourceImageBase64 || "",
           prompt: videoInput.prompt,
         },
         { onProgress },

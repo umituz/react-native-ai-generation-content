@@ -29,4 +29,6 @@ export const MODEL_INPUT_DEFAULTS = {
 export const VIDEO_FEATURE_PATTERNS: Record<string, VideoFeatureType> = {
   kiss: "ai-kiss",
   hug: "ai-hug",
+  "text-to-video": "text-to-video",
+  "image-to-video": "image-to-video",
 };
