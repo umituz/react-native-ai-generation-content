@@ -6,10 +6,11 @@
 import type { GenerationExecutor } from "../../domain/generation.types";
 import { ImageExecutor } from "./image-executor";
 import { VideoExecutor } from "./video-executor";
+import { TextToImageExecutor } from "./text-to-image-executor";
 
 declare const __DEV__: boolean;
 
-type GenerationType = "image" | "video" | "meme";
+export type GenerationType = "image" | "video" | "text-to-image" | "text-to-video" | "image-to-video" | "meme";
 
 export class ExecutorFactory {
   private static executors = new Map<
@@ -27,7 +28,12 @@ export class ExecutorFactory {
         case "image":
           this.executors.set(type, new ImageExecutor());
           break;
+        case "text-to-image":
+          this.executors.set(type, new TextToImageExecutor());
+          break;
         case "video":
+        case "text-to-video":
+        case "image-to-video":
           this.executors.set(type, new VideoExecutor());
           break;
         case "meme":

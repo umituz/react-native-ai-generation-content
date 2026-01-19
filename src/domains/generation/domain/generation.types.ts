@@ -33,6 +33,22 @@ export interface ImageGenerationInput {
   outputFormat?: "jpeg" | "png" | "webp";
 }
 
+export interface TextToImageInput {
+  prompt: string;
+  negativePrompt?: string;
+  aspectRatio?: string;
+  size?: string;
+  numImages?: number;
+  guidanceScale?: number;
+  style?: string;
+  outputFormat?: "jpeg" | "png" | "webp";
+}
+
+export interface TextToImageOutput {
+  imageUrl: string;
+  imageUrls: string[];
+}
+
 export interface VideoGenerationInput {
   sourceImageBase64: string;
   targetImageBase64?: string;

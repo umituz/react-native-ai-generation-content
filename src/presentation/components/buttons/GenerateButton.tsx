@@ -86,13 +86,20 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
         >
           <View style={styles.buttonContent}>
             {isProcessing ? (
-              <AtomicSpinner size="sm" color={tokens.colors.textInverse} />
+              <AtomicSpinner size="sm" color={disabled ? tokens.colors.textSecondary : tokens.colors.textInverse} />
             ) : (
-              <AtomicIcon name={icon} customSize={iconSize} customColor={tokens.colors.textInverse} />
+              <AtomicIcon 
+                name={icon} 
+                customSize={iconSize} 
+                customColor={disabled ? tokens.colors.textSecondary : tokens.colors.textInverse} 
+              />
             )}
             <AtomicText
               type="bodyLarge"
-              style={[styles.buttonText, { color: tokens.colors.textInverse }]}
+              style={[
+                styles.buttonText, 
+                { color: disabled ? tokens.colors.textSecondary : tokens.colors.textInverse }
+              ]}
             >
               {finalDisplayText}
             </AtomicText>

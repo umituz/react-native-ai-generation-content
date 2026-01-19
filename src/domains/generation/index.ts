@@ -27,7 +27,11 @@ export type {
   VideoGenerationOutput,
   MemeGenerationInput,
   MemeGenerationOutput,
+  TextToImageInput,
+  TextToImageOutput,
 } from "./domain/generation.types";
+
+export { ExecutorFactory, type GenerationType as ExecutorGenerationType } from "./infrastructure/executors/executor-factory";
 
 export * from "./wizard";
 export * from "./infrastructure/flow";

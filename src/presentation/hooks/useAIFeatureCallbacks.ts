@@ -45,6 +45,9 @@ export type AIFeatureGenerationResult =
  * Universal callbacks interface that maps to all feature-specific ones
  */
 export interface AIFeatureCallbacks<TRequest = unknown, TResult = unknown> {
+  // User state - needed by orchestrator
+  userId: string | null;
+
   // TextToImageCallbacks compatible
   executeGeneration: (request: TRequest) => Promise<AIFeatureGenerationResult>;
   calculateCost: (multiplier?: number, _model?: string | null) => number;
@@ -140,6 +143,7 @@ export function useAIFeatureCallbacks<TRequest = unknown, TResult = unknown>(
 
   return useMemo(
     () => ({
+      userId,
       executeGeneration,
       calculateCost,
       canAfford,
@@ -153,6 +157,7 @@ export function useAIFeatureCallbacks<TRequest = unknown, TResult = unknown>(
       onShowPaywall,
     }),
     [
+      userId,
       executeGeneration,
       calculateCost,
       canAfford,

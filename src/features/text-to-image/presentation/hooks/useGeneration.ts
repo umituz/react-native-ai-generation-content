@@ -46,7 +46,10 @@ const DEFAULT_ALERT_MESSAGES: AlertMessages = {
 };
 
 export function useGeneration(options: UseGenerationOptions): UseGenerationReturn {
-  const { formState, callbacks, userId, onPromptCleared } = options;
+  const { formState, callbacks, onPromptCleared } = options;
+
+  // Get userId from callbacks (from app layer via useAIFeatureCallbacks)
+  const userId = callbacks.userId ?? undefined;
 
   const totalCost = callbacks.calculateCost(formState.numImages, formState.selectedModel);
 
@@ -100,6 +103,24 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
       return { success: false, error: "Prompt is required" };
     }
 
+    // Auth check BEFORE generation
+    if (!callbacks.isAuthenticated()) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[TextToImage] Auth required");
+      }
+      callbacks.onAuthRequired?.();
+      return { success: false, error: "Authentication required" };
+    }
+
+    // Credit check BEFORE generation
+    if (!callbacks.canAfford(totalCost)) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[TextToImage] Insufficient credits", { totalCost });
+      }
+      callbacks.onCreditsRequired?.(totalCost);
+      return { success: false, error: "Insufficient credits" };
+    }
+
     const request: TextToImageGenerationRequest = {
       prompt: trimmedPrompt,
       model: formState.selectedModel ?? undefined,
@@ -120,7 +141,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
 
     // Return result based on orchestrator state
     return null; // Result handled via callbacks
-  }, [formState, generate, callbacks]);
+  }, [formState, generate, callbacks, totalCost]);
 
   return {
     generationState: {

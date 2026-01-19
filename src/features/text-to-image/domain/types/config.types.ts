@@ -39,6 +39,8 @@ export type TextToImageGenerationResult =
   | TextToImageGenerationResultError;
 
 export interface TextToImageCallbacks {
+  /** User ID for orchestrator - required for credit deduction */
+  userId: string | null;
   executeGeneration: (
     request: TextToImageGenerationRequest,
   ) => Promise<TextToImageGenerationResult>;

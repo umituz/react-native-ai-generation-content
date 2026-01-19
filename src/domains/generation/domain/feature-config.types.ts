@@ -7,11 +7,18 @@
 // Feature Type Enums
 // ============================================================================
 
-export type GenerationType = "image" | "video" | "meme";
+export type GenerationType =
+  | "image"
+  | "video"
+  | "text-to-image"
+  | "text-to-video"
+  | "image-to-video"
+  | "meme";
 
 export type InputType =
   | "single-photo"
   | "two-photos"
+  | "text-only"
   | "text"
   | "photo-text"
   | "photo-photo-text";
