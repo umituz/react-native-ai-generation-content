@@ -7,6 +7,8 @@
 // Domain Entities - Configuration Types
 export type {
   BaseStepConfig,
+  AuthGateStepConfig,
+  CreditGateStepConfig,
   PhotoUploadStepConfig,
   TextInputStepConfig,
   SelectionStepConfig,

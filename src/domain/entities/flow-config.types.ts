@@ -5,15 +5,37 @@
 
 /** Step Types */
 export enum StepType {
+  // Gate steps - auth and credits check
+  AUTH_GATE = "auth_gate",
+  CREDIT_GATE = "credit_gate",
+  // Content steps
   CATEGORY_SELECTION = "category_selection",
   SCENARIO_SELECTION = "scenario_selection",
   SCENARIO_PREVIEW = "scenario_preview",
   PARTNER_UPLOAD = "partner_upload",
   TEXT_INPUT = "text_input",
   FEATURE_SELECTION = "feature_selection",
+  // Generation steps
   GENERATING = "generating",
   RESULT_PREVIEW = "result_preview",
   CUSTOM = "custom",
+}
+
+/** Gate Step Result */
+export type GateResult = "passed" | "blocked" | "pending";
+
+/** Auth Gate Configuration */
+export interface AuthGateConfig {
+  readonly allowAnonymous?: boolean;
+  readonly onAuthRequired?: () => void;
+  readonly onAuthSuccess?: () => void;
+}
+
+/** Credit Gate Configuration */
+export interface CreditGateConfig {
+  readonly requiredCredits: number;
+  readonly onCreditsExhausted?: () => void;
+  readonly onCreditsAvailable?: () => void;
 }
 
 /** Partner Configuration */

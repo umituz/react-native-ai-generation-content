@@ -73,9 +73,31 @@ export interface PreviewStepConfig extends BaseStepConfig {
 }
 
 /**
+ * Auth Gate Step Configuration
+ * Blocks flow if user is not authenticated
+ */
+export interface AuthGateStepConfig extends BaseStepConfig {
+  readonly type: "auth_gate";
+  readonly allowAnonymous?: boolean;
+  readonly messageKey?: string;
+}
+
+/**
+ * Credit Gate Step Configuration
+ * Blocks flow if user doesn't have enough credits
+ */
+export interface CreditGateStepConfig extends BaseStepConfig {
+  readonly type: "credit_gate";
+  readonly requiredCredits: number;
+  readonly messageKey?: string;
+}
+
+/**
  * Union of all step config types
  */
 export type WizardStepConfig =
+  | AuthGateStepConfig
+  | CreditGateStepConfig
   | PhotoUploadStepConfig
   | TextInputStepConfig
   | SelectionStepConfig

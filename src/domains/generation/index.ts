@@ -35,3 +35,16 @@ export { ExecutorFactory, type GenerationType as ExecutorGenerationType } from "
 
 export * from "./wizard";
 export * from "./infrastructure/flow";
+
+// Flow config types from domain
+export {
+  StepType,
+  type GateResult,
+  type AuthGateConfig,
+  type CreditGateConfig,
+  type FlowState,
+  type FlowActions,
+  type FlowCallbacks,
+  type FlowConfiguration,
+  type StepDefinition,
+} from "../../domain/entities/flow-config.types";
