@@ -47,7 +47,8 @@ export interface TextToImageCallbacks {
   calculateCost: (numImages: NumImages, model?: string | null) => number;
   canAfford: (cost: number) => boolean;
   isAuthenticated: () => boolean;
-  onAuthRequired?: () => void;
+  /** Called when auth is required. Pass retryCallback to resume after auth. */
+  onAuthRequired?: (retryCallback?: () => void) => void;
   onCreditsRequired?: (cost: number) => void;
   onSuccess?: (imageUrls: string[]) => void;
   onError?: (error: string) => void;

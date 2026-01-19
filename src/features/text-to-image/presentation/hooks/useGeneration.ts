@@ -108,7 +108,10 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[TextToImage] Auth required");
       }
-      callbacks.onAuthRequired?.();
+      // Pass retry callback to resume generation after auth
+      callbacks.onAuthRequired?.(() => {
+        void handleGenerate();
+      });
       return { success: false, error: "Authentication required" };
     }
 

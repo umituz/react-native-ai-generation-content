@@ -24,8 +24,8 @@ export interface AIFeatureCallbacksConfig<TRequest = unknown, TResult = unknown>
     imageUrls?: string[];
   }>;
 
-  // Actions from app
-  showAuthModal: () => void;
+  // Actions from app - showAuthModal accepts callback for post-auth resume
+  showAuthModal: (callback?: () => void) => void;
   openPaywall: () => void;
   deductCredits?: (amount: number) => Promise<void>;
 
@@ -53,7 +53,8 @@ export interface AIFeatureCallbacks<TRequest = unknown, TResult = unknown> {
   calculateCost: (multiplier?: number, _model?: string | null) => number;
   canAfford: (cost: number) => boolean;
   isAuthenticated: () => boolean;
-  onAuthRequired: () => void;
+  /** Called when auth is required. Pass retryCallback to resume after auth. */
+  onAuthRequired: (retryCallback?: () => void) => void;
   onCreditsRequired: (cost?: number) => void;
   onSuccess?: (result: TResult) => void;
   onError?: (error: string) => void;
@@ -97,8 +98,8 @@ export function useAIFeatureCallbacks<TRequest = unknown, TResult = unknown>(
     [creditCostPerUnit],
   );
 
-  const onAuthRequired = useCallback(() => {
-    showAuthModal();
+  const onAuthRequired = useCallback((retryCallback?: () => void) => {
+    showAuthModal(retryCallback);
   }, [showAuthModal]);
 
   const onCreditsRequired = useCallback(
