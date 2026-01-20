@@ -1,9 +1,8 @@
 /**
  * Image Generation Strategy
- * Handles image-specific generation logic
+ * Handles image-specific generation logic (execution only)
  */
 
-import { createCreationsRepository } from "../../../../creations/infrastructure/adapters";
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { DEFAULT_STYLE_VALUE, IMAGE_PROCESSING_PROMPTS } from "./wizard-strategy.constants";
@@ -80,14 +79,8 @@ function applyStyleEnhancements(prompt: string, wizardData: Record<string, unkno
 // Strategy Factory
 // ============================================================================
 
-declare const __DEV__: boolean;
-
 export function createImageStrategy(options: CreateImageStrategyOptions): WizardStrategy {
-  const { scenario, collectionName = "creations" } = options;
-  const repository = createCreationsRepository(collectionName);
-
-  let lastInputRef: WizardImageInput | null = null;
-  let processingCreationId: string | null = null;
+  const { scenario } = options;
 
   return {
     execute: async (input: unknown) => {
@@ -95,8 +88,6 @@ export function createImageStrategy(options: CreateImageStrategyOptions): Wizard
       if (!scenario.model) {
         throw new Error("Model is required for image generation");
       }
-
-      lastInputRef = imageInput;
 
       const result = await executeImageGeneration(imageInput, scenario.model);
 
@@ -108,64 +99,5 @@ export function createImageStrategy(options: CreateImageStrategyOptions): Wizard
     },
 
     getCreditCost: () => 1,
-
-    saveAsProcessing: async (uid: string, input: unknown) => {
-      const imageInput = input as WizardImageInput;
-      const creationId = `${scenario.id}_${Date.now()}`;
-      processingCreationId = creationId;
-
-      await repository.create(uid, {
-        id: creationId,
-        uri: "",
-        type: scenario.id,
-        prompt: imageInput.prompt,
-        status: "processing" as const,
-        createdAt: new Date(),
-        isShared: false,
-        isFavorite: false,
-        metadata: { scenarioId: scenario.id, scenarioTitle: scenario.title },
-      });
-
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[ImageStrategy] Saved as processing", { creationId });
-      }
-
-      return creationId;
-    },
-
-    save: async (result: unknown, uid: string, creationId?: string) => {
-      const input = lastInputRef;
-      const imageResult = result as { imageUrl?: string };
-      if (!input || !scenario?.id || !imageResult.imageUrl) return;
-
-      const idToUpdate = creationId || processingCreationId;
-
-      if (idToUpdate) {
-        // Update existing processing creation to completed
-        await repository.update(uid, idToUpdate, {
-          uri: imageResult.imageUrl,
-          status: "completed" as const,
-          output: { imageUrl: imageResult.imageUrl },
-        });
-
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[ImageStrategy] Updated to completed", { creationId: idToUpdate });
-        }
-      } else {
-        // Fallback: create new (shouldn't happen normally)
-        await repository.create(uid, {
-          id: `${scenario.id}_${Date.now()}`,
-          uri: imageResult.imageUrl,
-          type: scenario.id,
-          prompt: input.prompt,
-          status: "completed" as const,
-          createdAt: new Date(),
-          isShared: false,
-          isFavorite: false,
-          metadata: { scenarioId: scenario.id, scenarioTitle: scenario.title },
-          output: { imageUrl: imageResult.imageUrl },
-        });
-      }
-    },
   };
 }

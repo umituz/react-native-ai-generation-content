@@ -4,10 +4,8 @@
  */
 
 export interface WizardStrategy {
+  /** Execute the generation - returns result with URLs */
   execute: (input: unknown) => Promise<{ imageUrl?: string; videoUrl?: string }>;
+  /** Get credit cost for this generation */
   getCreditCost: () => number;
-  /** Save as processing when generation starts - returns creation ID */
-  saveAsProcessing?: (userId: string, input: unknown) => Promise<string>;
-  /** Update to completed when generation finishes */
-  save?: (result: unknown, userId: string, creationId?: string) => Promise<void>;
 }

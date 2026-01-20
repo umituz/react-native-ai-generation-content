@@ -1,12 +1,15 @@
 /**
  * useWizardGeneration Hook
- * Wizard generation using orchestrator + strategy factory pattern
- * Saves to Firestore with status="processing" at start for gallery display
+ * Wizard generation with Firestore persistence
+ * - Saves status="processing" at start
+ * - Updates to status="completed" on success
+ * - Updates to status="failed" on error
  */
 
 import { useEffect, useRef, useMemo, useCallback } from "react";
 import { useGenerationOrchestrator } from "../../../../../presentation/hooks/generation";
 import { createWizardStrategy, buildWizardInput } from "../../infrastructure/strategies";
+import { createCreationPersistence } from "../../infrastructure/utils/creation-persistence.util";
 import type {
   UseWizardGenerationProps,
   UseWizardGenerationReturn,
@@ -36,47 +39,62 @@ export const useWizardGeneration = (
   } = props;
 
   const hasStarted = useRef(false);
-  const currentCreationIdRef = useRef<string | null>(null);
+  const creationIdRef = useRef<string | null>(null);
+  const inputRef = useRef<{ prompt: string } | null>(null);
 
-  useEffect(() => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[useWizardGeneration] Initialized", {
-        scenarioId: scenario.id,
-        outputType: scenario.outputType,
-      });
-    }
-  }, [scenario.id, scenario.outputType]);
+  // Persistence utility - separate from strategy
+  const persistence = useMemo(() => createCreationPersistence(), []);
 
-  const strategy = useMemo(() => {
-    return createWizardStrategy({
-      scenario,
-      collectionName: "creations",
-    });
-  }, [scenario]);
+  // Strategy - only handles execution
+  const strategy = useMemo(() => createWizardStrategy({ scenario }), [scenario]);
 
   const handleSuccess = useCallback(
-    (result: unknown) => {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[useWizardGeneration] Success", {
-          creationId: currentCreationIdRef.current,
-        });
+    async (result: unknown) => {
+      const typedResult = result as { imageUrl?: string; videoUrl?: string };
+      const creationId = creationIdRef.current;
+
+      // Update to completed in Firestore
+      if (creationId && userId) {
+        try {
+          await persistence.updateToCompleted(userId, creationId, {
+            uri: typedResult.imageUrl || typedResult.videoUrl || "",
+            imageUrl: typedResult.imageUrl,
+            videoUrl: typedResult.videoUrl,
+          });
+        } catch (err) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[useWizardGeneration] updateToCompleted error:", err);
+          }
+        }
       }
-      currentCreationIdRef.current = null;
+
+      creationIdRef.current = null;
+      inputRef.current = null;
       onSuccess?.(result);
     },
-    [onSuccess],
+    [userId, persistence, onSuccess],
   );
 
   const handleError = useCallback(
-    (err: { message: string }) => {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[useWizardGeneration] Error:", err.message);
+    async (err: { message: string }) => {
+      const creationId = creationIdRef.current;
+
+      // Update to failed in Firestore
+      if (creationId && userId) {
+        try {
+          await persistence.updateToFailed(userId, creationId, err.message);
+        } catch (updateErr) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[useWizardGeneration] updateToFailed error:", updateErr);
+          }
+        }
       }
-      // Note: Failed status update is handled by orchestrator via strategy
-      currentCreationIdRef.current = null;
+
+      creationIdRef.current = null;
+      inputRef.current = null;
       onError?.(err.message);
     },
-    [onError],
+    [userId, persistence, onError],
   );
 
   const { generate, isGenerating } = useGenerationOrchestrator(strategy, {
@@ -89,13 +107,6 @@ export const useWizardGeneration = (
 
   useEffect(() => {
     if (isGeneratingStep && !hasStarted.current && !isGenerating) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[useWizardGeneration] Starting generation", {
-          scenarioId: scenario.id,
-          wizardDataKeys: Object.keys(wizardData),
-        });
-      }
-
       hasStarted.current = true;
 
       buildWizardInput(wizardData, scenario)
@@ -106,11 +117,18 @@ export const useWizardGeneration = (
             return;
           }
 
-          // Save to Firestore with status="processing" BEFORE starting generation
-          if (strategy.saveAsProcessing && userId) {
+          inputRef.current = input as { prompt: string };
+
+          // Save to Firestore with status="processing"
+          const typedInput = input as { prompt?: string };
+          if (userId && typedInput.prompt) {
             try {
-              const creationId = await strategy.saveAsProcessing(userId, input);
-              currentCreationIdRef.current = creationId;
+              const creationId = await persistence.saveAsProcessing(userId, {
+                scenarioId: scenario.id,
+                scenarioTitle: scenario.title || scenario.id,
+                prompt: typedInput.prompt,
+              });
+              creationIdRef.current = creationId;
 
               if (typeof __DEV__ !== "undefined" && __DEV__) {
                 console.log("[useWizardGeneration] Saved as processing:", creationId);
@@ -119,16 +137,12 @@ export const useWizardGeneration = (
               if (typeof __DEV__ !== "undefined" && __DEV__) {
                 console.error("[useWizardGeneration] saveAsProcessing error:", err);
               }
-              // Continue with generation even if save fails
             }
           }
 
           generate(input);
         })
         .catch((error) => {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[useWizardGeneration] Input build error:", error);
-          }
           hasStarted.current = false;
           onError?.(error.message);
         });
@@ -137,16 +151,7 @@ export const useWizardGeneration = (
     if (!isGeneratingStep && hasStarted.current) {
       hasStarted.current = false;
     }
-  }, [
-    isGeneratingStep,
-    scenario,
-    wizardData,
-    isGenerating,
-    generate,
-    onError,
-    strategy,
-    userId,
-  ]);
+  }, [isGeneratingStep, scenario, wizardData, isGenerating, generate, onError, userId, persistence]);
 
   return { isGenerating };
 };
