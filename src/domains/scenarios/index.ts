@@ -11,6 +11,26 @@ export type { Scenario } from "./domain/Scenario";
 // Scenario Data
 export { SCENARIOS } from "./infrastructure/ScenariosData";
 
+// Scenario Helpers - For app-level configuration
+export {
+  createScenariosForApp,
+  filterScenariosByOutputType,
+  filterScenariosByCategory,
+  getScenarioCategories,
+  findScenarioById,
+} from "./infrastructure/scenario-helpers";
+export type { AppScenarioConfig } from "./infrastructure/scenario-helpers";
+
+// Scenario Registry - Singleton for app configuration
+export {
+  configureScenarios,
+  getConfiguredScenario,
+  getDefaultOutputType,
+  isScenariosConfigured,
+  getAllConfiguredScenarios,
+} from "./infrastructure/scenario-registry";
+export type { ConfiguredScenario } from "./infrastructure/scenario-registry";
+
 // Utils
 export { createStoryTemplate } from "./infrastructure/utils/scenario-utils";
 

@@ -107,7 +107,7 @@ export const useImageGeneration = <
 
   const strategy: GenerationStrategy<TInput, TResult> = useMemo(
     () => ({
-      execute: async (input, onProgress) => {
+      execute: async (input) => {
         // Build executor input
         const executorInput = buildExecutorInput
           ? buildExecutorInput(input)
@@ -118,7 +118,6 @@ export const useImageGeneration = <
         const result = await executeImageFeature(
           featureType,
           executorInput,
-          { onProgress },
         );
 
         if (!result.success || !result.imageUrl) {

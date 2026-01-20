@@ -76,7 +76,7 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
 
   const strategy: GenerationStrategy<VideoGenerationInput, TextToVideoResult> = useMemo(
     () => ({
-      execute: async (input, onProgress) => {
+      execute: async (input) => {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[TextToVideo] Executing generation:", input.prompt.slice(0, 100));
         }
@@ -94,11 +94,6 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
             model: config.model,
             buildInput,
             extractResult,
-            onProgress: (progress) => {
-              setState((prev) => ({ ...prev, progress }));
-              onProgress?.(progress);
-              callbacks.onProgress?.(progress);
-            },
           },
         );
 

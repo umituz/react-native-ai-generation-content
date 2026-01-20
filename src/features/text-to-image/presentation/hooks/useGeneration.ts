@@ -27,7 +27,6 @@ export interface UseGenerationOptions {
 
 export interface TextToImageGenerationState {
   isGenerating: boolean;
-  progress: number;
   error: string | null;
 }
 
@@ -72,7 +71,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
   );
 
   // Use orchestrator
-  const { generate, isGenerating, progress, error } = useGenerationOrchestrator(strategy, {
+  const { generate, isGenerating, error } = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages: DEFAULT_ALERT_MESSAGES,
     onCreditsExhausted: () => callbacks.onCreditsRequired?.(totalCost),
@@ -131,7 +130,6 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
   return {
     generationState: {
       isGenerating,
-      progress,
       error: error?.message || null,
     },
     totalCost,

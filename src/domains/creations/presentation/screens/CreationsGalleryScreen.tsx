@@ -1,11 +1,7 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
-  useAlert,
-  AlertType,
-  AlertMode,
-  useSharing,
   FilterSheet,
   ScreenLayout,
   useAppFocusEffect,
@@ -13,10 +9,10 @@ import {
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useGalleryFilters } from "../hooks/useGalleryFilters";
+import { useGalleryCallbacks } from "../hooks/useGalleryCallbacks";
 import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
-import { ResultPreviewScreen } from "../../../result-preview/presentation/components/ResultPreviewScreen";
-import { StarRatingPicker } from "../../../result-preview/presentation/components/StarRatingPicker";
-import { useResultActions } from "../../../result-preview/presentation/hooks/useResultActions";
+import { GalleryResultPreview } from "../components/GalleryResultPreview";
+import { usePendingJobs } from "../../../../presentation/hooks/use-pending-jobs";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import { getPreviewUrl } from "../../domain/utils";
 import type { Creation } from "../../domain/entities/Creation";
@@ -28,9 +24,11 @@ interface CreationsGalleryScreenProps {
   readonly repository: ICreationsRepository;
   readonly config: CreationsConfig;
   readonly t: (key: string) => string;
+  readonly initialCreationId?: string;
   readonly onEmptyAction?: () => void;
   readonly emptyActionLabel?: string;
   readonly showFilter?: boolean;
+  readonly showPendingJobs?: boolean;
 }
 
 export function CreationsGalleryScreen({
@@ -38,25 +36,42 @@ export function CreationsGalleryScreen({
   repository,
   config,
   t,
+  initialCreationId,
   onEmptyAction,
   emptyActionLabel,
   showFilter = config.showFilter ?? true,
+  showPendingJobs = true,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
-  const { share } = useSharing();
-  const alert = useAlert();
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
   const [showRatingPicker, setShowRatingPicker] = useState(false);
+  const hasAutoSelectedRef = useRef(false);
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
+  const { jobs: pendingJobs } = usePendingJobs();
   const deleteMutation = useDeleteCreation({ userId, repository });
 
-  const selectedImageUrl = selectedCreation ? (getPreviewUrl(selectedCreation.output) || selectedCreation.uri) : undefined;
+  // Auto-select creation when initialCreationId is provided
+  useEffect(() => {
+    if (initialCreationId && creations && creations.length > 0 && !hasAutoSelectedRef.current) {
+      const creation = creations.find((c) => c.id === initialCreationId);
+      if (creation) {
+        hasAutoSelectedRef.current = true;
+        setSelectedCreation(creation);
+      }
+    }
+  }, [initialCreationId, creations]);
 
-  const { isSharing, isSaving, handleDownload, handleShare } = useResultActions({
-    imageUrl: selectedImageUrl,
-    onSaveSuccess: () => alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("result.saveSuccess"), t("result.saveSuccessMessage")),
-    onSaveError: () => alert.show(AlertType.ERROR, AlertMode.TOAST, t("common.error"), t("result.saveError")),
+  const callbacks = useGalleryCallbacks({
+    userId,
+    repository,
+    config,
+    t,
+    deleteMutation,
+    refetch: async () => { await refetch(); },
+    setSelectedCreation,
+    setShowRatingPicker,
+    selectedCreation,
   });
 
   const statusOptions = config.filterConfig?.statusOptions ?? STATUS_FILTER_OPTIONS;
@@ -64,60 +79,9 @@ export function CreationsGalleryScreen({
   const showStatusFilter = config.filterConfig?.showStatusFilter ?? true;
   const showMediaFilter = config.filterConfig?.showMediaFilter ?? true;
 
-  const filters = useGalleryFilters({ creations, statusOptions, mediaOptions, t });
+  const filters = useGalleryFilters({ creations, statusOptions, mediaOptions, t, pendingJobs });
 
   useAppFocusEffect(useCallback(() => { void refetch(); }, [refetch]));
-
-  const handleShareCard = useCallback((c: Creation) => {
-    void share(c.uri, { dialogTitle: t("common.share") });
-  }, [share, t]);
-
-  const handleDelete = useCallback((c: Creation) => {
-    alert.show(AlertType.WARNING, AlertMode.MODAL, t(config.translations.deleteTitle), t(config.translations.deleteMessage), {
-      actions: [
-        { id: "cancel", label: t("common.cancel"), onPress: () => {} },
-        { id: "delete", label: t("common.delete"), style: "destructive", onPress: async () => {
-          await deleteMutation.mutateAsync(c.id);
-        }}
-      ]
-    });
-  }, [alert, config, deleteMutation, t]);
-
-  const handleFavorite = useCallback((c: Creation, isFavorite: boolean) => {
-    void (async () => {
-      if (!userId) return;
-      const success = await repository.updateFavorite(userId, c.id, isFavorite);
-      if (success) void refetch();
-    })();
-  }, [userId, repository, refetch]);
-
-  const handleCardPress = useCallback((item: Creation) => {
-    setSelectedCreation(item);
-  }, []);
-
-  const handleBack = useCallback(() => {
-    setSelectedCreation(null);
-  }, []);
-
-  const handleTryAgain = useCallback(() => {
-    setSelectedCreation(null);
-  }, []);
-
-  const handleOpenRatingPicker = useCallback(() => {
-    setShowRatingPicker(true);
-  }, []);
-
-  const handleSubmitRating = useCallback((rating: number, description: string) => {
-    if (!userId || !selectedCreation) return;
-    void (async () => {
-      const success = await repository.rate(userId, selectedCreation.id, rating, description);
-      if (success) {
-        setSelectedCreation({ ...selectedCreation, rating, ratedAt: new Date() });
-        alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("result.rateSuccessTitle"), t("result.rateSuccessMessage"));
-        void refetch();
-      }
-    })();
-  }, [userId, selectedCreation, repository, alert, t, refetch]);
 
   const filterButtons = useMemo(() => {
     const buttons = [];
@@ -144,10 +108,7 @@ export function CreationsGalleryScreen({
 
   const getScenarioTitle = useCallback((type: string): string => {
     const typeConfig = config.types?.find((tc) => tc.id === type);
-    if (typeConfig?.labelKey) {
-      return t(typeConfig.labelKey);
-    }
-    return type.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    return typeConfig?.labelKey ? t(typeConfig.labelKey) : type.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
   }, [config.types, t]);
 
   const renderItem = useCallback(({ item }: { item: Creation }) => (
@@ -155,16 +116,21 @@ export function CreationsGalleryScreen({
       creation={item}
       titleText={getScenarioTitle(item.type)}
       callbacks={{
-        onPress: () => handleCardPress(item),
-        onShare: async () => handleShareCard(item),
-        onDelete: () => handleDelete(item),
-        onFavorite: () => handleFavorite(item, !item.isFavorite),
+        onPress: () => callbacks.handleCardPress(item),
+        onShare: async () => callbacks.handleShareCard(item),
+        onDelete: () => callbacks.handleDelete(item),
+        onFavorite: () => callbacks.handleFavorite(item, !item.isFavorite),
       }}
     />
-  ), [handleShareCard, handleDelete, handleFavorite, handleCardPress, getScenarioTitle]);
+  ), [callbacks, getScenarioTitle]);
+
+  const activePendingCount = useMemo(() => {
+    if (!showPendingJobs) return 0;
+    return pendingJobs.filter((j) => j.status === "processing" || j.status === "queued").length;
+  }, [showPendingJobs, pendingJobs]);
 
   const renderHeader = useMemo(() => {
-    if ((!creations || creations.length === 0) && !isLoading) return null;
+    if (!creations?.length && !isLoading) return null;
     return (
       <View style={[styles.header, { backgroundColor: tokens.colors.surface, borderBottomColor: tokens.colors.border }]}>
         <GalleryHeader
@@ -173,10 +139,12 @@ export function CreationsGalleryScreen({
           countLabel={t(config.translations.photoCount)}
           showFilter={showFilter}
           filterButtons={filterButtons}
+          pendingCount={activePendingCount}
+          pendingLabel={t("creations.processing")}
         />
       </View>
     );
-  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, tokens]);
+  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, tokens, activePendingCount]);
 
   const renderEmpty = useMemo(() => (
     <GalleryEmptyStates
@@ -193,43 +161,25 @@ export function CreationsGalleryScreen({
     />
   ), [isLoading, creations, filters.isFiltered, tokens, t, config, emptyActionLabel, onEmptyAction, filters.clearAllFilters]);
 
-  // Show result preview when a creation is selected
-  if (selectedCreation && selectedImageUrl) {
-    const hasRating = selectedCreation.rating !== undefined && selectedCreation.rating !== null;
+  const selectedImageUrl = selectedCreation ? (getPreviewUrl(selectedCreation.output) || selectedCreation.uri) : undefined;
+  const selectedVideoUrl = selectedCreation?.output?.videoUrl;
+  const hasMediaToShow = selectedImageUrl || selectedVideoUrl;
+
+  if (selectedCreation && hasMediaToShow) {
     return (
-      <>
-        <ResultPreviewScreen
-          imageUrl={selectedImageUrl}
-          isSaving={isSaving}
-          isSharing={isSharing}
-          onDownload={handleDownload}
-          onShare={handleShare}
-          onTryAgain={handleTryAgain}
-          onNavigateBack={handleBack}
-          onRate={handleOpenRatingPicker}
-          hideLabel
-          iconOnly
-          showTryAgain
-          showRating={!hasRating}
-          translations={{
-            title: t(config.translations.title),
-            saveButton: t("result.saveButton"),
-            saving: t("result.saving"),
-            shareButton: t("result.shareButton"),
-            sharing: t("result.sharing"),
-            tryAnother: t("result.tryAnother"),
-          }}
-        />
-        <StarRatingPicker
-          visible={showRatingPicker}
-          onClose={() => setShowRatingPicker(false)}
-          onRate={handleSubmitRating}
-          title={t("result.rateTitle")}
-          submitLabel={t("common.submit")}
-          cancelLabel={t("common.cancel")}
-          descriptionPlaceholder={t("result.feedbackPlaceholder")}
-        />
-      </>
+      <GalleryResultPreview
+        selectedCreation={selectedCreation}
+        imageUrl={selectedVideoUrl ? undefined : selectedImageUrl}
+        videoUrl={selectedVideoUrl}
+        showRatingPicker={showRatingPicker}
+        config={config}
+        t={t}
+        onBack={callbacks.handleBack}
+        onTryAgain={callbacks.handleTryAgain}
+        onRate={callbacks.handleOpenRatingPicker}
+        onSubmitRating={callbacks.handleSubmitRating}
+        onCloseRating={() => setShowRatingPicker(false)}
+      />
     );
   }
 
@@ -241,7 +191,7 @@ export function CreationsGalleryScreen({
         keyExtractor={(item) => item.id}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={[styles.listContent, (!filters.filtered || filters.filtered.length === 0) && styles.emptyContent]}
+        contentContainerStyle={[styles.listContent, (!filters.filtered?.length) && styles.emptyContent]}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => void refetch()} tintColor={tokens.colors.primary} />}
       />

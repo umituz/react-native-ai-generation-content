@@ -13,7 +13,7 @@ export type OrchestratorStatus =
   | "error";
 
 export interface GenerationStrategy<TInput, TResult> {
-  execute: (input: TInput, onProgress?: (progress: number) => void) => Promise<TResult>;
+  execute: (input: TInput) => Promise<TResult>;
   getCreditCost: () => number;
   save?: (result: TResult, userId: string) => Promise<void>;
 }
@@ -65,7 +65,6 @@ export interface GenerationConfig {
 export interface GenerationState<TResult> {
   readonly status: OrchestratorStatus;
   readonly isGenerating: boolean;
-  readonly progress: number;
   readonly result: TResult | null;
   readonly error: GenerationError | null;
 }
@@ -83,7 +82,6 @@ export interface UseGenerationOrchestratorReturn<TInput, TResult> {
   readonly reset: () => void;
   readonly status: OrchestratorStatus;
   readonly isGenerating: boolean;
-  readonly progress: number;
   readonly result: TResult | null;
   readonly error: GenerationError | null;
 }

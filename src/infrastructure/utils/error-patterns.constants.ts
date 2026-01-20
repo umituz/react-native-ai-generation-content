@@ -25,10 +25,13 @@ export const AUTH_ERROR_PATTERNS = [
 
 export const CONTENT_POLICY_PATTERNS = [
   "content policy",
+  "content_policy_violation",
+  "policy violation",
   "safety",
   "moderation",
   "inappropriate",
   "blocked",
+  "flagged by a content checker",
 ] as const;
 
 export const SERVER_ERROR_PATTERNS = [

@@ -6,185 +6,94 @@
 import { useState, useCallback } from "react";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
-import { File, Paths } from "expo-file-system/next";
-import type {
-  UseResultActionsOptions,
-  UseResultActionsReturn,
-} from "../types/result-preview.types";
+import {
+  isBase64DataUrl,
+  toDataUrl,
+  saveBase64ToFile,
+  isVideoUrl,
+  downloadMediaToFile,
+} from "@umituz/react-native-design-system";
+import type { UseResultActionsOptions, UseResultActionsReturn } from "../types/result-preview.types";
 
-/**
- * Check if a string is a base64 data URL or raw base64
- */
-const isBase64DataUrl = (str: string): boolean => {
-  return str.startsWith("data:image/");
-};
-
-/**
- * Check if a string is raw base64 (not a URL and not a data URL)
- */
-const isRawBase64 = (str: string): boolean => {
-  return !str.startsWith("http") && !str.startsWith("data:image/") && !str.startsWith("file://");
-};
-
-/**
- * Convert raw base64 to data URL format
- */
-const toDataUrl = (str: string): string => {
-  if (isBase64DataUrl(str)) return str;
-  if (isRawBase64(str)) return `data:image/jpeg;base64,${str}`;
-  return str;
-};
-
-/**
- * Save base64 image to file system
- */
-const saveBase64ToFile = async (
-  base64Data: string,
-): Promise<string> => {
-  const timestamp = Date.now();
-  const filename = `ai_generation_${timestamp}.jpg`;
-  const file = new File(Paths.cache, filename);
-
-  // Extract pure base64 data (remove data URL prefix if present)
-  const pureBase64 = base64Data.replace(/^data:image\/\w+;base64,/, "");
-
-  // Convert base64 to Uint8Array
-  const binaryString = atob(pureBase64);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-
-  // Write file
-  file.write(bytes);
-
-  return file.uri;
-};
-
-/**
- * Hook for managing result actions (save/share)
- */
-export const useResultActions = (
-  options: UseResultActionsOptions = {},
-): UseResultActionsReturn => {
-  const {
-    imageUrl,
-    onSaveSuccess,
-    onSaveError,
-    onShareStart,
-    onShareEnd,
-  } = options;
+export const useResultActions = (options: UseResultActionsOptions = {}): UseResultActionsReturn => {
+  const { imageUrl, videoUrl, onSaveSuccess, onSaveError, onShareStart, onShareEnd } = options;
 
   const [isSharing, setIsSharing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  /**
-   * Save image to device gallery
-   */
+  const mediaUrl = videoUrl || imageUrl;
+
   const handleDownload = useCallback(async () => {
-    if (!imageUrl) {
-      onSaveError?.(new Error("No image URL provided"));
+    if (!mediaUrl) {
+      onSaveError?.(new Error("No media URL provided"));
       return;
     }
 
     try {
       setIsSaving(true);
 
-      // Request permissions
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== "granted") {
-        throw new Error("Media library permission not granted");
+      if (status !== "granted") throw new Error("Media library permission not granted");
+
+      const isVideo = Boolean(videoUrl) || isVideoUrl(mediaUrl);
+      let fileUri = mediaUrl;
+
+      if (!isVideo) {
+        const normalizedUrl = toDataUrl(mediaUrl);
+        if (isBase64DataUrl(normalizedUrl)) {
+          fileUri = await saveBase64ToFile(normalizedUrl);
+        } else if (normalizedUrl.startsWith("http")) {
+          fileUri = await downloadMediaToFile(normalizedUrl, false);
+        }
+      } else if (mediaUrl.startsWith("http")) {
+        fileUri = await downloadMediaToFile(mediaUrl, true);
       }
 
-      // Convert to data URL if raw base64
-      const normalizedUrl = toDataUrl(imageUrl);
-      let fileUri = normalizedUrl;
-
-      // If it's a base64 string, save to file first
-      if (isBase64DataUrl(normalizedUrl)) {
-        fileUri = await saveBase64ToFile(normalizedUrl);
-      }
-
-      // Save to media library
       await MediaLibrary.saveToLibraryAsync(fileUri);
-
       onSaveSuccess?.();
     } catch (error) {
-      const errorObj =
-        error instanceof Error ? error : new Error(String(error));
-      onSaveError?.(errorObj);
+      onSaveError?.(error instanceof Error ? error : new Error(String(error)));
     } finally {
       setIsSaving(false);
     }
-  }, [imageUrl, onSaveSuccess, onSaveError]);
+  }, [mediaUrl, videoUrl, onSaveSuccess, onSaveError]);
 
-  /**
-   * Download image from URL to file
-   */
-  const downloadUrlToFile = async (url: string): Promise<string> => {
-    const timestamp = Date.now();
-    const filename = `ai_generation_${timestamp}.jpg`;
-    const file = new File(Paths.cache, filename);
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to download image: ${response.statusText}`);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const bytes = new Uint8Array(arrayBuffer);
-    file.write(bytes);
-
-    return file.uri;
-  };
-
-  /**
-   * Share image
-   */
   const handleShare = useCallback(async () => {
-    if (!imageUrl) {
-      return;
-    }
+    if (!mediaUrl) return;
 
     try {
       setIsSharing(true);
       onShareStart?.();
 
-      // Convert to data URL if raw base64
-      const normalizedUrl = toDataUrl(imageUrl);
-      let shareUrl = normalizedUrl;
+      const isVideo = Boolean(videoUrl) || isVideoUrl(mediaUrl);
+      let shareUrl = mediaUrl;
 
-      // Download to file for sharing (works for both base64 and remote URLs)
-      if (isBase64DataUrl(normalizedUrl)) {
-        shareUrl = await saveBase64ToFile(normalizedUrl);
-      } else if (normalizedUrl.startsWith("http")) {
-        shareUrl = await downloadUrlToFile(normalizedUrl);
+      if (!isVideo) {
+        const normalizedUrl = toDataUrl(mediaUrl);
+        if (isBase64DataUrl(normalizedUrl)) {
+          shareUrl = await saveBase64ToFile(normalizedUrl);
+        } else if (normalizedUrl.startsWith("http")) {
+          shareUrl = await downloadMediaToFile(normalizedUrl, false);
+        }
+      } else if (mediaUrl.startsWith("http")) {
+        shareUrl = await downloadMediaToFile(mediaUrl, true);
       }
 
-      // Use expo-sharing for cross-platform file sharing
       const isAvailable = await Sharing.isAvailableAsync();
       if (isAvailable) {
-        await Sharing.shareAsync(shareUrl, {
-          mimeType: "image/jpeg",
-          dialogTitle: "Share Image",
-        });
+        const mimeType = isVideo ? "video/mp4" : "image/jpeg";
+        await Sharing.shareAsync(shareUrl, { mimeType, dialogTitle: isVideo ? "Share Video" : "Share Image" });
         onShareEnd?.(false);
       } else {
         onShareEnd?.(true);
       }
     } catch (error: unknown) {
-      // User cancelled or error - silently handle
       if (__DEV__) console.log("Share cancelled or failed:", error);
       onShareEnd?.(true);
     } finally {
       setIsSharing(false);
     }
-  }, [imageUrl, onShareStart, onShareEnd]);
+  }, [mediaUrl, videoUrl, onShareStart, onShareEnd]);
 
-  return {
-    isSaving,
-    isSharing,
-    handleDownload,
-    handleShare,
-  };
+  return { isSaving, isSharing, handleDownload, handleShare };
 };

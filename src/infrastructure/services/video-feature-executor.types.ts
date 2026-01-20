@@ -9,7 +9,6 @@ import type { VideoResultExtractor } from "../utils/url-extractor";
  */
 export interface ExecuteVideoFeatureOptions {
   extractResult?: VideoResultExtractor;
-  onProgress?: (progress: number) => void;
   onStatusChange?: (status: string) => void;
 }
 

@@ -52,9 +52,6 @@ export interface UseAIGenerationReturn {
 
   /** Whether generation is in progress */
   isGenerating: boolean;
-
-  /** Current progress (0-100) */
-  progress: number;
 }
 
 // ============================================================================
@@ -107,6 +104,5 @@ export function useAIGeneration(
   return {
     generate: orchestrator.generate,
     isGenerating: orchestrator.isGenerating,
-    progress: orchestrator.progress,
   };
 }

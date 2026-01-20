@@ -8,10 +8,8 @@
  * These ensure consistent, realistic output across all scenarios
  */
 export const PHOTOREALISTIC_BASE = {
-  quality: "ultra-realistic photograph, photorealistic, RAW photo quality, 8K UHD resolution",
-  skin: "natural skin with subtle texture, visible pores, authentic subtle imperfections, realistic human features",
-  camera: "shot on professional DSLR camera with 85mm f/1.4 lens, shallow depth of field, soft bokeh background",
-  lighting: "natural volumetric lighting, cinematic color grading",
+  quality: "photorealistic",
+  lighting: "cinematic lighting",
 } as const;
 
 /**
@@ -25,7 +23,7 @@ export const createPhotorealisticPrompt = (
   lightingOverride?: string,
 ): string => {
   const lighting = lightingOverride ?? PHOTOREALISTIC_BASE.lighting;
-  return `${PHOTOREALISTIC_BASE.quality}, ${scene}, ${PHOTOREALISTIC_BASE.skin}, ${lighting}, ${PHOTOREALISTIC_BASE.camera}`;
+  return `${PHOTOREALISTIC_BASE.quality}, ${scene}, ${lighting}`;
 };
 
 export const createStoryTemplate = (

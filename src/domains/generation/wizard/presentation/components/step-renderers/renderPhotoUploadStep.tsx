@@ -1,0 +1,52 @@
+/**
+ * Photo Upload Step Renderer
+ */
+
+import React from "react";
+import { GenericPhotoUploadScreen } from "../../screens/GenericPhotoUploadScreen";
+import { getWizardStepConfig, getUploadedImage } from "../WizardStepRenderer.utils";
+import type { StepDefinition } from "../../../../../../domain/entities/flow-config.types";
+import type { UploadedImage } from "../../../../../../presentation/hooks/generation/useAIGenerateState";
+
+export interface PhotoUploadStepProps {
+  readonly step: StepDefinition;
+  readonly customData: Record<string, unknown>;
+  readonly onBack: () => void;
+  readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;
+  readonly t: (key: string) => string;
+}
+
+export function renderPhotoUploadStep({
+  step,
+  customData,
+  onBack,
+  onPhotoContinue,
+  t,
+}: PhotoUploadStepProps): React.ReactElement {
+  const wizardConfig = getWizardStepConfig(step.config);
+  const titleKey = wizardConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
+  const subtitleKey = wizardConfig?.subtitleKey ?? `wizard.steps.${step.id}.subtitle`;
+  const existingPhoto = getUploadedImage(customData[step.id]);
+
+  return (
+    <GenericPhotoUploadScreen
+      stepId={step.id}
+      translations={{
+        title: t(titleKey),
+        subtitle: t(subtitleKey),
+        continue: t("common.continue"),
+        tapToUpload: t("photoUpload.tapToUpload"),
+        selectPhoto: t("photoUpload.selectPhoto"),
+        change: t("common.change"),
+        fileTooLarge: t("common.errors.file_too_large"),
+        maxFileSize: t("common.errors.max_file_size"),
+        error: t("common.error"),
+        uploadFailed: t("common.errors.upload_failed"),
+      }}
+      t={t}
+      onBack={onBack}
+      onContinue={(image) => onPhotoContinue(step.id, image)}
+      existingImage={existingPhoto}
+    />
+  );
+}

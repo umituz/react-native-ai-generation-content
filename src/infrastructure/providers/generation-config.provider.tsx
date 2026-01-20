@@ -1,100 +1,64 @@
 /**
  * Generation Config Provider
- * Provides app-specific configuration to the package
- * NO hard-coded models, everything comes from app!
+ * Provides app-specific AI models configuration
+ * For scenarios, use configureScenarios() from scenario-registry
  */
 
 import React, { createContext, useContext, type ReactNode } from "react";
 
 declare const __DEV__: boolean;
 
-// ============================================================================
-// Types
-// ============================================================================
-
 export interface GenerationModels {
-  /** Image generation with face identity preservation (couple photos) */
   readonly imageCoupleMultiRef?: string;
-  /** Text-to-image generation */
   readonly imageTextToImage?: string;
-  /** Image-to-video generation */
   readonly imageToVideo?: string;
-  /** Text-to-video generation */
   readonly textToVideo?: string;
-  /** AI Kiss video */
   readonly aiKiss?: string;
-  /** AI Hug video */
   readonly aiHug?: string;
-  /** Face swap */
   readonly faceSwap?: string;
-  /** Meme generation (caption) */
   readonly memeCaption?: string;
-  /** Meme generation (image) */
   readonly memeImage?: string;
-  /** Text to voice */
   readonly textToVoice?: string;
 }
 
 export interface GenerationConfigValue {
-  /** AI models configuration from app */
   readonly models: GenerationModels;
-  /** Get model for specific feature type */
   readonly getModel: (featureType: keyof GenerationModels) => string;
 }
 
-// ============================================================================
-// Context
-// ============================================================================
-
-const GenerationConfigContext = createContext<GenerationConfigValue | null>(null);
-
-// ============================================================================
-// Provider
-// ============================================================================
+const GenerationConfigContext = createContext<GenerationConfigValue | null>(
+  null,
+);
 
 export interface GenerationConfigProviderProps {
   readonly children: ReactNode;
   readonly models: GenerationModels;
 }
 
-export const GenerationConfigProvider: React.FC<GenerationConfigProviderProps> = ({
-  children,
-  models,
-}) => {
+export const GenerationConfigProvider: React.FC<
+  GenerationConfigProviderProps
+> = ({ children, models }) => {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     const configuredModels = Object.entries(models)
       .filter(([, value]) => !!value)
       .map(([key]) => key);
-
-    console.log("[GenerationConfigProvider] Initialized with models:", {
-      configured: configuredModels,
-      imageCoupleMultiRef: models.imageCoupleMultiRef || "not configured",
-      imageTextToImage: models.imageTextToImage || "not configured",
-      imageToVideo: models.imageToVideo || "not configured",
-      textToVideo: models.textToVideo || "not configured",
-    });
+    console.log("[GenerationConfigProvider] Models:", configuredModels);
   }
 
   const getModel = (featureType: keyof GenerationModels): string => {
     const model = models[featureType];
     if (!model) {
-      const availableModels = Object.keys(models).filter(
-        (key) => models[key as keyof GenerationModels]
+      const available = Object.keys(models).filter(
+        (key) => models[key as keyof GenerationModels],
       );
-
       throw new Error(
-        `Model not configured for feature: ${featureType}.\n\n` +
-        `This app only supports: ${availableModels.join(", ") || "none"}.\n` +
-        `Please configure '${featureType}' in your GenerationConfigProvider if you need it.`
+        `Model not configured: ${featureType}. Available: ${available.join(", ") || "none"}`,
       );
     }
     return model;
   };
 
-  const value: GenerationConfigValue = {
-    models,
-    getModel,
-  };
+  const value: GenerationConfigValue = { models, getModel };
 
   return (
     <GenerationConfigContext.Provider value={value}>
@@ -103,19 +67,12 @@ export const GenerationConfigProvider: React.FC<GenerationConfigProviderProps> =
   );
 };
 
-// ============================================================================
-// Hook
-// ============================================================================
-
 export const useGenerationConfig = (): GenerationConfigValue => {
   const context = useContext(GenerationConfigContext);
-
   if (!context) {
     throw new Error(
-      "useGenerationConfig must be used within GenerationConfigProvider. " +
-      "Wrap your app with <GenerationConfigProvider models={{...}}>"
+      "useGenerationConfig must be used within GenerationConfigProvider",
     );
   }
-
   return context;
 };

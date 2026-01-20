@@ -4,7 +4,7 @@
  * Generic for all AI generation apps (image/video)
  */
 
-import { Scenario, ScenarioCategory, ScenarioOutputType } from "../domain/Scenario";
+import { Scenario, ScenarioCategory } from "../domain/Scenario";
 import { TIME_BASED_SCENARIOS } from "./data/time-based-scenarios";
 import { FAMILY_SCENARIOS } from "./data/family-scenarios";
 import { LIFESTYLE_SCENARIOS } from "./data/lifestyle-scenarios";
@@ -78,11 +78,15 @@ import { UNDERWATER_SCENARIOS } from "./data/underwater-scenarios";
 import { ARABIAN_NIGHTS_SCENARIOS } from "./data/arabian-nights-scenarios";
 import { PREHISTORIC_WORLD_SCENARIOS } from "./data/prehistoric-world-scenarios";
 
-const assignCategory = (scenarios: Omit<Scenario, 'outputType'>[], category: ScenarioCategory) =>
-  scenarios.map((s) => ({ ...s, category, outputType: "image" as ScenarioOutputType }));
+/**
+ * Assigns category to scenarios
+ * Note: outputType is NOT assigned here - apps configure via createScenariosForApp()
+ */
+const assignCategory = (scenarios: Omit<Scenario, 'category'>[], category: ScenarioCategory) =>
+  scenarios.map((s) => ({ ...s, category }));
 
 export const SCENARIOS: Scenario[] = [
-  { ...CUSTOM_SCENARIO, category: ScenarioCategory.FANTASY, outputType: "image" },
+  { ...CUSTOM_SCENARIO, category: ScenarioCategory.FANTASY },
 
   // Time & Future
   ...assignCategory(TIME_BASED_SCENARIOS, ScenarioCategory.TIME_TRAVEL),

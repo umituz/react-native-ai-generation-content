@@ -33,8 +33,10 @@ export const FeatureType = WizardInputType;
  */
 const INPUT_PATTERNS: Record<WizardInputType, RegExp[]> = {
   [WizardInputType.DUAL_IMAGE]: [
-    // Empty - app must specify explicitly for dual image scenarios
-    // This prevents accidental matches with app-specific terms
+    /ai-kiss/i,
+    /ai-hug/i,
+    /couple/i,
+    /dual/i,
   ],
 
   [WizardInputType.SINGLE_IMAGE]: [
@@ -67,10 +69,10 @@ const INPUT_PATTERNS: Record<WizardInputType, RegExp[]> = {
  * Returns SINGLE_IMAGE as safe default
  */
 export const detectWizardInputType = (scenarioId: string): WizardInputType => {
-  // Check patterns in priority order: TEXT_INPUT, SINGLE_IMAGE, DUAL_IMAGE_FACE
-  // DUAL_IMAGE has no patterns - must be explicitly specified
+  // Check patterns in priority order: TEXT_INPUT, DUAL_IMAGE, DUAL_IMAGE_FACE, SINGLE_IMAGE
   const checkOrder: WizardInputType[] = [
     WizardInputType.TEXT_INPUT,
+    WizardInputType.DUAL_IMAGE,
     WizardInputType.DUAL_IMAGE_FACE,
     WizardInputType.SINGLE_IMAGE,
   ];

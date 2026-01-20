@@ -32,3 +32,22 @@ export const VIDEO_FEATURE_PATTERNS: Record<string, VideoFeatureType> = {
   "text-to-video": "text-to-video",
   "image-to-video": "image-to-video",
 };
+
+/** Default prompts for image processing features (no user input needed) */
+export const IMAGE_PROCESSING_PROMPTS: Record<string, string> = {
+  upscale: "Enhance and upscale this image to higher resolution with improved details and clarity",
+  "face-swap": "Swap the face from the source image onto the target image naturally",
+  "anime-selfie": "Transform this photo into a high-quality anime-style portrait",
+  "photo-restore": "Restore and enhance this photo, fix damage and improve quality",
+  "remove-background": "Remove the background completely, keep only the main subject",
+  "remove-object": "Remove unwanted objects from the image while preserving the scene",
+  "replace-background": "Replace the background with a new seamless environment",
+  "hd-touch-up": "Apply HD touch-up to enhance skin and facial features naturally",
+};
+
+/** Default prompts for video generation features (no user input needed) */
+export const VIDEO_PROCESSING_PROMPTS: Record<string, string> = {
+  "ai-kiss": "Create a romantic video where these two people share a gentle, loving kiss",
+  "ai-hug": "Create a heartwarming video where these two people share a warm, affectionate hug",
+  "image-to-video": "Animate this image with natural, smooth motion while preserving the original style",
+};

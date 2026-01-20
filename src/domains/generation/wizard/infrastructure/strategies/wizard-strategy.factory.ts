@@ -17,7 +17,6 @@ export type { WizardStrategy } from "./wizard-strategy.types";
 
 export interface CreateWizardStrategyOptions {
   readonly scenario: WizardScenarioData;
-  readonly wizardData: Record<string, unknown>;
   readonly collectionName?: string;
 }
 
@@ -27,12 +26,12 @@ export interface CreateWizardStrategyOptions {
 
 export function createWizardStrategy(options: CreateWizardStrategyOptions): WizardStrategy {
   const { scenario, collectionName } = options;
-  const outputType = scenario.outputType || "video";
 
-  if (outputType === "image") {
+  if (scenario.outputType === "image") {
     return createImageStrategy({ scenario, collectionName });
   }
 
+  // Default to video strategy for video outputType or undefined
   return createVideoStrategy({ scenario, collectionName });
 }
 
@@ -44,11 +43,10 @@ export async function buildWizardInput(
   wizardData: Record<string, unknown>,
   scenario: WizardScenarioData,
 ): Promise<unknown> {
-  const outputType = scenario.outputType || "video";
-
-  if (outputType === "image") {
+  if (scenario.outputType === "image") {
     return buildImageInput(wizardData, scenario);
   }
 
+  // Default to video input for video outputType or undefined
   return buildVideoInput(wizardData, scenario);
 }

@@ -154,6 +154,7 @@ export {
 // Gallery Components
 export { CreationsHomeCard } from "./presentation/components/CreationsHomeCard";
 export { EmptyState } from "./presentation/components/EmptyState";
+export { PendingJobsSection, type PendingJobsSectionProps } from "./presentation/components/PendingJobsSection";
 
 // Utilities
 export {

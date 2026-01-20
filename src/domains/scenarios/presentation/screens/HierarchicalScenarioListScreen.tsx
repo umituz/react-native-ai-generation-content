@@ -1,17 +1,10 @@
 /**
  * HierarchicalScenarioListScreen
  * Displays scenarios filtered by sub-category with optimized performance
- * PERFORMANCE OPTIMIZED: No FlatList key remounting, memoized calculations
  */
 
-import React, { useMemo, useCallback, useState, useEffect } from "react";
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  type ListRenderItemInfo,
-} from "react-native";
+import React, { useMemo, useCallback, useState } from "react";
+import { View, FlatList, StyleSheet, type ListRenderItemInfo } from "react-native";
 import {
   AtomicText,
   AtomicCard,
@@ -19,12 +12,13 @@ import {
   useResponsive,
   ScreenLayout,
   NavigationHeader,
-  AtomicIcon,
   AtomicSpinner,
   type DesignTokens,
 } from "@umituz/react-native-design-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ScenarioData, ScenarioSubCategory } from "../../domain/scenario.types";
+import { useHierarchicalScenarios } from "../hooks/useHierarchicalScenarios";
+import { ScenarioContinueButton } from "../components/ScenarioContinueButton";
 
 export interface HierarchicalScenarioListScreenProps {
   readonly subCategoryId: string;
@@ -50,58 +44,17 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   const tokens = useAppDesignTokens();
   const insets = useSafeAreaInsets();
   const { width } = useResponsive();
-
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const subCategory = useMemo(
-    () => subCategories.find((sub) => sub.id === subCategoryId),
-    [subCategories, subCategoryId]
-  );
-
-  const filteredScenarios = useMemo(() => {
-    if (!subCategory) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[HierarchicalScenarioListScreen] No subCategory found", {
-          subCategoryId,
-          subCategoriesCount: subCategories.length,
-        });
-      }
-      return [];
-    }
-
-    const filtered = scenarios.filter((scenario) => {
-      if (!scenario.category) return false;
-      return subCategory.scenarioCategories?.includes(scenario.category) ?? false;
-    });
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[HierarchicalScenarioListScreen] Filtered scenarios", {
-        subCategoryId: subCategory.id,
-        scenarioCategories: subCategory.scenarioCategories,
-        totalScenarios: scenarios.length,
-        filteredCount: filtered.length,
-        sampleScenarioCategories: scenarios.slice(0, 5).map(s => s.category),
-      });
-    }
-
-    return filtered;
-  }, [scenarios, subCategory, subCategoryId, subCategories]);
-
-  // Debug: Monitor component state
-  useEffect(() => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[HierarchicalScenarioListScreen] Component state", {
-        subCategoryId,
-        hasSubCategory: !!subCategory,
-        filteredScenariosCount: filteredScenarios.length,
-      });
-    }
-  }, [subCategoryId, subCategory, filteredScenarios]);
+  const { subCategory, filteredScenarios } = useHierarchicalScenarios({
+    subCategoryId,
+    subCategories,
+    scenarios,
+  });
 
   const horizontalPadding = tokens.spacing.md;
   const cardSpacing = tokens.spacing.md;
 
-  // Calculate card width once - memoized to prevent unnecessary recalculations
   const cardWidth = useMemo(() => {
     const availableWidth = width - horizontalPadding * 2 - cardSpacing;
     return availableWidth / numColumns;
@@ -113,35 +66,26 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   );
 
   const handleContinue = useCallback(() => {
-    if (selectedId) {
-      onSelectScenario(selectedId);
-    }
+    if (selectedId) onSelectScenario(selectedId);
   }, [selectedId, onSelectScenario]);
 
-  // Memoized callback for card selection - prevents inline arrow functions
   const handleCardPress = useCallback((itemId: string) => {
     setSelectedId(itemId);
   }, []);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<ScenarioData>) => {
-      const title = t(`scenario.${item.id}.title`);
-      const description = t(`scenario.${item.id}.description`);
-      const isSelected = selectedId === item.id;
-
-      return (
-        <AtomicCard
-          image={item.previewImageUrl || item.imageUrl || ""}
-          title={title}
-          subtitle={description}
-          imageAspectRatio={1.25}
-          selected={isSelected}
-          style={{ width: cardWidth }}
-          onPress={() => handleCardPress(item.id)}
-          testID={`scenario-card-${item.id}`}
-        />
-      );
-    },
+    ({ item }: ListRenderItemInfo<ScenarioData>) => (
+      <AtomicCard
+        image={item.previewImageUrl || item.imageUrl || ""}
+        title={t(`scenario.${item.id}.title`)}
+        subtitle={t(`scenario.${item.id}.description`)}
+        imageAspectRatio={1.25}
+        selected={selectedId === item.id}
+        style={{ width: cardWidth }}
+        onPress={() => handleCardPress(item.id)}
+        testID={`scenario-card-${item.id}`}
+      />
+    ),
     [cardWidth, selectedId, t, handleCardPress]
   );
 
@@ -155,7 +99,7 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
     ),
     [t, styles.emptyState]
   );
-  
+
   const LoadingComponent = useMemo(
     () => (
       <View style={styles.loadingContainer}>
@@ -168,11 +112,7 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
     [tokens, t, styles.loadingContainer]
   );
 
-  if (!subCategory) {
-    return null;
-  }
-
-  const canContinue = !!selectedId;
+  if (!subCategory) return null;
 
   return (
     <View style={styles.container}>
@@ -180,46 +120,14 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
         title={t(subCategory.titleKey)}
         onBackPress={onBack}
         rightElement={
-          <TouchableOpacity
+          <ScenarioContinueButton
+            canContinue={!!selectedId}
             onPress={handleContinue}
-            disabled={!canContinue}
-            activeOpacity={0.7}
-            style={[
-              styles.continueButton,
-              {
-                backgroundColor: canContinue
-                  ? tokens.colors.primary
-                  : tokens.colors.surfaceVariant,
-                opacity: canContinue ? 1 : 0.5,
-              },
-            ]}
-          >
-            <AtomicText
-              type="bodyMedium"
-              style={[
-                styles.continueText,
-                {
-                  color: canContinue
-                    ? tokens.colors.onPrimary
-                    : tokens.colors.textSecondary,
-                },
-              ]}
-            >
-              {t("common.continue")}
-            </AtomicText>
-            <AtomicIcon
-              name="arrow-forward"
-              size="sm"
-              color={canContinue ? "onPrimary" : "textSecondary"}
-            />
-          </TouchableOpacity>
+            label={t("common.continue")}
+          />
         }
       />
-      <ScreenLayout
-        scrollable={false}
-        edges={["left", "right"]}
-        backgroundColor={tokens.colors.backgroundPrimary}
-      >
+      <ScreenLayout scrollable={false} edges={["left", "right"]} backgroundColor={tokens.colors.backgroundPrimary}>
         <FlatList
           data={filteredScenarios}
           numColumns={numColumns}
@@ -227,15 +135,8 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
           columnWrapperStyle={styles.row}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          ListEmptyComponent={
-            isLoading 
-              ? LoadingComponent 
-              : (filteredScenarios.length === 0 ? ListEmptyComponent : null)
-          }
-          contentContainerStyle={[
-            styles.listContent,
-            { paddingBottom: insets.bottom + 100 },
-          ]}
+          ListEmptyComponent={isLoading ? LoadingComponent : (filteredScenarios.length === 0 ? ListEmptyComponent : null)}
+          contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 100 }]}
           removeClippedSubviews
           maxToRenderPerBatch={10}
           updateCellsBatchingPeriod={50}
@@ -247,45 +148,11 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   );
 };
 
-const createStyles = (
-  tokens: DesignTokens,
-  cardSpacing: number,
-  horizontalPadding: number
-) =>
+const createStyles = (tokens: DesignTokens, cardSpacing: number, horizontalPadding: number) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    listContent: {
-      paddingTop: tokens.spacing.sm,
-      flexGrow: 1,
-    },
-    row: {
-      gap: cardSpacing,
-      marginBottom: cardSpacing,
-      paddingHorizontal: horizontalPadding,
-    },
-    emptyState: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      paddingVertical: tokens.spacing.xl,
-    },
-    loadingContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      paddingVertical: tokens.spacing.xl,
-    },
-    continueButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: tokens.spacing.md,
-      paddingVertical: tokens.spacing.xs,
-      borderRadius: tokens.borders.radius.full,
-    },
-    continueText: {
-      fontWeight: "800",
-      marginRight: 4,
-    },
+    container: { flex: 1 },
+    listContent: { paddingTop: tokens.spacing.sm, flexGrow: 1 },
+    row: { gap: cardSpacing, marginBottom: cardSpacing, paddingHorizontal: horizontalPadding },
+    emptyState: { flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: tokens.spacing.xl },
+    loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: tokens.spacing.xl },
   });

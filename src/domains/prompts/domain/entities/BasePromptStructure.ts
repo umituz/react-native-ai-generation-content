@@ -20,7 +20,6 @@ export const IDENTITY_PRESERVATION_CORE = `CRITICAL IDENTITY PRESERVATION (HIGHE
   "mandatory_rules": [
     "The face must be EXACTLY as it appears in the reference photo - 100% identical",
     "Preserve every facial detail: bone structure, eye shape, eye color, nose shape, lip shape",
-    "Maintain natural skin texture with pores, marks, and realistic details",
     "Keep the person instantly recognizable - any deviation is NOT acceptable"
   ],
   "forbidden_modifications": [
@@ -28,7 +27,6 @@ export const IDENTITY_PRESERVATION_CORE = `CRITICAL IDENTITY PRESERVATION (HIGHE
     "Do NOT alter eye color, eye shape, or eye spacing",
     "Do NOT modify nose shape, size, or position",
     "Do NOT change lip shape, thickness, or natural expression",
-    "Do NOT alter skin tone or smooth skin texture",
     "Do NOT remove natural features like freckles, moles, or wrinkles"
   ],
   "verification": "Before output: confirm face matches reference photo with 100% accuracy"
@@ -36,17 +34,14 @@ export const IDENTITY_PRESERVATION_CORE = `CRITICAL IDENTITY PRESERVATION (HIGHE
 
 /**
  * Photorealistic rendering instruction
- * Ensures high-quality, professional photography output
  */
 export const PHOTOREALISTIC_RENDERING = `PHOTOREALISTIC RENDERING REQUIREMENTS:
 {
-  "style": "HIGH-END PHOTOREALISTIC PHOTOGRAPH",
-  "quality": "8k resolution, ultra-detailed textures, professional photography",
-  "lighting": "Cinematic lighting with natural shadows and highlights",
-  "camera": "Shot on professional DSLR camera (Canon EOS R5, Sony A7R V, or equivalent)",
-  "lens": "Professional lens with appropriate focal length (35mm, 50mm, 85mm)",
+  "style": "PHOTOREALISTIC PHOTOGRAPH",
+  "quality": "high quality, professional photography",
+  "lighting": "Natural lighting with realistic shadows and highlights",
   "prohibited": "STRICTLY NO anime, cartoons, illustrations, sketches, 3D renders, or non-photorealistic styles",
-  "output": "Must look like a real photograph taken by a professional photographer"
+  "output": "Must look like a real photograph"
 }`;
 
 /**
@@ -150,14 +145,14 @@ TRANSFORMATION REQUEST:
     "environment_update": "${background.replace(/\n/g, ' ').trim()}"
   },
   "visual_constraints": {
-    "style_matching": "Render as a premium DSLR photograph",
+    "style_matching": "Render as a premium photograph",
     "face_preservation": "Maintain 100% identity of the person",
-    "lighting": "Realistic professional studio or outdoor cinematic lighting",
+    "lighting": "Realistic professional recording lighting",
     "pose": "Natural, contextually appropriate pose"
   }
 }
 
-FINAL COMMAND: Transform the input person into a strictly photorealistic ${styleName}. The result MUST be a real-life looking person in high-quality ${styleName} attire, maintaining perfect facial identity.`;
+FINAL COMMAND: Transform the input person into a photorealistic ${styleName}. The result MUST be a real-life looking person in high-quality ${styleName} attire, maintaining perfect facial identity.`;
 
 /**
  * Simplified prompt for scenarios that already include detailed instructions
@@ -170,55 +165,4 @@ export const enhanceExistingPrompt = (existingPrompt: string): string => {
   return `${IDENTITY_PRESERVATION_CORE}
 
 ${existingPrompt}`;
-};
-
-/**
- * Multi-person identity preservation rules
- * Ensures all people maintain their identities with strict rules
- * Supports any number of people (1, 2, 3, N)
- */
-export const MULTI_PERSON_PRESERVATION_RULES = {
-  requirement: "ALL individuals must have 100% identical facial appearance to their reference photos",
-  perPersonRule: "Use EXACTLY the person from @imageN - preserve 100% identical facial features",
-  forbidden: [
-    "Do NOT swap, mix, or blend facial features between people",
-    "Do NOT idealize or beautify any face",
-    "Do NOT alter facial proportions or characteristics",
-  ],
-  positioning: "Natural positioning, all looking at camera with natural expressions",
-} as const;
-
-/**
- * Creates a multi-person prompt dynamically
- *
- * @param scenarioPrompt - The scenario description
- * @param personCount - Number of people (1, 2, 3, N)
- * @returns Complete prompt with identity preservation for all people
- */
-export const createMultiPersonPrompt = (
-  scenarioPrompt: string,
-  personCount: number,
-): string => {
-  const personRefs = Array.from({ length: personCount }, (_, i) =>
-    `Person ${i + 1}: @image${i + 1} - preserve 100% facial identity`
-  ).join("\n  ");
-
-  return `${IDENTITY_PRESERVATION_CORE}
-
-MULTI-PERSON IDENTITY PRESERVATION (${personCount} people):
-{
-  "requirement": "${MULTI_PERSON_PRESERVATION_RULES.requirement}",
-  "references": [
-    ${personRefs}
-  ],
-  "forbidden": ${JSON.stringify(MULTI_PERSON_PRESERVATION_RULES.forbidden)},
-  "positioning": "${MULTI_PERSON_PRESERVATION_RULES.positioning}"
-}
-
-${PHOTOREALISTIC_RENDERING}
-
-${NATURAL_POSE_GUIDELINES}
-
-SCENARIO DESCRIPTION:
-${scenarioPrompt}`;
 };

@@ -4,10 +4,7 @@
  */
 
 export interface WizardStrategy {
-  execute: (
-    input: unknown,
-    onProgress?: (progress: number) => void,
-  ) => Promise<{ imageUrl?: string; videoUrl?: string }>;
+  execute: (input: unknown) => Promise<{ imageUrl?: string; videoUrl?: string }>;
   getCreditCost: () => number;
   save?: (result: unknown, userId: string) => Promise<void>;
 }

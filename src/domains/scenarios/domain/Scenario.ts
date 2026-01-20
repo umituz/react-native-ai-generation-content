@@ -551,6 +551,20 @@ export enum ScenarioId {
   VALLEY_OF_TITANS = "valley_of_titans",
 
   CUSTOM = "custom",
+
+  // AI Features (not content scenarios, but registered for outputType)
+  AI_HUG = "ai-hug",
+  AI_KISS = "ai-kiss",
+  TEXT_TO_VIDEO = "text-to-video",
+  IMAGE_TO_VIDEO = "image-to-video",
+  TEXT_TO_IMAGE = "text-to-image",
+  REMOVE_BACKGROUND = "remove-background",
+  UPSCALE = "upscale",
+  FACE_SWAP = "face-swap",
+  ANIME_SELFIE = "anime-selfie",
+  PHOTO_RESTORE = "photo-restore",
+  REMOVE_OBJECT = "remove-object",
+  REPLACE_BACKGROUND = "replace-background",
 }
 
 export type ScenarioOutputType = "image" | "video";
@@ -573,7 +587,8 @@ export interface Scenario {
   storyTemplate: string;
   requiresPhoto?: boolean;
   hidden?: boolean;
-  outputType: ScenarioOutputType;
+  /** Output type - optional, apps should configure via createScenariosForApp() */
+  outputType?: ScenarioOutputType;
   model?: string; // AI model from app config
   enabled?: boolean;
   // Optional custom generating screen messages

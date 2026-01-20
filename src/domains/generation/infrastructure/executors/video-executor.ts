@@ -1,6 +1,6 @@
 /**
  * Video Generation Executor
- * Generic executor for all video generation features
+ * Generic executor for all video generation features (provider-agnostic)
  */
 
 import type {
@@ -41,15 +41,11 @@ export class VideoExecutor
         return { success: false, error: "AI provider not initialized" };
       }
 
-      options?.onProgress?.(5);
-
       const modelInput = this.buildModelInput(input);
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[VideoExecutor] Model input prepared");
       }
-
-      options?.onProgress?.(10);
 
       const result = await provider.subscribe(model, modelInput, {
         timeoutMs: options?.timeoutMs ?? 300000,
@@ -101,7 +97,7 @@ export class VideoExecutor
     }
   }
 
-  private buildModelInput(input: VideoGenerationInput) {
+  private buildModelInput(input: VideoGenerationInput): Record<string, unknown> {
     const { sourceImageBase64, targetImageBase64, prompt } = input;
 
     const formatBase64 = (base64: string): string => {

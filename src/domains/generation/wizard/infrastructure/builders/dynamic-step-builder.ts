@@ -41,6 +41,7 @@ export const buildFlowStepsFromWizard = (
   options?: {
     includePreview?: boolean;
     includeGenerating?: boolean;
+    includeResult?: boolean;
   },
 ): StepDefinition[] => {
   const steps: StepDefinition[] = [];
@@ -69,12 +70,14 @@ export const buildFlowStepsFromWizard = (
       required: true,
     });
 
-    // Always add result preview after generating
-    steps.push({
-      id: "RESULT_PREVIEW",
-      type: StepType.RESULT_PREVIEW,
-      required: true,
-    });
+    // Add result preview after generating (unless explicitly disabled)
+    if (options?.includeResult !== false) {
+      steps.push({
+        id: "RESULT_PREVIEW",
+        type: StepType.RESULT_PREVIEW,
+        required: true,
+      });
+    }
   }
 
   return steps;

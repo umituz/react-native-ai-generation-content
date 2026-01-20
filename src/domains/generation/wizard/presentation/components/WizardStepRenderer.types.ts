@@ -18,6 +18,8 @@ export interface WizardStepRendererProps {
   readonly onShare: () => void;
   readonly onRate?: () => void;
   readonly onTryAgain?: () => void;
+  /** Called when user dismisses generating screen - generation continues in background */
+  readonly onDismissGenerating?: () => void;
   readonly t: (key: string) => string;
   readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
   readonly renderGenerating?: (progress: number) => React.ReactElement | null;

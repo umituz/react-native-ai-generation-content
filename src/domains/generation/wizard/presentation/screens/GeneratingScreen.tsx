@@ -1,12 +1,15 @@
 /**
  * Generic Generating Screen
- * Shows progress while AI generates content
- * Uses scenario-specific messages with fallback to generic messages
+ * Shows indeterminate progress while AI generates content
+ * Uses status messages instead of fake percentages (UX best practice)
+ * Supports background generation - user can dismiss and generation continues
  */
 
 import React, { useMemo } from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useAppDesignTokens, AtomicText } from "@umituz/react-native-design-system";
+import { useGenerationPhase } from "../hooks/useGenerationPhase";
+import { IndeterminateProgressBar } from "../components/IndeterminateProgressBar";
 
 export interface GeneratingScreenProps {
   readonly progress: number;
@@ -18,23 +21,26 @@ export interface GeneratingScreenProps {
       readonly title?: string;
       readonly waitMessage?: string;
       readonly hint?: string;
+      readonly backgroundHint?: string;
     };
   };
   readonly t: (key: string) => string;
-  readonly onCancel?: () => void;
+  /** Called when user dismisses the screen - generation continues in background */
+  readonly onDismiss?: () => void;
 }
 
 export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
-  progress,
+  progress: _progress,
   scenario,
   t,
-  onCancel: _onCancel,
+  onDismiss,
 }) => {
   const tokens = useAppDesignTokens();
+  const phase = useGenerationPhase();
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[GeneratingScreen] Rendering", {
-      progress,
+      phase,
       scenarioId: scenario?.id,
     });
   }
@@ -45,8 +51,22 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
       title: custom?.title || t("generator.title"),
       waitMessage: custom?.waitMessage || t("generator.waitMessage"),
       hint: custom?.hint || t("generator.hint"),
+      backgroundHint: custom?.backgroundHint || t("generator.backgroundHint"),
     };
   }, [scenario, t]);
+
+  const statusMessage = useMemo(() => {
+    switch (phase) {
+      case "queued":
+        return t("generator.status.queued") || "Waiting in queue...";
+      case "processing":
+        return t("generator.status.processing") || "Generating your content...";
+      case "finalizing":
+        return t("generator.status.finalizing") || "Almost done...";
+      default:
+        return messages.waitMessage;
+    }
+  }, [phase, t, messages.waitMessage]);
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
@@ -58,38 +78,37 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
         </AtomicText>
 
         <AtomicText type="bodyMedium" style={[styles.message, { color: tokens.colors.textSecondary }]}>
-          {messages.waitMessage}
+          {statusMessage}
         </AtomicText>
 
-        {/* Progress Bar */}
         <View style={styles.progressContainer}>
-          <View style={[styles.progressBar, { backgroundColor: tokens.colors.surfaceVariant }]}>
-            <View
-              style={[
-                styles.progressFill,
-                {
-                  backgroundColor: tokens.colors.primary,
-                  width: `${Math.min(100, Math.max(0, progress))}%`,
-                },
-              ]}
-            />
-          </View>
-          <AtomicText type="bodySmall" style={[styles.progressText, { color: tokens.colors.textSecondary }]}>
-            {Math.round(progress)}%
-          </AtomicText>
+          <IndeterminateProgressBar
+            backgroundColor={tokens.colors.surfaceVariant}
+            fillColor={tokens.colors.primary}
+          />
         </View>
 
-        {/* Scenario Info */}
         {scenario && (
           <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary }]}>
             {scenario.title || scenario.id}
           </AtomicText>
         )}
 
-        {/* Hint */}
         <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary }]}>
           {messages.hint}
         </AtomicText>
+
+        {/* Background hint - tap to dismiss */}
+        {onDismiss && (
+          <TouchableOpacity
+            style={[styles.backgroundHintButton, { borderColor: tokens.colors.primary }]}
+            onPress={onDismiss}
+          >
+            <AtomicText type="bodyLarge" style={[styles.backgroundHint, { color: tokens.colors.primary }]}>
+              {messages.backgroundHint}
+            </AtomicText>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -117,22 +136,20 @@ const styles = StyleSheet.create({
   progressContainer: {
     width: "100%",
     marginTop: 24,
-    gap: 8,
-  },
-  progressBar: {
-    height: 8,
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  progressText: {
-    textAlign: "center",
   },
   hint: {
     textAlign: "center",
     marginTop: 8,
+  },
+  backgroundHintButton: {
+    marginTop: 32,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderWidth: 1,
+    borderRadius: 12,
+  },
+  backgroundHint: {
+    textAlign: "center",
+    fontWeight: "700",
   },
 });

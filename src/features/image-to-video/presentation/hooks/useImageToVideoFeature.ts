@@ -72,7 +72,7 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
 
   const strategy: GenerationStrategy<VideoGenerationInput, ImageToVideoResult> = useMemo(
     () => ({
-      execute: async (input, onProgress) => {
+      execute: async (input) => {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[ImageToVideo] Executing generation, creationId:", input.creationId);
         }
@@ -98,11 +98,6 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
             model: config.model,
             buildInput: config.buildInput,
             extractResult: config.extractResult,
-            onProgress: (progress) => {
-              setState((prev) => ({ ...prev, progress }));
-              onProgress?.(progress);
-              callbacks?.onProgress?.(progress);
-            },
           },
         );
 

@@ -102,9 +102,9 @@ export function GalleryEmptyStates({
         return (
             <View style={styles.centerContainer}>
                 <EmptyState
-                    title={t("common.no_results") || "No results"}
-                    description={t("common.no_results_description") || "Try changing your filters"}
-                    actionLabel={t("common.clear_all") || "Clear All"}
+                    title={t("common.no_results")}
+                    description={t("common.no_results_description")}
+                    actionLabel={t("common.clear_all")}
                     onAction={onClearFilters}
                 />
             </View>

@@ -1,11 +1,13 @@
 /**
  * useWizardGeneration Hook
  * Wizard generation using orchestrator + strategy factory pattern
+ * Includes background job tracking for CreationsGallery display
  */
 
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useCallback } from "react";
 import { useGenerationOrchestrator } from "../../../../../presentation/hooks/generation";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
+import { usePendingJobs } from "../../../../../presentation/hooks/use-pending-jobs";
 import { createWizardStrategy, buildWizardInput } from "../../infrastructure/strategies";
 
 declare const __DEV__: boolean;
@@ -28,16 +30,17 @@ export interface UseWizardGenerationProps {
   readonly wizardData: Record<string, unknown>;
   readonly userId?: string;
   readonly isGeneratingStep: boolean;
-  readonly alertMessages?: AlertMessages;
+  /** Required - alert messages for error states */
+  readonly alertMessages: AlertMessages;
   readonly onSuccess?: (result: unknown) => void;
   readonly onError?: (error: string) => void;
-  readonly onProgressChange?: (progress: number) => void;
   readonly onCreditsExhausted?: () => void;
+  /** Enable background job tracking for CreationsGallery display */
+  readonly trackAsBackgroundJob?: boolean;
 }
 
 export interface UseWizardGenerationReturn {
   readonly isGenerating: boolean;
-  readonly progress: number;
 }
 
 export const useWizardGeneration = (
@@ -51,59 +54,81 @@ export const useWizardGeneration = (
     alertMessages,
     onSuccess,
     onError,
-    onProgressChange,
     onCreditsExhausted,
+    trackAsBackgroundJob = true,
   } = props;
 
   const hasStarted = useRef(false);
+  const currentJobIdRef = useRef<string | null>(null);
+
+  // Background job tracking
+  const { addJob, updateJob, removeJob } = usePendingJobs();
 
   useEffect(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[useWizardGeneration] Initialized", {
         scenarioId: scenario.id,
-        outputType: scenario.outputType || "video",
+        outputType: scenario.outputType,
+        trackAsBackgroundJob,
       });
     }
-  }, [scenario.id, scenario.outputType]);
+  }, [scenario.id, scenario.outputType, trackAsBackgroundJob]);
 
   const strategy = useMemo(() => {
     return createWizardStrategy({
       scenario,
-      wizardData,
       collectionName: "creations",
     });
-  }, [scenario, wizardData]);
+  }, [scenario]);
 
-  const { generate, isGenerating, progress } = useGenerationOrchestrator(
+  // Handle generation success - remove job from queue
+  const handleSuccess = useCallback(
+    (result: unknown) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[useWizardGeneration] Success");
+      }
+
+      // Remove job from pending queue (creation is saved)
+      if (trackAsBackgroundJob && currentJobIdRef.current) {
+        removeJob(currentJobIdRef.current);
+        currentJobIdRef.current = null;
+      }
+
+      onSuccess?.(result);
+    },
+    [trackAsBackgroundJob, removeJob, onSuccess],
+  );
+
+  // Handle generation error - update job status
+  const handleError = useCallback(
+    (err: { message: string }) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[useWizardGeneration] Error:", err.message);
+      }
+
+      // Update job to failed status
+      if (trackAsBackgroundJob && currentJobIdRef.current) {
+        updateJob({
+          id: currentJobIdRef.current,
+          updates: { status: "failed", error: err.message, progress: 0 },
+        });
+      }
+
+      onError?.(err.message);
+    },
+    [trackAsBackgroundJob, updateJob, onError],
+  );
+
+  const { generate, isGenerating } = useGenerationOrchestrator(
     strategy,
     {
       userId,
-      alertMessages: alertMessages || {
-        networkError: "No internet connection",
-        policyViolation: "Content policy violation",
-        saveFailed: "Failed to save",
-        creditFailed: "Failed to deduct credits",
-        unknown: "An error occurred",
-      },
+      alertMessages,
       onCreditsExhausted,
-      onSuccess: (result) => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[useWizardGeneration] Success");
-        }
-        onSuccess?.(result);
-      },
-      onError: (err) => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[useWizardGeneration] Error:", err.message);
-        }
-        onError?.(err.message);
-      },
+      onSuccess: handleSuccess,
+      onError: handleError,
     },
   );
-
-  useEffect(() => {
-    if (onProgressChange) onProgressChange(progress);
-  }, [progress, onProgressChange]);
 
   useEffect(() => {
     if (isGeneratingStep && !hasStarted.current && !isGenerating) {
@@ -123,6 +148,29 @@ export const useWizardGeneration = (
             onError?.("Failed to build generation input");
             return;
           }
+
+          // Create background job for tracking
+          if (trackAsBackgroundJob && scenario.outputType) {
+            const jobId = `wizard-${scenario.id}-${Date.now()}`;
+            currentJobIdRef.current = jobId;
+
+            addJob({
+              id: jobId,
+              input: {
+                scenarioId: scenario.id,
+                scenarioTitle: scenario.title,
+                outputType: scenario.outputType,
+              },
+              type: scenario.outputType,
+              status: "processing",
+              progress: 10,
+            });
+
+            if (typeof __DEV__ !== "undefined" && __DEV__) {
+              console.log("[useWizardGeneration] Created background job:", jobId);
+            }
+          }
+
           generate(input);
         })
         .catch((error) => {
@@ -130,14 +178,23 @@ export const useWizardGeneration = (
             console.error("[useWizardGeneration] Input build error:", error);
           }
           hasStarted.current = false;
-          onError?.(error.message || "Failed to prepare generation");
+          onError?.(error.message);
         });
     }
 
     if (!isGeneratingStep && hasStarted.current) {
       hasStarted.current = false;
     }
-  }, [isGeneratingStep, scenario, wizardData, isGenerating, generate, onError]);
+  }, [
+    isGeneratingStep,
+    scenario,
+    wizardData,
+    isGenerating,
+    generate,
+    onError,
+    trackAsBackgroundJob,
+    addJob,
+  ]);
 
-  return { isGenerating, progress };
+  return { isGenerating };
 };

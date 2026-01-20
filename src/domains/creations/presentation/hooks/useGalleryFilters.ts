@@ -4,9 +4,10 @@
  * SOLID: Coordinates filter hooks without business logic
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type { Creation } from "../../domain/entities/Creation";
 import type { FilterOption } from "../../domain/types/creation-filter";
+import type { BackgroundJob } from "../../../../domain/entities/job.types";
 import { useFilter } from "./useFilter";
 import { useCreationsFilter } from "./useCreationsFilter";
 
@@ -15,6 +16,8 @@ interface UseGalleryFiltersProps {
   readonly statusOptions: FilterOption[];
   readonly mediaOptions: FilterOption[];
   readonly t: (key: string) => string;
+  /** Pending background jobs to include in status counts */
+  readonly pendingJobs?: BackgroundJob[];
 }
 
 interface UseGalleryFiltersReturn {
@@ -36,12 +39,30 @@ export function useGalleryFilters({
   creations,
   statusOptions,
   mediaOptions,
-  t
+  t,
+  pendingJobs = [],
 }: UseGalleryFiltersProps): UseGalleryFiltersReturn {
   const [statusFilterVisible, setStatusFilterVisible] = useState(false);
   const [mediaFilterVisible, setMediaFilterVisible] = useState(false);
 
-  const statusFilter = useFilter({ options: statusOptions, t });
+  // Calculate pending jobs count for status filter
+  const processingJobsCount = useMemo(() => {
+    return pendingJobs.filter(
+      (job) => job.status === "processing" || job.status === "queued",
+    ).length;
+  }, [pendingJobs]);
+
+  // Enrich status options with dynamic counts
+  const enrichedStatusOptions = useMemo(() => {
+    return statusOptions.map((option) => {
+      if (option.id === "processing" && processingJobsCount > 0) {
+        return { ...option, count: processingJobsCount };
+      }
+      return option;
+    });
+  }, [statusOptions, processingJobsCount]);
+
+  const statusFilter = useFilter({ options: enrichedStatusOptions, t });
   const mediaFilter = useFilter({ options: mediaOptions, t });
 
   const { filtered, isFiltered, activeFiltersCount } = useCreationsFilter({

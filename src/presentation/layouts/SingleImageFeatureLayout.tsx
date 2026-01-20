@@ -5,7 +5,7 @@
  * Note: No Modal wrapper - shows fullscreen progress when processing (FutureUS pattern)
  */
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
@@ -32,6 +32,20 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
   const { width: screenWidth, horizontalPadding } = useResponsive();
   const imageSize = screenWidth - horizontalPadding * 2;
 
+  // Background generation: user can dismiss progress but generation continues
+  const [isProgressDismissed, setIsProgressDismissed] = useState(false);
+
+  // Reset dismissed state when processing starts
+  useEffect(() => {
+    if (feature.isProcessing) {
+      setIsProgressDismissed(false);
+    }
+  }, [feature.isProcessing]);
+
+  const handleDismissProgress = useCallback(() => {
+    setIsProgressDismissed(true);
+  }, []);
+
   const handleProcess = useCallback(() => {
     void feature.process();
   }, [feature]);
@@ -45,7 +59,8 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
   }, [feature]);
 
   // Processing view - fullscreen (FutureUS pattern, no Modal)
-  if (feature.isProcessing) {
+  // Show only if processing AND not dismissed (user can dismiss and generation continues)
+  if (feature.isProcessing && !isProgressDismissed) {
     return (
       <View
         style={[
@@ -60,6 +75,7 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
           message={modalTranslations.message}
           hint={modalTranslations.hint}
           backgroundHint={modalTranslations.backgroundHint}
+          onClose={handleDismissProgress}
           backgroundColor={tokens.colors.surface}
           textColor={tokens.colors.textPrimary}
           progressColor={tokens.colors.primary}

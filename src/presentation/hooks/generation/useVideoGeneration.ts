@@ -62,7 +62,7 @@ export const useVideoGeneration = <TResult>(
 
   const strategy: GenerationStrategy<DualImageVideoInput, TResult> = useMemo(
     () => ({
-      execute: async (input, onProgress) => {
+      execute: async (input) => {
         const result = await executeVideoFeature(
           featureType,
           {
@@ -70,7 +70,6 @@ export const useVideoGeneration = <TResult>(
             targetImageBase64: input.targetImageBase64,
             prompt: input.prompt,
           },
-          { onProgress },
         );
 
         if (!result.success || !result.videoUrl) {

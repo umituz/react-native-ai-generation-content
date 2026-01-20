@@ -89,13 +89,17 @@ export {
   PHOTOREALISTIC_RENDERING,
   NATURAL_POSE_GUIDELINES,
   MASTER_BASE_PROMPT,
-  MULTI_PERSON_PRESERVATION_RULES,
   createEnhancedPrompt,
   createTransformationPrompt,
   enhanceExistingPrompt,
-  createMultiPersonPrompt,
 } from './domain/entities/BasePromptStructure';
 export type { CreatePromptOptions } from './domain/entities/BasePromptStructure';
+
+export {
+  MULTI_PERSON_PRESERVATION_RULES,
+  createMultiPersonPrompt,
+} from './domain/entities/MultiPersonPromptStructure';
+export type { MultiPersonPreservationRules } from './domain/entities/MultiPersonPromptStructure';
 
 export {
   buildFacePreservationPrompt,

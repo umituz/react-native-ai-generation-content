@@ -32,3 +32,4 @@ export { GalleryEmptyStates } from "./GalleryEmptyStates";
 export { CreationsHomeCard } from "./CreationsHomeCard";
 export { CreationRating } from "./CreationRating";
 export { CreationsGrid } from "./CreationsGrid";
+export { PendingJobsSection, type PendingJobsSectionProps } from "./PendingJobsSection";

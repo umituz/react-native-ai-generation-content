@@ -119,7 +119,7 @@ export function CreationCard({
       <View style={styles.previewContainer} pointerEvents="box-none">
         <CreationPreview
           uri={previewUrl}
-          status={creation.status || "completed"}
+          status={creation.status}
           type={creation.type as CreationTypeId}
         />
         {showBadges && creation.status && (
