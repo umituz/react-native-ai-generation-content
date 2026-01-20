@@ -52,7 +52,7 @@ export const SOLO_ARTISTIC_SCENARIOS: Scenario[] = [
     title: "Baroque Noble",
     description: "Dramatic classical style",
     icon: "👑",
-    imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=800",
     aiPrompt: createPhotorealisticPrompt(
       "a powerful noble in dramatic Baroque portrait style, person wearing elaborate period costume with lace collar and jewels, commanding authoritative expression looking at camera, rich velvet curtains and dramatic sky in background like Rembrandt",
       "dramatic Baroque lighting with strong contrasts and golden tones"
@@ -65,7 +65,7 @@ export const SOLO_ARTISTIC_SCENARIOS: Scenario[] = [
     title: "Surrealist Dream",
     description: "Salvador Dali style",
     icon: "🎭",
-    imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800",
     aiPrompt: createPhotorealisticPrompt(
       "a mysterious figure in surrealist dreamscape, person with enigmatic expression looking at camera, melting clocks floating objects and impossible architecture surrounding them like Salvador Dali painting",
       "otherworldly lighting with long shadows and dream-like atmosphere"

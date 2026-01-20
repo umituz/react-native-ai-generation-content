@@ -26,7 +26,7 @@ export const SOLO_ACTION_SCENARIOS: Scenario[] = [
     title: "Street Fighter",
     description: "Urban combat warrior",
     icon: "👊",
-    imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800",
     aiPrompt: createPhotorealisticPrompt(
       "a fierce street fighter in neon-lit urban alley, person wearing fighting gear with wrapped hands, intense determined expression looking at camera, graffiti walls and neon signs in rainy city night",
       "neon lighting with rain reflections and gritty urban atmosphere"
@@ -39,7 +39,7 @@ export const SOLO_ACTION_SCENARIOS: Scenario[] = [
     title: "Ninja Assassin",
     description: "Shadow warrior",
     icon: "🥷",
-    imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1555952517-2e8e729e0b44?w=800",
     aiPrompt: createPhotorealisticPrompt(
       "a deadly ninja on moonlit rooftop, person wearing black shinobi outfit with mask and katana, alert stealthy expression with eyes visible looking at camera, Japanese castle and full moon in background",
       "dramatic moonlight with shadows and mysterious ninja atmosphere"
@@ -65,7 +65,7 @@ export const SOLO_ACTION_SCENARIOS: Scenario[] = [
     title: "Parkour Runner",
     description: "Urban acrobat",
     icon: "🏃",
-    imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800",
     aiPrompt: createPhotorealisticPrompt(
       "an athletic parkour runner mid-leap between buildings, person wearing athletic urban clothing, focused determined expression looking at camera while jumping, city skyline and rooftops in background",
       "dynamic golden hour lighting with motion blur and urban energy"

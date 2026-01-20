@@ -26,7 +26,7 @@ export const SOLO_CINEMATIC_SCENARIOS: Scenario[] = [
     title: "Action Hero",
     description: "Blockbuster movie star",
     icon: "💥",
-    imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=800",
     aiPrompt: createPhotorealisticPrompt(
       "a powerful action hero walking away from explosion, person wearing tactical gear and leather jacket, confident fearless expression looking at camera, massive fiery explosion and debris flying in background",
       "dramatic orange explosion lighting with smoke and cinematic atmosphere"
@@ -65,7 +65,7 @@ export const SOLO_CINEMATIC_SCENARIOS: Scenario[] = [
     title: "Samurai Warrior",
     description: "Legendary Japanese warrior",
     icon: "⚔️",
-    imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
+    imageUrl: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800",
     aiPrompt: createPhotorealisticPrompt(
       "a noble samurai warrior in cherry blossom garden, person wearing traditional armor and katana, honorable stoic expression looking at camera, pink cherry blossom petals falling and traditional Japanese temple in background",
       "soft pink and golden lighting with falling petals and serene atmosphere"

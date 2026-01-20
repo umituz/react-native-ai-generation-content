@@ -73,3 +73,4 @@ export const SOLO_ADVENTURE_SCENARIOS: Scenario[] = [
     storyTemplate: createStoryTemplate("uncover lost treasures", "The greatest archaeological discovery."),
   },
 ];
+
