@@ -43,18 +43,9 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
       <View>
         <View style={styles.titleRow}>
           <AtomicText style={styles.title}>{title}</AtomicText>
-          {pendingCount > 0 && (
-            <View style={[styles.pendingBadge, { backgroundColor: tokens.colors.primary }]}>
-              <AtomicIcon name="sync-outline" size="xs" color="onPrimary" />
-              <AtomicText style={[styles.pendingBadgeText, { color: tokens.colors.onPrimary }]}>
-                {pendingCount}
-              </AtomicText>
-            </View>
-          )}
         </View>
         <AtomicText style={styles.subtitle}>
           {count} {countLabel}
-          {pendingCount > 0 && pendingLabel ? ` · ${pendingCount} ${pendingLabel}` : ""}
         </AtomicText>
       </View>
       {showFilter && filterButtons.length > 0 && (
