@@ -37,19 +37,14 @@ export { createStoryTemplate } from "./infrastructure/utils/scenario-utils";
 // Wizard Configurations - App-agnostic, classifies by INPUT REQUIREMENTS
 export {
   WizardInputType,
-  SCENARIO_WIZARD_CONFIGS,
   detectWizardInputType,
   getScenarioWizardConfig,
   hasExplicitConfig,
   getScenarioWizardInputType,
   registerWizardConfig,
-  // Deprecated (backward compatibility)
-  FeatureType,
-  detectFeatureType,
-  getScenarioFeatureType,
-} from "./configs/wizard-configs";
+} from "./configs";
 
-export type { WizardConfigOptions } from "./configs/wizard-configs";
+export type { WizardConfigOptions } from "./configs";
 
 // Presentation - Containers
 export { CategoryNavigationContainer } from "./presentation/containers";
