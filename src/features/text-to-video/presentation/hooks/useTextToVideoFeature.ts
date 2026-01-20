@@ -74,12 +74,16 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
   const { config, callbacks, userId, buildInput, extractResult } = props;
   const [state, setState] = useState<TextToVideoFeatureState>(INITIAL_STATE);
 
+  const currentCreationIdRef = useMemo(() => ({ value: "" }), []);
+
   const strategy: GenerationStrategy<VideoGenerationInput, TextToVideoResult> = useMemo(
     () => ({
       execute: async (input) => {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[TextToVideo] Executing generation:", input.prompt.slice(0, 100));
         }
+
+        currentCreationIdRef.value = input.creationId;
 
         callbacks.onGenerationStart?.({
           creationId: input.creationId,
@@ -111,9 +115,9 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
       },
       getCreditCost: () => config.creditCost,
       save: async (result) => {
-        if (result.success && result.videoUrl) {
+        if (result.success && result.videoUrl && currentCreationIdRef.value) {
           await callbacks.onCreationSave?.({
-            creationId: generateCreationId(),
+            creationId: currentCreationIdRef.value,
             type: "text-to-video",
             videoUrl: result.videoUrl,
             thumbnailUrl: result.thumbnailUrl,
@@ -122,7 +126,7 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
         }
       },
     }),
-    [config, callbacks, buildInput, extractResult, userId, state.prompt],
+    [config, callbacks, buildInput, extractResult, userId, state.prompt, currentCreationIdRef],
   );
 
   const orchestrator = useGenerationOrchestrator(strategy, {

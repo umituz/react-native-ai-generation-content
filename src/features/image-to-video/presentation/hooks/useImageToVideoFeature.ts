@@ -29,6 +29,7 @@ export type {
 export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseImageToVideoFeatureReturn {
   const { config, callbacks, userId } = props;
   const [state, setState] = useState(INITIAL_STATE);
+  const currentCreationIdRef = useMemo(() => ({ value: "" }), []);
 
   const strategy: GenerationStrategy<VideoGenerationInput, ImageToVideoResult> = useMemo(
     () => ({
@@ -37,6 +38,7 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
           console.log("[ImageToVideo] Executing generation, creationId:", input.creationId);
         }
 
+        currentCreationIdRef.value = input.creationId;
         config.onProcessingStart?.();
 
         callbacks?.onGenerationStart?.({
@@ -75,9 +77,9 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
       },
       getCreditCost: () => config.creditCost ?? 0,
       save: async (result) => {
-        if (result.success && result.videoUrl && state.imageUri) {
+        if (result.success && result.videoUrl && state.imageUri && currentCreationIdRef.value) {
           await callbacks?.onCreationSave?.({
-            creationId: generateCreationId(),
+            creationId: currentCreationIdRef.value,
             type: "image-to-video",
             videoUrl: result.videoUrl,
             thumbnailUrl: result.thumbnailUrl,
@@ -86,7 +88,7 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
         }
       },
     }),
-    [config, callbacks, userId, state.imageUri],
+    [config, callbacks, userId, state.imageUri, currentCreationIdRef],
   );
 
   const orchestrator = useGenerationOrchestrator(strategy, {
