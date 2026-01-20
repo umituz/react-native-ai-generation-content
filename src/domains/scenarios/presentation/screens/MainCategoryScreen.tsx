@@ -17,10 +17,10 @@ import {
 } from "@umituz/react-native-design-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AIGenScreenHeader } from "../../../../presentation/components";
-import type { ScenarioMainCategory } from "../../domain/scenario.types";
+import type { MainCategory } from "../../domain/category.types";
 
 export interface MainCategoryScreenProps {
-  readonly mainCategories: readonly ScenarioMainCategory[];
+  readonly mainCategories: readonly MainCategory[];
   readonly onSelectCategory: (categoryId: string) => void;
   readonly onBack?: () => void;
   readonly t: (key: string) => string;
@@ -61,7 +61,7 @@ export const MainCategoryScreen: React.FC<MainCategoryScreenProps> = ({
   );
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<ScenarioMainCategory>) => {
+    ({ item }: ListRenderItemInfo<MainCategory>) => {
       const title = t(item.titleKey);
       const description = item.descriptionKey ? t(item.descriptionKey) : "";
 

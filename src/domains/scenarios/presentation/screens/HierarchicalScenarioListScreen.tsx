@@ -16,13 +16,14 @@ import {
   type DesignTokens,
 } from "@umituz/react-native-design-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { ScenarioData, ScenarioSubCategory } from "../../domain/scenario.types";
+import type { ScenarioData } from "../../domain/scenario.types";
+import type { SubCategory } from "../../domain/category.types";
 import { useHierarchicalScenarios } from "../hooks/useHierarchicalScenarios";
 import { ScenarioContinueButton } from "../components/ScenarioContinueButton";
 
 export interface HierarchicalScenarioListScreenProps {
   readonly subCategoryId: string;
-  readonly subCategories: readonly ScenarioSubCategory[];
+  readonly subCategories: readonly SubCategory[];
   readonly scenarios: readonly ScenarioData[];
   readonly onSelectScenario: (scenarioId: string) => void;
   readonly onBack: () => void;

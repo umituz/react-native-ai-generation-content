@@ -6,45 +6,21 @@
 
 import { useEffect, useRef, useMemo, useCallback } from "react";
 import { useGenerationOrchestrator } from "../../../../../presentation/hooks/generation";
-import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
 import { usePendingJobs } from "../../../../../presentation/hooks/use-pending-jobs";
 import { createWizardStrategy, buildWizardInput } from "../../infrastructure/strategies";
+import type {
+  UseWizardGenerationProps,
+  UseWizardGenerationReturn,
+} from "./wizard-generation.types";
 
 declare const __DEV__: boolean;
 
-import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
-
-export type WizardOutputType = "image" | "video";
-
-export interface WizardScenarioData {
-  readonly id: string;
-  readonly aiPrompt?: string;
-  readonly outputType?: WizardOutputType;
-  /** Input type - determines required photo count. Default: "single" */
-  readonly inputType?: ScenarioInputType;
-  readonly model?: string;
-  readonly title?: string;
-  readonly description?: string;
-  [key: string]: unknown;
-}
-
-export interface UseWizardGenerationProps {
-  readonly scenario: WizardScenarioData;
-  readonly wizardData: Record<string, unknown>;
-  readonly userId?: string;
-  readonly isGeneratingStep: boolean;
-  /** Required - alert messages for error states */
-  readonly alertMessages: AlertMessages;
-  readonly onSuccess?: (result: unknown) => void;
-  readonly onError?: (error: string) => void;
-  readonly onCreditsExhausted?: () => void;
-  /** Enable background job tracking for CreationsGallery display */
-  readonly trackAsBackgroundJob?: boolean;
-}
-
-export interface UseWizardGenerationReturn {
-  readonly isGenerating: boolean;
-}
+export type {
+  WizardOutputType,
+  WizardScenarioData,
+  UseWizardGenerationProps,
+  UseWizardGenerationReturn,
+} from "./wizard-generation.types";
 
 export const useWizardGeneration = (
   props: UseWizardGenerationProps,
@@ -64,7 +40,6 @@ export const useWizardGeneration = (
   const hasStarted = useRef(false);
   const currentJobIdRef = useRef<string | null>(null);
 
-  // Background job tracking
   const { addJob, updateJob, removeJob } = usePendingJobs();
 
   useEffect(() => {
@@ -84,14 +59,12 @@ export const useWizardGeneration = (
     });
   }, [scenario]);
 
-  // Handle generation success - remove job from queue
   const handleSuccess = useCallback(
     (result: unknown) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[useWizardGeneration] Success");
       }
 
-      // Remove job from pending queue (creation is saved)
       if (trackAsBackgroundJob && currentJobIdRef.current) {
         removeJob(currentJobIdRef.current);
         currentJobIdRef.current = null;
@@ -102,14 +75,12 @@ export const useWizardGeneration = (
     [trackAsBackgroundJob, removeJob, onSuccess],
   );
 
-  // Handle generation error - update job status
   const handleError = useCallback(
     (err: { message: string }) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[useWizardGeneration] Error:", err.message);
       }
 
-      // Update job to failed status
       if (trackAsBackgroundJob && currentJobIdRef.current) {
         updateJob({
           id: currentJobIdRef.current,
@@ -122,16 +93,13 @@ export const useWizardGeneration = (
     [trackAsBackgroundJob, updateJob, onError],
   );
 
-  const { generate, isGenerating } = useGenerationOrchestrator(
-    strategy,
-    {
-      userId,
-      alertMessages,
-      onCreditsExhausted,
-      onSuccess: handleSuccess,
-      onError: handleError,
-    },
-  );
+  const { generate, isGenerating } = useGenerationOrchestrator(strategy, {
+    userId,
+    alertMessages,
+    onCreditsExhausted,
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
 
   useEffect(() => {
     if (isGeneratingStep && !hasStarted.current && !isGenerating) {
@@ -152,7 +120,6 @@ export const useWizardGeneration = (
             return;
           }
 
-          // Create background job for tracking
           if (trackAsBackgroundJob && scenario.outputType) {
             const jobId = `wizard-${scenario.id}-${Date.now()}`;
             currentJobIdRef.current = jobId;

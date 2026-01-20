@@ -3,7 +3,7 @@
  * Config-driven wizard steps for image-to-video generation
  */
 
-import type { WizardFeatureConfig } from "../domain/entities/wizard-config.types";
+import type { WizardFeatureConfig } from "../domain/entities/wizard-feature.types";
 
 export const IMAGE_TO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
   id: "image-to-video",

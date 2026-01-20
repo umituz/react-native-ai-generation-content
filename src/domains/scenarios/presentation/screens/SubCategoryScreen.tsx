@@ -17,11 +17,11 @@ import {
 } from "@umituz/react-native-design-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AIGenScreenHeader } from "../../../../presentation/components";
-import type { ScenarioSubCategory } from "../../domain/scenario.types";
+import type { SubCategory } from "../../domain/category.types";
 
 export interface SubCategoryScreenProps {
   readonly mainCategoryId: string;
-  readonly subCategories: readonly ScenarioSubCategory[];
+  readonly subCategories: readonly SubCategory[];
   readonly onSelectSubCategory: (subCategoryId: string) => void;
   readonly onBack: () => void;
   readonly t: (key: string) => string;
@@ -79,7 +79,7 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
   );
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<ScenarioSubCategory>) => {
+    ({ item }: ListRenderItemInfo<SubCategory>) => {
       const title = t(item.titleKey);
       const description = item.descriptionKey ? t(item.descriptionKey) : "";
 

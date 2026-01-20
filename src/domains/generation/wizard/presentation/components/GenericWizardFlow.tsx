@@ -6,7 +6,7 @@
 
 import React, { useMemo } from "react";
 import type { StepType } from "../../../../../domain/entities/flow-config.types";
-import type { WizardFeatureConfig } from "../../domain/entities/wizard-config.types";
+import type { WizardFeatureConfig } from "../../domain/entities/wizard-feature.types";
 import type { WizardScenarioData } from "../hooks/useWizardGeneration";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
 import { validateScenario } from "../utilities/validateScenario";

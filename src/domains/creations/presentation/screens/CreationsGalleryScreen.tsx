@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
+import { View, FlatList, RefreshControl } from "react-native";
 import {
   useAppDesignTokens,
   FilterSheet,
@@ -16,20 +16,10 @@ import { usePendingJobs } from "../../../../presentation/hooks/use-pending-jobs"
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import { getPreviewUrl } from "../../domain/utils";
 import type { Creation } from "../../domain/entities/Creation";
-import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
-import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
+import type { CreationsGalleryScreenProps } from "./creations-gallery.types";
+import { creationsGalleryStyles as styles } from "./creations-gallery.styles";
 
-interface CreationsGalleryScreenProps {
-  readonly userId: string | null;
-  readonly repository: ICreationsRepository;
-  readonly config: CreationsConfig;
-  readonly t: (key: string) => string;
-  readonly initialCreationId?: string;
-  readonly onEmptyAction?: () => void;
-  readonly emptyActionLabel?: string;
-  readonly showFilter?: boolean;
-  readonly showPendingJobs?: boolean;
-}
+export type { CreationsGalleryScreenProps } from "./creations-gallery.types";
 
 export function CreationsGalleryScreen({
   userId,
@@ -51,7 +41,6 @@ export function CreationsGalleryScreen({
   const { jobs: pendingJobs } = usePendingJobs();
   const deleteMutation = useDeleteCreation({ userId, repository });
 
-  // Auto-select creation when initialCreationId is provided
   useEffect(() => {
     if (initialCreationId && creations && creations.length > 0 && !hasAutoSelectedRef.current) {
       const creation = creations.find((c) => c.id === initialCreationId);
@@ -200,9 +189,3 @@ export function CreationsGalleryScreen({
     </ScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  header: { borderBottomWidth: 1 },
-  listContent: { paddingHorizontal: 16, paddingTop: 16 },
-  emptyContent: { flexGrow: 1 },
-});

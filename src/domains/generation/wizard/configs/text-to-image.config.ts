@@ -3,7 +3,8 @@
  * Config-driven wizard steps for text-to-image generation
  */
 
-import type { WizardFeatureConfig, TextInputStepConfig } from "../domain/entities/wizard-config.types";
+import type { WizardFeatureConfig } from "../domain/entities/wizard-feature.types";
+import type { TextInputStepConfig } from "../domain/entities/wizard-step.types";
 
 const promptStep: TextInputStepConfig = {
   id: "prompt",

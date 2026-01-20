@@ -3,7 +3,7 @@
  * Type definitions for wizard input classification
  */
 
-import type { WizardFeatureConfig } from "../../generation/wizard/domain/entities/wizard-config.types";
+import type { WizardFeatureConfig } from "../../generation/wizard/domain/entities/wizard-feature.types";
 
 /**
  * Input Type Classification

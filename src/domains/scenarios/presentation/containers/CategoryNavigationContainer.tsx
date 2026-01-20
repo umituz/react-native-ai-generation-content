@@ -5,11 +5,8 @@
  */
 
 import React, { useState, useCallback, useEffect } from "react";
-import type {
-  ScenarioData,
-  ScenarioMainCategory,
-  ScenarioSubCategory,
-} from "../../domain/scenario.types";
+import type { ScenarioData } from "../../domain/scenario.types";
+import type { MainCategory, SubCategory } from "../../domain/category.types";
 import { MainCategoryScreen } from "../screens/MainCategoryScreen";
 import { SubCategoryScreen } from "../screens/SubCategoryScreen";
 import { HierarchicalScenarioListScreen } from "../screens/HierarchicalScenarioListScreen";
@@ -17,8 +14,8 @@ import { HierarchicalScenarioListScreen } from "../screens/HierarchicalScenarioL
 type NavigationStep = "main_category" | "sub_category" | "scenario_list";
 
 export interface CategoryNavigationContainerProps {
-  readonly mainCategories: readonly ScenarioMainCategory[];
-  readonly subCategories: readonly ScenarioSubCategory[];
+  readonly mainCategories: readonly MainCategory[];
+  readonly subCategories: readonly SubCategory[];
   readonly scenarios: readonly ScenarioData[];
   readonly onSelectScenario: (scenarioId: string) => void;
   readonly onBack?: () => void;

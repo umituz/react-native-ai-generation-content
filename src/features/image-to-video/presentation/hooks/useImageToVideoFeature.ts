@@ -7,68 +7,28 @@ import { useState, useCallback, useMemo } from "react";
 import {
   useGenerationOrchestrator,
   type GenerationStrategy,
-  type AlertMessages,
 } from "../../../../presentation/hooks/generation";
 import { executeImageToVideo } from "../../infrastructure/services";
-import type {
-  ImageToVideoFeatureState,
-  ImageToVideoFeatureConfig,
-  ImageToVideoResult,
-  ImageToVideoFeatureCallbacks,
-  ImageToVideoGenerateParams,
-} from "../../domain/types";
+import type { ImageToVideoResult } from "../../domain/types";
+import {
+  INITIAL_STATE,
+  DEFAULT_ALERT_MESSAGES,
+  generateCreationId,
+  type UseImageToVideoFeatureProps,
+  type UseImageToVideoFeatureReturn,
+  type VideoGenerationInput,
+} from "./image-to-video-feature.types";
 
 declare const __DEV__: boolean;
 
-const INITIAL_STATE: ImageToVideoFeatureState = {
-  imageUri: null,
-  motionPrompt: "",
-  videoUrl: null,
-  thumbnailUrl: null,
-  isProcessing: false,
-  progress: 0,
-  error: null,
-};
-
-const DEFAULT_ALERT_MESSAGES: AlertMessages = {
-  networkError: "No internet connection. Please check your network.",
-  policyViolation: "Content not allowed. Please try again.",
-  saveFailed: "Failed to save. Please try again.",
-  creditFailed: "Credit operation failed. Please try again.",
-  unknown: "An error occurred. Please try again.",
-};
-
-export interface UseImageToVideoFeatureProps {
-  config: ImageToVideoFeatureConfig;
-  callbacks?: ImageToVideoFeatureCallbacks;
-  userId: string;
-}
-
-export interface UseImageToVideoFeatureReturn {
-  state: ImageToVideoFeatureState;
-  setImageUri: (uri: string) => void;
-  setMotionPrompt: (prompt: string) => void;
-  generate: (params?: ImageToVideoGenerateParams) => Promise<ImageToVideoResult>;
-  reset: () => void;
-  isReady: boolean;
-  canGenerate: boolean;
-}
-
-interface VideoGenerationInput {
-  imageUri: string;
-  imageBase64: string;
-  motionPrompt: string;
-  options?: Omit<ImageToVideoGenerateParams, "imageUri" | "motionPrompt">;
-  creationId: string;
-}
-
-function generateCreationId(): string {
-  return `image-to-video_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-}
+export type {
+  UseImageToVideoFeatureProps,
+  UseImageToVideoFeatureReturn,
+} from "./image-to-video-feature.types";
 
 export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseImageToVideoFeatureReturn {
   const { config, callbacks, userId } = props;
-  const [state, setState] = useState<ImageToVideoFeatureState>(INITIAL_STATE);
+  const [state, setState] = useState(INITIAL_STATE);
 
   const strategy: GenerationStrategy<VideoGenerationInput, ImageToVideoResult> = useMemo(
     () => ({
@@ -157,7 +117,7 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
   }, []);
 
   const generate = useCallback(
-    async (params?: ImageToVideoGenerateParams): Promise<ImageToVideoResult> => {
+    async (params?: Parameters<UseImageToVideoFeatureReturn["generate"]>[0]): Promise<ImageToVideoResult> => {
       const { imageUri: paramImageUri, motionPrompt: paramMotionPrompt, ...options } = params || {};
       const effectiveImageUri = paramImageUri || state.imageUri;
       const effectiveMotionPrompt = paramMotionPrompt ?? state.motionPrompt;

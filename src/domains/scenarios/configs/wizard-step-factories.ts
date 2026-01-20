@@ -3,7 +3,7 @@
  * Factory functions for creating wizard step configurations
  */
 
-import type { WizardFeatureConfig } from "../../generation/wizard/domain/entities/wizard-config.types";
+import type { WizardFeatureConfig } from "../../generation/wizard/domain/entities/wizard-feature.types";
 import { WizardInputType, type WizardConfigFactory } from "./wizard-input.types";
 
 function createDualImageConfig(scenarioId: string): WizardFeatureConfig {

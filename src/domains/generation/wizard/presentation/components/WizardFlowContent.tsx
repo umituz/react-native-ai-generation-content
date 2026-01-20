@@ -8,7 +8,7 @@ import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { useFlow } from "../../../infrastructure/flow/useFlow";
 import { StepType, type StepDefinition } from "../../../../../domain/entities/flow-config.types";
-import type { WizardFeatureConfig } from "../../domain/entities/wizard-config.types";
+import type { WizardFeatureConfig } from "../../domain/entities/wizard-feature.types";
 import { buildFlowStepsFromWizard } from "../../infrastructure/builders/dynamic-step-builder";
 import { useWizardGeneration, type WizardScenarioData } from "../hooks/useWizardGeneration";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";

@@ -4,7 +4,7 @@
  * Works for ALL features - NO feature-specific code!
  */
 
-// Domain Entities - Configuration Types
+// Domain Entities - Step Types
 export type {
   BaseStepConfig,
   AuthGateStepConfig,
@@ -14,11 +14,15 @@ export type {
   SelectionStepConfig,
   PreviewStepConfig,
   WizardStepConfig,
+} from "./domain/entities/wizard-step.types";
+
+// Domain Entities - Feature Types
+export type {
   WizardFeatureConfig,
   ScenarioBasedConfig,
-} from "./domain/entities/wizard-config.types";
+} from "./domain/entities/wizard-feature.types";
 
-export { buildWizardConfigFromScenario, WIZARD_PRESETS } from "./domain/entities/wizard-config.types";
+export { buildWizardConfigFromScenario, WIZARD_PRESETS } from "./domain/entities/wizard-feature.types";
 
 // Infrastructure - Builders
 export {

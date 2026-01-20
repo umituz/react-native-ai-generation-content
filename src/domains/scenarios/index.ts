@@ -62,11 +62,11 @@ export type {
   SubCategoryScreenProps,
 } from "./presentation/screens";
 
-// Legacy types (backward compatibility)
+// Category Types
 export type {
-  ScenarioMainCategory,
-  ScenarioSubCategory,
-  ScenarioData,
+  MainCategory,
+  SubCategory,
+  CategoryInfo,
   ScenarioSelectorConfig,
   ScenarioPreviewTranslations,
   ScenarioConfig,
@@ -75,4 +75,7 @@ export type {
   MagicPromptConfig,
   CoupleFeatureId,
   CoupleFeatureSelection,
-} from "./domain/scenario.types";
+} from "./domain/category.types";
+
+// Scenario Data Types
+export type { ScenarioData } from "./domain/scenario.types";

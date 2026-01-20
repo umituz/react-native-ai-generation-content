@@ -3,7 +3,7 @@ import type {
   TextInputStepConfig,
   PhotoUploadStepConfig,
   SelectionStepConfig,
-} from "../../domain/entities/wizard-config.types";
+} from "../../domain/entities/wizard-step.types";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -3,7 +3,7 @@
  * Main resolver for getting wizard configurations
  */
 
-import type { WizardFeatureConfig } from "../../generation/wizard/domain/entities/wizard-config.types";
+import type { WizardFeatureConfig } from "../../generation/wizard/domain/entities/wizard-feature.types";
 import { getConfiguredScenario } from "../infrastructure/scenario-registry";
 import { WizardInputType, type WizardConfigOptions } from "./wizard-input.types";
 import { detectWizardInputType, SCENARIO_TO_WIZARD_INPUT_MAP } from "./wizard-input-detector";

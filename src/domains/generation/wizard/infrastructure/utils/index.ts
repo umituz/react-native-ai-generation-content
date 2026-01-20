@@ -3,8 +3,11 @@ export {
   extractTrimmedString,
   extractNumber,
   extractSelection,
+} from "./primitive-extractors";
+
+export {
   extractPrompt,
   extractDuration,
   extractAspectRatio,
   extractResolution,
-} from "./wizard-data-extractors";
+} from "./wizard-field-extractors";

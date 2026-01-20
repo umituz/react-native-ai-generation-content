@@ -6,11 +6,8 @@
 
 import { StepType } from "../../../../../domain/entities/flow-config.types";
 import type { StepDefinition } from "../../../../../domain/entities/flow-config.types";
-import type {
-  WizardFeatureConfig,
-  WizardStepConfig,
-  ScenarioBasedConfig,
-} from "../../domain/entities/wizard-config.types";
+import type { WizardStepConfig } from "../../domain/entities/wizard-step.types";
+import type { WizardFeatureConfig, ScenarioBasedConfig } from "../../domain/entities/wizard-feature.types";
 
 /**
  * Convert wizard step config to flow step definition
