@@ -119,6 +119,7 @@ export function CreationCard({
       <View style={styles.previewContainer} pointerEvents="box-none">
         <CreationPreview
           uri={previewUrl}
+          thumbnailUrl={creation.output?.thumbnailUrl}
           status={creation.status}
           type={creation.type as CreationTypeId}
         />
