@@ -1,12 +1,11 @@
 /**
  * useWizardGeneration Hook
  * Wizard generation using orchestrator + strategy factory pattern
- * Includes background job tracking for CreationsGallery display
+ * Saves to Firestore with status="processing" at start for gallery display
  */
 
 import { useEffect, useRef, useMemo, useCallback } from "react";
 import { useGenerationOrchestrator } from "../../../../../presentation/hooks/generation";
-import { usePendingJobs } from "../../../../../presentation/hooks/use-pending-jobs";
 import { createWizardStrategy, buildWizardInput } from "../../infrastructure/strategies";
 import type {
   UseWizardGenerationProps,
@@ -34,23 +33,19 @@ export const useWizardGeneration = (
     onSuccess,
     onError,
     onCreditsExhausted,
-    trackAsBackgroundJob = true,
   } = props;
 
   const hasStarted = useRef(false);
-  const currentJobIdRef = useRef<string | null>(null);
-
-  const { addJob, updateJob, removeJob } = usePendingJobs();
+  const currentCreationIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[useWizardGeneration] Initialized", {
         scenarioId: scenario.id,
         outputType: scenario.outputType,
-        trackAsBackgroundJob,
       });
     }
-  }, [scenario.id, scenario.outputType, trackAsBackgroundJob]);
+  }, [scenario.id, scenario.outputType]);
 
   const strategy = useMemo(() => {
     return createWizardStrategy({
@@ -62,17 +57,14 @@ export const useWizardGeneration = (
   const handleSuccess = useCallback(
     (result: unknown) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[useWizardGeneration] Success");
+        console.log("[useWizardGeneration] Success", {
+          creationId: currentCreationIdRef.current,
+        });
       }
-
-      if (trackAsBackgroundJob && currentJobIdRef.current) {
-        removeJob(currentJobIdRef.current);
-        currentJobIdRef.current = null;
-      }
-
+      currentCreationIdRef.current = null;
       onSuccess?.(result);
     },
-    [trackAsBackgroundJob, removeJob, onSuccess],
+    [onSuccess],
   );
 
   const handleError = useCallback(
@@ -80,17 +72,11 @@ export const useWizardGeneration = (
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[useWizardGeneration] Error:", err.message);
       }
-
-      if (trackAsBackgroundJob && currentJobIdRef.current) {
-        updateJob({
-          id: currentJobIdRef.current,
-          updates: { status: "failed", error: err.message, progress: 0 },
-        });
-      }
-
+      // Note: Failed status update is handled by orchestrator via strategy
+      currentCreationIdRef.current = null;
       onError?.(err.message);
     },
-    [trackAsBackgroundJob, updateJob, onError],
+    [onError],
   );
 
   const { generate, isGenerating } = useGenerationOrchestrator(strategy, {
@@ -113,31 +99,27 @@ export const useWizardGeneration = (
       hasStarted.current = true;
 
       buildWizardInput(wizardData, scenario)
-        .then((input) => {
+        .then(async (input) => {
           if (!input) {
             hasStarted.current = false;
             onError?.("Failed to build generation input");
             return;
           }
 
-          if (trackAsBackgroundJob && scenario.outputType) {
-            const jobId = `wizard-${scenario.id}-${Date.now()}`;
-            currentJobIdRef.current = jobId;
+          // Save to Firestore with status="processing" BEFORE starting generation
+          if (strategy.saveAsProcessing && userId) {
+            try {
+              const creationId = await strategy.saveAsProcessing(userId, input);
+              currentCreationIdRef.current = creationId;
 
-            addJob({
-              id: jobId,
-              input: {
-                scenarioId: scenario.id,
-                scenarioTitle: scenario.title,
-                outputType: scenario.outputType,
-              },
-              type: scenario.outputType,
-              status: "processing",
-              progress: 10,
-            });
-
-            if (typeof __DEV__ !== "undefined" && __DEV__) {
-              console.log("[useWizardGeneration] Created background job:", jobId);
+              if (typeof __DEV__ !== "undefined" && __DEV__) {
+                console.log("[useWizardGeneration] Saved as processing:", creationId);
+              }
+            } catch (err) {
+              if (typeof __DEV__ !== "undefined" && __DEV__) {
+                console.error("[useWizardGeneration] saveAsProcessing error:", err);
+              }
+              // Continue with generation even if save fails
             }
           }
 
@@ -162,8 +144,8 @@ export const useWizardGeneration = (
     isGenerating,
     generate,
     onError,
-    trackAsBackgroundJob,
-    addJob,
+    strategy,
+    userId,
   ]);
 
   return { isGenerating };

@@ -76,6 +76,7 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
   const videoFeatureType = getVideoFeatureType(scenario.id);
 
   let lastInputRef: WizardVideoInput | null = null;
+  let processingCreationId: string | null = null;
 
   return {
     execute: async (input: unknown) => {
@@ -102,23 +103,63 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
 
     getCreditCost: () => 1,
 
-    save: async (result: unknown, uid) => {
-      const input = lastInputRef;
-      const videoResult = result as { videoUrl?: string };
-      if (!input || !scenario?.id || !videoResult.videoUrl) return;
+    saveAsProcessing: async (uid: string, input: unknown) => {
+      const videoInput = input as WizardVideoInput;
+      const creationId = `${scenario.id}_${Date.now()}`;
+      processingCreationId = creationId;
 
       await repository.create(uid, {
-        id: `${scenario.id}_${Date.now()}`,
-        uri: videoResult.videoUrl,
+        id: creationId,
+        uri: "",
         type: scenario.id,
-        prompt: input.prompt,
-        status: "completed" as const,
+        prompt: videoInput.prompt,
+        status: "processing" as const,
         createdAt: new Date(),
         isShared: false,
         isFavorite: false,
         metadata: { scenarioId: scenario.id, scenarioTitle: scenario.title },
-        output: { videoUrl: videoResult.videoUrl },
       });
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[VideoStrategy] Saved as processing", { creationId });
+      }
+
+      return creationId;
+    },
+
+    save: async (result: unknown, uid: string, creationId?: string) => {
+      const input = lastInputRef;
+      const videoResult = result as { videoUrl?: string };
+      if (!input || !scenario?.id || !videoResult.videoUrl) return;
+
+      const idToUpdate = creationId || processingCreationId;
+
+      if (idToUpdate) {
+        // Update existing processing creation to completed
+        await repository.update(uid, idToUpdate, {
+          uri: videoResult.videoUrl,
+          status: "completed" as const,
+          output: { videoUrl: videoResult.videoUrl },
+        });
+
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[VideoStrategy] Updated to completed", { creationId: idToUpdate });
+        }
+      } else {
+        // Fallback: create new (shouldn't happen normally)
+        await repository.create(uid, {
+          id: `${scenario.id}_${Date.now()}`,
+          uri: videoResult.videoUrl,
+          type: scenario.id,
+          prompt: input.prompt,
+          status: "completed" as const,
+          createdAt: new Date(),
+          isShared: false,
+          isFavorite: false,
+          metadata: { scenarioId: scenario.id, scenarioTitle: scenario.title },
+          output: { videoUrl: videoResult.videoUrl },
+        });
+      }
     },
   };
 }
