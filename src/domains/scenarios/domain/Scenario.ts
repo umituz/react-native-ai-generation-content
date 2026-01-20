@@ -569,6 +569,14 @@ export enum ScenarioId {
 
 export type ScenarioOutputType = "image" | "video";
 
+/**
+ * Scenario input type - determines required photo count
+ * single: Requires exactly 1 photo (solo transformations)
+ * dual: Requires exactly 2 photos (couple interactions)
+ * text: No photo required (text-only prompts)
+ */
+export type ScenarioInputType = "single" | "dual" | "text";
+
 export interface GeneratingMessages {
   title?: string;
   waitMessage?: string;
@@ -589,8 +597,9 @@ export interface Scenario {
   hidden?: boolean;
   /** Output type - optional, apps should configure via createScenariosForApp() */
   outputType?: ScenarioOutputType;
-  model?: string; // AI model from app config
+  /** Input type - determines required photo count. Default: "single" */
+  inputType?: ScenarioInputType;
+  model?: string;
   enabled?: boolean;
-  // Optional custom generating screen messages
   generatingMessages?: GeneratingMessages;
 }

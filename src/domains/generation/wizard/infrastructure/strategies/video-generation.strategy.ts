@@ -6,6 +6,7 @@
 import { executeVideoFeature } from "../../../../../infrastructure/services/video-feature-executor.service";
 import { createCreationsRepository } from "../../../../creations/infrastructure/adapters";
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
+import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { VIDEO_PROCESSING_PROMPTS } from "./wizard-strategy.constants";
 import { extractPrompt, extractDuration, extractAspectRatio, extractResolution } from "../utils";
@@ -15,12 +16,42 @@ import type { WizardVideoInput, CreateVideoStrategyOptions } from "./video-gener
 
 declare const __DEV__: boolean;
 
-// Re-export types for external use
 export type { WizardVideoInput, WizardVideoResult, CreateVideoStrategyOptions } from "./video-generation.types";
 
-// ============================================================================
-// Input Builder
-// ============================================================================
+interface PhotoValidationResult {
+  isValid: boolean;
+  errorKey?: string;
+}
+
+function validatePhotoCount(
+  photoCount: number,
+  inputType: ScenarioInputType | undefined,
+): PhotoValidationResult {
+  const effectiveInputType = inputType ?? "single";
+
+  switch (effectiveInputType) {
+    case "dual":
+      if (photoCount < 2) {
+        return {
+          isValid: false,
+          errorKey: "error.generation.dualPhotosRequired",
+        };
+      }
+      break;
+    case "single":
+      if (photoCount < 1) {
+        return {
+          isValid: false,
+          errorKey: "error.generation.photoRequired",
+        };
+      }
+      break;
+    case "text":
+      break;
+  }
+
+  return { isValid: true };
+}
 
 export async function buildVideoInput(
   wizardData: Record<string, unknown>,
@@ -32,7 +63,19 @@ export async function buildVideoInput(
 
   const photos = await extractPhotosAsBase64(wizardData, true);
 
-  // Extract prompt with fallback to default
+  const validation = validatePhotoCount(photos.length, scenario.inputType);
+  if (!validation.isValid) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[VideoStrategy] Validation failed", {
+        scenarioId: scenario.id,
+        inputType: scenario.inputType,
+        photoCount: photos.length,
+        errorKey: validation.errorKey,
+      });
+    }
+    throw new Error(validation.errorKey ?? "error.generation.invalidInput");
+  }
+
   let prompt = extractPrompt(wizardData, scenario.aiPrompt);
 
   if (!prompt) {
@@ -40,7 +83,7 @@ export async function buildVideoInput(
     if (defaultPrompt) {
       prompt = defaultPrompt;
     } else {
-      throw new Error("Prompt is required for video generation");
+      throw new Error("error.generation.promptRequired");
     }
   }
 

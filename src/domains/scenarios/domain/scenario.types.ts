@@ -9,6 +9,14 @@
 export type ScenarioOutputType = "image" | "video";
 
 /**
+ * Input type for scenarios - determines required photo count
+ * single: Requires exactly 1 photo (solo transformations)
+ * dual: Requires exactly 2 photos (couple interactions)
+ * text: No photo required (text-only prompts)
+ */
+export type ScenarioInputType = "single" | "dual" | "text";
+
+/**
  * Scenario represents a pre-configured AI generation template
  * Used across all AI generation apps (image or video output)
  */
@@ -26,6 +34,8 @@ export interface Scenario {
   readonly storyTemplate?: string;
   readonly requiresPhoto?: boolean;
   readonly outputType: ScenarioOutputType;
+  /** Input type - determines required photo count. Default: "single" */
+  readonly inputType?: ScenarioInputType;
   readonly enabled?: boolean;
   readonly metadata?: Record<string, unknown>;
 }
@@ -198,10 +208,11 @@ export interface ScenarioData {
   readonly icon?: string;
   readonly imageUrl?: string;
   readonly previewImageUrl?: string;
-  /** AI prompt - optional if prompt comes from wizard data */
   readonly aiPrompt?: string;
   readonly storyTemplate?: string;
   readonly requiresPhoto?: boolean;
   readonly hidden?: boolean;
+  /** Input type - determines required photo count. Default: "single" */
+  readonly inputType?: ScenarioInputType;
   readonly [key: string]: unknown;
 }

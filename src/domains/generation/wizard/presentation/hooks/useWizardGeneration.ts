@@ -12,13 +12,16 @@ import { createWizardStrategy, buildWizardInput } from "../../infrastructure/str
 
 declare const __DEV__: boolean;
 
+import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
+
 export type WizardOutputType = "image" | "video";
 
 export interface WizardScenarioData {
   readonly id: string;
-  /** AI prompt - optional if prompt comes from wizard data (text_input step) */
   readonly aiPrompt?: string;
   readonly outputType?: WizardOutputType;
+  /** Input type - determines required photo count. Default: "single" */
+  readonly inputType?: ScenarioInputType;
   readonly model?: string;
   readonly title?: string;
   readonly description?: string;
