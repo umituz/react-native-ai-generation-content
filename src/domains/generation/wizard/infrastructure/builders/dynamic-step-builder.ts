@@ -104,7 +104,7 @@ export const quickBuildWizard = (
   featureId: string,
   scenarioConfig: ScenarioBasedConfig,
 ): StepDefinition[] => {
-  const { buildWizardConfigFromScenario } = require("../../domain/entities/wizard-config.types");
+  const { buildWizardConfigFromScenario } = require("../../domain/entities/wizard-feature.types");
   const wizardConfig = buildWizardConfigFromScenario(featureId, scenarioConfig);
   return buildFlowStepsFromWizard(wizardConfig, {
     includePreview: true,
