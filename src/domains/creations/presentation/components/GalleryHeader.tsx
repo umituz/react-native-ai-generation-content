@@ -45,7 +45,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
           <AtomicText style={styles.title}>{title}</AtomicText>
           {pendingCount > 0 && (
             <View style={[styles.pendingBadge, { backgroundColor: tokens.colors.primary }]}>
-              <AtomicIcon name="Loader" size="xs" color="onPrimary" />
+              <AtomicIcon name="sync-outline" size="xs" color="onPrimary" />
               <AtomicText style={[styles.pendingBadgeText, { color: tokens.colors.onPrimary }]}>
                 {pendingCount}
               </AtomicText>
