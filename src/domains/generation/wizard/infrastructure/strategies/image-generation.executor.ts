@@ -3,8 +3,7 @@
  * Handles the actual image generation execution
  */
 
-import { buildFacePreservationPrompt } from "../../../../prompts/infrastructure/builders/face-preservation-builder";
-import { buildInteractionStylePrompt } from "../../../../prompts/infrastructure/builders/interaction-style-builder";
+import { buildUnifiedPrompt } from "./shared/unified-prompt-builder";
 import type { WizardImageInput } from "./image-generation.types";
 import {
   GENERATION_TIMEOUT_MS,
@@ -21,31 +20,19 @@ interface ExecutionResult {
   error?: string;
 }
 
-/**
- * Formats base64 string with proper data URI prefix
- */
 function formatBase64(base64: string): string {
   return base64.startsWith("data:") ? base64 : `${BASE64_IMAGE_PREFIX}${base64}`;
 }
 
-/**
- * Builds the final prompt based on input type (photo-based or text-to-image)
- */
 function buildFinalPrompt(input: WizardImageInput, imageUrls: string[]): string {
   const hasPhotos = imageUrls.length > 0;
 
   if (hasPhotos) {
-    const facePrompt = buildFacePreservationPrompt({
-      scenarioPrompt: input.prompt,
-      personCount: imageUrls.length,
+    return buildUnifiedPrompt({
+      basePrompt: input.prompt,
+      photoCount: imageUrls.length,
+      interactionStyle: input.interactionStyle,
     });
-
-    const interactionPrompt = buildInteractionStylePrompt({
-      style: input.interactionStyle ?? "romantic",
-      personCount: imageUrls.length,
-    });
-
-    return interactionPrompt ? `${facePrompt}\n\n${interactionPrompt}` : facePrompt;
   }
 
   // Text-to-image with optional style
@@ -56,9 +43,6 @@ function buildFinalPrompt(input: WizardImageInput, imageUrls: string[]): string 
   return input.prompt;
 }
 
-/**
- * Executes image generation using the AI provider
- */
 export async function executeImageGeneration(
   input: WizardImageInput,
   model: string,

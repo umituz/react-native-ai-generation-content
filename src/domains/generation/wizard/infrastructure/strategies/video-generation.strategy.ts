@@ -5,53 +5,19 @@
 
 import { executeVideoFeature } from "../../../../../infrastructure/services/video-feature-executor.service";
 import { createCreationsRepository } from "../../../../creations/infrastructure/adapters";
+import { buildUnifiedPrompt } from "./shared/unified-prompt-builder";
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
-import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { VIDEO_PROCESSING_PROMPTS } from "./wizard-strategy.constants";
 import { extractPrompt, extractDuration, extractAspectRatio, extractResolution } from "../utils";
 import { extractPhotosAsBase64 } from "./shared/photo-extraction.utils";
 import { getVideoFeatureType } from "./video-generation.utils";
 import type { WizardVideoInput, CreateVideoStrategyOptions } from "./video-generation.types";
+import { validatePhotoCount } from "./video-generation.types";
 
 declare const __DEV__: boolean;
 
 export type { WizardVideoInput, WizardVideoResult, CreateVideoStrategyOptions } from "./video-generation.types";
-
-interface PhotoValidationResult {
-  isValid: boolean;
-  errorKey?: string;
-}
-
-function validatePhotoCount(
-  photoCount: number,
-  inputType: ScenarioInputType | undefined,
-): PhotoValidationResult {
-  const effectiveInputType = inputType ?? "single";
-
-  switch (effectiveInputType) {
-    case "dual":
-      if (photoCount < 2) {
-        return {
-          isValid: false,
-          errorKey: "error.generation.dualPhotosRequired",
-        };
-      }
-      break;
-    case "single":
-      if (photoCount < 1) {
-        return {
-          isValid: false,
-          errorKey: "error.generation.photoRequired",
-        };
-      }
-      break;
-    case "text":
-      break;
-  }
-
-  return { isValid: true };
-}
 
 export async function buildVideoInput(
   wizardData: Record<string, unknown>,
@@ -65,60 +31,49 @@ export async function buildVideoInput(
 
   const validation = validatePhotoCount(photos.length, scenario.inputType);
   if (!validation.isValid) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[VideoStrategy] Validation failed", {
-        scenarioId: scenario.id,
-        inputType: scenario.inputType,
-        photoCount: photos.length,
-        errorKey: validation.errorKey,
-      });
-    }
     throw new Error(validation.errorKey ?? "error.generation.invalidInput");
   }
 
-  let prompt = extractPrompt(wizardData, scenario.aiPrompt);
+  let basePrompt = extractPrompt(wizardData, scenario.aiPrompt);
 
-  if (!prompt) {
+  if (!basePrompt) {
     const defaultPrompt = VIDEO_PROCESSING_PROMPTS[scenario.id];
     if (defaultPrompt) {
-      prompt = defaultPrompt;
+      basePrompt = defaultPrompt;
     } else {
       throw new Error("error.generation.promptRequired");
     }
   }
 
-  const input: WizardVideoInput = {
+  // Build unified prompt with face preservation
+  const finalPrompt = buildUnifiedPrompt({
+    basePrompt,
+    photoCount: photos.length,
+    interactionStyle: scenario.interactionStyle as string | undefined,
+  });
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[VideoStrategy] Prompt built", {
+      baseLength: basePrompt.length,
+      finalLength: finalPrompt.length,
+      photoCount: photos.length,
+    });
+  }
+
+  return {
     sourceImageBase64: photos[0],
     targetImageBase64: photos[1] || photos[0],
-    prompt,
+    prompt: finalPrompt,
     duration: extractDuration(wizardData),
     aspectRatio: extractAspectRatio(wizardData),
     resolution: extractResolution(wizardData),
   };
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[VideoStrategy] Input built", {
-      hasSource: !!input.sourceImageBase64,
-      hasTarget: !!input.targetImageBase64,
-      duration: input.duration,
-    });
-  }
-
-  return input;
 }
-
-// ============================================================================
-// Strategy Factory
-// ============================================================================
 
 export function createVideoStrategy(options: CreateVideoStrategyOptions): WizardStrategy {
   const { scenario, collectionName = "creations" } = options;
   const repository = createCreationsRepository(collectionName);
   const videoFeatureType = getVideoFeatureType(scenario.id);
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[VideoStrategy] Created", { scenarioId: scenario.id, videoFeatureType });
-  }
 
   let lastInputRef: WizardVideoInput | null = null;
 
@@ -152,7 +107,7 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
       const videoResult = result as { videoUrl?: string };
       if (!input || !scenario?.id || !videoResult.videoUrl) return;
 
-      const creation = {
+      await repository.create(uid, {
         id: `${scenario.id}_${Date.now()}`,
         uri: videoResult.videoUrl,
         type: scenario.id,
@@ -161,14 +116,9 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
         createdAt: new Date(),
         isShared: false,
         isFavorite: false,
-        metadata: {
-          scenarioId: scenario.id,
-          scenarioTitle: scenario.title,
-        },
+        metadata: { scenarioId: scenario.id, scenarioTitle: scenario.title },
         output: { videoUrl: videoResult.videoUrl },
-      };
-
-      await repository.create(uid, creation);
+      });
     },
   };
 }
