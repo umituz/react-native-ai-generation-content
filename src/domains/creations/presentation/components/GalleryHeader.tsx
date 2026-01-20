@@ -19,10 +19,6 @@ interface GalleryHeaderProps {
   readonly filterButtons?: FilterButtonConfig[];
   readonly showFilter?: boolean;
   readonly style?: ViewStyle;
-  /** Number of pending/processing jobs to show as badge */
-  readonly pendingCount?: number;
-  /** Label for pending badge tooltip */
-  readonly pendingLabel?: string;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
@@ -32,8 +28,6 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   filterButtons = [],
   showFilter = true,
   style,
-  pendingCount = 0,
-  pendingLabel,
 }) => {
   const tokens = useAppDesignTokens();
   const styles = useStyles(tokens);
@@ -101,18 +95,6 @@ const useStyles = (tokens: DesignTokens) =>
       fontSize: 20,
       fontWeight: "700",
       color: tokens.colors.textPrimary,
-    },
-    pendingBadge: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 4,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 12,
-    },
-    pendingBadgeText: {
-      fontSize: 12,
-      fontWeight: "600",
     },
     subtitle: {
       fontSize: 14,

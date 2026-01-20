@@ -25,17 +25,15 @@ export {
   ALL_CREATION_TYPES,
   IMAGE_CREATION_TYPES,
   VIDEO_CREATION_TYPES,
-  VOICE_CREATION_TYPES,
   DEFAULT_CREATION_FILTER,
   MEDIA_FILTER_OPTIONS,
   STATUS_FILTER_OPTIONS,
   getTypesForCategory,
   getCategoryForType,
+  getCategoryForCreation,
   isTypeInCategory,
   isVideoCreationType,
   isImageCreationType,
-  isVoiceCreationType,
-  getMediaTypeForCreation,
   calculateCreationStats,
 } from "./domain/types";
 

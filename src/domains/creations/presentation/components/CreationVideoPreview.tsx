@@ -12,6 +12,7 @@ import {
 } from "@umituz/react-native-design-system";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { isInProgress } from "../../domain/utils";
+import { shouldShowThumbnail } from "../../domain/utils/preview-helpers";
 
 export interface CreationVideoPreviewProps {
   /** Thumbnail image URL (optional) */
@@ -30,14 +31,6 @@ export interface CreationVideoPreviewProps {
   readonly showLoadingIndicator?: boolean;
 }
 
-/** Check if URL is a video URL (mp4, mov, etc.) */
-function isVideoUrl(url?: string | null): boolean {
-  if (!url) return false;
-  const videoExtensions = [".mp4", ".mov", ".avi", ".webm", ".mkv"];
-  const lowerUrl = url.toLowerCase();
-  return videoExtensions.some((ext) => lowerUrl.includes(ext));
-}
-
 export function CreationVideoPreview({
   thumbnailUrl,
   videoUrl: _videoUrl,
@@ -48,9 +41,20 @@ export function CreationVideoPreview({
 }: CreationVideoPreviewProps) {
   const tokens = useAppDesignTokens();
   const inProgress = isInProgress(status);
+  const hasThumbnail = shouldShowThumbnail(thumbnailUrl, inProgress);
 
-  // Only use thumbnail if it's a real image URL, not a video URL
-  const hasThumbnail = !!thumbnailUrl && !inProgress && !isVideoUrl(thumbnailUrl);
+  // Debug logging
+  if (__DEV__) {
+    console.log("[CreationVideoPreview]", {
+      thumbnailUrl,
+      status,
+      inProgress,
+      hasThumbnail,
+      willShowSpinner: inProgress && showLoadingIndicator,
+      willShowThumbnail: hasThumbnail,
+      willShowPlaceholder: !inProgress && !hasThumbnail,
+    });
+  }
 
   const styles = useMemo(
     () =>
@@ -119,7 +123,7 @@ export function CreationVideoPreview({
   }
 
   // Show thumbnail with play icon overlay
-  if (hasThumbnail) {
+  if (hasThumbnail && thumbnailUrl) {
     return (
       <View style={styles.container}>
         <Image

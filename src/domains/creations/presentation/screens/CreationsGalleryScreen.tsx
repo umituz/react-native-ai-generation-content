@@ -120,8 +120,6 @@ export function CreationsGalleryScreen({
           countLabel={t(config.translations.photoCount)}
           showFilter={showFilter}
           filterButtons={filterButtons}
-          pendingCount={filters.processingCount}
-          pendingLabel={t("creations.processing")}
         />
       </View>
     );

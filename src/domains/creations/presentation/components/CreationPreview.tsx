@@ -1,21 +1,14 @@
 /**
  * CreationPreview Component
  * Smart wrapper that delegates to CreationImagePreview or CreationVideoPreview
- * based on creation type
+ * based on output content type (not creation type)
  */
 
 import React from "react";
+import { isVideoUrl } from "@umituz/react-native-design-system";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { CreationImagePreview } from "./CreationImagePreview";
 import { CreationVideoPreview } from "./CreationVideoPreview";
-
-/** Video creation types */
-const VIDEO_TYPES: CreationTypeId[] = ["text-to-video", "image-to-video"];
-
-/** Check if creation type is a video type */
-function isVideoType(type?: CreationTypeId | string): boolean {
-  return VIDEO_TYPES.includes(type as CreationTypeId);
-}
 
 interface CreationPreviewProps {
   /** Preview image/thumbnail URL */
@@ -43,11 +36,15 @@ export function CreationPreview({
   height,
   showLoadingIndicator = true,
 }: CreationPreviewProps) {
-  // For video types, use CreationVideoPreview
-  if (isVideoType(type)) {
+  // Determine preview type based on URI content, not creation type
+  // This handles scenario-based videos (solo_martial_artist, ski_resort, etc.)
+  const hasVideoContent = uri && isVideoUrl(uri);
+
+  // For video content, use CreationVideoPreview
+  if (hasVideoContent) {
     return (
       <CreationVideoPreview
-        thumbnailUrl={thumbnailUrl || uri}
+        thumbnailUrl={thumbnailUrl}
         videoUrl={uri}
         status={status}
         type={type as CreationTypeId}
@@ -58,7 +55,7 @@ export function CreationPreview({
     );
   }
 
-  // For image types, use CreationImagePreview
+  // For image content, use CreationImagePreview
   return (
     <CreationImagePreview
       uri={uri}

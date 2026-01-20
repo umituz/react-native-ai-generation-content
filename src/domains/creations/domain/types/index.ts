@@ -18,15 +18,13 @@ export {
 export {
   IMAGE_CREATION_TYPES,
   VIDEO_CREATION_TYPES,
-  VOICE_CREATION_TYPES,
   ALL_CREATION_TYPES,
   getTypesForCategory,
   getCategoryForType,
+  getCategoryForCreation,
   isTypeInCategory,
   isVideoCreationType,
   isImageCreationType,
-  isVoiceCreationType,
-  getMediaTypeForCreation,
 } from "./creation-categories";
 
 // Filter types

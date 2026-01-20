@@ -10,7 +10,6 @@ export type CreationTypeId =
   | "text-to-image"
   | "text-to-video"
   | "image-to-video"
-  | "text-to-voice"
   | "upscale"
   | "remove-background"
   | "photo-restore"
@@ -39,7 +38,7 @@ export type CreationStatus =
 /**
  * Creation category for grouping types
  */
-export type CreationCategory = "image" | "video" | "voice" | "all";
+export type CreationCategory = "image" | "video" | "all";
 
 /**
  * All status values as array for iteration
@@ -59,5 +58,4 @@ export const ALL_CREATION_CATEGORIES: CreationCategory[] = [
   "all",
   "image",
   "video",
-  "voice",
 ];

@@ -40,6 +40,11 @@ export function CreationCard({
       creationId: creation.id,
       hasOnPress: !!callbacks.onPress,
       callbacksKeys: Object.keys(callbacks),
+      status: creation.status,
+      type: creation.type,
+      output: creation.output,
+      hasThumbnailUrl: !!creation.output?.thumbnailUrl,
+      thumbnailUrl: creation.output?.thumbnailUrl,
     });
   }
 

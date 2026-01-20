@@ -4,7 +4,6 @@
  */
 
 import type { CreationTypeId, CreationStatus, CreationCategory } from "./creation-types";
-import { IMAGE_CREATION_TYPES, VIDEO_CREATION_TYPES, VOICE_CREATION_TYPES } from "./creation-categories";
 
 /**
  * Filter options for querying creations
@@ -61,7 +60,6 @@ export const MEDIA_FILTER_OPTIONS: FilterOption[] = [
   { id: "all", label: "All", labelKey: "creations.filter.all", icon: "grid-outline" },
   { id: "image", label: "Images", labelKey: "creations.filter.images", icon: "image-outline" },
   { id: "video", label: "Videos", labelKey: "creations.filter.videos", icon: "videocam-outline" },
-  { id: "voice", label: "Voice", labelKey: "creations.filter.voice", icon: "mic-outline" },
 ];
 
 /**
@@ -89,11 +87,16 @@ export interface CreationStats {
  * Calculate stats from creations array
  */
 export function calculateCreationStats(
-  creations: Array<{ type?: string; status?: string }>
+  creations: Array<{
+    type?: string;
+    status?: string;
+    output?: { videoUrl?: string; imageUrl?: string; imageUrls?: string[] };
+    uri?: string;
+  }>
 ): CreationStats {
   const stats: CreationStats = {
     total: creations.length,
-    byCategory: { all: creations.length, image: 0, video: 0, voice: 0 },
+    byCategory: { all: creations.length, image: 0, video: 0 },
     byStatus: { pending: 0, queued: 0, processing: 0, completed: 0, failed: 0 },
     byType: {},
   };
@@ -114,15 +117,11 @@ export function calculateCreationStats(
     }
   }
 
-  // Calculate category counts from type counts
-  for (const [typeId, count] of Object.entries(stats.byType)) {
-    if ((IMAGE_CREATION_TYPES as string[]).includes(typeId)) {
-      stats.byCategory.image += count as number;
-    } else if ((VIDEO_CREATION_TYPES as string[]).includes(typeId)) {
-      stats.byCategory.video += count as number;
-    } else if ((VOICE_CREATION_TYPES as string[]).includes(typeId)) {
-      stats.byCategory.voice += count as number;
-    }
+  // Calculate category counts based on OUTPUT content (most reliable)
+  const { getCategoryForCreation } = require("./creation-categories");
+  for (const creation of creations) {
+    const category = getCategoryForCreation(creation) as Exclude<CreationCategory, "all">;
+    stats.byCategory[category]++;
   }
 
   return stats;

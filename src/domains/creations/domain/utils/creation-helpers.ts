@@ -26,8 +26,6 @@ export function getTypeIcon(type: CreationTypeId): IconName {
     case "text-to-video":
     case "image-to-video":
       return "film";
-    case "text-to-voice":
-      return "mic";
     case "style-transfer":
     case "colorization":
       return "color-palette";

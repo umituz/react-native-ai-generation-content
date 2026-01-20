@@ -21,13 +21,13 @@ export const IMAGE_CREATION_TYPES: CreationTypeId[] = [
   "background-replacement",
   "ai-brush",
   "hd-touch-up",
-  "ai-hug",
-  "ai-kiss",
   "anime-selfie",
 ];
 
 /**
- * Video-related creation types
+ * Video-related creation types (core types only)
+ * NOTE: All other video types (scenarios, ai-hug, ai-kiss, etc.)
+ * are dynamically determined by output content via isVideoUrl()
  */
 export const VIDEO_CREATION_TYPES: CreationTypeId[] = [
   "text-to-video",
@@ -35,17 +35,11 @@ export const VIDEO_CREATION_TYPES: CreationTypeId[] = [
 ];
 
 /**
- * Voice-related creation types
- */
-export const VOICE_CREATION_TYPES: CreationTypeId[] = ["text-to-voice"];
-
-/**
  * All creation types
  */
 export const ALL_CREATION_TYPES: CreationTypeId[] = [
   ...IMAGE_CREATION_TYPES,
   ...VIDEO_CREATION_TYPES,
-  ...VOICE_CREATION_TYPES,
 ];
 
 /**
@@ -59,15 +53,15 @@ export function getTypesForCategory(
       return IMAGE_CREATION_TYPES;
     case "video":
       return VIDEO_CREATION_TYPES;
-    case "voice":
-      return VOICE_CREATION_TYPES;
     case "all":
+      return ALL_CREATION_TYPES;
+    default:
       return ALL_CREATION_TYPES;
   }
 }
 
 /**
- * Get category for a creation type
+ * Get category for a creation type (type-based fallback only)
  */
 export function getCategoryForType(type: CreationTypeId): CreationCategory {
   if (IMAGE_CREATION_TYPES.includes(type)) {
@@ -76,10 +70,44 @@ export function getCategoryForType(type: CreationTypeId): CreationCategory {
   if (VIDEO_CREATION_TYPES.includes(type)) {
     return "video";
   }
-  if (VOICE_CREATION_TYPES.includes(type)) {
-    return "voice";
-  }
   return "image"; // Default fallback
+}
+
+/**
+ * Get category for a creation based on its output content
+ * This is the PRIMARY method for categorization - OUTPUT determines category, not type
+ * Handles all scenarios (solo_martial_artist, ski_resort, ai-hug, ai-kiss, etc.)
+ *
+ * Strategy: API response already tells us the type via field names:
+ * - output.videoUrl exists → video
+ * - output.imageUrl exists → image
+ * No need to parse URLs or check extensions!
+ */
+export function getCategoryForCreation(creation: {
+  type?: string;
+  output?: {
+    videoUrl?: string;
+    imageUrl?: string;
+    imageUrls?: string[];
+  };
+  uri?: string;
+}): CreationCategory {
+  // PRIORITY 1: Check output field names (most reliable)
+  if (creation.output?.videoUrl) {
+    return "video";
+  }
+
+  if (creation.output?.imageUrl || creation.output?.imageUrls?.length) {
+    return "image";
+  }
+
+  // PRIORITY 2: Fallback to type-based (for known types)
+  if (creation.type) {
+    return getCategoryForType(creation.type as CreationTypeId);
+  }
+
+  // Final fallback
+  return "image";
 }
 
 /**
@@ -109,25 +137,4 @@ export function isVideoCreationType(type?: string): boolean {
 export function isImageCreationType(type?: string): boolean {
   if (!type) return false;
   return IMAGE_CREATION_TYPES.includes(type as CreationTypeId);
-}
-
-/**
- * Check if creation type is voice
- */
-export function isVoiceCreationType(type?: string): boolean {
-  if (!type) return false;
-  return VOICE_CREATION_TYPES.includes(type as CreationTypeId);
-}
-
-/**
- * Get media type (image/video/audio) for a creation type
- */
-export function getMediaTypeForCreation(
-  type?: string
-): "image" | "video" | "audio" | "unknown" {
-  if (!type) return "unknown";
-  if (isVideoCreationType(type)) return "video";
-  if (isVoiceCreationType(type)) return "audio";
-  if (isImageCreationType(type)) return "image";
-  return "unknown";
 }

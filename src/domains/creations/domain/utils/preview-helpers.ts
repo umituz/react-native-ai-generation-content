@@ -3,6 +3,7 @@
  * Utility functions for creation preview/thumbnail extraction
  */
 
+import { isImageUrl } from "@umituz/react-native-design-system";
 import type { CreationOutput } from "../entities/Creation";
 
 // Re-export for convenience
@@ -81,4 +82,22 @@ export function getPrimaryMediaUrl(output?: CreationOutput): string | null {
     output.audioUrl ||
     null
   );
+}
+
+/**
+ * Determine if thumbnail URL is valid and should be displayed
+ * - Must exist
+ * - Must be an image URL (not a video URL)
+ * - Content must not be in progress
+ */
+export function shouldShowThumbnail(
+  thumbnailUrl?: string | null,
+  inProgress?: boolean
+): boolean {
+  if (!thumbnailUrl || inProgress) {
+    return false;
+  }
+
+  // Thumbnail must be an image, not a video
+  return isImageUrl(thumbnailUrl);
 }
