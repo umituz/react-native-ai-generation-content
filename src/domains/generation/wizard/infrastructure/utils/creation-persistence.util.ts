@@ -72,13 +72,14 @@ export function createCreationPersistence(config: CreationPersistenceConfig = {}
       creationId: string,
       data: CompletedCreationData,
     ): Promise<void> => {
+      const output: { imageUrl?: string; videoUrl?: string } = {};
+      if (data.imageUrl) output.imageUrl = data.imageUrl;
+      if (data.videoUrl) output.videoUrl = data.videoUrl;
+
       await repository.update(userId, creationId, {
         uri: data.uri,
         status: "completed" as const,
-        output: {
-          imageUrl: data.imageUrl,
-          videoUrl: data.videoUrl,
-        },
+        output,
       });
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {

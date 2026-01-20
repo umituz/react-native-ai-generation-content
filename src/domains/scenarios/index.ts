@@ -11,6 +11,14 @@ export type { Scenario } from "./domain/Scenario";
 // Scenario Data
 export { SCENARIOS } from "./infrastructure/ScenariosData";
 
+// Category Groups - Pre-defined category groups for filtering
+export {
+  TRUE_SOLO_CATEGORIES,
+  SINGLE_PERSON_CATEGORIES,
+  COUPLE_CATEGORIES,
+  ALL_CATEGORIES,
+} from "./domain/category-groups";
+
 // Scenario Helpers - For app-level configuration
 export {
   createScenariosForApp,

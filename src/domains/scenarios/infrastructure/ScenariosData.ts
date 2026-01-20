@@ -13,6 +13,7 @@ import {
   LIFESTYLE_GROUP_SCENARIOS,
   ACTIVITIES_SCENARIOS,
 } from "./data/scenario-groups";
+import { SOLO_SCENARIOS } from "./data/solo";
 
 export const SCENARIOS: Scenario[] = [
   CUSTOM_FANTASY_SCENARIO,
@@ -21,4 +22,5 @@ export const SCENARIOS: Scenario[] = [
   ...ADVENTURE_FANTASY_SCENARIOS,
   ...LIFESTYLE_GROUP_SCENARIOS,
   ...ACTIVITIES_SCENARIOS,
+  ...SOLO_SCENARIOS,
 ];

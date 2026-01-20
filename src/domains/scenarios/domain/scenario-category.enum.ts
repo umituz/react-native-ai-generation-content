@@ -75,4 +75,12 @@ export enum ScenarioCategory {
   UNDERWATER = "underwater",
   ARABIAN_NIGHTS = "arabian_nights",
   PREHISTORIC = "prehistoric",
+  // True single-person categories
+  SOLO_FANTASY = "solo_fantasy",
+  SOLO_ADVENTURE = "solo_adventure",
+  SOLO_CINEMATIC = "solo_cinematic",
+  SOLO_ARTISTIC = "solo_artistic",
+  SOLO_ACTION = "solo_action",
+  SOLO_MYTHOLOGY = "solo_mythology",
+  SOLO_SPORTS = "solo_sports",
 }

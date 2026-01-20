@@ -19,6 +19,7 @@ import { CULTURE_NATURE_IDS } from "./culture-nature.ids";
 import { THEMATIC_WORLDS_IDS } from "./thematic-worlds.ids";
 import { EXOTIC_WORLDS_IDS } from "./exotic-worlds.ids";
 import { AI_FEATURES_IDS } from "./ai-features.ids";
+import { SOLO_SCENARIOS_IDS } from "./solo-scenarios.ids";
 
 export const ScenarioId = {
   ...TIME_FAMILY_IDS,
@@ -37,6 +38,7 @@ export const ScenarioId = {
   ...THEMATIC_WORLDS_IDS,
   ...EXOTIC_WORLDS_IDS,
   ...AI_FEATURES_IDS,
+  ...SOLO_SCENARIOS_IDS,
 } as const;
 
 export type ScenarioId = (typeof ScenarioId)[keyof typeof ScenarioId];

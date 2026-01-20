@@ -13,53 +13,26 @@ export interface AppScenarioConfig {
   readonly outputType: ScenarioOutputType;
   /** Optional AI model to assign to all scenarios */
   readonly model?: string;
-  /** Optional filter to exclude certain scenarios by ID */
-  readonly excludeIds?: readonly string[];
-  /** Optional filter to include only certain category IDs */
-  readonly includeCategories?: readonly string[];
+  /** Categories to include (whitelist) */
+  readonly categories: readonly string[];
 }
 
 /**
  * Creates app-configured scenarios from package scenarios
- * Apps use this to set their desired outputType and model
- *
- * @example
- * // Video generation app
- * const scenarios = createScenariosForApp(SCENARIOS, {
- *   outputType: "video",
- *   model: "fal-ai/veo3/image-to-video"
- * });
- *
- * @example
- * // Image generation app
- * const scenarios = createScenariosForApp(SCENARIOS, {
- *   outputType: "image",
- *   model: "fal-ai/nano-banana/edit",
- *   excludeIds: ["custom"]
- * });
+ * Uses whitelist approach - only includes specified categories
  */
 export const createScenariosForApp = (
   scenarios: readonly Scenario[],
   config: AppScenarioConfig,
 ): Scenario[] => {
-  const { outputType, model, excludeIds, includeCategories } = config;
+  const { outputType, model, categories } = config;
 
   return scenarios
     .filter((scenario) => {
-      // Filter by excluded IDs
-      if (excludeIds?.includes(scenario.id)) {
+      if (!scenario.category) {
         return false;
       }
-      // Filter by included categories
-      if (
-        includeCategories &&
-        includeCategories.length > 0 &&
-        scenario.category &&
-        !includeCategories.includes(scenario.category)
-      ) {
-        return false;
-      }
-      return true;
+      return categories.includes(scenario.category);
     })
     .map((scenario) => ({
       ...scenario,
@@ -69,11 +42,7 @@ export const createScenariosForApp = (
 };
 
 /**
- * Filters scenarios by output type (if they have one set)
- * Useful for apps that have mixed scenarios with different output types
- *
- * @example
- * const videoScenarios = filterScenariosByOutputType(scenarios, "video");
+ * Filters scenarios by output type
  */
 export const filterScenariosByOutputType = (
   scenarios: readonly Scenario[],
@@ -82,9 +51,6 @@ export const filterScenariosByOutputType = (
 
 /**
  * Filters scenarios by category
- *
- * @example
- * const weddingScenarios = filterScenariosByCategory(scenarios, "wedding");
  */
 export const filterScenariosByCategory = (
   scenarios: readonly Scenario[],
@@ -93,10 +59,6 @@ export const filterScenariosByCategory = (
 
 /**
  * Gets unique categories from scenarios
- *
- * @example
- * const categories = getScenarioCategories(scenarios);
- * // ["wedding", "fantasy", "adventure", ...]
  */
 export const getScenarioCategories = (
   scenarios: readonly Scenario[],
@@ -112,9 +74,6 @@ export const getScenarioCategories = (
 
 /**
  * Finds a scenario by ID
- *
- * @example
- * const scenario = findScenarioById(scenarios, "beach_wedding");
  */
 export const findScenarioById = (
   scenarios: readonly Scenario[],
