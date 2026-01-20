@@ -31,11 +31,7 @@ export const IMAGE_TO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
       type: "selection",
       titleKey: "generation.duration.title",
       selectionType: "duration",
-      options: [
-        { id: "4s", label: "4 seconds", value: 4 },
-        { id: "8s", label: "8 seconds", value: 8 },
-        { id: "12s", label: "12 seconds", value: 12 },
-      ],
+      options: [{ id: "4s", label: "4 seconds", value: 4 }],
       required: true,
       defaultValue: "4s",
     },
