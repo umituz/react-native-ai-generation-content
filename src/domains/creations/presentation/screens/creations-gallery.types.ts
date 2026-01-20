@@ -14,5 +14,4 @@ export interface CreationsGalleryScreenProps {
   readonly onEmptyAction?: () => void;
   readonly emptyActionLabel?: string;
   readonly showFilter?: boolean;
-  readonly showPendingJobs?: boolean;
 }

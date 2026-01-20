@@ -7,7 +7,6 @@
 import { useState, useCallback, useMemo } from "react";
 import type { Creation } from "../../domain/entities/Creation";
 import type { FilterOption } from "../../domain/types/creation-filter";
-import type { BackgroundJob } from "../../../../domain/entities/job.types";
 import { useFilter } from "./useFilter";
 import { useCreationsFilter } from "./useCreationsFilter";
 
@@ -16,14 +15,13 @@ interface UseGalleryFiltersProps {
   readonly statusOptions: FilterOption[];
   readonly mediaOptions: FilterOption[];
   readonly t: (key: string) => string;
-  /** Pending background jobs to include in status counts */
-  readonly pendingJobs?: BackgroundJob[];
 }
 
 interface UseGalleryFiltersReturn {
   readonly filtered: Creation[];
   readonly isFiltered: boolean;
   readonly activeFiltersCount: number;
+  readonly processingCount: number;
   readonly statusFilterVisible: boolean;
   readonly mediaFilterVisible: boolean;
   readonly statusFilter: ReturnType<typeof useFilter>;
@@ -40,27 +38,27 @@ export function useGalleryFilters({
   statusOptions,
   mediaOptions,
   t,
-  pendingJobs = [],
 }: UseGalleryFiltersProps): UseGalleryFiltersReturn {
   const [statusFilterVisible, setStatusFilterVisible] = useState(false);
   const [mediaFilterVisible, setMediaFilterVisible] = useState(false);
 
-  // Calculate pending jobs count for status filter
-  const processingJobsCount = useMemo(() => {
-    return pendingJobs.filter(
-      (job) => job.status === "processing" || job.status === "queued",
+  // Calculate processing count from creations status (single source of truth)
+  const processingCount = useMemo(() => {
+    if (!creations) return 0;
+    return creations.filter(
+      (c) => c.status === "processing" || c.status === "queued",
     ).length;
-  }, [pendingJobs]);
+  }, [creations]);
 
   // Enrich status options with dynamic counts
   const enrichedStatusOptions = useMemo(() => {
     return statusOptions.map((option) => {
-      if (option.id === "processing" && processingJobsCount > 0) {
-        return { ...option, count: processingJobsCount };
+      if (option.id === "processing" && processingCount > 0) {
+        return { ...option, count: processingCount };
       }
       return option;
     });
-  }, [statusOptions, processingJobsCount]);
+  }, [statusOptions, processingCount]);
 
   const statusFilter = useFilter({ options: enrichedStatusOptions, t });
   const mediaFilter = useFilter({ options: mediaOptions, t });
@@ -85,6 +83,7 @@ export function useGalleryFilters({
     filtered,
     isFiltered,
     activeFiltersCount,
+    processingCount,
     statusFilterVisible,
     mediaFilterVisible,
     statusFilter,

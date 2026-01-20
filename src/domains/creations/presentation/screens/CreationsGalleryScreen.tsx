@@ -12,7 +12,6 @@ import { useGalleryFilters } from "../hooks/useGalleryFilters";
 import { useGalleryCallbacks } from "../hooks/useGalleryCallbacks";
 import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
 import { GalleryResultPreview } from "../components/GalleryResultPreview";
-import { usePendingJobs } from "../../../../presentation/hooks/use-pending-jobs";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import { getPreviewUrl } from "../../domain/utils";
 import type { Creation } from "../../domain/entities/Creation";
@@ -30,7 +29,6 @@ export function CreationsGalleryScreen({
   onEmptyAction,
   emptyActionLabel,
   showFilter = config.showFilter ?? true,
-  showPendingJobs = true,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
@@ -38,7 +36,6 @@ export function CreationsGalleryScreen({
   const hasAutoSelectedRef = useRef(false);
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
-  const { jobs: pendingJobs } = usePendingJobs();
   const deleteMutation = useDeleteCreation({ userId, repository });
 
   useEffect(() => {
@@ -68,7 +65,7 @@ export function CreationsGalleryScreen({
   const showStatusFilter = config.filterConfig?.showStatusFilter ?? true;
   const showMediaFilter = config.filterConfig?.showMediaFilter ?? true;
 
-  const filters = useGalleryFilters({ creations, statusOptions, mediaOptions, t, pendingJobs });
+  const filters = useGalleryFilters({ creations, statusOptions, mediaOptions, t });
 
   useAppFocusEffect(useCallback(() => { void refetch(); }, [refetch]));
 
@@ -113,11 +110,6 @@ export function CreationsGalleryScreen({
     />
   ), [callbacks, getScenarioTitle]);
 
-  const activePendingCount = useMemo(() => {
-    if (!showPendingJobs) return 0;
-    return pendingJobs.filter((j) => j.status === "processing" || j.status === "queued").length;
-  }, [showPendingJobs, pendingJobs]);
-
   const renderHeader = useMemo(() => {
     if (!creations?.length && !isLoading) return null;
     return (
@@ -128,12 +120,12 @@ export function CreationsGalleryScreen({
           countLabel={t(config.translations.photoCount)}
           showFilter={showFilter}
           filterButtons={filterButtons}
-          pendingCount={activePendingCount}
+          pendingCount={filters.processingCount}
           pendingLabel={t("creations.processing")}
         />
       </View>
     );
-  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, tokens, activePendingCount]);
+  }, [creations, isLoading, filters.filtered.length, filters.processingCount, showFilter, filterButtons, t, config, tokens]);
 
   const renderEmpty = useMemo(() => (
     <GalleryEmptyStates
