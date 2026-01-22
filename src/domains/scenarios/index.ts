@@ -40,7 +40,11 @@ export {
 export type { ConfiguredScenario } from "./infrastructure/scenario-registry";
 
 // Utils
-export { createStoryTemplate } from "./infrastructure/utils/scenario-utils";
+export {
+  createStoryTemplate,
+  createPhotorealisticPrompt,
+  createCreativePrompt,
+} from "./infrastructure/utils/scenario-utils";
 
 // Wizard Configurations - App-agnostic, classifies by INPUT REQUIREMENTS
 export {
