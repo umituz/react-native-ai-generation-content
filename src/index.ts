@@ -90,7 +90,7 @@ export {
   GenerateButton, ResultDisplay, AIGenerationResult, ErrorDisplay, FeatureHeader,
   AIGenScreenHeader, CreditBadge, PhotoUploadCard, SettingsSheet, StyleSelector,
   AspectRatioSelector, DurationSelector, GridSelector, StylePresetsGrid, AIGenerationForm,
-  AIGenerationConfig,
+  AIGenerationConfig, ModelSelector,
   createAspectRatioOptions, createDurationOptions, createStyleOptions, createStyleOptionsFromConfig,
   ASPECT_RATIO_IDS, COMMON_DURATIONS,
 } from "./presentation/components";
@@ -121,7 +121,7 @@ export type {
   AspectRatioSelectorProps, DurationSelectorProps, GridSelectorProps, GridSelectorOption,
   StyleOption, AspectRatioOption, DurationValue, AspectRatioTranslations, DurationOption,
   StyleTranslations, AIGenerationFormProps, AIGenerationFormTranslations,
-  AIGenerationConfigProps,
+  AIGenerationConfigProps, ModelOption, ModelSelectorProps,
 } from "./presentation/components";
 
 export { DEFAULT_SINGLE_PHOTO_FLOW, DEFAULT_DUAL_PHOTO_FLOW } from "./presentation/types/flow-config.types";

@@ -34,3 +34,4 @@ export * from "./headers";
 export * from "./PhotoUploadCard";
 export * from "./prompts/ExamplePrompts";
 export * from "./moderation/ModerationSummary";
+export * from "./shared/ModelSelector";
