@@ -135,6 +135,7 @@ export * from "./domains/content-moderation";
 export * from "./domains/creations";
 export * from "./domains/face-detection";
 export * from "./domains/scenarios";
+export * from "./domains/access-control";
 export * from "./infrastructure/orchestration";
 
 export {
