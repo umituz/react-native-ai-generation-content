@@ -8,9 +8,6 @@ export type { ScenarioOutputType, ScenarioInputType, GeneratingMessages } from "
 export { ScenarioCategory, ScenarioId } from "./domain/Scenario";
 export type { Scenario } from "./domain/Scenario";
 
-// Scenario Data
-export { SCENARIOS } from "./infrastructure/ScenariosData";
-
 // Category Groups - Pre-defined category groups for filtering
 export {
   TRUE_SOLO_CATEGORIES,
