@@ -15,4 +15,9 @@ export const CINEMATIC_ARTISTIC_IDS = {
   ANIME_DREAM: "anime_dream",
   // Creative
   PHOTOGRAPHY_DUO: "photography_duo",
+  // New
+  MOVIE_PREMIERE: "movie_premiere",
+  STREET_ART_MURAL: "street_art_mural",
+  VR_GAMING: "vr_gaming",
+  FASHION_WEEK: "fashion_week",
 } as const;

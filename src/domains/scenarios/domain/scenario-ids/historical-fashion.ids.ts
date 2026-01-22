@@ -17,4 +17,8 @@ export const HISTORICAL_FASHION_IDS = {
   STEAMPUNK: "steampunk",
   HIGH_FASHION: "high_fashion",
   GRUNGE_90S: "grunge_90s",
+  // New
+  VICTORIAN_ERA: "victorian_era",
+  ENCHANTED_FOREST_FOLKLORE: "enchanted_forest_folklore",
+  FIFTIES_DINER: "fifties_diner",
 } as const;

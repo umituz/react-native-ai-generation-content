@@ -41,7 +41,12 @@ export const FANTASY_SCIFI_IDS = {
   AI_COMMAND: "ai_command",
   ANDROID_LOVERS: "android_lovers",
   // Elemental
-  FIRE_ICE_DYNAMIC: "fire_ice_dynamic",
   EARTH_SHAPER_STRENGTH: "earth_shaper_strength",
   STORM_BRINGER_POWER: "storm_bringer_power",
+  // New
+  FANTASY_KINGDOM: "fantasy_kingdom",
+  CYBERPUNK_CITY: "cyberpunk_city",
+  SKYDIVING_THRILL: "skydiving_thrill",
+  SUPERHERO_DUO: "superhero_duo",
+  MYSTIC_FOREST: "mystic_forest",
 } as const;

@@ -16,4 +16,7 @@ export const HOBBIES_CAREER_IDS = {
   GRADUATION: "graduation",
   // Gaming
   ESPORTS: "esports",
+  // New
+  POWER_COUPLE_OFFICE: "power_couple_office",
+  GRADUATION_DAY: "graduation_day",
 } as const;
