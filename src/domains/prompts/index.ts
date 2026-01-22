@@ -89,7 +89,7 @@ export {
   PHOTOREALISTIC_RENDERING,
   NATURAL_POSE_GUIDELINES,
   MASTER_BASE_PROMPT,
-  createEnhancedPrompt,
+  createPhotorealisticPrompt,
   createTransformationPrompt,
   enhanceExistingPrompt,
 } from './domain/entities/BasePromptStructure';

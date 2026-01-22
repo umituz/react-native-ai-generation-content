@@ -68,8 +68,8 @@ ${PHOTOREALISTIC_RENDERING}
 ${NATURAL_POSE_GUIDELINES}`;
 
 /**
- * Creates a complete AI prompt with identity preservation
- * 
+ * Creates a complete photorealistic AI prompt with identity preservation
+ *
  * @param scenarioPrompt - The specific scenario description
  * @param options - Optional customization
  * @returns Complete AI-ready prompt
@@ -85,7 +85,7 @@ export interface CreatePromptOptions {
   customInstructions?: string;
 }
 
-export const createEnhancedPrompt = (
+export const createPhotorealisticPrompt = (
   scenarioPrompt: string,
   options: CreatePromptOptions = {}
 ): string => {
@@ -157,7 +157,7 @@ FINAL COMMAND: Transform the input person into a photorealistic ${styleName}. Th
 /**
  * Simplified prompt for scenarios that already include detailed instructions
  * Adds only the essential identity preservation layer
- * 
+ *
  * @param existingPrompt - The existing detailed prompt
  * @returns Enhanced prompt with identity preservation
  */
