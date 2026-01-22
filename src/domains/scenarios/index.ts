@@ -39,7 +39,6 @@ export type { ConfiguredScenario } from "./infrastructure/scenario-registry";
 // Utils
 export {
   createStoryTemplate,
-  createPhotorealisticPrompt,
   createCreativePrompt,
 } from "./infrastructure/utils/scenario-utils";
 

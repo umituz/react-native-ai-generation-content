@@ -2,11 +2,11 @@
  * Unified Prompt Builder
  * Single prompt building logic for ALL generation types (image & video)
  * Uses MultiPersonPromptStructure for photo-based scenarios
- * Uses createEnhancedPrompt for text-only scenarios
+ * Uses createPhotorealisticPrompt for text-only scenarios
  */
 
 import { createMultiPersonPrompt } from "../../../../../prompts/domain/entities/MultiPersonPromptStructure";
-import { createEnhancedPrompt } from "../../../../../prompts/domain/entities/BasePromptStructure";
+import { createPhotorealisticPrompt } from "../../../../../prompts/domain/entities/BasePromptStructure";
 
 export interface BuildPromptOptions {
   /** Base scenario prompt (aiPrompt from scenario config) */
@@ -20,14 +20,14 @@ export interface BuildPromptOptions {
 /**
  * Build unified prompt for any generation type
  * - Photo-based: Uses createMultiPersonPrompt with @image1, @image2 references
- * - Text-only: Uses createEnhancedPrompt with identity preservation
+ * - Text-only: Uses createPhotorealisticPrompt with identity preservation
  */
 export function buildUnifiedPrompt(options: BuildPromptOptions): string {
   const { basePrompt, photoCount, interactionStyle } = options;
 
   // Text-only generation (no photos)
   if (photoCount === 0) {
-    return createEnhancedPrompt(basePrompt, {
+    return createPhotorealisticPrompt(basePrompt, {
       includeIdentityPreservation: false,
       includePhotoRealism: true,
       includePoseGuidelines: true,
