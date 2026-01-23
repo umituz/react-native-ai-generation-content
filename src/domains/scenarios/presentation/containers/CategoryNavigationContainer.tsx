@@ -138,10 +138,13 @@ export const CategoryNavigationContainer: React.FC<
   }
 
   if (currentStep === "sub_category" && selectedMainCategoryId) {
+    const selectedMainCategory = mainCategories.find(c => c.id === selectedMainCategoryId);
+
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[CategoryNavigationContainer] Rendering SubCategoryScreen", {
         selectedMainCategoryId,
         subCategoriesCount: subCategories.length,
+        mainCategoryTitle: selectedMainCategory?.titleKey,
       });
     }
     return (
@@ -151,6 +154,8 @@ export const CategoryNavigationContainer: React.FC<
         onSelectSubCategory={handleSelectSubCategory}
         onBack={handleBackFromSubCategory}
         t={t}
+        headerTitleKey={selectedMainCategory?.titleKey}
+        headerDescriptionKey="scenario.sub_category.description"
       />
     );
   }
