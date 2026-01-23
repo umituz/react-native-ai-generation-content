@@ -1,9 +1,10 @@
 /**
  * Text-to-Image Executor
- * Provider-agnostic text-to-image execution using active AI provider
+ * Provider-agnostic text-to-image execution using Template Method pattern
  */
 
-import { providerRegistry } from "../../../../infrastructure/services";
+import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
+import { isSuccess, type Result } from "../../../../domain/types/result.types";
 import type {
   TextToImageRequest,
   TextToImageResult,
@@ -11,8 +12,9 @@ import type {
   TextToImageResultExtractor,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
-
+/**
+ * Options for text-to-image execution
+ */
 export interface ExecuteTextToImageOptions {
   model: string;
   buildInput: TextToImageInputBuilder;
@@ -20,6 +22,17 @@ export interface ExecuteTextToImageOptions {
   onProgress?: (progress: number) => void;
 }
 
+/**
+ * Extracted result structure from provider response
+ */
+interface ExtractedImageResult {
+  imageUrl?: string;
+  imageUrls?: string[];
+}
+
+/**
+ * Extract images from provider response object
+ */
 function extractImagesFromObject(
   obj: Record<string, unknown>,
 ): string[] | null {
@@ -40,9 +53,12 @@ function extractImagesFromObject(
   return null;
 }
 
+/**
+ * Default extractor for text-to-image results
+ */
 function defaultExtractResult(
   result: unknown,
-): { imageUrl?: string; imageUrls?: string[] } | undefined {
+): ExtractedImageResult | undefined {
   if (typeof result !== "object" || result === null) {
     return undefined;
   }
@@ -84,64 +100,93 @@ function defaultExtractResult(
   return undefined;
 }
 
-export async function executeTextToImage(
-  request: TextToImageRequest,
-  options: ExecuteTextToImageOptions,
-): Promise<TextToImageResult> {
-  const provider = providerRegistry.getActiveProvider();
-
-  if (!provider) {
-    return { success: false, error: "No AI provider configured" };
+/**
+ * Text-to-Image Executor using Template Method pattern
+ * Eliminates code duplication through BaseExecutor
+ */
+class TextToImageExecutor extends BaseExecutor<
+  TextToImageRequest,
+  TextToImageResult,
+  ExtractedImageResult
+> {
+  constructor() {
+    super("TextToImage");
   }
 
-  if (!provider.isInitialized()) {
-    return { success: false, error: "AI provider not initialized" };
-  }
-
-  if (!request.prompt) {
-    return { success: false, error: "Prompt is required" };
-  }
-
-  const { model, buildInput, extractResult, onProgress } = options;
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
-    console.log(`[TextToImage] Provider: ${provider.providerId}, Model: ${model}`);
-  }
-
-  try {
-    onProgress?.(10);
-
-    const input = buildInput(request.prompt, request.options);
-    onProgress?.(20);
-
-    const result = await provider.run(model, input);
-    onProgress?.(90);
-
-    const extractor = extractResult || defaultExtractResult;
-    const extracted = extractor(result);
-    onProgress?.(100);
-
-    if (!extracted?.imageUrl) {
-      return { success: false, error: "No image in response" };
+  protected validateRequest(request: TextToImageRequest): string | undefined {
+    if (!request.prompt) {
+      return "Prompt is required";
     }
+    return undefined;
+  }
 
+  protected async executeProvider(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    provider: any,
+    model: string,
+    input: unknown,
+  ): Promise<unknown> {
+    return provider.run(model, input);
+  }
+
+  protected validateExtractedResult(
+    extracted: ExtractedImageResult | undefined,
+  ): string | undefined {
+    if (!extracted?.imageUrl) {
+      return "No image in response";
+    }
+    return undefined;
+  }
+
+  protected transformResult(
+    extracted: ExtractedImageResult,
+  ): TextToImageResult {
     return {
       success: true,
       imageUrl: extracted.imageUrl,
       imageUrls: extracted.imageUrls,
     };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.error("[TextToImage] Error:", message);
-    }
-    return { success: false, error: message };
+  }
+
+  protected getDefaultExtractor(): (
+    result: unknown,
+  ) => ExtractedImageResult | undefined {
+    return defaultExtractResult;
   }
 }
 
+// Singleton instance
+const executor = new TextToImageExecutor();
+
+/**
+ * Execute text-to-image generation
+ * Public API maintained for backwards compatibility
+ */
+export async function executeTextToImage(
+  request: TextToImageRequest,
+  options: ExecuteTextToImageOptions,
+): Promise<TextToImageResult> {
+  const result: Result<TextToImageResult, string> = await executor.execute(
+    request,
+    {
+      model: options.model,
+      buildInput: (req) => options.buildInput(req.prompt, req.options),
+      extractResult: options.extractResult,
+      onProgress: options.onProgress,
+    },
+  );
+
+  // Convert Result<T, E> back to legacy format for backwards compatibility
+  if (isSuccess(result)) {
+    return result.value;
+  }
+  return { success: false, error: result.error };
+}
+
+/**
+ * Check if text-to-image is supported
+ * Public API maintained for backwards compatibility
+ */
 export function hasTextToImageSupport(): boolean {
-  const provider = providerRegistry.getActiveProvider();
-  return provider !== null && provider.isInitialized();
+  return executor.hasSupport();
 }

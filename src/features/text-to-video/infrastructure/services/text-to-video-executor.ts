@@ -1,9 +1,10 @@
 /**
  * Text-to-Video Executor
- * Single Responsibility: Execute text-to-video using active AI provider
+ * Provider-agnostic text-to-video execution using Template Method pattern
  */
 
-import { providerRegistry } from "../../../../infrastructure/services";
+import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
+import { isSuccess, type Result } from "../../../../domain/types/result.types";
 import type {
   TextToVideoRequest,
   TextToVideoResult,
@@ -13,6 +14,9 @@ import type {
 
 declare const __DEV__: boolean;
 
+/**
+ * Options for text-to-video execution
+ */
 export interface ExecuteTextToVideoOptions {
   model: string;
   buildInput: TextToVideoInputBuilder;
@@ -20,9 +24,20 @@ export interface ExecuteTextToVideoOptions {
   onProgress?: (progress: number) => void;
 }
 
+/**
+ * Extracted result structure from provider response
+ */
+interface ExtractedVideoResult {
+  videoUrl?: string;
+  thumbnailUrl?: string;
+}
+
+/**
+ * Default extractor for text-to-video results
+ */
 function defaultExtractResult(
   result: unknown,
-): { videoUrl?: string; thumbnailUrl?: string } | undefined {
+): ExtractedVideoResult | undefined {
   if (typeof result !== "object" || result === null) return undefined;
 
   const r = result as Record<string, unknown>;
@@ -45,97 +60,108 @@ function defaultExtractResult(
   return undefined;
 }
 
-export async function executeTextToVideo(
-  request: TextToVideoRequest,
-  options: ExecuteTextToVideoOptions,
-): Promise<TextToVideoResult> {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
-    console.log("[TextToVideoExecutor] executeTextToVideo() called");
+/**
+ * Text-to-Video Executor using Template Method pattern
+ * Eliminates code duplication through BaseExecutor
+ */
+class TextToVideoExecutor extends BaseExecutor<
+  TextToVideoRequest,
+  TextToVideoResult,
+  ExtractedVideoResult
+> {
+  constructor() {
+    super("TextToVideo");
   }
 
-  const provider = providerRegistry.getActiveProvider();
-
-  if (!provider) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.error("[TextToVideoExecutor] No AI provider configured");
+  protected validateRequest(request: TextToVideoRequest): string | undefined {
+    if (!request.prompt) {
+      return "Prompt is required";
     }
-    return { success: false, error: "No AI provider configured" };
+    return undefined;
   }
 
-  if (!provider.isInitialized()) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.error("[TextToVideoExecutor] AI provider not initialized");
-    }
-    return { success: false, error: "AI provider not initialized" };
-  }
+  protected async executeProvider(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    provider: any,
+    model: string,
+    input: unknown,
+    onProgress?: (progress: number) => void,
+  ): Promise<unknown> {
+    this.logInfo("Starting provider.run()...");
 
-  if (!request.prompt) {
-    return { success: false, error: "Prompt is required" };
-  }
-
-  const { model, buildInput, extractResult, onProgress } = options;
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
-    console.log(`[TextToVideoExecutor] Provider: ${provider.providerId}, Model: ${model}`);
-  }
-
-  try {
-    onProgress?.(5);
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[TextToVideoExecutor] Starting provider.run()...");
-    }
-
-    const input = buildInput(request.prompt, request.options);
-
+    // Provider reports real progress via callback
     const result = await provider.run(model, input, {
-      onProgress: (progressInfo) => {
+      onProgress: (progressInfo: { progress: number }) => {
         const progressValue = progressInfo.progress;
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-           
-          console.log("[TextToVideoExecutor] Progress:", progressValue);
+          console.log("[TextToVideo] Progress:", progressValue);
         }
         onProgress?.(progressValue);
       },
     });
 
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[TextToVideoExecutor] provider.run() completed", result);
-    }
+    this.logInfo("provider.run() completed");
+    return result;
+  }
 
-    const extractor = extractResult || defaultExtractResult;
-    const extracted = extractor(result);
-    onProgress?.(100);
-
+  protected validateExtractedResult(
+    extracted: ExtractedVideoResult | undefined,
+  ): string | undefined {
     if (!extracted?.videoUrl) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-         
-        console.error("[TextToVideoExecutor] No video URL in response");
-      }
-      return { success: false, error: "No video in response" };
+      return "No video in response";
     }
+    return undefined;
+  }
 
+  protected transformResult(
+    extracted: ExtractedVideoResult,
+  ): TextToVideoResult {
     return {
       success: true,
       videoUrl: extracted.videoUrl,
       thumbnailUrl: extracted.thumbnailUrl,
     };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.error("[TextToVideoExecutor] Error:", message);
-    }
-    return { success: false, error: message };
+  }
+
+  protected getDefaultExtractor(): (
+    result: unknown,
+  ) => ExtractedVideoResult | undefined {
+    return defaultExtractResult;
   }
 }
 
+// Singleton instance
+const executor = new TextToVideoExecutor();
+
+/**
+ * Execute text-to-video generation
+ * Public API maintained for backwards compatibility
+ */
+export async function executeTextToVideo(
+  request: TextToVideoRequest,
+  options: ExecuteTextToVideoOptions,
+): Promise<TextToVideoResult> {
+  const result: Result<TextToVideoResult, string> = await executor.execute(
+    request,
+    {
+      model: options.model,
+      buildInput: (req) => options.buildInput(req.prompt, req.options),
+      extractResult: options.extractResult,
+      onProgress: options.onProgress,
+    },
+  );
+
+  // Convert Result<T, E> back to legacy format for backwards compatibility
+  if (isSuccess(result)) {
+    return result.value;
+  }
+  return { success: false, error: result.error };
+}
+
+/**
+ * Check if text-to-video is supported
+ * Public API maintained for backwards compatibility
+ */
 export function hasTextToVideoSupport(): boolean {
-  const provider = providerRegistry.getActiveProvider();
-  return provider !== null && provider.isInitialized();
+  return executor.hasSupport();
 }

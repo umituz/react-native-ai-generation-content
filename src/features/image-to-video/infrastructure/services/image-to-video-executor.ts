@@ -1,22 +1,10 @@
 /**
  * Image-to-Video Executor
- * Provider-agnostic image-to-video execution using active AI provider
- * Uses progress mapper for consistent progress reporting
+ * Provider-agnostic image-to-video execution using Template Method pattern
  */
 
-import { providerRegistry } from "../../../../infrastructure/services";
-
-/** Map job status to progress percentage */
-const getProgressFromJobStatus = (status: string): number => {
-  switch (status.toLowerCase()) {
-    case "queued": return 10;
-    case "in_queue": return 15;
-    case "processing": return 50;
-    case "in_progress": return 60;
-    case "completed": return 100;
-    default: return 30;
-  }
-};
+import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
+import { isSuccess, type Result } from "../../../../domain/types/result.types";
 import type {
   ImageToVideoRequest,
   ImageToVideoResult,
@@ -24,8 +12,9 @@ import type {
   ImageToVideoResultExtractor,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
-
+/**
+ * Options for image-to-video execution
+ */
 export interface ExecuteImageToVideoOptions {
   model: string;
   buildInput: ImageToVideoInputBuilder;
@@ -33,9 +22,40 @@ export interface ExecuteImageToVideoOptions {
   onProgress?: (progress: number) => void;
 }
 
+/**
+ * Extracted result structure from provider response
+ */
+interface ExtractedVideoResult {
+  videoUrl?: string;
+  thumbnailUrl?: string;
+}
+
+/**
+ * Map job status to progress percentage
+ */
+const getProgressFromJobStatus = (status: string): number => {
+  switch (status.toLowerCase()) {
+    case "queued":
+      return 10;
+    case "in_queue":
+      return 15;
+    case "processing":
+      return 50;
+    case "in_progress":
+      return 60;
+    case "completed":
+      return 100;
+    default:
+      return 30;
+  }
+};
+
+/**
+ * Default extractor for image-to-video results
+ */
 function defaultExtractResult(
   result: unknown,
-): { videoUrl?: string; thumbnailUrl?: string } | undefined {
+): ExtractedVideoResult | undefined {
   if (typeof result !== "object" || result === null) return undefined;
 
   const r = result as Record<string, unknown>;
@@ -58,108 +78,116 @@ function defaultExtractResult(
   return undefined;
 }
 
-export async function executeImageToVideo(
-  request: ImageToVideoRequest,
-  options: ExecuteImageToVideoOptions,
-): Promise<ImageToVideoResult> {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
-    console.log("[ImageToVideoExecutor] executeImageToVideo() called");
+/**
+ * Image-to-Video Executor using Template Method pattern
+ * Eliminates code duplication through BaseExecutor
+ */
+class ImageToVideoExecutor extends BaseExecutor<
+  ImageToVideoRequest,
+  ImageToVideoResult,
+  ExtractedVideoResult
+> {
+  constructor() {
+    super("ImageToVideo");
   }
 
-  const provider = providerRegistry.getActiveProvider();
-
-  if (!provider) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.error("[ImageToVideoExecutor] No AI provider configured");
+  protected validateRequest(
+    request: ImageToVideoRequest,
+  ): string | undefined {
+    if (!request.imageBase64) {
+      return "Image base64 is required";
     }
-    return { success: false, error: "No AI provider configured" };
+    return undefined;
   }
 
-  if (!provider.isInitialized()) {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.error("[ImageToVideoExecutor] AI provider not initialized");
-    }
-    return { success: false, error: "AI provider not initialized" };
-  }
-
-  if (!request.imageBase64) {
-    return { success: false, error: "Image base64 is required" };
-  }
-
-  const { model, buildInput, extractResult, onProgress } = options;
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-     
-    console.log(`[ImageToVideoExecutor] Provider: ${provider.providerId}, Model: ${model}`);
-  }
-
-  try {
-    onProgress?.(5);
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[ImageToVideoExecutor] Starting provider.subscribe()...");
-    }
-
-    // Build input directly - let buildInput handle base64 format
-    const input = buildInput(request.imageBase64, request.motionPrompt, request.options);
+  protected async executeProvider(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    provider: any,
+    model: string,
+    input: unknown,
+    onProgress?: (progress: number) => void,
+  ): Promise<unknown> {
+    this.logInfo("Starting provider.subscribe()...");
 
     // Use subscribe for video generation (long-running operation with queue)
-    // subscribe provides progress updates unlike run()
+    // Provider reports real progress via onQueueUpdate callback
     const result = await provider.subscribe(model, input, {
-      onQueueUpdate: (status) => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-           
-          console.log("[ImageToVideoExecutor] Queue status:", status.status, "position:", status.queuePosition);
-        }
-        // Map provider status to progress using centralized mapper
+      onQueueUpdate: (status: { status: string; queuePosition?: number }) => {
+        this.logInfo(
+          `Queue status: ${status.status}, position: ${status.queuePosition}`,
+        );
+        // Map provider status to progress
         const progress = getProgressFromJobStatus(status.status);
         onProgress?.(progress);
       },
       timeoutMs: 300000, // 5 minutes timeout for video generation
     });
 
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[ImageToVideoExecutor] Subscribe resolved, result keys:", result ? Object.keys(result as object) : "null");
-    }
+    this.logInfo(
+      `Subscribe resolved, result keys: ${result ? Object.keys(result as object) : "null"}`,
+    );
+    return result;
+  }
 
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.log("[ImageToVideoExecutor] provider.subscribe() completed");
-    }
-
-    const extractor = extractResult || defaultExtractResult;
-    const extracted = extractor(result);
-    onProgress?.(100);
-
+  protected validateExtractedResult(
+    extracted: ExtractedVideoResult | undefined,
+  ): string | undefined {
     if (!extracted?.videoUrl) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-         
-        console.error("[ImageToVideoExecutor] No video URL in response");
-      }
-      return { success: false, error: "No video in response" };
+      return "No video in response";
     }
+    return undefined;
+  }
 
+  protected transformResult(
+    extracted: ExtractedVideoResult,
+  ): ImageToVideoResult {
     return {
       success: true,
       videoUrl: extracted.videoUrl,
       thumbnailUrl: extracted.thumbnailUrl,
     };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-       
-      console.error("[ImageToVideoExecutor] Error:", message);
-    }
-    return { success: false, error: message };
+  }
+
+  protected getDefaultExtractor(): (
+    result: unknown,
+  ) => ExtractedVideoResult | undefined {
+    return defaultExtractResult;
   }
 }
 
+// Singleton instance
+const executor = new ImageToVideoExecutor();
+
+/**
+ * Execute image-to-video generation
+ * Public API maintained for backwards compatibility
+ */
+export async function executeImageToVideo(
+  request: ImageToVideoRequest,
+  options: ExecuteImageToVideoOptions,
+): Promise<ImageToVideoResult> {
+  const result: Result<ImageToVideoResult, string> = await executor.execute(
+    request,
+    {
+      model: options.model,
+      buildInput: (req) =>
+        options.buildInput(req.imageBase64!, req.motionPrompt, req.options),
+      extractResult: options.extractResult,
+      onProgress: options.onProgress,
+    },
+  );
+
+  // Convert Result<T, E> back to legacy format for backwards compatibility
+  if (isSuccess(result)) {
+    return result.value;
+  }
+  return { success: false, error: result.error };
+}
+
+/**
+ * Check if image-to-video is supported
+ * Public API maintained for backwards compatibility
+ */
 export function hasImageToVideoSupport(): boolean {
-  const provider = providerRegistry.getActiveProvider();
-  return provider !== null && provider.isInitialized();
+  return executor.hasSupport();
 }

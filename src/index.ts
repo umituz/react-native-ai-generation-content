@@ -5,6 +5,18 @@
 
 if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] @umituz/react-native-ai-generation-content/index.ts - Module loading");
 
+// Result Type Pattern - Functional error handling
+export type {
+  Result, Success, Failure,
+} from "./domain/types";
+export {
+  success, failure, isSuccess, isFailure, mapResult, andThen, unwrap, unwrapOr,
+} from "./domain/types";
+
+// Base Executor - Template Method Pattern
+export { BaseExecutor } from "./infrastructure/executors";
+export type { BaseExecutorOptions } from "./infrastructure/executors";
+
 export type {
   AIProviderConfig, IAIProvider, JobSubmission, JobStatus, AIJobStatusType, AILogEntry,
   SubscribeOptions, RunOptions, ImageFeatureType, VideoFeatureType, ImageFeatureInputData,

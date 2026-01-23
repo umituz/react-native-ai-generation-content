@@ -41,7 +41,7 @@ import type {
 export function useAIFeatureGate(
   options: AIFeatureGateOptions,
 ): AIFeatureGateReturn {
-  const { creditCost, featureName, onSuccess, onError } = options;
+  const { creditCost, onSuccess, onError } = options;
 
   // Auth state
   const { isAuthenticated: rawIsAuthenticated, isAnonymous } = useAuth();
