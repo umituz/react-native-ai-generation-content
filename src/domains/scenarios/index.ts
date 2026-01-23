@@ -46,6 +46,7 @@ export {
 export {
   WizardInputType,
   detectWizardInputType,
+  SCENARIO_TO_WIZARD_INPUT_MAP,
   getScenarioWizardConfig,
   hasExplicitConfig,
   getScenarioWizardInputType,
