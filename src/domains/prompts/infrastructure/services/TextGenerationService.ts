@@ -3,15 +3,15 @@
  * AI prompt generation for text content creation
  */
 
-import type { ITextGenerationService } from '@ai-generation/prompts';
-import type { TextGenerationConfig } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
+import type {ITextGenerationService} from '../../domain/repositories/IAIPromptServices';
+import type {TextGenerationConfig} from '../../domain/entities/TextGenerationConfig';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
 import {
   validateTextGenerationConfig,
   getTokenCount,
   getTemperature,
   getTopP,
-} from '@ai-generation/prompts';
+} from '../../domain/entities/TextGenerationConfig';
 import { BasePromptService } from './base';
 
 const BASE_TEMPLATE = `

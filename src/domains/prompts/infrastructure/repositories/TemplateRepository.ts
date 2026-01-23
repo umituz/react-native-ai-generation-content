@@ -1,6 +1,6 @@
-import type { ITemplateRepository } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import type { AIPromptCategory, AIPromptResult } from '@ai-generation/prompts';
+import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
+import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
+import type { AIPromptCategory, AIPromptResult } from '../../domain/entities/types';
 
 export class TemplateRepository implements ITemplateRepository {
   private storage = new Map<string, AIPromptTemplate>();

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import type { AIPromptCategory } from '@ai-generation/prompts';
-import type { ITemplateRepository } from '@ai-generation/prompts';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
+import type {AIPromptCategory} from '../../domain/entities/types';
+import type {ITemplateRepository} from '../../domain/repositories/ITemplateRepository';
 import { useAsyncState } from './useAsyncState';
 
 export interface UseTemplateState {

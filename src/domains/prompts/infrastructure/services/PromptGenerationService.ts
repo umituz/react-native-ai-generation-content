@@ -1,6 +1,6 @@
-import type { IPromptGenerationService } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import type { AIPromptResult } from '@ai-generation/prompts';
+import type {IPromptGenerationService} from '../../domain/repositories/IAIPromptServices';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
+import type {AIPromptResult} from '../../domain/entities/types';
 
 export class PromptGenerationService implements IPromptGenerationService {
   generateFromTemplate(

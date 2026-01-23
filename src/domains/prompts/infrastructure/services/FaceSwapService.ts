@@ -3,10 +3,10 @@
  * AI prompt generation for face transformation tasks
  */
 
-import type { IFaceSwapService } from '@ai-generation/prompts';
-import type { FaceSwapConfig } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import { validateFaceSwapConfig } from '@ai-generation/prompts';
+import type {IFaceSwapService} from '../../domain/repositories/IAIPromptServices';
+import type {FaceSwapConfig} from '../../domain/entities/FaceSwapConfig';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
+import {validateFaceSwapConfig} from '../../domain/entities/FaceSwapConfig';
 import { BasePromptService } from './base';
 
 const BASE_TEMPLATE = `

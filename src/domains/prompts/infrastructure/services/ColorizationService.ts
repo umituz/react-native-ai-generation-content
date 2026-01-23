@@ -3,14 +3,14 @@
  * AI prompt generation for photo colorization
  */
 
-import type { IColorizationService } from '@ai-generation/prompts';
-import type { ColorizationConfig } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
+import type {IColorizationService} from '../../domain/repositories/IAIPromptServices';
+import type {ColorizationConfig} from '../../domain/entities/ColorizationConfig';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
 import {
   validateColorizationConfig,
   getColorizationQuality,
   getSuggestedColorPalette,
-} from '@ai-generation/prompts';
+} from '../../domain/entities/ColorizationConfig';
 import { BasePromptService } from './base';
 
 const BASE_TEMPLATE = `

@@ -3,10 +3,10 @@
  * AI prompt generation for background removal tasks
  */
 
-import type { IBackgroundRemovalService } from '@ai-generation/prompts';
-import type { BackgroundRemovalConfig } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import { validateBackgroundRemovalConfig, getProcessingTime, getQualityScore } from '@ai-generation/prompts';
+import type {IBackgroundRemovalService} from '../../domain/repositories/IAIPromptServices';
+import type {BackgroundRemovalConfig} from '../../domain/entities/BackgroundRemovalConfig';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
+import {validateBackgroundRemovalConfig, getProcessingTime, getQualityScore} from '../../domain/entities/BackgroundRemovalConfig';
 import { BasePromptService } from './base';
 
 const BASE_TEMPLATE = `

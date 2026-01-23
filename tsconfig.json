@@ -29,8 +29,6 @@
       "#features/*": ["./src/features/*"],
       "#domains/*": ["./src/domains/*"],
       "#utils/*": ["./src/utils/*"],
-      "@ai-generation/prompts": ["./src/domains/prompts"],
-      "@ai-generation/prompts/*": ["./src/domains/prompts/*"],
       "@ai-generation/content-moderation": ["./src/domains/content-moderation"],
       "@ai-generation/content-moderation/*": ["./src/domains/content-moderation/*"],
       "@ai-generation/creations": ["./src/domains/creations"],

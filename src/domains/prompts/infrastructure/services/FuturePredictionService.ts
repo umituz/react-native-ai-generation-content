@@ -3,12 +3,12 @@
  * AI prompt generation for future scenario predictions
  */
 
-import type { IFuturePredictionService } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import type { AIPromptResult } from '@ai-generation/prompts';
-import type { FuturePredictionConfig, FuturePredictionResult } from '@ai-generation/prompts';
-import { createAIPromptTemplate } from '@ai-generation/prompts';
-import { validateFuturePredictionConfig, getFutureYear } from '@ai-generation/prompts';
+import type {IFuturePredictionService} from '../../domain/repositories/IAIPromptServices';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
+import type {AIPromptResult} from '../../domain/entities/types';
+import type {FuturePredictionConfig, FuturePredictionResult} from '../../domain/entities/FuturePredictionConfig';
+import {createAIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
+import {validateFuturePredictionConfig, getFutureYear} from '../../domain/entities/FuturePredictionConfig';
 import { DEFAULT_PROMPT_SAFETY } from './base';
 
 export const IDENTITY_INSTRUCTION = `CRITICAL PRESERVATION LOCK:

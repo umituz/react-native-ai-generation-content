@@ -3,13 +3,13 @@
  * Handles processing of different AI service types
  */
 
-import type { FaceSwapConfig } from '@ai-generation/prompts';
-import type { PhotoRestorationConfig } from '@ai-generation/prompts';
-import type { ImageEnhancementConfig } from '@ai-generation/prompts';
-import type { StyleTransferConfig } from '@ai-generation/prompts';
-import type { BackgroundRemovalConfig } from '@ai-generation/prompts';
-import type { TextGenerationConfig } from '@ai-generation/prompts';
-import type { ColorizationConfig } from '@ai-generation/prompts';
+import type {FaceSwapConfig} from '../../domain/entities/FaceSwapConfig';
+import type {PhotoRestorationConfig} from '../../domain/entities/PhotoRestorationConfig';
+import type {ImageEnhancementConfig} from '../../domain/entities/ImageEnhancementConfig';
+import type {StyleTransferConfig} from '../../domain/entities/StyleTransferConfig';
+import type {BackgroundRemovalConfig} from '../../domain/entities/BackgroundRemovalConfig';
+import type {TextGenerationConfig} from '../../domain/entities/TextGenerationConfig';
+import type {ColorizationConfig} from '../../domain/entities/ColorizationConfig';
 import type {
     IFaceSwapService,
     IPhotoRestorationService,
@@ -18,9 +18,9 @@ import type {
     IBackgroundRemovalService,
     ITextGenerationService,
     IColorizationService,
-} from '@ai-generation/prompts';
-import type { AIPromptResult } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
+} from '../../domain/repositories/IAIPromptServices';
+import type {AIPromptResult} from '../../domain/entities/types';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
 
 export type AIConfig =
     | { type: 'face-swap'; config: FaceSwapConfig }

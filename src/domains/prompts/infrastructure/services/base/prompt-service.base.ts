@@ -4,11 +4,11 @@
  * Eliminates code duplication across service implementations
  */
 
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import type { AIPromptResult, AIPromptCategory } from '@ai-generation/prompts';
-import type { AIPromptSafety } from '@ai-generation/prompts';
-import { createAIPromptTemplate } from '@ai-generation/prompts';
-import { PromptGenerationService } from '@ai-generation/prompts';
+import type { AIPromptTemplate } from '../../../domain/entities/AIPromptTemplate';
+import type { AIPromptResult, AIPromptCategory } from '../../../domain/entities/types';
+import type { AIPromptSafety } from '../../../domain/entities/value-objects';
+import { createAIPromptTemplate } from '../../../domain/entities/AIPromptTemplate';
+import { PromptGenerationService } from '../PromptGenerationService';
 
 /**
  * Default safety configuration for all AI prompt templates
@@ -52,7 +52,7 @@ export abstract class BasePromptService<TConfig> {
         return Promise.resolve({
           success: false,
           error: 'VALIDATION_ERROR',
-          message: `Invalid ${this.getServiceName()} configuration`,
+          message: 'Invalid configuration',
         });
       }
 
@@ -62,7 +62,7 @@ export abstract class BasePromptService<TConfig> {
       return Promise.resolve({
         success: false,
         error: 'GENERATION_FAILED',
-        message: `Failed to generate ${this.getServiceName()} template`,
+        message: 'Failed to generate template',
       });
     }
   }

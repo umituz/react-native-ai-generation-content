@@ -1,5 +1,5 @@
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import type { AIPromptResult, AIPromptCategory } from '@ai-generation/prompts';
+import type { AIPromptTemplate } from '../entities/AIPromptTemplate';
+import type { AIPromptResult, AIPromptCategory } from '../entities/types';
 
 export interface ITemplateRepository {
   findById(id: string): Promise<AIPromptResult<AIPromptTemplate | null>>;

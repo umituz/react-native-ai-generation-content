@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import type { ImageEnhancementConfig, EnhancementAdjustments } from '@ai-generation/prompts';
-import type { AIPromptTemplate } from '@ai-generation/prompts';
-import type { IImageEnhancementService } from '@ai-generation/prompts';
-import type { IPromptHistoryRepository } from '@ai-generation/prompts';
-import { createGeneratedPrompt } from '@ai-generation/prompts';
+import type {ImageEnhancementConfig, EnhancementAdjustments} from '../../domain/entities/ImageEnhancementConfig';
+import type {IImageEnhancementService} from '../../domain/repositories/IAIPromptServices';
+import type {AIPromptTemplate} from '../../domain/entities/AIPromptTemplate';
+import type {IPromptHistoryRepository} from '../../domain/repositories/IPromptHistoryRepository';
+import {createGeneratedPrompt} from '../../domain/entities/GeneratedPrompt';
 import { useAsyncState } from './useAsyncState';
 
 export interface ImageEnhancementResult {
