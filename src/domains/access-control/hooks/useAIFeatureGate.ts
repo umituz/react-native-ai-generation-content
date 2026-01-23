@@ -76,27 +76,23 @@ export function useAIFeatureGate(
     return hasCredits;
   }, [isAuthenticated, isPremium, hasCredits]);
 
-  // Wrapped requireFeature with error handling
+  // Wrapped requireFeature with optional callbacks
   const requireFeature = useCallback(
-    async (action: () => void | Promise<void>): Promise<void> => {
-      try {
-        requireFeatureFromPackage(async () => {
-          try {
-            await action();
-            onSuccess?.();
-          } catch (error) {
-            const errorObj =
-              error instanceof Error ? error : new Error(String(error));
-            onError?.(errorObj);
-            throw error;
-          }
-        });
-      } catch (error) {
-        const errorObj =
-          error instanceof Error ? error : new Error(String(error));
-        onError?.(errorObj);
-        throw error;
-      }
+    (action: () => void | Promise<void>): void => {
+      requireFeatureFromPackage(() => {
+        const result = action();
+        if (result instanceof Promise) {
+          result
+            .then(() => onSuccess?.())
+            .catch((error) => {
+              const errorObj =
+                error instanceof Error ? error : new Error(String(error));
+              onError?.(errorObj);
+            });
+        } else {
+          onSuccess?.();
+        }
+      });
     },
     [requireFeatureFromPackage, onSuccess, onError],
   );

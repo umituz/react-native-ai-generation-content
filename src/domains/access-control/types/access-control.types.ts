@@ -30,7 +30,7 @@ export interface AIFeatureGateReturn {
    * Function to execute protected feature
    * Handles all access control checks (auth, premium, credits, paywall)
    */
-  requireFeature: (action: () => void | Promise<void>) => Promise<void>;
+  requireFeature: (action: () => void | Promise<void>) => void;
 
   /**
    * Whether user can access this feature (all checks passed)
