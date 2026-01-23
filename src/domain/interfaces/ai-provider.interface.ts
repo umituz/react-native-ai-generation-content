@@ -152,45 +152,27 @@ export interface VideoFeatureInputData {
 }
 
 // =============================================================================
-// Provider Interface
+// Provider Interface (Composition using Interface Segregation Principle)
 // =============================================================================
 
-export interface IAIProvider {
+import type { IAIProviderLifecycle } from "./provider-lifecycle.interface";
+import type { IAIProviderCapabilities } from "./provider-capabilities.interface";
+import type { IAIProviderJobManager } from "./provider-job-manager.interface";
+import type { IAIProviderExecutor } from "./provider-executor.interface";
+import type { IAIProviderImageFeatures } from "./provider-image-features.interface";
+import type { IAIProviderVideoFeatures } from "./provider-video-features.interface";
+
+/**
+ * Main AI Provider Interface
+ * Composition of segregated interfaces following SOLID principles
+ */
+export interface IAIProvider
+  extends IAIProviderLifecycle,
+    IAIProviderCapabilities,
+    IAIProviderJobManager,
+    IAIProviderExecutor,
+    IAIProviderImageFeatures,
+    IAIProviderVideoFeatures {
   readonly providerId: string;
   readonly providerName: string;
-
-  initialize(config: AIProviderConfig): void;
-  isInitialized(): boolean;
-  getCapabilities(): ProviderCapabilities;
-  isFeatureSupported(feature: ImageFeatureType | VideoFeatureType): boolean;
-
-  submitJob(model: string, input: Record<string, unknown>): Promise<JobSubmission>;
-  getJobStatus(model: string, requestId: string): Promise<JobStatus>;
-  getJobResult<T = unknown>(model: string, requestId: string): Promise<T>;
-
-  subscribe<T = unknown>(
-    model: string,
-    input: Record<string, unknown>,
-    options?: SubscribeOptions<T>,
-  ): Promise<T>;
-
-  run<T = unknown>(
-    model: string,
-    input: Record<string, unknown>,
-    options?: RunOptions,
-  ): Promise<T>;
-
-  reset(): void;
-
-  getImageFeatureModel(feature: ImageFeatureType): string;
-  buildImageFeatureInput(
-    feature: ImageFeatureType,
-    data: ImageFeatureInputData,
-  ): Record<string, unknown>;
-
-  getVideoFeatureModel(feature: VideoFeatureType): string;
-  buildVideoFeatureInput(
-    feature: VideoFeatureType,
-    data: VideoFeatureInputData,
-  ): Record<string, unknown>;
 }

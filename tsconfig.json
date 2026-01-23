@@ -23,6 +23,12 @@
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
+      "#domain/*": ["./src/domain/*"],
+      "#infrastructure/*": ["./src/infrastructure/*"],
+      "#presentation/*": ["./src/presentation/*"],
+      "#features/*": ["./src/features/*"],
+      "#domains/*": ["./src/domains/*"],
+      "#utils/*": ["./src/utils/*"],
       "@ai-generation/prompts": ["./src/domains/prompts"],
       "@ai-generation/prompts/*": ["./src/domains/prompts/*"],
       "@ai-generation/content-moderation": ["./src/domains/content-moderation"],
@@ -33,7 +39,14 @@
       "@ai-generation/face-detection/*": ["./src/domains/face-detection/*"],
       "@ai-generation/feature-background": ["./src/domains/feature-background"],
       "@ai-generation/feature-background/*": ["./src/domains/feature-background/*"],
-      "@features/*": ["./src/features/*"]
+      "@ai-generation/scenarios": ["./src/domains/scenarios"],
+      "@ai-generation/scenarios/*": ["./src/domains/scenarios/*"],
+      "@ai-generation/generation": ["./src/domains/generation"],
+      "@ai-generation/generation/*": ["./src/domains/generation/*"],
+      "@ai-generation/result-preview": ["./src/domains/result-preview"],
+      "@ai-generation/result-preview/*": ["./src/domains/result-preview/*"],
+      "@ai-generation/access-control": ["./src/domains/access-control"],
+      "@ai-generation/access-control/*": ["./src/domains/access-control/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
