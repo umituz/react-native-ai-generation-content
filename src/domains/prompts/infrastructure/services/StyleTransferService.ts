@@ -3,10 +3,10 @@
  * AI prompt generation for artistic style transfer
  */
 
-import type { IStyleTransferService } from '../../domain/repositories/IAIPromptServices';
-import type { StyleTransferConfig } from '../../domain/entities/StyleTransferConfig';
-import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
-import { validateStyleTransferConfig, getStyleStrengthValue } from '../../domain/entities/StyleTransferConfig';
+import type { IStyleTransferService } from '@ai-generation/prompts';
+import type { StyleTransferConfig } from '@ai-generation/prompts';
+import type { AIPromptTemplate } from '@ai-generation/prompts';
+import { validateStyleTransferConfig, getStyleStrengthValue } from '@ai-generation/prompts';
 import { BasePromptService } from './base';
 
 const BASE_TEMPLATE = `

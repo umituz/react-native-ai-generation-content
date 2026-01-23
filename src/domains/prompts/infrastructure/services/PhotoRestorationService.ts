@@ -3,10 +3,10 @@
  * AI prompt generation for photo restoration tasks
  */
 
-import type { IPhotoRestorationService } from '../../domain/repositories/IAIPromptServices';
-import type { PhotoRestorationConfig } from '../../domain/entities/PhotoRestorationConfig';
-import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
-import { validatePhotoRestorationConfig, getQualityLevel } from '../../domain/entities/PhotoRestorationConfig';
+import type { IPhotoRestorationService } from '@ai-generation/prompts';
+import type { PhotoRestorationConfig } from '@ai-generation/prompts';
+import type { AIPromptTemplate } from '@ai-generation/prompts';
+import { validatePhotoRestorationConfig, getQualityLevel } from '@ai-generation/prompts';
 import { BasePromptService } from './base';
 
 const BASE_TEMPLATE = `

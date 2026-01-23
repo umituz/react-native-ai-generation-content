@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import type { PhotoRestorationConfig } from '../../domain/entities/PhotoRestorationConfig';
-import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
-import type { IPhotoRestorationService } from '../../domain/repositories/IAIPromptServices';
-import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
-import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
+import type { PhotoRestorationConfig } from '@ai-generation/prompts';
+import type { AIPromptTemplate } from '@ai-generation/prompts';
+import type { IPhotoRestorationService } from '@ai-generation/prompts';
+import type { IPromptHistoryRepository } from '@ai-generation/prompts';
+import { createGeneratedPrompt } from '@ai-generation/prompts';
 import { useAsyncState } from './useAsyncState';
 
 export interface PhotoRestorationResult {

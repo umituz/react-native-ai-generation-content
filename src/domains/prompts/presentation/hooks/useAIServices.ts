@@ -1,12 +1,12 @@
 import { useState, useCallback, useMemo } from 'react';
-import type { ITemplateRepository } from '../../domain/repositories/ITemplateRepository';
-import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
-import type { GeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
-import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
+import type { ITemplateRepository } from '@ai-generation/prompts';
+import type { IPromptHistoryRepository } from '@ai-generation/prompts';
+import type { GeneratedPrompt } from '@ai-generation/prompts';
+import { createGeneratedPrompt } from '@ai-generation/prompts';
 import { useAsyncState } from './useAsyncState';
-import { AIServiceProcessor, type AIConfig, type AIServices } from '../../infrastructure/services/AIServiceProcessor';
+import { AIServiceProcessor, type AIConfig, type AIServices } from '@ai-generation/prompts';
 
-export type { AIConfig };
+
 
 export interface UseAIServicesState {
   generatedPrompt: GeneratedPrompt | null;

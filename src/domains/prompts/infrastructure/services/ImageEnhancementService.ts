@@ -3,10 +3,10 @@
  * AI prompt generation for image enhancement tasks
  */
 
-import type { IImageEnhancementService } from '../../domain/repositories/IAIPromptServices';
-import type { ImageEnhancementConfig, EnhancementAdjustments } from '../../domain/entities/ImageEnhancementConfig';
-import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
-import { validateImageEnhancementConfig, calculateAdjustments } from '../../domain/entities/ImageEnhancementConfig';
+import type { IImageEnhancementService } from '@ai-generation/prompts';
+import type { ImageEnhancementConfig, EnhancementAdjustments } from '@ai-generation/prompts';
+import type { AIPromptTemplate } from '@ai-generation/prompts';
+import { validateImageEnhancementConfig, calculateAdjustments } from '@ai-generation/prompts';
 import { BasePromptService } from './base';
 
 const BASE_TEMPLATE = `

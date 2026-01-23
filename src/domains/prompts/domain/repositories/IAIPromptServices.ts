@@ -1,29 +1,29 @@
-import type { AIPromptTemplate } from '../entities/AIPromptTemplate';
-import type { AIPromptResult } from '../entities/types';
-import type { FaceSwapConfig } from '../entities/FaceSwapConfig';
+import type { AIPromptTemplate } from '@ai-generation/prompts';
+import type { AIPromptResult } from '@ai-generation/prompts';
+import type { FaceSwapConfig } from '@ai-generation/prompts';
 import type {
   PhotoRestorationConfig
-} from '../entities/PhotoRestorationConfig';
+} from '@ai-generation/prompts';
 import type {
   ImageEnhancementConfig,
   EnhancementAdjustments
-} from '../entities/ImageEnhancementConfig';
+} from '@ai-generation/prompts';
 import type {
   StyleTransferConfig
-} from '../entities/StyleTransferConfig';
+} from '@ai-generation/prompts';
 import type {
   BackgroundRemovalConfig
-} from '../entities/BackgroundRemovalConfig';
+} from '@ai-generation/prompts';
 import type {
   TextGenerationConfig
-} from '../entities/TextGenerationConfig';
+} from '@ai-generation/prompts';
 import type {
   ColorizationConfig
-} from '../entities/ColorizationConfig';
+} from '@ai-generation/prompts';
 import type {
   FuturePredictionConfig,
   FuturePredictionResult,
-} from '../entities/FuturePredictionConfig';
+} from '@ai-generation/prompts';
 
 export interface IFaceSwapService {
   generateTemplate(config: FaceSwapConfig): Promise<AIPromptResult<AIPromptTemplate>>;

@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { StyleTransferConfig } from '../../domain/entities/StyleTransferConfig';
-import type { AIPromptTemplate } from '../../domain/entities/AIPromptTemplate';
-import type { IStyleTransferService } from '../../domain/repositories/IAIPromptServices';
-import { StyleTransferService } from '../../infrastructure/services/StyleTransferService';
-import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
-import { createGeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
+import type { StyleTransferConfig } from '@ai-generation/prompts';
+import type { AIPromptTemplate } from '@ai-generation/prompts';
+import type { IStyleTransferService } from '@ai-generation/prompts';
+import { StyleTransferService } from '@ai-generation/prompts';
+import type { IPromptHistoryRepository } from '@ai-generation/prompts';
+import { createGeneratedPrompt } from '@ai-generation/prompts';
 import { useAsyncState } from './useAsyncState';
 
 export interface StyleTransferResult {

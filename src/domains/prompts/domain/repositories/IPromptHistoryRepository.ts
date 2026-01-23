@@ -1,5 +1,5 @@
-import type { GeneratedPrompt } from '../entities/GeneratedPrompt';
-import type { AIPromptResult } from '../entities/types';
+import type { GeneratedPrompt } from '@ai-generation/prompts';
+import type { AIPromptResult } from '@ai-generation/prompts';
 
 export interface IPromptHistoryRepository {
   save(prompt: GeneratedPrompt): Promise<AIPromptResult<void>>;

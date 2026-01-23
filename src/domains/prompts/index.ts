@@ -72,7 +72,7 @@ export { useImageEnhancement } from './presentation/hooks/useImageEnhancement';
 export type { UseStyleTransferState, UseStyleTransferActions } from './presentation/hooks/useStyleTransfer';
 export { useStyleTransfer } from './presentation/hooks/useStyleTransfer';
 
-export type { AIConfig, UseAIServicesState, UseAIServicesActions } from './presentation/hooks/useAIServices';
+export type { UseAIServicesState, UseAIServicesActions } from './presentation/hooks/useAIServices';
 export { useAIServices } from './presentation/hooks/useAIServices';
 
 export type { UsePromptGenerationState, UsePromptGenerationActions } from './presentation/hooks/usePromptGeneration';
@@ -114,3 +114,6 @@ export {
   getInteractionForbidden,
 } from './infrastructure/builders/interaction-style-builder';
 export type { InteractionStyle, InteractionStyleOptions } from './infrastructure/builders/interaction-style-builder';
+
+export { AIServiceProcessor } from './infrastructure/services/AIServiceProcessor';
+export type { AIConfig, AIServices, ProcessResult } from './infrastructure/services/AIServiceProcessor';

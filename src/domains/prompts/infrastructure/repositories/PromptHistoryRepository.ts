@@ -1,6 +1,6 @@
-import type { IPromptHistoryRepository } from '../../domain/repositories/IPromptHistoryRepository';
-import type { GeneratedPrompt } from '../../domain/entities/GeneratedPrompt';
-import type { AIPromptResult } from '../../domain/entities/types';
+import type { IPromptHistoryRepository } from '@ai-generation/prompts';
+import type { GeneratedPrompt } from '@ai-generation/prompts';
+import type { AIPromptResult } from '@ai-generation/prompts';
 
 export class PromptHistoryRepository implements IPromptHistoryRepository {
   private storage: GeneratedPrompt[] = [];

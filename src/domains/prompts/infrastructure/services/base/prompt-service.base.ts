@@ -4,11 +4,11 @@
  * Eliminates code duplication across service implementations
  */
 
-import type { AIPromptTemplate } from '../../../domain/entities/AIPromptTemplate';
-import type { AIPromptResult, AIPromptCategory } from '../../../domain/entities/types';
-import type { AIPromptSafety } from '../../../domain/entities/value-objects';
-import { createAIPromptTemplate } from '../../../domain/entities/AIPromptTemplate';
-import { PromptGenerationService } from '../PromptGenerationService';
+import type { AIPromptTemplate } from '@ai-generation/prompts';
+import type { AIPromptResult, AIPromptCategory } from '@ai-generation/prompts';
+import type { AIPromptSafety } from '@ai-generation/prompts';
+import { createAIPromptTemplate } from '@ai-generation/prompts';
+import { PromptGenerationService } from '@ai-generation/prompts';
 
 /**
  * Default safety configuration for all AI prompt templates
