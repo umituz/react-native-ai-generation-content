@@ -5,7 +5,7 @@
 
 import type { IAIProvider } from "../../domain/interfaces";
 
-declare const __DEV__: boolean;
+declare const __DEV__: boolean | undefined;
 
 class ProviderRegistry {
   private providers: Map<string, IAIProvider> = new Map();
@@ -13,7 +13,7 @@ class ProviderRegistry {
 
   register(provider: IAIProvider): void {
     if (this.providers.has(provider.providerId)) {
-      if (__DEV__) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.warn(
           `[ProviderRegistry] Provider ${provider.providerId} already registered`,
         );
@@ -23,7 +23,7 @@ class ProviderRegistry {
 
     this.providers.set(provider.providerId, provider);
 
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log(
         `[ProviderRegistry] Registered provider: ${provider.providerId}`,
       );
@@ -43,13 +43,13 @@ class ProviderRegistry {
     }
     this.activeProviderId = providerId;
 
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log(`[ProviderRegistry] Active provider set to: ${providerId}`);
     }
   }
 
   getActiveProvider(): IAIProvider | null {
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[ProviderRegistry] getActiveProvider() called", {
         activeProviderId: this.activeProviderId,
         registeredProviders: Array.from(this.providers.keys()),
@@ -57,7 +57,7 @@ class ProviderRegistry {
     }
 
     if (!this.activeProviderId) {
-      if (__DEV__) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.warn("[ProviderRegistry] No active provider set!");
       }
       return null;
@@ -65,7 +65,7 @@ class ProviderRegistry {
 
     const provider = this.providers.get(this.activeProviderId) ?? null;
 
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[ProviderRegistry] getActiveProvider() returning", {
         providerId: provider?.providerId,
         isInitialized: provider?.isInitialized(),
