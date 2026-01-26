@@ -17,6 +17,8 @@ export interface BaseWizardFlowProps {
   readonly creditBalance: number;
   /** Are credits loaded */
   readonly isCreditsLoaded: boolean;
+  /** Credit cost for this generation - REQUIRED, determined by the app */
+  readonly creditCost: number;
   /** Show auth modal with callback */
   readonly onShowAuthModal: (callback: () => void) => void;
   /** Show paywall */

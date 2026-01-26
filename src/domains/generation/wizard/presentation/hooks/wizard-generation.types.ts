@@ -4,7 +4,7 @@
  */
 
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
-import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
+import type { ScenarioInputType, ScenarioPromptType } from "../../../../scenarios/domain/Scenario";
 
 export type WizardOutputType = "image" | "video";
 
@@ -14,6 +14,8 @@ export interface WizardScenarioData {
   readonly outputType?: WizardOutputType;
   /** Input type - determines required photo count. Default: "single" */
   readonly inputType?: ScenarioInputType;
+  /** Prompt type - identity preservation or genetic blend */
+  readonly promptType?: ScenarioPromptType;
   readonly model?: string;
   readonly title?: string;
   readonly description?: string;
@@ -27,6 +29,8 @@ export interface UseWizardGenerationProps {
   readonly isGeneratingStep: boolean;
   /** Required - alert messages for error states */
   readonly alertMessages: AlertMessages;
+  /** Credit cost for this generation - REQUIRED, determined by the app */
+  readonly creditCost: number;
   readonly onSuccess?: (result: unknown) => void;
   readonly onError?: (error: string) => void;
   readonly onCreditsExhausted?: () => void;

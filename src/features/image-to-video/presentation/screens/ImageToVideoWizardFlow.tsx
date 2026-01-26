@@ -33,6 +33,7 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
     hasPremium,
     creditBalance,
     isCreditsLoaded,
+    creditCost,
     onShowAuthModal,
     onShowPaywall,
     onGenerationComplete,
@@ -63,10 +64,10 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
   const handleGenerationStart = useCallback(
     (_data: Record<string, unknown>, proceed: () => void) => {
       if (!isAuthenticated) { onShowAuthModal(proceed); return; }
-      if (!hasPremium && isCreditsLoaded && creditBalance < 1) { onShowPaywall(); return; }
+      if (!hasPremium && isCreditsLoaded && creditBalance < creditCost) { onShowPaywall(); return; }
       proceed();
     },
-    [isAuthenticated, hasPremium, creditBalance, isCreditsLoaded, onShowAuthModal, onShowPaywall],
+    [isAuthenticated, hasPremium, creditBalance, creditCost, isCreditsLoaded, onShowAuthModal, onShowPaywall],
   );
 
   return (
@@ -76,6 +77,7 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
         scenario={scenario}
         userId={userId}
         alertMessages={alertMessages ?? defaultAlerts}
+        creditCost={creditCost}
         onGenerationStart={handleGenerationStart}
         onGenerationComplete={onGenerationComplete}
         onGenerationError={onGenerationError}

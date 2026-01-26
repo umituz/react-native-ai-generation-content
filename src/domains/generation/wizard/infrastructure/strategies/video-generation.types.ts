@@ -27,6 +27,8 @@ export interface WizardVideoResult {
 export interface CreateVideoStrategyOptions {
   readonly scenario: WizardScenarioData;
   readonly collectionName?: string;
+  /** Credit cost for this generation - REQUIRED, determined by the app */
+  readonly creditCost: number;
 }
 
 export interface PhotoValidationResult {

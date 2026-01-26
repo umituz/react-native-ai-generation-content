@@ -32,6 +32,7 @@ function buildFinalPrompt(input: WizardImageInput, imageUrls: string[]): string 
       basePrompt: input.prompt,
       photoCount: imageUrls.length,
       interactionStyle: input.interactionStyle,
+      promptType: input.promptType,
     });
   }
 

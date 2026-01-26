@@ -36,7 +36,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
-  const { deductCredit } = useDeductCredit({ userId, onCreditsExhausted });
+  const { deductCredit, checkCredits } = useDeductCredit({ userId, onCreditsExhausted });
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -93,6 +93,17 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       try {
         if (!offlineStore.isOnline) throw createGenerationError("network", alertMessages.networkError);
 
+        // Pre-validate credits before generation to catch concurrent consumption
+        const creditCost = strategy.getCreditCost();
+        const hasEnoughCredits = await checkCredits(creditCost);
+        if (!hasEnoughCredits) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] Pre-validation: insufficient credits");
+          }
+          onCreditsExhausted?.();
+          throw createGenerationError("credits", alertMessages.creditFailed);
+        }
+
         return await handleModeration({
           input,
           moderation,
@@ -118,7 +129,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         isGeneratingRef.current = false;
       }
     },
-    [moderation, alertMessages, offlineStore.isOnline, executeGeneration, showError, onError, handleLifecycleComplete],
+    [moderation, alertMessages, offlineStore.isOnline, strategy, checkCredits, onCreditsExhausted, executeGeneration, showError, onError, handleLifecycleComplete],
   );
 
   const reset = useCallback(() => {

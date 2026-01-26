@@ -97,7 +97,9 @@ export type { CreatePromptOptions } from './domain/entities/BasePromptStructure'
 
 export {
   MULTI_PERSON_PRESERVATION_RULES,
+  GENETIC_BLEND_RULES,
   createMultiPersonPrompt,
+  createGeneticBlendPrompt,
 } from './domain/entities/MultiPersonPromptStructure';
 export type { MultiPersonPreservationRules } from './domain/entities/MultiPersonPromptStructure';
 

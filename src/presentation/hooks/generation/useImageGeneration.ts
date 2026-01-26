@@ -48,8 +48,8 @@ export interface ImageGenerationConfig<TInput extends ImageGenerationInput, TRes
   };
   /** Optional: Build creation for saving */
   buildCreation?: (result: TResult, input: TInput) => Creation | null;
-  /** Credit cost (default: 1) */
-  creditCost?: number;
+  /** Credit cost for this generation - REQUIRED, determined by the app */
+  creditCost: number;
   /** Alert messages for errors */
   alertMessages: AlertMessages;
   /** Callbacks */
@@ -93,7 +93,7 @@ export const useImageGeneration = <
     processResult,
     buildExecutorInput,
     buildCreation,
-    creditCost = 1,
+    creditCost,
     alertMessages,
     onCreditsExhausted,
     onSuccess,

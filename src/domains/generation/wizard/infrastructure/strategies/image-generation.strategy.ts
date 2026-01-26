@@ -47,8 +47,9 @@ export async function buildImageInput(
   const styleValue = extractSelection(wizardData.style);
   const style = typeof styleValue === "string" ? styleValue : undefined;
   const interactionStyle = (scenario.interactionStyle as InteractionStyle) ?? "romantic";
+  const promptType = scenario.promptType;
 
-  return { photos, prompt: finalPrompt, style, interactionStyle };
+  return { photos, prompt: finalPrompt, style, interactionStyle, promptType };
 }
 
 /**
@@ -80,7 +81,7 @@ function applyStyleEnhancements(prompt: string, wizardData: Record<string, unkno
 // ============================================================================
 
 export function createImageStrategy(options: CreateImageStrategyOptions): WizardStrategy {
-  const { scenario } = options;
+  const { scenario, creditCost } = options;
 
   return {
     execute: async (input: unknown) => {
@@ -98,6 +99,6 @@ export function createImageStrategy(options: CreateImageStrategyOptions): Wizard
       return { imageUrl: result.imageUrl };
     },
 
-    getCreditCost: () => 1,
+    getCreditCost: () => creditCost,
   };
 }

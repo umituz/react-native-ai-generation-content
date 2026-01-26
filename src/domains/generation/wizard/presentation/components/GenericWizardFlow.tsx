@@ -24,6 +24,8 @@ export interface GenericWizardFlowProps {
   readonly scenarioId?: string;
   readonly userId?: string;
   readonly alertMessages: AlertMessages;
+  /** Credit cost for this generation - REQUIRED, determined by the app */
+  readonly creditCost: number;
   readonly skipResultStep?: boolean;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
   readonly onGenerationStart?: (
@@ -49,6 +51,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
     scenarioId,
     userId,
     alertMessages,
+    creditCost,
     skipResultStep = false,
     onStepChange,
     onGenerationStart,
@@ -104,6 +107,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
       validatedScenario={validatedScenario}
       userId={userId}
       alertMessages={alertMessages}
+      creditCost={creditCost}
       skipResultStep={skipResultStep}
       onStepChange={onStepChange}
       onGenerationStart={onGenerationStart}

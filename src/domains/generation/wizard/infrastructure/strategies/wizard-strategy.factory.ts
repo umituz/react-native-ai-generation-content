@@ -18,6 +18,8 @@ export type { WizardStrategy } from "./wizard-strategy.types";
 export interface CreateWizardStrategyOptions {
   readonly scenario: WizardScenarioData;
   readonly collectionName?: string;
+  /** Credit cost for this generation - REQUIRED, determined by the app */
+  readonly creditCost: number;
 }
 
 // ============================================================================
@@ -25,14 +27,14 @@ export interface CreateWizardStrategyOptions {
 // ============================================================================
 
 export function createWizardStrategy(options: CreateWizardStrategyOptions): WizardStrategy {
-  const { scenario, collectionName } = options;
+  const { scenario, collectionName, creditCost } = options;
 
   if (scenario.outputType === "image") {
-    return createImageStrategy({ scenario, collectionName });
+    return createImageStrategy({ scenario, collectionName, creditCost });
   }
 
   // Default to video strategy for video outputType or undefined
-  return createVideoStrategy({ scenario, collectionName });
+  return createVideoStrategy({ scenario, collectionName, creditCost });
 }
 
 // ============================================================================

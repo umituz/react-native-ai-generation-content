@@ -33,6 +33,7 @@ export const useWizardGeneration = (
     userId,
     isGeneratingStep,
     alertMessages,
+    creditCost,
     onSuccess,
     onError,
     onCreditsExhausted,
@@ -45,8 +46,11 @@ export const useWizardGeneration = (
   // Persistence utility - separate from strategy
   const persistence = useMemo(() => createCreationPersistence(), []);
 
-  // Strategy - only handles execution
-  const strategy = useMemo(() => createWizardStrategy({ scenario }), [scenario]);
+  // Strategy - only handles execution, creditCost is passed from app
+  const strategy = useMemo(
+    () => createWizardStrategy({ scenario, creditCost }),
+    [scenario, creditCost],
+  );
 
   const handleSuccess = useCallback(
     async (result: unknown) => {

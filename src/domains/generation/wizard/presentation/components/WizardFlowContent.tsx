@@ -25,6 +25,8 @@ export interface WizardFlowContentProps {
   readonly validatedScenario: WizardScenarioData;
   readonly userId?: string;
   readonly alertMessages: AlertMessages;
+  /** Credit cost for this generation - REQUIRED, determined by the app */
+  readonly creditCost: number;
   readonly skipResultStep?: boolean;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
   readonly onGenerationStart?: (
@@ -49,6 +51,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     validatedScenario,
     userId,
     alertMessages,
+    creditCost,
     skipResultStep = false,
     onStepChange,
     onGenerationStart,
@@ -127,6 +130,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     userId,
     isGeneratingStep: currentStep?.type === StepType.GENERATING,
     alertMessages,
+    creditCost,
     onSuccess: handlers.handleGenerationComplete,
     onError: onGenerationError,
     onCreditsExhausted,

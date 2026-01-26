@@ -70,7 +70,7 @@ export async function buildVideoInput(
 }
 
 export function createVideoStrategy(options: CreateVideoStrategyOptions): WizardStrategy {
-  const { scenario } = options;
+  const { scenario, creditCost } = options;
   const videoFeatureType = getVideoFeatureType(scenario.id);
 
   return {
@@ -95,6 +95,6 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
       return { videoUrl: result.videoUrl };
     },
 
-    getCreditCost: () => 1,
+    getCreditCost: () => creditCost,
   };
 }
