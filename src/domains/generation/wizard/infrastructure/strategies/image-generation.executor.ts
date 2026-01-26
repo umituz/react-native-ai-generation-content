@@ -28,11 +28,14 @@ function buildFinalPrompt(input: WizardImageInput, imageUrls: string[]): string 
   const hasPhotos = imageUrls.length > 0;
 
   if (hasPhotos) {
+    // Custom prompt type means app provides complete prompt - skip identity preservation
+    const skipIdentityPreservation = input.promptType === "custom";
+
     return buildUnifiedPrompt({
       basePrompt: input.prompt,
       photoCount: imageUrls.length,
       interactionStyle: input.interactionStyle,
-      promptType: input.promptType,
+      skipIdentityPreservation,
     });
   }
 

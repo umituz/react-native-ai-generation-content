@@ -16,9 +16,9 @@ export type ScenarioInputType = "single" | "dual" | "text";
 /**
  * Prompt type determines how multi-person prompts are built
  * - identity: Preserve exact facial features from input photos (default)
- * - genetic_blend: Create new face by blending features from multiple inputs (for child prediction)
+ * - custom: Use aiPrompt as-is without adding identity preservation (for app-specific scenarios)
  */
-export type ScenarioPromptType = "identity" | "genetic_blend";
+export type ScenarioPromptType = "identity" | "custom";
 
 export interface GeneratingMessages {
   title?: string;
