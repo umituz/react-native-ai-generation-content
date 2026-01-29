@@ -46,7 +46,13 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
   const tokens = useAppDesignTokens();
 
   const scenario: WizardScenarioData = useMemo(
-    () => ({ id: "image-to-video", outputType: "video", model, title: t("image2video.title") }),
+    () => ({
+      id: "image-to-video",
+      outputType: "video",
+      inputType: "single",
+      model,
+      title: t("image2video.title"),
+    }),
     [model, t],
   );
 

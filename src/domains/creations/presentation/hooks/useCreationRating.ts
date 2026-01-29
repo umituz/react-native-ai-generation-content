@@ -1,11 +1,13 @@
 /**
  * useCreationRating Hook
- * Handles rating of creations with optimistic update
+ * Handles rating of creations
+ * Realtime listener handles UI updates automatically
  */
 
-import { useMutation, useQueryClient } from "@umituz/react-native-design-system";
+import { useState, useCallback } from "react";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
-import type { Creation } from "../../domain/entities/Creation";
+
+declare const __DEV__: boolean;
 
 interface UseCreationRatingProps {
   readonly userId: string | null;
@@ -15,41 +17,53 @@ interface UseCreationRatingProps {
 interface RatingVariables {
   readonly id: string;
   readonly rating: number;
+  readonly description?: string;
+}
+
+interface UseCreationRatingReturn {
+  readonly mutate: (variables: RatingVariables) => void;
+  readonly mutateAsync: (variables: RatingVariables) => Promise<boolean>;
+  readonly isPending: boolean;
 }
 
 export function useCreationRating({
   userId,
   repository,
-}: UseCreationRatingProps) {
-  const queryClient = useQueryClient();
-  const queryKey = ["creations", userId ?? ""];
+}: UseCreationRatingProps): UseCreationRatingReturn {
+  const [isPending, setIsPending] = useState(false);
 
-  return useMutation({
-    mutationFn: async ({ id, rating }: RatingVariables) => {
+  const mutateAsync = useCallback(
+    async ({ id, rating, description }: RatingVariables): Promise<boolean> => {
       if (!userId) return false;
-      return repository.rate(userId, id, rating);
-    },
-    onMutate: async ({ id, rating }: RatingVariables) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousData = queryClient.getQueryData<Creation[]>(queryKey);
 
-      if (previousData) {
-        queryClient.setQueryData<Creation[]>(queryKey, (old) =>
-          old?.map((c) =>
-            c.id === id ? { ...c, rating, ratedAt: new Date() } : c
-          ) ?? []
-        );
+      setIsPending(true);
+      try {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[useCreationRating] Rating:", { id, rating });
+        }
+        const result = await repository.rate(userId, id, rating, description);
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[useCreationRating] Rate result:", result);
+        }
+        return result;
+      } catch (error) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[useCreationRating] Error:", error);
+        }
+        return false;
+      } finally {
+        setIsPending(false);
       }
+    },
+    [userId, repository],
+  );
 
-      return { previousData };
+  const mutate = useCallback(
+    (variables: RatingVariables): void => {
+      void mutateAsync(variables);
     },
-    onError: (_error, _variables, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(queryKey, context.previousData);
-      }
-    },
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey });
-    },
-  });
+    [mutateAsync],
+  );
+
+  return { mutate, mutateAsync, isPending };
 }

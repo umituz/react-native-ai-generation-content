@@ -160,6 +160,67 @@ export function hasVideoFeatureSupport(): boolean {
   return provider !== null && provider.isInitialized();
 }
 
+/**
+ * Submit a video feature to the queue for background processing
+ * Returns immediately with requestId and model for later status polling
+ */
+export async function submitVideoFeatureToQueue(
+  featureType: VideoFeatureType,
+  request: VideoFeatureRequest,
+): Promise<{ success: boolean; requestId?: string; model?: string; error?: string }> {
+  if (__DEV__) {
+    console.log(`[VideoExecutor:${featureType}] QUEUE SUBMIT`, {
+      hasSource: !!request.sourceImageBase64,
+      hasTarget: !!request.targetImageBase64,
+      promptLength: request.prompt?.length ?? 0,
+    });
+  }
+
+  const provider = providerRegistry.getActiveProvider();
+
+  if (!provider) {
+    return { success: false, error: "No AI provider configured" };
+  }
+
+  if (!provider.isInitialized()) {
+    return { success: false, error: "AI provider not initialized" };
+  }
+
+  const model = provider.getVideoFeatureModel(featureType);
+
+  try {
+    const inputData: VideoFeatureInputData = {
+      sourceImageBase64: cleanBase64(request.sourceImageBase64),
+      targetImageBase64: cleanBase64(request.targetImageBase64),
+      prompt: request.prompt,
+      options: request.options,
+    };
+
+    const input = provider.buildVideoFeatureInput(featureType, inputData);
+
+    const submission = await provider.submitJob(model, input);
+
+    if (__DEV__) {
+      console.log(`[VideoExecutor:${featureType}] QUEUE SUBMITTED`, {
+        requestId: submission.requestId,
+        model,
+      });
+    }
+
+    return {
+      success: true,
+      requestId: submission.requestId,
+      model,
+    };
+  } catch (error) {
+    const message = extractErrorMessage(error, "Queue submission failed", `Video:${featureType}`);
+    if (__DEV__) {
+      console.error(`[VideoExecutor:${featureType}] QUEUE EXCEPTION`, { error: message });
+    }
+    return { success: false, error: message };
+  }
+}
+
 export type {
   ExecuteVideoFeatureOptions,
   VideoFeatureResult,

@@ -16,6 +16,9 @@ export interface ProcessingCreationData {
   readonly scenarioId: string;
   readonly scenarioTitle: string;
   readonly prompt: string;
+  // Background job tracking - FAL queue
+  readonly requestId?: string;
+  readonly model?: string;
 }
 
 export interface CompletedCreationData {
@@ -51,6 +54,8 @@ export function createCreationPersistence(config: CreationPersistenceConfig = {}
         createdAt: new Date(),
         isShared: false,
         isFavorite: false,
+        requestId: data.requestId,
+        model: data.model,
         metadata: {
           scenarioId: data.scenarioId,
           scenarioTitle: data.scenarioTitle,
@@ -58,7 +63,11 @@ export function createCreationPersistence(config: CreationPersistenceConfig = {}
       });
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[CreationPersistence] Saved as processing", { creationId });
+        console.log("[CreationPersistence] Saved as processing", {
+          creationId,
+          requestId: data.requestId,
+          model: data.model,
+        });
       }
 
       return creationId;
@@ -102,6 +111,26 @@ export function createCreationPersistence(config: CreationPersistenceConfig = {}
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[CreationPersistence] Updated to failed", { creationId, error });
+      }
+    },
+
+    /**
+     * Update creation with FAL queue requestId and model after job submission
+     * Call this after fal.queue.submit() returns
+     */
+    updateRequestId: async (
+      userId: string,
+      creationId: string,
+      requestId: string,
+      model: string,
+    ): Promise<void> => {
+      await repository.update(userId, creationId, {
+        requestId,
+        model,
+      });
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[CreationPersistence] Updated requestId", { creationId, requestId, model });
       }
     },
   };

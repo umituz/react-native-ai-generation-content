@@ -1,15 +1,15 @@
 /**
  * useWizardGeneration Hook
- * Wizard generation with Firestore persistence
- * - Saves status="processing" at start
- * - Updates to status="completed" on success
- * - Updates to status="failed" on error
+ * Orchestrates wizard-based generation by delegating to appropriate mode:
+ * - Video: Queue-based generation with background support
+ * - Photo: Blocking execution for quick results
  */
 
-import { useEffect, useRef, useMemo, useCallback } from "react";
-import { useGenerationOrchestrator } from "../../../../../presentation/hooks/generation";
+import { useEffect, useRef, useMemo } from "react";
 import { createWizardStrategy, buildWizardInput } from "../../infrastructure/strategies";
 import { createCreationPersistence } from "../../infrastructure/utils/creation-persistence.util";
+import { useVideoQueueGeneration } from "./useVideoQueueGeneration";
+import { usePhotoBlockingGeneration } from "./usePhotoBlockingGeneration";
 import type {
   UseWizardGenerationProps,
   UseWizardGenerationReturn,
@@ -40,77 +40,42 @@ export const useWizardGeneration = (
   } = props;
 
   const hasStarted = useRef(false);
-  const creationIdRef = useRef<string | null>(null);
-  const inputRef = useRef<{ prompt: string } | null>(null);
 
-  // Persistence utility - separate from strategy
   const persistence = useMemo(() => createCreationPersistence(), []);
-
-  // Strategy - only handles execution, creditCost is passed from app
   const strategy = useMemo(
     () => createWizardStrategy({ scenario, creditCost }),
     [scenario, creditCost],
   );
 
-  const handleSuccess = useCallback(
-    async (result: unknown) => {
-      const typedResult = result as { imageUrl?: string; videoUrl?: string };
-      const creationId = creationIdRef.current;
+  const isVideoMode = scenario.outputType === "video" && !!strategy.submitToQueue;
 
-      // Update to completed in Firestore
-      if (creationId && userId) {
-        try {
-          await persistence.updateToCompleted(userId, creationId, {
-            uri: typedResult.imageUrl || typedResult.videoUrl || "",
-            imageUrl: typedResult.imageUrl,
-            videoUrl: typedResult.videoUrl,
-          });
-        } catch (err) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[useWizardGeneration] updateToCompleted error:", err);
-          }
-        }
-      }
-
-      creationIdRef.current = null;
-      inputRef.current = null;
-      onSuccess?.(result);
-    },
-    [userId, persistence, onSuccess],
-  );
-
-  const handleError = useCallback(
-    async (err: { message: string }) => {
-      const creationId = creationIdRef.current;
-
-      // Update to failed in Firestore
-      if (creationId && userId) {
-        try {
-          await persistence.updateToFailed(userId, creationId, err.message);
-        } catch (updateErr) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[useWizardGeneration] updateToFailed error:", updateErr);
-          }
-        }
-      }
-
-      creationIdRef.current = null;
-      inputRef.current = null;
-      onError?.(err.message);
-    },
-    [userId, persistence, onError],
-  );
-
-  const { generate, isGenerating } = useGenerationOrchestrator(strategy, {
+  // Video generation hook (queue-based)
+  const videoGeneration = useVideoQueueGeneration({
     userId,
-    alertMessages,
-    onCreditsExhausted,
-    onSuccess: handleSuccess,
-    onError: handleError,
+    scenario,
+    persistence,
+    strategy,
+    onSuccess,
+    onError,
   });
 
+  // Photo generation hook (blocking)
+  const photoGeneration = usePhotoBlockingGeneration({
+    userId,
+    scenario,
+    persistence,
+    strategy,
+    alertMessages,
+    onSuccess,
+    onError,
+    onCreditsExhausted,
+  });
+
+  // Main effect: trigger generation when step becomes active
   useEffect(() => {
-    if (isGeneratingStep && !hasStarted.current && !isGenerating) {
+    const isAlreadyGenerating = videoGeneration.isGenerating || photoGeneration.isGenerating;
+
+    if (isGeneratingStep && !hasStarted.current && !isAlreadyGenerating) {
       hasStarted.current = true;
 
       buildWizardInput(wizardData, scenario)
@@ -121,32 +86,22 @@ export const useWizardGeneration = (
             return;
           }
 
-          inputRef.current = input as { prompt: string };
-
-          // Save to Firestore with status="processing"
           const typedInput = input as { prompt?: string };
-          if (userId && typedInput.prompt) {
-            try {
-              const creationId = await persistence.saveAsProcessing(userId, {
-                scenarioId: scenario.id,
-                scenarioTitle: scenario.title || scenario.id,
-                prompt: typedInput.prompt,
-              });
-              creationIdRef.current = creationId;
 
-              if (typeof __DEV__ !== "undefined" && __DEV__) {
-                console.log("[useWizardGeneration] Saved as processing:", creationId);
-              }
-            } catch (err) {
-              if (typeof __DEV__ !== "undefined" && __DEV__) {
-                console.error("[useWizardGeneration] saveAsProcessing error:", err);
-              }
-            }
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[WizardGeneration] Mode:", isVideoMode ? "VIDEO_QUEUE" : "PHOTO_BLOCKING");
           }
 
-          generate(input);
+          if (isVideoMode) {
+            await videoGeneration.startGeneration(input, typedInput.prompt || "");
+          } else {
+            await photoGeneration.startGeneration(input, typedInput.prompt || "");
+          }
         })
         .catch((error) => {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[WizardGeneration] Build input error:", error.message);
+          }
           hasStarted.current = false;
           onError?.(error.message);
         });
@@ -155,7 +110,17 @@ export const useWizardGeneration = (
     if (!isGeneratingStep && hasStarted.current) {
       hasStarted.current = false;
     }
-  }, [isGeneratingStep, scenario, wizardData, isGenerating, generate, onError, userId, persistence]);
+  }, [
+    isGeneratingStep,
+    scenario,
+    wizardData,
+    isVideoMode,
+    videoGeneration,
+    photoGeneration,
+    onError,
+  ]);
 
-  return { isGenerating };
+  return {
+    isGenerating: videoGeneration.isGenerating || photoGeneration.isGenerating,
+  };
 };

@@ -35,6 +35,9 @@ export interface Creation {
   // Extended fields for job-based creations
   readonly status?: CreationStatus;
   readonly output?: CreationOutput;
+  // Background job tracking - FAL queue requestId and model
+  readonly requestId?: string;
+  readonly model?: string;
   // Soft delete - if set, the creation is considered deleted
   readonly deletedAt?: Date;
 }
@@ -58,6 +61,9 @@ export interface CreationDocument {
   readonly createdAt: FirebaseTimestamp | Date;
   readonly completedAt?: FirebaseTimestamp | Date;
   readonly deletedAt?: FirebaseTimestamp | Date;
+  // Background job tracking - FAL queue requestId and model
+  readonly requestId?: string;
+  readonly model?: string;
 }
 
 interface FirebaseTimestamp {
@@ -113,6 +119,8 @@ export function mapDocumentToCreation(
     ratedAt: ratedAtDate,
     status: data.status as CreationStatus | undefined,
     output: data.output ?? undefined,
+    requestId: data.requestId,
+    model: data.model,
     deletedAt: deletedAtDate,
   };
 }

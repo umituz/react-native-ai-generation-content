@@ -20,6 +20,7 @@ export type { ImageResultExtractor } from "../utils/url-extractor";
 export {
   executeVideoFeature,
   hasVideoFeatureSupport,
+  submitVideoFeatureToQueue,
 } from "./video-feature-executor.service";
 export type {
   ExecuteVideoFeatureOptions,

@@ -57,7 +57,7 @@ function createTextInputConfig(scenarioId: string): WizardFeatureConfig {
     name: scenarioId,
     steps: [
       {
-        id: "text_input",
+        id: "prompt",
         type: "text_input",
         titleKey: "textInput.title",
         subtitleKey: "textInput.subtitle",

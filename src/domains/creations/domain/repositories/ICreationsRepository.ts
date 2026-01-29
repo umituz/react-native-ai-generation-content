@@ -5,8 +5,17 @@
 
 import type { Creation } from "../entities/Creation";
 
+export type CreationsSubscriptionCallback = (creations: Creation[]) => void;
+export type UnsubscribeFunction = () => void;
+
 export interface ICreationsRepository {
   getAll(userId: string): Promise<Creation[]>;
+  /** Realtime subscription to all creations */
+  subscribeToAll(
+    userId: string,
+    onData: CreationsSubscriptionCallback,
+    onError?: (error: Error) => void,
+  ): UnsubscribeFunction;
   getById(userId: string, id: string): Promise<Creation | null>;
   create(userId: string, creation: Creation): Promise<void>;
   update(

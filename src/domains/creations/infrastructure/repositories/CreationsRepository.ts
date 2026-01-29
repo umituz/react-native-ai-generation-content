@@ -2,7 +2,11 @@
 if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository.ts - Module loading");
 
 import { BaseRepository, FirestorePathResolver } from "@umituz/react-native-firebase";
-import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
+import type {
+  ICreationsRepository,
+  CreationsSubscriptionCallback,
+  UnsubscribeFunction,
+} from "../../domain/repositories/ICreationsRepository";
 import type { Creation } from "../../domain/entities/Creation";
 import { mapDocumentToCreation } from "../../domain/entities/Creation";
 import type { DocumentMapper } from "../../domain/value-objects/CreationsConfig";
@@ -64,6 +68,14 @@ export class CreationsRepository
 
   async getById(userId: string, id: string): Promise<Creation | null> {
     return this.fetcher.getById(userId, id);
+  }
+
+  subscribeToAll(
+    userId: string,
+    onData: CreationsSubscriptionCallback,
+    onError?: (error: Error) => void,
+  ): UnsubscribeFunction {
+    return this.fetcher.subscribeToAll(userId, onData, onError);
   }
 
   async create(userId: string, creation: Creation): Promise<void> {

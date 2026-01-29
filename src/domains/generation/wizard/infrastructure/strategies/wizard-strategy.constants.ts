@@ -50,4 +50,7 @@ export const VIDEO_PROCESSING_PROMPTS: Record<string, string> = {
   "ai-kiss": "Create a romantic video where these two people share a gentle, loving kiss",
   "ai-hug": "Create a heartwarming video where these two people share a warm, affectionate hug",
   "image-to-video": "Animate this image with natural, smooth motion while preserving the original style",
+  "solo_renaissance_portrait": "Transform this person into an elegant Renaissance-style animated portrait with classical artistic movements and period-appropriate lighting",
+  "renaissance_portrait": "Transform this portrait into a majestic Renaissance-style animated painting with subtle classical movements",
+  "historical_portrait": "Animate this portrait in a historical style with period-appropriate subtle movements",
 };

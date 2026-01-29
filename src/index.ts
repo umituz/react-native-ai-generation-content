@@ -47,6 +47,7 @@ export {
 export {
   providerRegistry, generationOrchestrator, pollJob, createJobPoller,
   executeImageFeature, hasImageFeatureSupport, executeVideoFeature, hasVideoFeatureSupport,
+  submitVideoFeatureToQueue,
 } from "./infrastructure/services";
 
 export type {

@@ -8,6 +8,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
+import { useProcessingJobsPoller } from "../hooks/useProcessingJobsPoller";
 import { useGalleryFilters } from "../hooks/useGalleryFilters";
 import { useGalleryCallbacks } from "../hooks/useGalleryCallbacks";
 import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
@@ -37,6 +38,14 @@ export function CreationsGalleryScreen({
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
   const deleteMutation = useDeleteCreation({ userId, repository });
+
+  // Poll FAL queue for "processing" creations (enables true background generation)
+  useProcessingJobsPoller({
+    userId,
+    creations: creations ?? [],
+    repository,
+    enabled: !!userId && (creations?.length ?? 0) > 0,
+  });
 
   useEffect(() => {
     if (initialCreationId && creations && creations.length > 0 && !hasAutoSelectedRef.current) {

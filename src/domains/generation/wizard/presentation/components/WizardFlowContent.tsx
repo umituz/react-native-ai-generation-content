@@ -121,6 +121,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     setShowRatingPicker,
     onGenerationStart,
     onGenerationComplete,
+    onGenerationError,
     onBack,
   });
 
@@ -132,7 +133,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     alertMessages,
     creditCost,
     onSuccess: handlers.handleGenerationComplete,
-    onError: onGenerationError,
+    onError: handlers.handleGenerationError,
     onCreditsExhausted,
   });
 

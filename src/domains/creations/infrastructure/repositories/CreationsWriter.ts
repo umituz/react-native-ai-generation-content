@@ -8,6 +8,7 @@ declare const __DEV__: boolean;
 const UPDATABLE_FIELDS = [
   "metadata", "isShared", "uri", "type", "prompt", "status",
   "output", "rating", "ratedAt", "isFavorite", "deletedAt",
+  "requestId", "model",
 ] as const;
 
 /**
@@ -34,6 +35,8 @@ export class CreationsWriter {
       ...(creation.status !== undefined && { status: creation.status }),
       ...(creation.output !== undefined && { output: creation.output }),
       ...(creation.prompt !== undefined && { prompt: creation.prompt }),
+      ...(creation.requestId !== undefined && { requestId: creation.requestId }),
+      ...(creation.model !== undefined && { model: creation.model }),
     };
 
     try {

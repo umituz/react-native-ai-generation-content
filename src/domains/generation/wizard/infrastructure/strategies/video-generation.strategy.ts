@@ -1,10 +1,13 @@
 /**
  * Video Generation Strategy
  * Handles video-specific generation logic (execution only)
+ * Uses clean prompts for Sora 2 - no complex identity preservation text
  */
 
-import { executeVideoFeature } from "../../../../../infrastructure/services/video-feature-executor.service";
-import { buildUnifiedPrompt } from "./shared/unified-prompt-builder";
+import {
+  executeVideoFeature,
+  submitVideoFeatureToQueue,
+} from "../../../../../infrastructure/services/video-feature-executor.service";
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { VIDEO_PROCESSING_PROMPTS } from "./wizard-strategy.constants";
@@ -33,28 +36,26 @@ export async function buildVideoInput(
     throw new Error(validation.errorKey ?? "error.generation.invalidInput");
   }
 
-  let basePrompt = extractPrompt(wizardData, scenario.aiPrompt);
+  let finalPrompt = extractPrompt(wizardData, scenario.aiPrompt);
 
-  if (!basePrompt) {
+  if (!finalPrompt) {
     const defaultPrompt = VIDEO_PROCESSING_PROMPTS[scenario.id];
     if (defaultPrompt) {
-      basePrompt = defaultPrompt;
+      finalPrompt = defaultPrompt;
     } else {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[VideoStrategy] No prompt found for scenario:", scenario.id);
+        console.error("[VideoStrategy] Available defaults:", Object.keys(VIDEO_PROCESSING_PROMPTS));
+      }
       throw new Error("error.generation.promptRequired");
     }
   }
 
-  // Build unified prompt with face preservation
-  const finalPrompt = buildUnifiedPrompt({
-    basePrompt,
-    photoCount: photos.length,
-    interactionStyle: scenario.interactionStyle as string | undefined,
-  });
-
+  // For video generation with Sora 2, use clean prompt directly
+  // No need for complex identity preservation text - Sora 2 handles this natively
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[VideoStrategy] Prompt built", {
-      baseLength: basePrompt.length,
-      finalLength: finalPrompt.length,
+    console.log("[VideoStrategy] Using clean prompt for Sora 2", {
+      promptLength: finalPrompt.length,
       photoCount: photos.length,
     });
   }
@@ -93,6 +94,28 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
       }
 
       return { videoUrl: result.videoUrl };
+    },
+
+    submitToQueue: async (input: unknown) => {
+      const videoInput = input as WizardVideoInput;
+
+      const result = await submitVideoFeatureToQueue(videoFeatureType, {
+        sourceImageBase64: videoInput.sourceImageBase64,
+        targetImageBase64: videoInput.targetImageBase64,
+        prompt: videoInput.prompt,
+        options: {
+          duration: videoInput.duration,
+          aspect_ratio: videoInput.aspectRatio,
+          resolution: videoInput.resolution,
+        },
+      });
+
+      return {
+        success: result.success,
+        requestId: result.requestId,
+        model: result.model,
+        error: result.error,
+      };
     },
 
     getCreditCost: () => creditCost,

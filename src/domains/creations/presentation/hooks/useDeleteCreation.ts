@@ -1,48 +1,63 @@
 /**
  * useDeleteCreation Hook
- * Handles deletion of user creations with optimistic update
+ * Handles deletion of user creations
+ * Realtime listener handles UI updates automatically
  */
 
-import { useMutation, useQueryClient } from "@umituz/react-native-design-system";
+import { useState, useCallback } from "react";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
-import type { Creation } from "../../domain/entities/Creation";
+
+declare const __DEV__: boolean;
 
 interface UseDeleteCreationProps {
   readonly userId: string | null;
   readonly repository: ICreationsRepository;
 }
 
+interface UseDeleteCreationReturn {
+  readonly mutate: (creationId: string) => void;
+  readonly mutateAsync: (creationId: string) => Promise<boolean>;
+  readonly isPending: boolean;
+}
+
 export function useDeleteCreation({
   userId,
   repository,
-}: UseDeleteCreationProps) {
-  const queryClient = useQueryClient();
-  const queryKey = ["creations", userId ?? ""];
+}: UseDeleteCreationProps): UseDeleteCreationReturn {
+  const [isPending, setIsPending] = useState(false);
 
-  return useMutation({
-    mutationFn: async (creationId: string) => {
+  const mutateAsync = useCallback(
+    async (creationId: string): Promise<boolean> => {
       if (!userId) return false;
-      return repository.delete(userId, creationId);
-    },
-    onMutate: async (creationId: string) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousData = queryClient.getQueryData<Creation[]>(queryKey);
 
-      if (previousData) {
-        queryClient.setQueryData<Creation[]>(queryKey, (old: Creation[] | undefined) =>
-          old?.filter((c: Creation) => c.id !== creationId) ?? []
-        );
+      setIsPending(true);
+      try {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[useDeleteCreation] Deleting:", creationId);
+        }
+        const result = await repository.delete(userId, creationId);
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[useDeleteCreation] Delete result:", result);
+        }
+        return result;
+      } catch (error) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[useDeleteCreation] Error:", error);
+        }
+        return false;
+      } finally {
+        setIsPending(false);
       }
+    },
+    [userId, repository],
+  );
 
-      return { previousData };
+  const mutate = useCallback(
+    (creationId: string): void => {
+      void mutateAsync(creationId);
     },
-    onError: (_error: Error, _variables: string, context: { previousData?: Creation[] } | undefined) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(queryKey, context.previousData);
-      }
-    },
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey });
-    },
-  });
+    [mutateAsync],
+  );
+
+  return { mutate, mutateAsync, isPending };
 }

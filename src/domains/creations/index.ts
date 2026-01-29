@@ -94,7 +94,11 @@ export { DEFAULT_TRANSLATIONS, DEFAULT_CONFIG } from "./domain/value-objects";
 // DOMAIN LAYER - Repository Interface
 // =============================================================================
 
-export type { ICreationsRepository } from "./domain/repositories";
+export type {
+  ICreationsRepository,
+  CreationsSubscriptionCallback,
+  UnsubscribeFunction,
+} from "./domain/repositories";
 
 // =============================================================================
 // INFRASTRUCTURE LAYER
@@ -121,6 +125,11 @@ export type {
   BaseProcessingStartData,
   BaseProcessingResult,
 } from "./presentation/hooks/useCreationPersistence";
+export { useProcessingJobsPoller } from "./presentation/hooks/useProcessingJobsPoller";
+export type {
+  UseProcessingJobsPollerConfig,
+  UseProcessingJobsPollerReturn,
+} from "./presentation/hooks/useProcessingJobsPoller";
 
 // =============================================================================
 // PRESENTATION LAYER - Components

@@ -29,6 +29,7 @@ export interface UseWizardFlowHandlersProps {
   readonly setShowRatingPicker: (show: boolean) => void;
   readonly onGenerationStart?: (data: Record<string, unknown>, proceed: () => void) => void;
   readonly onGenerationComplete?: (result: unknown) => void;
+  readonly onGenerationError?: (error: string) => void;
   readonly onBack?: () => void;
 }
 
@@ -51,6 +52,7 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
     setShowRatingPicker,
     onGenerationStart,
     onGenerationComplete,
+    onGenerationError,
     onBack,
   } = props;
 
@@ -67,6 +69,30 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
       if (!skipResultStep) nextStep();
     },
     [setResult, setCurrentCreation, nextStep, onGenerationComplete, skipResultStep],
+  );
+
+  const handleGenerationError = useCallback(
+    (errorMessage: string) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[WizardFlowHandlers] Generation error:", errorMessage);
+      }
+      // Translate error key if it looks like a translation key
+      const displayMessage = errorMessage.startsWith("error.")
+        ? t(errorMessage)
+        : errorMessage;
+      // Show error alert to user
+      alert.show(
+        AlertType.ERROR,
+        AlertMode.MODAL,
+        t("common.error"),
+        displayMessage,
+      );
+      // Notify parent component
+      onGenerationError?.(errorMessage);
+      // Close the wizard
+      onBack?.();
+    },
+    [alert, t, onGenerationError, onBack],
   );
 
   const handleDismissGenerating = useCallback(() => {
@@ -124,6 +150,7 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
 
   return {
     handleGenerationComplete,
+    handleGenerationError,
     handleDismissGenerating,
     handleBack,
     handleNextStep,

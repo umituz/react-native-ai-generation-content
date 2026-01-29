@@ -13,7 +13,7 @@ export function extractPrompt(
   wizardData: Record<string, unknown>,
   fallback?: string,
 ): string | undefined {
-  const promptKeys = ["prompt", "motion_prompt", "text", "userPrompt"];
+  const promptKeys = ["prompt", "motion_prompt", "text", "userPrompt", "text_input"];
 
   for (const key of promptKeys) {
     if (key in wizardData) {

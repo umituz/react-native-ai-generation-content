@@ -2,4 +2,8 @@
  * Domain Repository Interfaces
  */
 
-export type { ICreationsRepository } from "./ICreationsRepository";
+export type {
+  ICreationsRepository,
+  CreationsSubscriptionCallback,
+  UnsubscribeFunction,
+} from "./ICreationsRepository";

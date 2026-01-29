@@ -46,7 +46,13 @@ export const TextToVideoWizardFlow: React.FC<TextToVideoWizardFlowProps> = (prop
   const tokens = useAppDesignTokens();
 
   const scenario: WizardScenarioData = useMemo(
-    () => ({ id: "text-to-video", outputType: "video", model, title: t("text2video.title") }),
+    () => ({
+      id: "text-to-video",
+      outputType: "video",
+      inputType: "text",
+      model,
+      title: t("text2video.title"),
+    }),
     [model, t],
   );
 
