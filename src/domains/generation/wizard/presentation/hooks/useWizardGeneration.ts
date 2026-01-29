@@ -3,9 +3,12 @@
  * Orchestrates wizard-based generation by delegating to appropriate mode:
  * - Video: Queue-based generation with background support
  * - Photo: Blocking execution for quick results
+ *
+ * Architecture: State machine pattern with useReducer
+ * States: IDLE → PREPARING → GENERATING → COMPLETED/ERROR → IDLE
  */
 
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useReducer, useMemo } from "react";
 import { createWizardStrategy, buildWizardInput } from "../../infrastructure/strategies";
 import { createCreationPersistence } from "../../infrastructure/utils/creation-persistence.util";
 import { useVideoQueueGeneration } from "./useVideoQueueGeneration";
@@ -16,6 +19,57 @@ import type {
 } from "./wizard-generation.types";
 
 declare const __DEV__: boolean;
+
+/**
+ * Generation orchestration states
+ */
+type GenerationStatus =
+  | "IDLE"        // Not started
+  | "PREPARING"   // Building input
+  | "GENERATING"  // Generation in progress
+  | "ERROR"       // Failed (prevents retry)
+  | "COMPLETED";  // Success
+
+/**
+ * State machine state
+ */
+interface GenerationState {
+  status: GenerationStatus;
+  error?: string;
+}
+
+/**
+ * State machine actions
+ */
+type GenerationAction =
+  | { type: "START_PREPARATION" }
+  | { type: "START_GENERATION" }
+  | { type: "COMPLETE" }
+  | { type: "ERROR"; error: string }
+  | { type: "RESET" };
+
+/**
+ * State machine reducer
+ */
+const generationReducer = (
+  state: GenerationState,
+  action: GenerationAction,
+): GenerationState => {
+  switch (action.type) {
+    case "START_PREPARATION":
+      return { status: "PREPARING" };
+    case "START_GENERATION":
+      return { status: "GENERATING" };
+    case "COMPLETE":
+      return { status: "COMPLETED" };
+    case "ERROR":
+      return { status: "ERROR", error: action.error };
+    case "RESET":
+      return { status: "IDLE" };
+    default:
+      return state;
+  }
+};
 
 export type {
   WizardOutputType,
@@ -39,8 +93,8 @@ export const useWizardGeneration = (
     onCreditsExhausted,
   } = props;
 
-  const hasStarted = useRef(false);
-  const hasError = useRef(false);
+  // State machine: replaces multiple useRef flags
+  const [state, dispatch] = useReducer(generationReducer, { status: "IDLE" });
 
   const persistence = useMemo(() => createCreationPersistence(), []);
   const strategy = useMemo(
@@ -76,21 +130,28 @@ export const useWizardGeneration = (
   useEffect(() => {
     const isAlreadyGenerating = videoGeneration.isGenerating || photoGeneration.isGenerating;
 
-    if (isGeneratingStep && !hasStarted.current && !isAlreadyGenerating && !hasError.current) {
-      hasStarted.current = true;
+    // Start generation: Simple single condition using state machine
+    if (isGeneratingStep && state.status === "IDLE" && !isAlreadyGenerating) {
+      dispatch({ type: "START_PREPARATION" });
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[WizardGeneration] State: PREPARING");
+      }
 
       buildWizardInput(wizardData, scenario)
         .then(async (input) => {
           if (!input) {
-            hasStarted.current = false;
-            hasError.current = true;
+            dispatch({ type: "ERROR", error: "Failed to build generation input" });
             onError?.("Failed to build generation input");
             return;
           }
 
+          dispatch({ type: "START_GENERATION" });
+
           const typedInput = input as { prompt?: string };
 
           if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[WizardGeneration] State: GENERATING");
             console.log("[WizardGeneration] Mode:", isVideoMode ? "VIDEO_QUEUE" : "PHOTO_BLOCKING");
           }
 
@@ -99,23 +160,28 @@ export const useWizardGeneration = (
           } else {
             await photoGeneration.startGeneration(input, typedInput.prompt || "");
           }
+
+          dispatch({ type: "COMPLETE" });
         })
         .catch((error) => {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
             console.error("[WizardGeneration] Build input error:", error.message);
           }
-          hasStarted.current = false;
-          hasError.current = true;
+          dispatch({ type: "ERROR", error: error.message });
           onError?.(error.message);
         });
     }
 
-    if (!isGeneratingStep) {
-      hasStarted.current = false;
-      hasError.current = false;
+    // Reset state when leaving generating step
+    if (!isGeneratingStep && state.status !== "IDLE") {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[WizardGeneration] State: RESET");
+      }
+      dispatch({ type: "RESET" });
     }
   }, [
     isGeneratingStep,
+    state.status,
     scenario,
     wizardData,
     isVideoMode,
