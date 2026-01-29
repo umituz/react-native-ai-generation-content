@@ -40,6 +40,7 @@ export const useWizardGeneration = (
   } = props;
 
   const hasStarted = useRef(false);
+  const hasError = useRef(false);
 
   const persistence = useMemo(() => createCreationPersistence(), []);
   const strategy = useMemo(
@@ -75,13 +76,14 @@ export const useWizardGeneration = (
   useEffect(() => {
     const isAlreadyGenerating = videoGeneration.isGenerating || photoGeneration.isGenerating;
 
-    if (isGeneratingStep && !hasStarted.current && !isAlreadyGenerating) {
+    if (isGeneratingStep && !hasStarted.current && !isAlreadyGenerating && !hasError.current) {
       hasStarted.current = true;
 
       buildWizardInput(wizardData, scenario)
         .then(async (input) => {
           if (!input) {
             hasStarted.current = false;
+            hasError.current = true;
             onError?.("Failed to build generation input");
             return;
           }
@@ -103,12 +105,14 @@ export const useWizardGeneration = (
             console.error("[WizardGeneration] Build input error:", error.message);
           }
           hasStarted.current = false;
+          hasError.current = true;
           onError?.(error.message);
         });
     }
 
-    if (!isGeneratingStep && hasStarted.current) {
+    if (!isGeneratingStep) {
       hasStarted.current = false;
+      hasError.current = false;
     }
   }, [
     isGeneratingStep,
