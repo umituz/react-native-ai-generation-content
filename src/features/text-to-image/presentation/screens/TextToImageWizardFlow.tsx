@@ -46,7 +46,13 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
   const tokens = useAppDesignTokens();
 
   const scenario: WizardScenarioData = useMemo(
-    () => ({ id: "text-to-image", outputType: "image", model, title: t("text2image.title") }),
+    () => ({
+      id: "text-to-image",
+      outputType: "image",
+      inputType: "text",
+      model,
+      title: t("text2image.title"),
+    }),
     [model, t],
   );
 
@@ -70,6 +76,11 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
     [isAuthenticated, hasPremium, creditBalance, creditCost, isCreditsLoaded, onShowAuthModal, onShowPaywall],
   );
 
+  const handleGenerationComplete = useCallback(() => {
+    onGenerationComplete?.();
+    onBack();
+  }, [onGenerationComplete, onBack]);
+
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
       <GenericWizardFlow
@@ -78,8 +89,9 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
         userId={userId}
         alertMessages={alertMessages ?? defaultAlerts}
         creditCost={creditCost}
+        skipResultStep={true}
         onGenerationStart={handleGenerationStart}
-        onGenerationComplete={onGenerationComplete}
+        onGenerationComplete={handleGenerationComplete}
         onGenerationError={onGenerationError}
         onCreditsExhausted={onShowPaywall}
         onBack={onBack}

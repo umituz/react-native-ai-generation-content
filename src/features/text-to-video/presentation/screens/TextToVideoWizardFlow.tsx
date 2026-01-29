@@ -76,6 +76,11 @@ export const TextToVideoWizardFlow: React.FC<TextToVideoWizardFlowProps> = (prop
     [isAuthenticated, hasPremium, creditBalance, creditCost, isCreditsLoaded, onShowAuthModal, onShowPaywall],
   );
 
+  const handleGenerationComplete = useCallback(() => {
+    onGenerationComplete?.();
+    onBack();
+  }, [onGenerationComplete, onBack]);
+
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
       <GenericWizardFlow
@@ -84,8 +89,9 @@ export const TextToVideoWizardFlow: React.FC<TextToVideoWizardFlowProps> = (prop
         userId={userId}
         alertMessages={alertMessages ?? defaultAlerts}
         creditCost={creditCost}
+        skipResultStep={true}
         onGenerationStart={handleGenerationStart}
-        onGenerationComplete={onGenerationComplete}
+        onGenerationComplete={handleGenerationComplete}
         onGenerationError={onGenerationError}
         onCreditsExhausted={onShowPaywall}
         onBack={onBack}
