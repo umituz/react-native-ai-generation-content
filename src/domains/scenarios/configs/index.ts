@@ -15,3 +15,7 @@ export {
   hasExplicitConfig,
   getScenarioWizardInputType,
 } from "./wizard-config-resolver";
+
+// Pre-built Wizard Configs
+export { TEXT_TO_VIDEO_WIZARD_CONFIG } from "../../generation/wizard/configs/text-to-video.config";
+export { TEXT_TO_IMAGE_WIZARD_CONFIG } from "../../generation/wizard/configs/text-to-image.config";
