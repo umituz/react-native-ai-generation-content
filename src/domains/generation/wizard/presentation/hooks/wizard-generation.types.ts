@@ -19,6 +19,8 @@ export interface WizardScenarioData {
   readonly model?: string;
   readonly title?: string;
   readonly description?: string;
+  /** Video feature type - set by main app to control generation mode */
+  readonly featureType?: "text-to-video" | "image-to-video" | "ai-kiss" | "ai-hug";
   [key: string]: unknown;
 }
 
