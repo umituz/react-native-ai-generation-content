@@ -23,8 +23,10 @@ export type {
   SelectionScreenProps,
 } from "./SelectionScreen.types";
 
+declare const __DEV__: boolean;
+
 export const SelectionScreen: React.FC<SelectionScreenProps> = ({
-  stepId: _stepId,
+  stepId,
   translations,
   options,
   config,
@@ -34,9 +36,17 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
 }) => {
   const tokens = useAppDesignTokens();
   const [selected, setSelected] = useState<string | string[]>(() => {
-    if (initialValue) return initialValue;
-    if (config?.multiSelect) return [];
-    return "";
+    const initialState = initialValue ? initialValue : (config?.multiSelect ? [] : "");
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[SelectionScreen] Initial state:", {
+        stepId,
+        initialValue,
+        initialState,
+        hasInitialValue: !!initialValue,
+        multiSelect: config?.multiSelect,
+      });
+    }
+    return initialState;
   });
 
   const isMultiSelect = config?.multiSelect ?? false;
@@ -44,6 +54,17 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
   const canContinue = isRequired
     ? isMultiSelect ? (selected as string[]).length > 0 : selected !== ""
     : true;
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[SelectionScreen] Render state:", {
+      stepId,
+      selected,
+      isRequired,
+      isMultiSelect,
+      canContinue,
+      optionIds: options.map(o => o.id),
+    });
+  }
 
   const handleSelect = useCallback((optionId: string) => {
     if (isMultiSelect) {

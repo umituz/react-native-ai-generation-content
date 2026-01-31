@@ -15,6 +15,11 @@ export interface AIFeatureGateOptions {
   featureName?: string;
 
   /**
+   * Callback fired when network is unavailable
+   */
+  onNetworkError?: () => void;
+
+  /**
    * Callback fired when feature is successfully accessed and executed
    */
   onSuccess?: () => void;
@@ -61,6 +66,11 @@ export interface AIFeatureGateReturn {
    * Current credit balance
    */
   creditBalance: number;
+
+  /**
+   * Whether device is offline
+   */
+  isOffline: boolean;
 }
 
 /**

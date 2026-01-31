@@ -19,6 +19,7 @@
  */
 
 import { useCallback, useMemo } from "react";
+import { useOffline } from "@umituz/react-native-design-system";
 import { useAuth, useAuthModalStore } from "@umituz/react-native-auth";
 import {
   usePremium,
@@ -41,7 +42,10 @@ import type {
 export function useAIFeatureGate(
   options: AIFeatureGateOptions,
 ): AIFeatureGateReturn {
-  const { creditCost, onSuccess, onError } = options;
+  const { creditCost, onNetworkError, onSuccess, onError } = options;
+
+  // Network state
+  const { isOffline } = useOffline();
 
   // Auth state
   const { isAuthenticated: rawIsAuthenticated, isAnonymous } = useAuth();
@@ -69,16 +73,23 @@ export function useAIFeatureGate(
     isCreditsLoaded,
   });
 
-  // Can access if: authenticated AND (premium OR has credits)
+  // Can access if: online AND authenticated AND (premium OR has credits)
   const canAccess = useMemo(() => {
+    if (isOffline) return false;
     if (!isAuthenticated) return false;
     if (isPremium) return true;
     return hasCredits;
-  }, [isAuthenticated, isPremium, hasCredits]);
+  }, [isOffline, isAuthenticated, isPremium, hasCredits]);
 
-  // Wrapped requireFeature with optional callbacks
+  // Wrapped requireFeature with offline check and optional callbacks
   const requireFeature = useCallback(
     (action: () => void | Promise<void>): void => {
+      // Network check first - must be online
+      if (isOffline) {
+        onNetworkError?.();
+        return;
+      }
+      // Then auth/credit checks via subscription package
       requireFeatureFromPackage(() => {
         const result = action();
         if (result instanceof Promise) {
@@ -94,7 +105,7 @@ export function useAIFeatureGate(
         }
       });
     },
-    [requireFeatureFromPackage, onSuccess, onError],
+    [isOffline, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
   );
 
   return {
@@ -105,5 +116,6 @@ export function useAIFeatureGate(
     isAuthenticated,
     isPremium,
     creditBalance,
+    isOffline,
   };
 }

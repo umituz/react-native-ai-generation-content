@@ -73,13 +73,18 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
 
   const handleGenerationError = useCallback(
     (errorMessage: string) => {
+      // Ensure we have a meaningful error message
+      const safeErrorMessage = errorMessage?.trim() || "error.generation.unknown";
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[WizardFlowHandlers] Generation error:", errorMessage);
+        console.log("[WizardFlowHandlers] Generation error:", {
+          original: errorMessage,
+          safe: safeErrorMessage,
+        });
       }
       // Translate error key if it looks like a translation key
-      const displayMessage = errorMessage.startsWith("error.")
-        ? t(errorMessage)
-        : errorMessage;
+      const displayMessage = safeErrorMessage.startsWith("error.")
+        ? t(safeErrorMessage)
+        : safeErrorMessage;
       // Show error alert to user
       alert.show(
         AlertType.ERROR,
@@ -88,7 +93,7 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
         displayMessage,
       );
       // Notify parent component
-      onGenerationError?.(errorMessage);
+      onGenerationError?.(safeErrorMessage);
       // Close the wizard
       onBack?.();
     },
@@ -115,7 +120,18 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
 
   const handleNextStep = useCallback(() => {
     const nextStepDef = flowSteps[currentStepIndex + 1];
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[WizardFlowHandlers] handleNextStep", {
+        currentStepIndex,
+        nextStepType: nextStepDef?.type,
+        isGenerating: nextStepDef?.type === StepType.GENERATING,
+        hasOnGenerationStart: !!onGenerationStart,
+      });
+    }
     if (nextStepDef?.type === StepType.GENERATING && onGenerationStart) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[WizardFlowHandlers] Calling onGenerationStart callback");
+      }
       onGenerationStart(customData, nextStep);
       return;
     }

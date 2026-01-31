@@ -16,6 +16,8 @@ export interface SelectionStepProps {
   readonly t: (key: string) => string;
 }
 
+declare const __DEV__: boolean;
+
 export function renderSelectionStep({
   step,
   customData,
@@ -26,8 +28,30 @@ export function renderSelectionStep({
   const selectionConfig = getSelectionConfig(step.config);
   const titleKey = selectionConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
   const subtitleKey = selectionConfig?.subtitleKey ?? `wizard.steps.${step.id}.subtitle`;
-  const existingValue = customData[step.id] as string | string[] | undefined;
   const options = selectionConfig?.options ?? [];
+  const isRequired = step.required ?? true;
+
+  // Priority: existing value > config default > auto-select single option
+  const existingValue = customData[step.id] as string | string[] | undefined;
+  const configDefault = selectionConfig?.defaultValue;
+  const autoSelectValue = isRequired && options.length === 1 ? options[0].id : undefined;
+  const initialValue = existingValue ?? configDefault ?? autoSelectValue;
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[renderSelectionStep] Step config:", {
+      stepId: step.id,
+      stepType: step.type,
+      hasConfig: !!step.config,
+      configType: (step.config as Record<string, unknown>)?.type,
+      hasSelectionConfig: !!selectionConfig,
+      configDefault,
+      existingValue,
+      autoSelectValue,
+      initialValue,
+      isRequired,
+      optionsCount: options.length,
+    });
+  }
 
   return (
     <SelectionScreen
@@ -46,13 +70,12 @@ export function renderSelectionStep({
       }))}
       config={{
         multiSelect: selectionConfig?.multiSelect ?? false,
-        required: step.required ?? true,
+        required: isRequired,
       }}
-      initialValue={existingValue}
+      initialValue={initialValue}
       onBack={onBack}
       onContinue={(value) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onPhotoContinue(step.id, { uri: String(value), selection: value, previewUrl: "" } as unknown as any);
+        onPhotoContinue(step.id, { uri: String(value), selection: value, previewUrl: "" } as UploadedImage);
       }}
     />
   );

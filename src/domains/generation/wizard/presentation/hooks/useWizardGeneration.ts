@@ -164,11 +164,12 @@ export const useWizardGeneration = (
           dispatch({ type: "COMPLETE" });
         })
         .catch((error) => {
+          const errorMsg = error?.message || "error.generation.unknown";
           if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[WizardGeneration] Build input error:", error.message);
+            console.error("[WizardGeneration] Build input error:", errorMsg, error);
           }
-          dispatch({ type: "ERROR", error: error.message });
-          onError?.(error.message);
+          dispatch({ type: "ERROR", error: errorMsg });
+          onError?.(errorMsg);
         });
     }
 

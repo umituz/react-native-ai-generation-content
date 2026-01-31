@@ -9,20 +9,10 @@ export interface BaseWizardFlowProps {
   readonly model: string;
   /** User ID for saving creations */
   readonly userId?: string;
-  /** Is user authenticated (registered, not anonymous) */
-  readonly isAuthenticated: boolean;
-  /** Does user have premium subscription */
-  readonly hasPremium: boolean;
-  /** User's credit balance */
-  readonly creditBalance: number;
-  /** Are credits loaded */
-  readonly isCreditsLoaded: boolean;
   /** Credit cost for this generation - REQUIRED, determined by the app */
   readonly creditCost: number;
-  /** Show auth modal with callback */
-  readonly onShowAuthModal: (callback: () => void) => void;
-  /** Show paywall */
-  readonly onShowPaywall: () => void;
+  /** Called when network is unavailable and generation is blocked */
+  readonly onNetworkError?: () => void;
   /** Called when generation completes */
   readonly onGenerationComplete?: () => void;
   /** Called on generation error */

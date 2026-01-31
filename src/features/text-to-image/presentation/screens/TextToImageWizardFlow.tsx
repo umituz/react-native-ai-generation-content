@@ -8,6 +8,7 @@ import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { GenericWizardFlow } from "../../../../domains/generation/wizard/presentation/components";
 import { TEXT_TO_IMAGE_WIZARD_CONFIG } from "../../../../domains/generation/wizard/configs";
+import { useAIFeatureGate } from "../../../../domains/access-control";
 import type { WizardScenarioData } from "../../../../domains/generation/wizard/presentation/hooks/useWizardGeneration";
 import type { BaseWizardFlowProps } from "../../../../domains/generation/wizard/presentation/components/WizardFlow.types";
 import type { AlertMessages } from "../../../../presentation/hooks/generation/types";
@@ -29,13 +30,8 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
   const {
     model,
     userId,
-    isAuthenticated,
-    hasPremium,
-    creditBalance,
-    isCreditsLoaded,
     creditCost,
-    onShowAuthModal,
-    onShowPaywall,
+    onNetworkError,
     onGenerationComplete,
     onGenerationError,
     onBack,
@@ -44,6 +40,12 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
   } = props;
 
   const tokens = useAppDesignTokens();
+
+  // Centralized access control - handles offline, auth, credits, paywall
+  const { requireFeature } = useAIFeatureGate({
+    creditCost,
+    onNetworkError,
+  });
 
   const scenario: WizardScenarioData = useMemo(
     () => ({
@@ -69,11 +71,10 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
 
   const handleGenerationStart = useCallback(
     (_data: Record<string, unknown>, proceed: () => void) => {
-      if (!isAuthenticated) { onShowAuthModal(proceed); return; }
-      if (!hasPremium && isCreditsLoaded && creditBalance < creditCost) { onShowPaywall(); return; }
-      proceed();
+      // Use centralized access control - checks offline, auth, credits
+      requireFeature(proceed);
     },
-    [isAuthenticated, hasPremium, creditBalance, creditCost, isCreditsLoaded, onShowAuthModal, onShowPaywall],
+    [requireFeature],
   );
 
   const handleGenerationComplete = useCallback(() => {
@@ -93,7 +94,6 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
         onGenerationStart={handleGenerationStart}
         onGenerationComplete={handleGenerationComplete}
         onGenerationError={onGenerationError}
-        onCreditsExhausted={onShowPaywall}
         onBack={onBack}
         onTryAgain={onBack}
         t={t}
