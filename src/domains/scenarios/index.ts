@@ -11,8 +11,8 @@ export type { Scenario } from "./domain/Scenario";
 // Category Groups - Pre-defined category groups for filtering
 export {
   TRUE_SOLO_CATEGORIES,
-  SINGLE_PERSON_CATEGORIES,
-  COUPLE_CATEGORIES,
+  GENERAL_CATEGORIES,
+  MULTI_PERSON_CATEGORIES,
   ALL_CATEGORIES,
 } from "./domain/category-groups";
 

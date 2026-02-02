@@ -193,6 +193,217 @@ const feature = useTextToImageFeature({
 
 ---
 
+## 🔐 Auth & Credit Gating (CRITICAL)
+
+### Provider Setup (Required First!)
+
+Add `AuthBottomSheet` and `SafeBottomSheetModalProvider` to your `AppProviders.tsx`:
+
+```typescript
+// src/core/providers/AppProviders.tsx
+import {
+  DesignSystemProvider,
+  TanstackProvider,
+  SafeBottomSheetModalProvider,
+  AlertContainer,
+} from "@umituz/react-native-design-system";
+import { AuthBottomSheet } from "@umituz/react-native-auth";
+
+export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => (
+  <DesignSystemProvider>
+    <TanstackProvider>
+      <SafeBottomSheetModalProvider>
+        {children}
+        <AuthBottomSheet />
+        <AlertContainer />
+      </SafeBottomSheetModalProvider>
+    </TanstackProvider>
+  </DesignSystemProvider>
+);
+```
+
+**Key Points:**
+- `SafeBottomSheetModalProvider` - Required wrapper for bottom sheet modals
+- `AuthBottomSheet` - Renders globally, auto-controlled by `useAuthModalStore`
+- Modal appears automatically when `showAuthModal()` called from anywhere
+
+### Overview
+
+**IMPORTANT:** Before any AI generation, you **MUST** implement proper access control:
+1. **Authentication Check** → User must be logged in
+2. **Subscription Check** → Premium users bypass credit check
+3. **Credit Balance Check** → Free users need sufficient credits
+4. **Paywall Display** → Show upgrade options if insufficient credits
+
+### useAIFeatureGate Hook
+
+The `useAIFeatureGate` hook provides unified access control for all AI features.
+
+**Basic Usage:**
+```typescript
+import { useAIFeatureGate } from '@umituz/react-native-ai-generation-content';
+
+function MyAIScreen() {
+  const { requireFeature, canAccess, creditBalance } = useAIFeatureGate({
+    creditCost: 1, // Credits required for this feature
+  });
+
+  const handleGenerate = () => {
+    // Your generation logic
+  };
+
+  return (
+    <Button
+      onPress={() => requireFeature(handleGenerate)}
+      disabled={!canAccess}
+    >
+      Generate ({creditBalance} credits)
+    </Button>
+  );
+}
+```
+
+### Access Control Flow
+
+```
+User clicks "Generate"
+        ↓
+    [Offline?] ──Yes──→ Show network error
+        ↓ No
+    [Authenticated?] ──No──→ Show Auth Modal
+        ↓ Yes                    ↓
+        ↓              User logs in → Continue
+        ↓
+    [Has Subscription?] ──Yes──→ Execute action ✓
+        ↓ No
+    [Has Credits?] ──Yes──→ Execute action ✓
+        ↓ No
+    Show Paywall
+        ↓
+    User purchases → Credits increase → Execute action ✓
+```
+
+### useAIFeatureGate Options
+
+| Option | Type | Required | Description |
+|--------|------|----------|-------------|
+| `creditCost` | number | Yes | Credits required for this feature |
+| `onNetworkError` | () => void | No | Called when user is offline |
+| `onSuccess` | () => void | No | Called after successful action |
+| `onError` | (error: Error) => void | No | Called on action error |
+
+### useAIFeatureGate Return Values
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `requireFeature` | (action) => void | Wraps action with access control |
+| `canAccess` | boolean | Can user access this feature now |
+| `isCheckingAccess` | boolean | Loading credits state |
+| `hasCredits` | boolean | Has sufficient credits |
+| `isAuthenticated` | boolean | User is logged in |
+| `isPremium` | boolean | Has active subscription |
+| `creditBalance` | number | Current credit balance |
+| `isOffline` | boolean | Device is offline |
+
+### Alternative: useFeatureGate (Manual Setup)
+
+For custom integrations or non-AI features, use the base `useFeatureGate` from subscription package:
+
+```typescript
+import { useAuth, useAuthModalStore } from '@umituz/react-native-auth';
+import {
+  usePremium,
+  useCredits,
+  usePaywallVisibility,
+  useFeatureGate
+} from '@umituz/react-native-subscription';
+
+function MyScreen() {
+  const { isAuthenticated, isAnonymous } = useAuth();
+  const { showAuthModal } = useAuthModalStore();
+  const { isPremium } = usePremium();
+  const { credits, isLoading } = useCredits();
+  const { openPaywall } = usePaywallVisibility();
+
+  const { requireFeature } = useFeatureGate({
+    isAuthenticated: isAuthenticated && !isAnonymous,
+    onShowAuthModal: (callback) => showAuthModal(callback),
+    hasSubscription: isPremium,
+    creditBalance: credits?.credits ?? 0,
+    requiredCredits: 1,
+    onShowPaywall: () => openPaywall(),
+    isCreditsLoaded: !isLoading,
+  });
+
+  const handleAction = () => {
+    requireFeature(() => {
+      // Your protected action
+    });
+  };
+}
+```
+
+### Credit Constants Best Practice
+
+Define credit costs in a central constants file:
+
+```typescript
+// src/core/constants/credit.constants.ts
+export const CREDIT_COST = {
+  TEXT_TO_IMAGE: 1,
+  FACE_SWAP: 1,
+  VIDEO_GENERATION: 5,
+  PHOTO_RESTORATION: 2,
+} as const;
+
+export type CreditCostKey = keyof typeof CREDIT_COST;
+```
+
+### Integration Example
+
+```typescript
+import { useAIFeatureGate } from '@umituz/react-native-ai-generation-content';
+import { CREDIT_COST } from '@/core/constants/credit.constants';
+
+function FaceSwapScreen() {
+  const { requireFeature, canAccess, creditBalance, isPremium } = useAIFeatureGate({
+    creditCost: CREDIT_COST.FACE_SWAP,
+    onNetworkError: () => {
+      Alert.alert('Offline', 'Please check your internet connection');
+    },
+  });
+
+  const handleSwap = async () => {
+    // Face swap logic here
+  };
+
+  return (
+    <View>
+      {/* Credit info for free users */}
+      {!isPremium && (
+        <Text>Credits: {creditBalance}</Text>
+      )}
+
+      <Button
+        onPress={() => requireFeature(handleSwap)}
+        title="Swap Faces"
+      />
+    </View>
+  );
+}
+```
+
+### Common Mistakes
+
+| ❌ Wrong | ✅ Correct |
+|----------|-----------|
+| `onPress={handleGenerate}` | `onPress={() => requireFeature(handleGenerate)}` |
+| Skip auth check | Always use requireFeature |
+| Direct API call | Wrap with requireFeature |
+| Ignore offline state | Check isOffline before actions |
+
+---
+
 ## 🚀 Quick Implementation Patterns
 
 ### Pattern 1: Unified Screen (Fastest)

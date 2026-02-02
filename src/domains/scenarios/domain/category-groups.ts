@@ -20,10 +20,9 @@ export const TRUE_SOLO_CATEGORIES: readonly ScenarioCategory[] = [
 ];
 
 /**
- * @deprecated Use TRUE_SOLO_CATEGORIES for single-person apps
- * These categories contain COUPLE prompts despite the name
+ * General categories - scenarios that work with various content types
  */
-export const SINGLE_PERSON_CATEGORIES: readonly ScenarioCategory[] = [
+export const GENERAL_CATEGORIES: readonly ScenarioCategory[] = [
   ScenarioCategory.FANTASY,
   ScenarioCategory.ADVENTURE,
   ScenarioCategory.SPORTS,
@@ -56,8 +55,6 @@ export const SINGLE_PERSON_CATEGORIES: readonly ScenarioCategory[] = [
   ScenarioCategory.ELITE,
   ScenarioCategory.GOTHIC,
   ScenarioCategory.DAILY_ESSENCE,
-  ScenarioCategory.MOVIE_LEGENDS,
-  ScenarioCategory.ICONIC_MOMENTS,
   ScenarioCategory.FOLKLORE,
   ScenarioCategory.MUSIC,
   ScenarioCategory.STEAMPUNK,
@@ -85,16 +82,11 @@ export const SINGLE_PERSON_CATEGORIES: readonly ScenarioCategory[] = [
 ];
 
 /**
- * Couple categories - scenarios designed for two people
+ * Multi-person categories - scenarios that may involve multiple people
+ * Note: Does NOT include intimate/romantic content (App Store Guidelines 1.1)
  */
-export const COUPLE_CATEGORIES: readonly ScenarioCategory[] = [
-  ScenarioCategory.INTIMATE,
+export const MULTI_PERSON_CATEGORIES: readonly ScenarioCategory[] = [
   ScenarioCategory.WEDDING,
-  ScenarioCategory.AFFECTION,
-  ScenarioCategory.ROMANTIC_KISSES,
-  ScenarioCategory.SULTRY,
-  ScenarioCategory.STOLEN_MOMENTS,
-  ScenarioCategory.CONNECTION,
   ScenarioCategory.FAMILY,
   ScenarioCategory.TIME_TRAVEL,
   ScenarioCategory.HOME_LIFE,
@@ -107,6 +99,6 @@ export const COUPLE_CATEGORIES: readonly ScenarioCategory[] = [
  * All categories
  */
 export const ALL_CATEGORIES: readonly ScenarioCategory[] = [
-  ...SINGLE_PERSON_CATEGORIES,
-  ...COUPLE_CATEGORIES,
+  ...GENERAL_CATEGORIES,
+  ...MULTI_PERSON_CATEGORIES,
 ];
