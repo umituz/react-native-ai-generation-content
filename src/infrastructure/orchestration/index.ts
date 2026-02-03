@@ -3,6 +3,23 @@
  * Exports generic orchestration utilities for AI generation
  */
 
-export * from "./GenerationOrchestrator";
-export * from "./orchestrator.types";
-export * from "./orchestrator.errors";
+// GenerationOrchestrator
+export { GenerationOrchestrator } from "./GenerationOrchestrator";
+
+// Types
+export type {
+  CreditService,
+  PaywallService,
+  NetworkService,
+  AuthService,
+  GenerationMetadata,
+  GenerationCapability,
+  OrchestratorConfig,
+} from "./orchestrator.types";
+
+// Errors
+export {
+  NetworkUnavailableError,
+  InsufficientCreditsError,
+  AuthenticationRequiredError,
+} from "./orchestrator.errors";

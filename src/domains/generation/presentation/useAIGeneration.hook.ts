@@ -1,7 +1,7 @@
 /**
  * useAIGeneration Hook
  * Universal hook for ALL AI generation features
- * Replaces all feature-specific hooks (useCoupleFutureFlow, useAIHugFeature, etc.)
+ * Replaces all feature-specific hooks with a single unified API
  */
 
 import { useGenerationOrchestrator } from "../../../presentation/hooks/generation/orchestrator";

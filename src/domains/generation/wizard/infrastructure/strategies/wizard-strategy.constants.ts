@@ -27,8 +27,6 @@ export const MODEL_INPUT_DEFAULTS = {
 
 /** Video feature type patterns for scenario detection */
 export const VIDEO_FEATURE_PATTERNS: Record<string, VideoFeatureType> = {
-  kiss: "ai-kiss",
-  hug: "ai-hug",
   "text-to-video": "text-to-video",
   "image-to-video": "image-to-video",
 };
@@ -47,8 +45,6 @@ export const IMAGE_PROCESSING_PROMPTS: Record<string, string> = {
 
 /** Default prompts for video generation features (no user input needed) */
 export const VIDEO_PROCESSING_PROMPTS: Record<string, string> = {
-  "ai-kiss": "Create a romantic video where these two people share a gentle, loving kiss",
-  "ai-hug": "Create a heartwarming video where these two people share a warm, affectionate hug",
   "image-to-video": "Animate this image with natural, smooth motion while preserving the original style",
   "solo_renaissance_portrait": "Transform this person into an elegant Renaissance-style animated portrait with classical artistic movements and period-appropriate lighting",
   "renaissance_portrait": "Transform this portrait into a majestic Renaissance-style animated painting with subtle classical movements",

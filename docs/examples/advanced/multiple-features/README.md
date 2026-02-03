@@ -398,7 +398,7 @@ Group features by category:
 const CATEGORIES = {
   'Text Generation': ['text-to-image', 'text-to-video', 'text-to-voice'],
   'Image Processing': ['face-swap', 'photo-restoration', 'upscaling'],
-  'Special Effects': ['ai-hug', 'ai-kiss', 'anime-selfie'],
+  'Special Effects': ['anime-selfie', 'style-transfer'],
 };
 ```
 

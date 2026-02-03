@@ -1,20 +1,17 @@
 /**
  * Scenarios Domain
- * Pre-configured AI generation scenarios for all apps
+ * Generic AI generation scenario infrastructure
+ * Note: ScenarioId and ScenarioCategory should be defined in each app
  */
 
 // Types
-export type { ScenarioOutputType, ScenarioInputType, ScenarioPromptType, GeneratingMessages } from "./domain/Scenario";
-export { ScenarioCategory, ScenarioId } from "./domain/Scenario";
-export type { Scenario } from "./domain/Scenario";
-
-// Category Groups - Pre-defined category groups for filtering
-export {
-  TRUE_SOLO_CATEGORIES,
-  GENERAL_CATEGORIES,
-  MULTI_PERSON_CATEGORIES,
-  ALL_CATEGORIES,
-} from "./domain/category-groups";
+export type {
+  ScenarioOutputType,
+  ScenarioInputType,
+  ScenarioPromptType,
+  GeneratingMessages,
+  Scenario,
+} from "./domain/Scenario";
 
 // Scenario Helpers - For app-level configuration
 export {

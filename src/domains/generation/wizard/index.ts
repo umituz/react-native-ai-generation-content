@@ -62,4 +62,8 @@ export type {
 } from "./presentation/screens";
 
 // Feature Configs
-export * from "./configs";
+export {
+  TEXT_TO_IMAGE_WIZARD_CONFIG,
+  TEXT_TO_VIDEO_WIZARD_CONFIG,
+  IMAGE_TO_VIDEO_WIZARD_CONFIG,
+} from "./configs";

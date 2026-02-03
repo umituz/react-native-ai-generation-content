@@ -105,8 +105,6 @@ See [basic/](./basic/) directory for:
 - **[Photo Restoration](./basic/photo-restoration/)** - Restore old and damaged photos with quality levels
 - **[Upscaling](./basic/upscaling/)** - Enhance image resolution with scale factors
 - **[Remove Background](./basic/remove-background/)** - Remove image backgrounds with AI
-- **[AI Hug](./basic/ai-hug/)** - Generate AI hug videos from two photos
-- **[AI Kiss](./basic/ai-kiss/)** - Create romantic kiss videos
 - **[Text to Video](./basic/text-to-video/)** - Generate videos from text descriptions
 - **[Anime Selfie](./basic/anime-selfie/)** - Transform photos into anime artwork
 - **[Style Transfer](./basic/style-transfer/)** - Apply artistic styles to photos
@@ -150,8 +148,6 @@ See [full-apps/](./full-apps/) directory for:
 
 ### Special Effects
 
-- [AI Hug](./basic/ai-hug/)
-- [AI Kiss](./basic/ai-kiss/)
 - [Anime Selfie](./basic/anime-selfie/)
 
 ## 💡 Tips

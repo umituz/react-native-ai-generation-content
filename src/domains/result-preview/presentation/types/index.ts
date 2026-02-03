@@ -2,4 +2,15 @@
  * Result Preview Types Export
  */
 
-export * from "./result-preview.types";
+export type {
+  ResultData,
+  ResultActionsCallbacks,
+  ResultDisplayState,
+  ResultImageCardProps,
+  ResultActionBarProps,
+  RecentCreation,
+  ResultPreviewScreenProps,
+  ResultPreviewTranslations,
+  UseResultActionsOptions,
+  UseResultActionsReturn,
+} from "./result-preview.types";

@@ -14,7 +14,7 @@ This domain provides the **mechanism** for scenario-based AI generation. Scenari
 - `WizardInputDetector` - Detect input type (single/dual image)
 - `ScenarioCategory` enum - Category definitions
 - `ScenarioData` interface - Type definitions
-- Category groups (TRUE_SOLO_CATEGORIES, COUPLE_CATEGORIES, etc.)
+- Category groups (TRUE_SOLO_CATEGORIES, etc.)
 
 ### ❌ NOT Provided (App Responsibility)
 - Scenario prompts (text content)
@@ -32,13 +32,13 @@ import { ScenarioData, ScenarioCategory } from '@umituz/react-native-ai-generati
 
 export const APP_SCENARIOS: ScenarioData[] = [
   {
-    id: 'romantic_sunset',
-    category: ScenarioCategory.INTIMATE,
-    title: 'Sunset Romance',
-    prompt: 'A couple watching sunset on the beach, golden hour lighting...',
-    inputType: 'dual', // or 'single'
-    outputType: 'video', // or 'image'
-    model: 'fal-ai/kling-video/v1.5/pro/image-to-video',
+    id: 'fantasy_warrior',
+    category: ScenarioCategory.SOLO_FANTASY,
+    title: 'Fantasy Warrior',
+    prompt: 'A powerful warrior in fantasy armor, epic lighting...',
+    inputType: 'single',
+    outputType: 'image',
+    model: 'fal-ai/flux/dev',
   },
   // ... more scenarios
 ];
@@ -63,22 +63,16 @@ import {
 } from '@umituz/react-native-ai-generation-content';
 
 // Get all scenarios for a category
-const scenarios = scenarioRegistry.getByCategory(ScenarioCategory.INTIMATE);
+const scenarios = scenarioRegistry.getByCategory(ScenarioCategory.SOLO_FANTASY);
 
 // Get wizard config for a scenario
-const wizardConfig = getScenarioWizardConfig('romantic_sunset');
+const wizardConfig = getScenarioWizardConfig('fantasy_warrior');
 ```
 
 ## Category Groups
 
 ### TRUE_SOLO_CATEGORIES
 Pure single-person categories with scenarios requiring one photo only.
-
-### COUPLE_CATEGORIES
-Couple categories with scenarios requiring two photos (dual image input).
-
-### SINGLE_PERSON_CATEGORIES (Deprecated)
-Legacy mixed categories. Use `TRUE_SOLO_CATEGORIES` for single-photo apps.
 
 ### ALL_CATEGORIES
 All available categories combined.
@@ -119,13 +113,13 @@ src/domains/scenarios/
 
 ## Examples
 
-### Video Generation App (future_us_app)
+### Video Generation App
 ```typescript
-const COUPLE_SCENARIOS: ScenarioData[] = [
+const VIDEO_SCENARIOS: ScenarioData[] = [
   {
-    id: 'romantic_kiss',
-    category: ScenarioCategory.INTIMATE,
-    inputType: 'dual',
+    id: 'cinematic_hero',
+    category: ScenarioCategory.SOLO_CINEMATIC,
+    inputType: 'single',
     outputType: 'video',
     model: 'fal-ai/kling-video/v1.5/pro/image-to-video',
     // ... data
@@ -133,7 +127,7 @@ const COUPLE_SCENARIOS: ScenarioData[] = [
 ];
 ```
 
-### Image Generation App (ai_portrait_generator)
+### Image Generation App
 ```typescript
 const SOLO_SCENARIOS: ScenarioData[] = [
   {
@@ -154,7 +148,7 @@ const SOLO_SCENARIOS: ScenarioData[] = [
 **Before (Wrong):**
 ```typescript
 // Package contained scenario data
-import { ROMANTIC_SCENARIOS } from '@umituz/react-native-ai-generation-content';
+import { SCENARIOS } from '@umituz/react-native-ai-generation-content';
 ```
 
 **After (Correct):**

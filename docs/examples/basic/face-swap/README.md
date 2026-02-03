@@ -285,8 +285,7 @@ async function shareImage(imageUrl: string): Promise<void> {
 
 ## Related Examples
 
-- [AI Hug](../ai-hug/)
-- [AI Kiss](../ai-kiss/)
+- [Image to Video](../image-to-video/)
 - [Dual Image](../../shared/)
 
 ---

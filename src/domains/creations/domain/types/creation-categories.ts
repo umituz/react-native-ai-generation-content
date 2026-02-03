@@ -26,7 +26,7 @@ export const IMAGE_CREATION_TYPES: CreationTypeId[] = [
 
 /**
  * Video-related creation types (core types only)
- * NOTE: All other video types (scenarios, ai-hug, ai-kiss, etc.)
+ * NOTE: All other video types (scenarios, etc.)
  * are dynamically determined by output content via isVideoUrl()
  */
 export const VIDEO_CREATION_TYPES: CreationTypeId[] = [
@@ -76,7 +76,7 @@ export function getCategoryForType(type: CreationTypeId): CreationCategory {
 /**
  * Get category for a creation based on its output content
  * This is the PRIMARY method for categorization - OUTPUT determines category, not type
- * Handles all scenarios (solo_martial_artist, ski_resort, ai-hug, ai-kiss, etc.)
+ * Handles all scenarios (solo_martial_artist, ski_resort, etc.)
  *
  * Strategy: API response already tells us the type via field names:
  * - output.videoUrl exists → video

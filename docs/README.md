@@ -91,8 +91,6 @@ docs/
 
 ### Entertainment App
 - [Face Swap](../src/features/face-swap/README.md)
-- [AI Hug](../src/features/ai-hug/README.md)
-- [AI Kiss](../src/features/ai-kiss/README.md)
 - [Anime Selfie](../src/features/anime-selfie/README.md)
 
 ### Content Creation

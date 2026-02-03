@@ -20,7 +20,7 @@ export const SCENARIO_TO_WIZARD_INPUT_MAP: Record<ScenarioInputType, WizardInput
  * Only matches generic I/O patterns
  */
 const INPUT_PATTERNS: Record<WizardInputType, readonly RegExp[]> = {
-  [WizardInputType.DUAL_IMAGE]: [/kiss/i, /hug/i, /embrace/i, /couple/i, /dual/i, /partner/i],
+  [WizardInputType.DUAL_IMAGE]: [/dual/i],
   [WizardInputType.SINGLE_IMAGE]: [
     /^image-to-video$/i,
     /upscale/i,

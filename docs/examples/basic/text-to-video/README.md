@@ -704,7 +704,6 @@ const styles = StyleSheet.create({
 
 - [Text to Image](../text-to-image/)
 - [Image to Video](../)
-- [AI Hug](../ai-hug/)
 
 ---
 

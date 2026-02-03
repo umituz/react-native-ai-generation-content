@@ -1,6 +1,6 @@
 /**
  * DualImageVideoFeatureLayout
- * Centralized layout for dual-image video features (ai-kiss, ai-hug)
+ * Centralized layout for dual-image video features
  * Handles: ScrollView, AIGenerationForm, AIGenerationResult, GenerationProgressContent
  * Note: No Modal wrapper - shows fullscreen progress when processing (FutureUS pattern)
  */

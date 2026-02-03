@@ -809,8 +809,7 @@ const styles = StyleSheet.create({
 ## Related Examples
 
 - [Text to Video](../text-to-video/)
-- [AI Hug](../ai-hug/)
-- [AI Kiss](../ai-kiss/)
+- [Face Swap](../face-swap/)
 
 ---
 

@@ -78,9 +78,8 @@ Provide clear guidance for getting help, reporting issues, and finding resources
 **Available Features:**
 - [Text to Image](./src/features/text-to-image/README.md)
 - [Face Swap](./src/features/face-swap/README.md)
-- [AI Hug](./src/features/ai-hug/README.md)
 - [Photo Restoration](./src/features/photo-restoration/README.md)
-- And 20+ more features
+- And 18+ more features
 
 ### Domain Documentation
 

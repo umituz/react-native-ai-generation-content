@@ -307,8 +307,6 @@ interface FaceAnalysis {
 ## 📚 Related Features
 
 - [Face Swap](../../features/face-swap) - Swap faces between images
-- [AI Hug](../../features/ai-hug) - Generate AI hug images
-- [AI Kiss](../../features/ai-kiss) - Generate AI kiss images
 
 ---
 

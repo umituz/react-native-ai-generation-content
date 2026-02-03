@@ -4,25 +4,16 @@
  * Output: image URL
  */
 
-import { providerRegistry } from "./provider-registry.service";
-import { cleanBase64, extractErrorMessage } from "../utils";
+import { extractErrorMessage, validateProvider, prepareImageInputData } from "../utils";
 import { extractImageResult } from "../utils/url-extractor";
 import type { ImageResultExtractor } from "../utils/url-extractor";
-import type { ImageFeatureType, ImageFeatureInputData } from "../../domain/interfaces";
+import type { ImageFeatureType } from "../../domain/interfaces";
 
-declare const __DEV__: boolean;
-
-/**
- * Execution options
- */
 export interface ExecuteImageFeatureOptions {
   extractResult?: ImageResultExtractor;
   onProgress?: (progress: number) => void;
 }
 
-/**
- * Execution result
- */
 export interface ImageFeatureResult {
   success: boolean;
   imageUrl?: string;
@@ -30,9 +21,6 @@ export interface ImageFeatureResult {
   requestId?: string;
 }
 
-/**
- * Request data for image features
- */
 export interface ImageFeatureRequest {
   imageBase64?: string;
   targetImageBase64?: string;
@@ -48,41 +36,26 @@ export async function executeImageFeature(
   request: ImageFeatureRequest,
   options?: ExecuteImageFeatureOptions,
 ): Promise<ImageFeatureResult> {
-  const provider = providerRegistry.getActiveProvider();
-
-  if (!provider) {
-    return { success: false, error: "No AI provider configured" };
+  const validation = validateProvider(`Image:${featureType}`);
+  if (!validation.success) {
+    return { success: false, error: validation.error };
   }
 
-  if (!provider.isInitialized()) {
-    return { success: false, error: "AI provider not initialized" };
-  }
-
+  const { provider } = validation;
   const { extractResult, onProgress } = options ?? {};
-
   const model = provider.getImageFeatureModel(featureType);
 
-  if (__DEV__) {
-     
-    console.log(`[Image:${featureType}] Provider: ${provider.providerId}, Model: ${model}`);
-  }
-
   try {
-    const inputData: ImageFeatureInputData = {
-      imageBase64: request.imageBase64 ? cleanBase64(request.imageBase64) : "",
-      targetImageBase64: request.targetImageBase64
-        ? cleanBase64(request.targetImageBase64)
-        : undefined,
-      prompt: request.prompt,
-      options: request.options,
-    };
-
+    const inputData = prepareImageInputData(
+      request.imageBase64 ?? "",
+      request.targetImageBase64,
+      request.prompt,
+      request.options,
+    );
     const input = provider.buildImageFeatureInput(featureType, inputData);
     const result = await provider.run(model, input);
 
-    const extractor = extractResult ?? extractImageResult;
-    const imageUrl = extractor(result);
-
+    const imageUrl = (extractResult ?? extractImageResult)(result);
     onProgress?.(100);
 
     if (!imageUrl) {
@@ -104,6 +77,5 @@ export async function executeImageFeature(
  * Check if image features are supported
  */
 export function hasImageFeatureSupport(): boolean {
-  const provider = providerRegistry.getActiveProvider();
-  return provider !== null && provider.isInitialized();
+  return validateProvider("ImageFeatureSupport").success;
 }

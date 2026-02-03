@@ -46,7 +46,7 @@ export async function buildImageInput(
   // Extract style for text-to-image
   const styleValue = extractSelection(wizardData.style);
   const style = typeof styleValue === "string" ? styleValue : undefined;
-  const interactionStyle = (scenario.interactionStyle as InteractionStyle) ?? "romantic";
+  const interactionStyle = (scenario.interactionStyle as InteractionStyle) ?? "natural";
   const promptType = scenario.promptType;
 
   return { photos, prompt: finalPrompt, style, interactionStyle, promptType };
@@ -58,9 +58,9 @@ export async function buildImageInput(
 function applyStyleEnhancements(prompt: string, wizardData: Record<string, unknown>): string {
   const enhancements: string[] = [];
 
-  const romanticMoods = extractSelection(wizardData.selection_romantic_mood);
-  if (Array.isArray(romanticMoods) && romanticMoods.length > 0) {
-    enhancements.push(`Mood: ${romanticMoods.join(", ")}`);
+  const moodSelections = extractSelection(wizardData.selection_mood);
+  if (Array.isArray(moodSelections) && moodSelections.length > 0) {
+    enhancements.push(`Mood: ${moodSelections.join(", ")}`);
   }
 
   const artStyle = extractSelection(wizardData.selection_art_style);

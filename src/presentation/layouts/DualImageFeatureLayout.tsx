@@ -1,6 +1,6 @@
 /**
  * DualImageFeatureLayout
- * Centralized layout for all dual-image processing features (face-swap, ai-kiss, ai-hug)
+ * Centralized layout for all dual-image processing features (face-swap)
  * Handles: ScrollView, AIGenerationForm, AIGenerationResult, GenerationProgressContent
  * Note: No Modal wrapper - shows fullscreen progress when processing (FutureUS pattern)
  */

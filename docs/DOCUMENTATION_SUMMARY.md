@@ -64,11 +64,8 @@ Complete overview of all documentation created for `@umituz/react-native-ai-gene
 - ✅ `image-captioning/README.md` - Image description generation
 
 ### Special Effects Features
-- ✅ `ai-hug/README.md` - AI hug generation
-- ✅ `ai-kiss/README.md` - AI kiss generation
 - ✅ `anime-selfie/README.md` - Photo to anime conversion
 - ✅ `meme-generator/README.md` - Meme creation
-- ✅ `couple-future/README.md` - Future predictions
 
 ### Video/Audio Features
 - ✅ `script-generator/README.md` - Video/podcast scripts
@@ -144,16 +141,13 @@ Complete overview of all documentation created for `@umituz/react-native-ai-gene
 3. ✅ `photo-restoration/` - Photo restoration with quality levels
 4. ✅ `upscaling/` - Image upscaling with factors
 5. ✅ `remove-background/` - Background removal
-6. ✅ `ai-hug/` - AI hug video generation
-7. ✅ `ai-kiss/` - AI kiss video generation
-8. ✅ `text-to-video/` - Text to video generation
+6. ✅ `text-to-video/` - Text to video generation
 9. ✅ `anime-selfie/` - Photo to anime conversion
 10. ✅ `style-transfer/` - Artistic style transfer
 11. ✅ `sketch-to-image/` - Sketch to realistic image
 12. ✅ `image-to-video/` - Image to video animation
 13. ✅ `meme-generator/` - Meme creation with AI
 14. ✅ `inpainting/` - Fill missing image parts
-15. ✅ `couple-future/` - Future predictions
 
 ### Advanced Examples (6 Files)
 1. ✅ `custom-ui/` - Build custom UI from scratch
@@ -226,11 +220,8 @@ Complete overview of all documentation created for `@umituz/react-native-ai-gene
 - Image Captioning (description generation)
 
 ### Special Effects
-- AI Hug (two photos to hug video)
-- AI Kiss (romantic kiss videos)
 - Anime Selfie (photo to anime)
 - Meme Generator (create memes)
-- Couple Future (predictions)
 
 ### Video/Audio
 - Image to Video (animation styles)
@@ -350,8 +341,8 @@ Complete overview of all documentation created for `@umituz/react-native-ai-gene
 1. Text to Image - Generate images from text
 2. Face Swap - Swap faces between photos
 3. Photo Restoration - Restore old photos
-4. AI Hug - Create hug videos
-5. Anime Selfie - Photo to anime conversion
+4. Anime Selfie - Photo to anime conversion
+5. Image to Video - Animate static photos
 
 ---
 

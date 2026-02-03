@@ -22,9 +22,6 @@ Provider-agnostic AI generation orchestration layer. Focus on business logic and
 
 ### Face & Person Features
 - **Face Swap**: Swap faces between images
-- **AI Hug**: Generate hug images (2 people)
-- **AI Kiss**: Generate kiss images (2 people)
-- **Couple Future**: Future predictions for couples
 - **Future Prediction**: Individual future scenarios
 
 ### Video & Animation
@@ -170,8 +167,7 @@ FEATURE HOOKS:
 - useTextToImageFeature: Image generation
 - useFaceSwapFeature: Face swapping
 - useTextToVoiceFeature: Text-to-speech
-- useAIHugFeature: AI hug generation
-- And 21+ more features
+- And 20+ more features
 
 STRICTLY FORBIDDEN:
 - No skipping configuration
@@ -190,10 +186,9 @@ STRICTLY FORBIDDEN:
 ```
 @umituz/react-native-ai-generation-content/
 ├── src/
-│   ├── features/           # 25 AI features (each with README)
+│   ├── features/           # 23 AI features (each with README)
 │   │   ├── text-to-image/
 │   │   ├── face-swap/
-│   │   ├── ai-hug/
 │   │   └── ...
 │   ├── domains/           # Shared domains
 │   │   ├── content-moderation/

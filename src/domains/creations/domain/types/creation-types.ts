@@ -21,8 +21,6 @@ export type CreationTypeId =
   | "background-replacement"
   | "ai-brush"
   | "hd-touch-up"
-  | "ai-hug"
-  | "ai-kiss"
   | "anime-selfie";
 
 /**

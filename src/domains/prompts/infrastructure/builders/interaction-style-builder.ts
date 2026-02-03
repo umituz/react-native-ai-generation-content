@@ -15,11 +15,7 @@
 // =============================================================================
 
 /** Interaction style between people in the image */
-export type InteractionStyle =
-  | "romantic"
-  | "friendly"
-  | "professional"
-  | "neutral";
+export type InteractionStyle = "friendly" | "professional" | "neutral";
 
 export interface InteractionStyleOptions {
   /** Interaction style between people */
@@ -38,14 +34,6 @@ export interface InteractionStyleOptions {
 
 /** Interaction style rules - what TO DO for each style */
 const INTERACTION_RULES: Record<InteractionStyle, readonly string[]> = {
-  romantic: [
-    "Close physical proximity - touching, holding hands, arms around each other",
-    "Warm, genuine, loving smiles showing happiness",
-    "Affectionate eye contact or looking at camera together happily",
-    "Natural romantic body language - leaning into each other",
-    "Intimate connection visible between the two people",
-    "Comfortable and relaxed together, natural poses",
-  ],
   friendly: [
     "Casual comfortable proximity",
     "Genuine friendly smiles",
@@ -64,21 +52,13 @@ const INTERACTION_RULES: Record<InteractionStyle, readonly string[]> = {
 
 /** Interaction style forbidden - what NOT to do for each style */
 const INTERACTION_FORBIDDEN: Record<InteractionStyle, readonly string[]> = {
-  romantic: [
-    "Do NOT position people far apart or distant from each other",
-    "Do NOT use cold, serious, stern, or angry expressions",
-    "Do NOT create stiff, awkward, or unnatural poses",
-    "Do NOT have people looking away from each other coldly",
-    "Do NOT show disconnection or emotional distance between people",
-    "Do NOT make poses look forced or uncomfortable",
-  ],
   friendly: [
     "Do NOT use cold or unfriendly expressions",
     "Do NOT create awkward distancing",
     "Do NOT make poses stiff or formal",
   ],
   professional: [
-    "Do NOT use overly casual or intimate positioning",
+    "Do NOT use overly casual positioning",
     "Do NOT use sloppy or unprofessional poses",
   ],
   neutral: [],
@@ -91,14 +71,18 @@ const INTERACTION_FORBIDDEN: Record<InteractionStyle, readonly string[]> = {
 /**
  * Get interaction rules for a given style
  */
-export function getInteractionRules(style: InteractionStyle): readonly string[] {
+export function getInteractionRules(
+  style: InteractionStyle,
+): readonly string[] {
   return INTERACTION_RULES[style];
 }
 
 /**
  * Get forbidden actions for a given style
  */
-export function getInteractionForbidden(style: InteractionStyle): readonly string[] {
+export function getInteractionForbidden(
+  style: InteractionStyle,
+): readonly string[] {
   return INTERACTION_FORBIDDEN[style];
 }
 
@@ -153,7 +137,6 @@ export function buildMinimalInteractionStylePrompt(
   }
 
   const styleDescriptions: Record<InteractionStyle, string> = {
-    romantic: "close, touching, warm smiles, loving connection",
     friendly: "casual proximity, friendly smiles, relaxed poses",
     professional: "appropriate distance, confident expressions",
     neutral: "",

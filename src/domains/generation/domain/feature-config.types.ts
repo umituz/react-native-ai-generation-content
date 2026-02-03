@@ -30,7 +30,7 @@ export type OutputType = "image" | "video";
 // ============================================================================
 
 export interface FeatureConfig {
-  /** Unique feature identifier (e.g., 'couple-future', 'ai-hug') */
+  /** Unique feature identifier (e.g., 'solo-fantasy', 'image-to-video') */
   readonly id: string;
 
   /** Generation type (determines which executor to use) */

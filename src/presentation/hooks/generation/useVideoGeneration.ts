@@ -1,6 +1,6 @@
 /**
  * useVideoGeneration Hook
- * Generic video generation hook for dual-image video features (ai-hug, ai-kiss)
+ * Generic video generation hook for dual-image video features
  * Uses centralized orchestrator for credit/error handling
  */
 
@@ -13,7 +13,7 @@ import { createCreationsRepository } from "../../../domains/creations/infrastruc
 import type { Creation } from "../../../domains/creations/domain/entities/Creation";
 
 /**
- * Input for dual image video features (ai-hug, ai-kiss)
+ * Input for dual image video features
  */
 export interface DualImageVideoInput {
   sourceImageBase64: string;
@@ -22,7 +22,7 @@ export interface DualImageVideoInput {
 }
 
 export interface VideoGenerationConfig<TResult> {
-  /** Feature type (ai-hug, ai-kiss) */
+  /** Feature type for video generation */
   featureType: VideoFeatureType;
   /** User ID for credit operations */
   userId: string | undefined;

@@ -4,7 +4,7 @@
  */
 
 /**
- * Dual image video feature state (for ai-kiss, ai-hug)
+ * Dual image video feature state
  */
 export interface DualImageVideoFeatureState {
   sourceImageUri: string | null;

@@ -6,21 +6,6 @@
 import type { ScenarioStepConfig } from "../../../../domain/entities/step-config.types";
 
 export const SCENARIO_CONFIGS: Record<string, ScenarioStepConfig> = {
-  "romantic-kiss": {
-    photoUploads: {
-      count: 2,
-      labels: ["First Partner", "Second Partner"],
-      showFaceDetection: true,
-      showNameInput: false,
-    },
-  },
-  "couple-hug": {
-    photoUploads: {
-      count: 2,
-      labels: ["Partner A", "Partner B"],
-      showFaceDetection: true,
-    },
-  },
   "image-to-video": {
     photoUploads: {
       count: 1,

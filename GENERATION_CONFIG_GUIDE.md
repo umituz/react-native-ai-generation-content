@@ -78,8 +78,6 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
 ### Video Generation
 - `imageToVideo` - Image-to-video animation
 - `textToVideo` - Text-to-video generation
-- `aiKiss` - AI Kiss video feature
-- `aiHug` - AI Hug video feature
 
 ### Other
 - `memeCaption` - Meme caption generation (text-to-text)

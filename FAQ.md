@@ -129,7 +129,7 @@ const feature = useTextToImageFeature({
 - Photo Restoration, Upscaling, HD Touch Up
 
 **Face & Person**:
-- Face Swap, AI Hug, AI Kiss, Couple Future
+- Face Swap
 
 **Video**:
 - Text to Video, Image to Video

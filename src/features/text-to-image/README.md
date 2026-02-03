@@ -288,7 +288,7 @@ Use this checklist when generating code:
 
 2. **Include Style**
    - Specify art style, mood, atmosphere
-   - Example: "in the style of oil painting, romantic mood"
+   - Example: "in the style of oil painting, dramatic mood"
 
 3. **Add Technical Details**
    - Lighting, camera angle, composition

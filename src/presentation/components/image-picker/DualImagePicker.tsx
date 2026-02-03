@@ -1,6 +1,6 @@
 /**
  * DualImagePicker Component
- * Two-image picker for face swap, AI hug/kiss features
+ * Two-image picker for dual-image features (face swap, etc.)
  * Props-driven for 100+ apps compatibility
  */
 

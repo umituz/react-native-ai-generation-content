@@ -1,13 +1,8 @@
 /**
  * Scenario Domain
  * Core types and interfaces for AI generation scenarios
+ * Note: ScenarioId and ScenarioCategory should be defined in the app, not here
  */
-
-import { ScenarioCategory } from "./scenario-category.enum";
-import type { ScenarioId } from "./scenario-ids";
-
-export { ScenarioCategory } from "./scenario-category.enum";
-export { ScenarioId } from "./scenario-ids";
 
 export type ScenarioOutputType = "image" | "video";
 
@@ -26,9 +21,13 @@ export interface GeneratingMessages {
   hint?: string;
 }
 
+/**
+ * Scenario interface
+ * id and category are strings - apps define their own ScenarioId and ScenarioCategory types
+ */
 export interface Scenario {
-  id: ScenarioId;
-  category?: ScenarioCategory;
+  id: string;
+  category?: string;
   title: string;
   description: string;
   icon: string;

@@ -37,11 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Inpainting
 
 - **Special Effects**
-  - AI Hug
-  - AI Kiss
   - Anime Selfie
   - Meme Generator
-  - Couple Future
   - Future Prediction
   - Sketch to Image
 

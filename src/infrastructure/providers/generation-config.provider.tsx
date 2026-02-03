@@ -13,8 +13,6 @@ export interface GenerationModels {
   readonly imageTextToImage?: string;
   readonly imageToVideo?: string;
   readonly textToVideo?: string;
-  readonly aiKiss?: string;
-  readonly aiHug?: string;
   readonly faceSwap?: string;
   readonly memeCaption?: string;
   readonly memeImage?: string;

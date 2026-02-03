@@ -120,14 +120,14 @@ Layout for dual image/video features:
 ```tsx
 import { DualImageVideoFeatureLayout } from '@umituz/react-native-ai-generation-content';
 
-function AIHugScreen() {
+function ImageToVideoScreen() {
   return (
     <DualImageVideoFeatureLayout
-      featureId="ai-hug"
+      featureId="image-to-video"
       userId="user-123"
       config={{
-        title: 'AI Hug',
-        description: 'Generate AI hug images',
+        title: 'Image to Video',
+        description: 'Generate video from images',
         inputType: 'image',
       }}
       onSelectSource={async () => {
