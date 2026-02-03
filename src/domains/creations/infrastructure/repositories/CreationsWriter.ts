@@ -112,12 +112,26 @@ export class CreationsWriter {
   }
 
   async updateFavorite(userId: string, creationId: string, isFavorite: boolean): Promise<boolean> {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[CreationsWriter] updateFavorite()", { userId, creationId, isFavorite });
+    }
     const docRef = this.pathResolver.getDocRef(userId, creationId);
-    if (!docRef) return false;
+    if (!docRef) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[CreationsWriter] updateFavorite() - no docRef");
+      }
+      return false;
+    }
     try {
       await updateDoc(docRef, { isFavorite });
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[CreationsWriter] updateFavorite() success");
+      }
       return true;
-    } catch {
+    } catch (error) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] updateFavorite() error", error);
+      }
       return false;
     }
   }

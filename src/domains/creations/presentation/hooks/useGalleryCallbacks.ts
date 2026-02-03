@@ -3,6 +3,8 @@
  * Extracts callback handlers from CreationsGalleryScreen
  */
 
+declare const __DEV__: boolean;
+
 import { useCallback } from "react";
 import { useAlert, AlertType, AlertMode, useSharing } from "@umituz/react-native-design-system";
 import type { Creation } from "../../domain/entities/Creation";
@@ -72,10 +74,19 @@ export function useGalleryCallbacks(props: UseGalleryCallbacksProps) {
   const handleFavorite = useCallback(
     (c: Creation) => {
       void (async () => {
+        if (__DEV__) {
+          console.log("[handleFavorite] Called", { id: c.id, currentFavorite: c.isFavorite, userId });
+        }
         if (!userId) return;
         // Toggle the favorite status
         const newFavoriteStatus = !c.isFavorite;
+        if (__DEV__) {
+          console.log("[handleFavorite] Toggling", { newFavoriteStatus });
+        }
         const success = await repository.updateFavorite(userId, c.id, newFavoriteStatus);
+        if (__DEV__) {
+          console.log("[handleFavorite] Update result", { success });
+        }
         if (success) void refetch();
       })();
     },

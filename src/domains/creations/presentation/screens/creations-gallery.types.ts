@@ -14,4 +14,6 @@ export interface CreationsGalleryScreenProps {
   readonly onEmptyAction?: () => void;
   readonly emptyActionLabel?: string;
   readonly showFilter?: boolean;
+  /** Callback for back navigation - if provided, shows back button in header */
+  readonly onBack?: () => void;
 }

@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import { View, FlatList, RefreshControl } from "react-native";
+import { View, FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import {
   useAppDesignTokens,
   FilterSheet,
   ScreenLayout,
   useAppFocusEffect,
+  AtomicIcon,
+  AtomicText,
 } from "@umituz/react-native-design-system";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
@@ -30,6 +32,7 @@ export function CreationsGalleryScreen({
   onEmptyAction,
   emptyActionLabel,
   showFilter = config.showFilter ?? true,
+  onBack,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
@@ -170,9 +173,32 @@ export function CreationsGalleryScreen({
       />
     );
   }
+  
+  const screenHeader = useMemo(() => {
+    if (!onBack) return undefined;
+    
+    return (
+      <View style={styles.screenHeader}>
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+          <AtomicIcon
+            name="chevron-left"
+            customSize={28}
+            customColor={tokens.colors.textPrimary}
+          />
+        </TouchableOpacity>
+        <AtomicText
+          type="titleLarge"
+          style={{ color: tokens.colors.textPrimary }}
+        >
+          {t(config.translations.title)}
+        </AtomicText>
+        <View style={styles.placeholder} />
+      </View>
+    );
+  }, [onBack, tokens, t, config]);
 
   return (
-    <ScreenLayout scrollable={false}>
+    <ScreenLayout scrollable={false} header={screenHeader}>
       <FlatList
         data={filters.filtered}
         renderItem={renderItem}
