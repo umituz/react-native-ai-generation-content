@@ -21,6 +21,7 @@ export interface UseGalleryCallbacksProps {
   readonly setSelectedCreation: (creation: Creation | null) => void;
   readonly setShowRatingPicker: (show: boolean) => void;
   readonly selectedCreation: Creation | null;
+  readonly onTryAgain?: () => void;
 }
 
 export function useGalleryCallbacks(props: UseGalleryCallbacksProps) {
@@ -34,6 +35,7 @@ export function useGalleryCallbacks(props: UseGalleryCallbacksProps) {
     setSelectedCreation,
     setShowRatingPicker,
     selectedCreation,
+    onTryAgain,
   } = props;
 
   const { share } = useSharing();
@@ -106,7 +108,8 @@ export function useGalleryCallbacks(props: UseGalleryCallbacksProps) {
 
   const handleTryAgain = useCallback(() => {
     setSelectedCreation(null);
-  }, [setSelectedCreation]);
+    onTryAgain?.();
+  }, [setSelectedCreation, onTryAgain]);
 
   const handleOpenRatingPicker = useCallback(() => {
     setShowRatingPicker(true);

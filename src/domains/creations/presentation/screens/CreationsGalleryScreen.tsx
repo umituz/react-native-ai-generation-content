@@ -33,6 +33,8 @@ export function CreationsGalleryScreen({
   emptyActionLabel,
   showFilter = config.showFilter ?? true,
   onBack,
+  onTryAgain,
+  getCreationTitle,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
@@ -70,6 +72,7 @@ export function CreationsGalleryScreen({
     setSelectedCreation,
     setShowRatingPicker,
     selectedCreation,
+    onTryAgain,
   });
 
   const statusOptions = config.filterConfig?.statusOptions ?? STATUS_FILTER_OPTIONS;
@@ -104,15 +107,20 @@ export function CreationsGalleryScreen({
     return buttons;
   }, [showStatusFilter, showMediaFilter, filters, t, config.translations]);
 
-  const getScenarioTitle = useCallback((type: string): string => {
-    const typeConfig = config.types?.find((tc) => tc.id === type);
-    return typeConfig?.labelKey ? t(typeConfig.labelKey) : type.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-  }, [config.types, t]);
+  const getItemTitle = useCallback((item: Creation): string => {
+    // Use custom title function if provided
+    if (getCreationTitle) {
+      return getCreationTitle({ type: item.type, metadata: item.metadata });
+    }
+    // Default: use type config label
+    const typeConfig = config.types?.find((tc) => tc.id === item.type);
+    return typeConfig?.labelKey ? t(typeConfig.labelKey) : item.type.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  }, [config.types, t, getCreationTitle]);
 
   const renderItem = useCallback(({ item }: { item: Creation }) => (
     <CreationCard
       creation={item}
-      titleText={getScenarioTitle(item.type)}
+      titleText={getItemTitle(item)}
       callbacks={{
         onPress: () => callbacks.handleCardPress(item),
         onShare: async () => callbacks.handleShareCard(item),
@@ -120,7 +128,7 @@ export function CreationsGalleryScreen({
         onFavorite: () => callbacks.handleFavorite(item),
       }}
     />
-  ), [callbacks, getScenarioTitle]);
+  ), [callbacks, getItemTitle]);
 
   const renderHeader = useMemo(() => {
     if (!creations?.length && !isLoading) return null;
@@ -155,25 +163,8 @@ export function CreationsGalleryScreen({
   const selectedImageUrl = selectedCreation ? (getPreviewUrl(selectedCreation.output) || selectedCreation.uri) : undefined;
   const selectedVideoUrl = selectedCreation?.output?.videoUrl;
   const hasMediaToShow = selectedImageUrl || selectedVideoUrl;
+  const showPreview = selectedCreation && hasMediaToShow;
 
-  if (selectedCreation && hasMediaToShow) {
-    return (
-      <GalleryResultPreview
-        selectedCreation={selectedCreation}
-        imageUrl={selectedVideoUrl ? undefined : selectedImageUrl}
-        videoUrl={selectedVideoUrl}
-        showRatingPicker={showRatingPicker}
-        config={config}
-        t={t}
-        onBack={callbacks.handleBack}
-        onTryAgain={callbacks.handleTryAgain}
-        onRate={callbacks.handleOpenRatingPicker}
-        onSubmitRating={callbacks.handleSubmitRating}
-        onCloseRating={() => setShowRatingPicker(false)}
-      />
-    );
-  }
-  
   const screenHeader = useMemo(() => {
     if (!onBack) return undefined;
     
@@ -196,6 +187,24 @@ export function CreationsGalleryScreen({
       </View>
     );
   }, [onBack, tokens, t, config]);
+
+  if (showPreview) {
+    return (
+      <GalleryResultPreview
+        selectedCreation={selectedCreation}
+        imageUrl={selectedVideoUrl ? undefined : selectedImageUrl}
+        videoUrl={selectedVideoUrl}
+        showRatingPicker={showRatingPicker}
+        config={config}
+        t={t}
+        onBack={callbacks.handleBack}
+        onTryAgain={callbacks.handleTryAgain}
+        onRate={callbacks.handleOpenRatingPicker}
+        onSubmitRating={callbacks.handleSubmitRating}
+        onCloseRating={() => setShowRatingPicker(false)}
+      />
+    );
+  }
 
   return (
     <ScreenLayout scrollable={false} header={screenHeader}>

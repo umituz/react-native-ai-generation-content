@@ -16,4 +16,8 @@ export interface CreationsGalleryScreenProps {
   readonly showFilter?: boolean;
   /** Callback for back navigation - if provided, shows back button in header */
   readonly onBack?: () => void;
+  /** Callback for "Try Again" action - navigates to create new */
+  readonly onTryAgain?: () => void;
+  /** Function to get dynamic title from creation metadata */
+  readonly getCreationTitle?: (creation: { type: string; metadata?: Record<string, unknown> }) => string;
 }
