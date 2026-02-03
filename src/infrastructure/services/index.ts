@@ -27,3 +27,8 @@ export type {
   VideoFeatureResult,
   VideoFeatureRequest,
 } from "./video-feature-executor.service";
+export { executeMultiImageGeneration } from "./multi-image-generation.executor";
+export type {
+  MultiImageGenerationInput,
+  MultiImageGenerationResult,
+} from "./multi-image-generation.executor";

@@ -7,6 +7,7 @@ export {
   useGenerationOrchestrator,
   useImageGeneration,
   useVideoGeneration,
+  useDualImageGeneration,
   createGenerationError,
   getAlertMessage,
   parseError,
@@ -28,6 +29,8 @@ export type {
   ImageGenerationConfig,
   DualImageVideoInput,
   VideoGenerationConfig,
+  DualImageGenerationConfig,
+  DualImageGenerationReturn,
 } from "./generation";
 
 export { useGeneration } from "./use-generation";

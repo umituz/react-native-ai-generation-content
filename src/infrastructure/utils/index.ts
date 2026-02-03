@@ -12,4 +12,4 @@ export * from "./url-extractor.util";
 export * from "./photo-generation";
 export * from "./feature-utils";
 export * from "./video-helpers";
-export * from "./media-actions.util";
+export * from "./provider-validator.util";

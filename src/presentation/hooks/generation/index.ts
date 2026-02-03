@@ -9,6 +9,7 @@ export { useGenerationOrchestrator } from "./orchestrator";
 // Generic feature hooks
 export { useImageGeneration } from "./useImageGeneration";
 export { useVideoGeneration } from "./useVideoGeneration";
+export { useDualImageGeneration } from "./useDualImageGeneration";
 
 // Types
 export type {
@@ -38,6 +39,11 @@ export type {
   DualImageVideoInput,
   VideoGenerationConfig,
 } from "./useVideoGeneration";
+
+export type {
+  DualImageGenerationConfig,
+  DualImageGenerationReturn,
+} from "./useDualImageGeneration";
 
 // Error utilities
 export {
