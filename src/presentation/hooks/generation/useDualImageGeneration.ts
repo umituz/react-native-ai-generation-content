@@ -5,55 +5,18 @@
  */
 
 import { useState, useCallback, useMemo } from "react";
-import {
-  MediaPickerService,
-  MediaQuality,
-  useAlert,
-  saveImageToGallery,
-} from "@umituz/react-native-design-system";
+import { useAlert, saveImageToGallery } from "@umituz/react-native-design-system";
 import { useGenerationOrchestrator } from "./orchestrator";
+import { useImagePicker } from "./useImagePicker";
 import { executeMultiImageGeneration } from "../../../infrastructure/services/multi-image-generation.executor";
-import { prepareImage } from "../../../infrastructure/utils/feature-utils";
-import type { GenerationStrategy, AlertMessages } from "./types";
+import type { GenerationStrategy } from "./types";
+import type {
+  DualImageGenerationConfig,
+  DualImageGenerationReturn,
+  GenerationInput,
+} from "./useDualImageGeneration.types";
 
-declare const __DEV__: boolean;
-
-export interface DualImageGenerationConfig {
-  /** AI model to use */
-  readonly model: string;
-  /** Function that returns the prompt (can depend on external state) */
-  readonly getPrompt: () => string;
-  /** User ID for credit operations */
-  readonly userId: string | undefined;
-  /** Credit cost per generation */
-  readonly creditCost: number;
-  /** Alert messages */
-  readonly alertMessages: AlertMessages;
-  /** Image aspect ratio for picker */
-  readonly imageAspect?: [number, number];
-  /** Callbacks */
-  readonly onCreditsExhausted?: () => void;
-  readonly onSuccess?: (imageUrl: string) => void;
-  readonly onError?: (error: string) => void;
-}
-
-export interface DualImageGenerationReturn {
-  readonly sourceImageUri: string | null;
-  readonly targetImageUri: string | null;
-  readonly processedUrl: string | null;
-  readonly isProcessing: boolean;
-  readonly progress: number;
-  selectSourceImage(): Promise<void>;
-  selectTargetImage(): Promise<void>;
-  process(): Promise<void>;
-  save(): Promise<void>;
-  reset(): void;
-}
-
-interface GenerationInput {
-  sourceBase64: string;
-  targetBase64: string;
-}
+export type { DualImageGenerationConfig, DualImageGenerationReturn } from "./useDualImageGeneration.types";
 
 export const useDualImageGeneration = (
   config: DualImageGenerationConfig,
@@ -71,13 +34,18 @@ export const useDualImageGeneration = (
   } = config;
 
   const { showError, showSuccess } = useAlert();
-
-  // Image state
-  const [sourceImageUri, setSourceImageUri] = useState<string | null>(null);
-  const [targetImageUri, setTargetImageUri] = useState<string | null>(null);
-  const [sourceBase64, setSourceBase64] = useState<string | null>(null);
-  const [targetBase64, setTargetBase64] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+
+  // Image pickers
+  const sourceImage = useImagePicker({
+    aspect: imageAspect,
+    onError: () => showError("Error", "Failed to select image"),
+  });
+
+  const targetImage = useImagePicker({
+    aspect: imageAspect,
+    onError: () => showError("Error", "Failed to select image"),
+  });
 
   // Generation strategy for orchestrator
   const strategy: GenerationStrategy<GenerationInput, string> = useMemo(
@@ -112,67 +80,25 @@ export const useDualImageGeneration = (
     onError: (error) => onError?.(error.message),
   });
 
-  // Image selection handlers
-  const selectSourceImage = useCallback(async () => {
-    try {
-      const result = await MediaPickerService.pickSingleImage({
-        allowsEditing: true,
-        quality: MediaQuality.HIGH,
-        aspect: imageAspect,
-      });
-
-      if (!result.canceled && result.assets?.[0]) {
-        const asset = result.assets[0];
-        setSourceImageUri(asset.uri);
-        const base64 = await prepareImage(asset.uri);
-        setSourceBase64(base64);
-      }
-    } catch (error) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.error("[DualImageGeneration] Source image error:", error);
-      }
-      showError("Error", "Failed to select image");
-    }
-  }, [imageAspect, showError]);
-
-  const selectTargetImage = useCallback(async () => {
-    try {
-      const result = await MediaPickerService.pickSingleImage({
-        allowsEditing: true,
-        quality: MediaQuality.HIGH,
-        aspect: imageAspect,
-      });
-
-      if (!result.canceled && result.assets?.[0]) {
-        const asset = result.assets[0];
-        setTargetImageUri(asset.uri);
-        const base64 = await prepareImage(asset.uri);
-        setTargetBase64(base64);
-      }
-    } catch (error) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.error("[DualImageGeneration] Target image error:", error);
-      }
-      showError("Error", "Failed to select image");
-    }
-  }, [imageAspect, showError]);
-
   // Process handler
   const process = useCallback(async () => {
-    if (!sourceBase64 || !targetBase64) {
+    if (!sourceImage.base64 || !targetImage.base64) {
       showError("Missing Photos", "Please upload both photos");
       return;
     }
 
     setProgress(10);
     try {
-      await orchestrator.generate({ sourceBase64, targetBase64 });
+      await orchestrator.generate({
+        sourceBase64: sourceImage.base64,
+        targetBase64: targetImage.base64,
+      });
     } catch {
       setProgress(0);
     }
-  }, [sourceBase64, targetBase64, orchestrator, showError]);
+  }, [sourceImage.base64, targetImage.base64, orchestrator, showError]);
 
-  // Save handler - uses design-system saveImageToGallery
+  // Save handler
   const save = useCallback(async () => {
     if (!orchestrator.result) return;
 
@@ -186,22 +112,20 @@ export const useDualImageGeneration = (
 
   // Reset handler
   const reset = useCallback(() => {
-    setSourceImageUri(null);
-    setTargetImageUri(null);
-    setSourceBase64(null);
-    setTargetBase64(null);
+    sourceImage.reset();
+    targetImage.reset();
     setProgress(0);
     orchestrator.reset();
-  }, [orchestrator]);
+  }, [sourceImage, targetImage, orchestrator]);
 
   return {
-    sourceImageUri,
-    targetImageUri,
+    sourceImageUri: sourceImage.uri,
+    targetImageUri: targetImage.uri,
     processedUrl: orchestrator.result,
     isProcessing: orchestrator.isGenerating,
     progress,
-    selectSourceImage,
-    selectTargetImage,
+    selectSourceImage: sourceImage.pick,
+    selectTargetImage: targetImage.pick,
     process,
     save,
     reset,

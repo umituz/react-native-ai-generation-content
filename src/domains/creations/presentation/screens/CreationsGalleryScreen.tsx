@@ -114,7 +114,7 @@ export function CreationsGalleryScreen({
         onPress: () => callbacks.handleCardPress(item),
         onShare: async () => callbacks.handleShareCard(item),
         onDelete: () => callbacks.handleDelete(item),
-        onFavorite: () => callbacks.handleFavorite(item, !item.isFavorite),
+        onFavorite: () => callbacks.handleFavorite(item),
       }}
     />
   ), [callbacks, getScenarioTitle]);

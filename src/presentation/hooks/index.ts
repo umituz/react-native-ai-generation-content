@@ -8,6 +8,7 @@ export {
   useImageGeneration,
   useVideoGeneration,
   useDualImageGeneration,
+  useImagePicker,
   createGenerationError,
   getAlertMessage,
   parseError,
@@ -31,6 +32,9 @@ export type {
   VideoGenerationConfig,
   DualImageGenerationConfig,
   DualImageGenerationReturn,
+  ImagePickerState,
+  UseImagePickerOptions,
+  UseImagePickerReturn,
 } from "./generation";
 
 export { useGeneration } from "./use-generation";

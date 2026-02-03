@@ -70,10 +70,12 @@ export function useGalleryCallbacks(props: UseGalleryCallbacksProps) {
   );
 
   const handleFavorite = useCallback(
-    (c: Creation, isFavorite: boolean) => {
+    (c: Creation) => {
       void (async () => {
         if (!userId) return;
-        const success = await repository.updateFavorite(userId, c.id, isFavorite);
+        // Toggle the favorite status
+        const newFavoriteStatus = !c.isFavorite;
+        const success = await repository.updateFavorite(userId, c.id, newFavoriteStatus);
         if (success) void refetch();
       })();
     },

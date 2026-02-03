@@ -34,6 +34,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   onGenerate,
   isGenerating,
   hideGenerateButton,
+  isDisabled,
   generateButtonProps,
   showAdvanced,
   onAdvancedToggle,
@@ -48,7 +49,9 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
 
   const tokens = useAppDesignTokens();
   const isAdvancedVisible = showAdvanced !== undefined ? showAdvanced : true;
-  const buttonIsDisabled = onPromptChange ? !prompt?.trim() : false;
+  // Button is disabled if: external isDisabled is true, OR prompt validation fails (when prompt is used)
+  const promptInvalid = onPromptChange ? !prompt?.trim() : false;
+  const buttonIsDisabled = isDisabled || promptInvalid;
 
   useEffect(() => {
     if (__DEV__) {

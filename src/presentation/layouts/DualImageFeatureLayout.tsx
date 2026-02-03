@@ -121,6 +121,7 @@ export const DualImageFeatureLayout: React.FC<DualImageFeatureLayoutProps> = ({
       <AIGenerationForm
         onGenerate={handleProcess}
         isGenerating={feature.isProcessing}
+        isDisabled={!feature.sourceImageUri || !feature.targetImageUri}
         progress={feature.progress}
         translations={{
           generateButton: translations.processButtonText,

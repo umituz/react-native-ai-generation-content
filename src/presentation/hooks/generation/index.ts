@@ -10,6 +10,7 @@ export { useGenerationOrchestrator } from "./orchestrator";
 export { useImageGeneration } from "./useImageGeneration";
 export { useVideoGeneration } from "./useVideoGeneration";
 export { useDualImageGeneration } from "./useDualImageGeneration";
+export { useImagePicker } from "./useImagePicker";
 
 // Types
 export type {
@@ -44,6 +45,12 @@ export type {
   DualImageGenerationConfig,
   DualImageGenerationReturn,
 } from "./useDualImageGeneration";
+
+export type {
+  ImagePickerState,
+  UseImagePickerOptions,
+  UseImagePickerReturn,
+} from "./useImagePicker";
 
 // Error utilities
 export {

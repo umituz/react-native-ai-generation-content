@@ -55,6 +55,8 @@ export interface AIGenerationFormProps extends PropsWithChildren {
   onGenerate: () => void;
   isGenerating: boolean;
   hideGenerateButton?: boolean;
+  /** External control to disable the generate button (e.g., when images are not selected) */
+  isDisabled?: boolean;
   
   // Optional: Generation Progress
   progress?: number;
