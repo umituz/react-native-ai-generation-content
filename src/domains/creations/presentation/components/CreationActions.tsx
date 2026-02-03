@@ -28,6 +28,8 @@ export interface CreationAction {
   disabled?: boolean;
   /** Use filled background (primary color) */
   filled?: boolean;
+  /** Custom hex color or token color */
+  customColor?: string;
   /** Action handler */
   onPress: () => void;
 }
@@ -114,6 +116,7 @@ export function CreationActions({
               name={action.icon}
               size={sizeConfig.icon}
               color={action.color || (action.filled ? "textInverse" : "primary")}
+              customColor={action.customColor}
             />
           )}
         </TouchableOpacity>

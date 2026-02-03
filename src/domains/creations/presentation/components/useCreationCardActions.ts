@@ -4,6 +4,7 @@
  */
 
 import { useMemo } from "react";
+import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import type { CreationCardData, CreationCardCallbacks } from "./CreationCard.types";
 import type { CreationAction } from "./CreationActions";
 
@@ -22,6 +23,8 @@ export function useCreationCardActions({
   isDownloadAvailable,
   canPostToFeed,
 }: UseCreationCardActionsParams): CreationAction[] {
+  const tokens = useAppDesignTokens();
+
   return useMemo<CreationAction[]>(() => {
     const result: CreationAction[] = [];
 
@@ -47,6 +50,7 @@ export function useCreationCardActions({
         id: "favorite",
         icon: creation.isFavorite ? "heart" : "heart-outline",
         color: creation.isFavorite ? "error" : undefined,
+        customColor: !creation.isFavorite ? tokens.colors.textSecondary : undefined,
         onPress: () => callbacks.onFavorite?.(creation),
       });
     }
@@ -70,5 +74,5 @@ export function useCreationCardActions({
     }
 
     return result;
-  }, [callbacks, creation, isSharing, isDownloadAvailable, canPostToFeed]);
+  }, [callbacks, creation, isSharing, isDownloadAvailable, canPostToFeed, tokens]);
 }

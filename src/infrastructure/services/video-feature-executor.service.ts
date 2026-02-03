@@ -10,7 +10,6 @@ import { VIDEO_TIMEOUT_MS } from "../constants";
 import type { VideoFeatureType } from "../../domain/interfaces";
 import type { ExecuteVideoFeatureOptions, VideoFeatureResult, VideoFeatureRequest } from "./video-feature-executor.types";
 
-declare const __DEV__: boolean;
 
 /**
  * Execute any video feature using the active provider
