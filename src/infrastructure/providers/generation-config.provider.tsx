@@ -9,7 +9,7 @@ import React, { createContext, useContext, type ReactNode } from "react";
 declare const __DEV__: boolean;
 
 export interface GenerationModels {
-  readonly imageCoupleMultiRef?: string;
+  readonly imageMultiRef?: string;
   readonly imageTextToImage?: string;
   readonly imageToVideo?: string;
   readonly textToVideo?: string;
