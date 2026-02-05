@@ -78,10 +78,3 @@ export interface MagicPromptConfig {
   readonly maxLength: number;
   readonly minLength: number;
 }
-
-export type CoupleFeatureId = string;
-
-export interface CoupleFeatureSelection {
-  readonly featureId: CoupleFeatureId | null;
-  readonly [key: string]: CoupleFeatureId | string | boolean | number | null | undefined;
-}

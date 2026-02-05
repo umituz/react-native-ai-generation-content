@@ -79,8 +79,6 @@ export type {
   VisualStyleOption,
   InspirationChipData,
   MagicPromptConfig,
-  CoupleFeatureId,
-  CoupleFeatureSelection,
 } from "./domain/category.types";
 
 // Scenario Data Types

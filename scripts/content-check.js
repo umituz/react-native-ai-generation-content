@@ -37,7 +37,6 @@ const FORBIDDEN_PATTERNS = [
 
 // Patterns that are OK in code but not in user-facing content
 const CODE_ALLOWED_PATTERNS = [
-  'CoupleFeature', // Class/type name
   'coupleRef',     // Variable name
   'imageCoupleMultiRef', // Model config key
 ];

@@ -90,7 +90,7 @@ export type {
   CategoryNavigationContainerProps, MainCategoryScreenProps, SubCategoryScreenProps,
   MainCategory, SubCategory, CategoryInfo, ScenarioSelectorConfig, ScenarioPreviewTranslations,
   ScenarioConfig, VisualStyleOption, InspirationChipData, MagicPromptConfig,
-  CoupleFeatureId, CoupleFeatureSelection, ScenarioData,
+  ScenarioData,
 } from "../domains/scenarios";
 export {
   createScenariosForApp, filterScenariosByOutputType, filterScenariosByCategory,

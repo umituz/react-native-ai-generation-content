@@ -1,6 +1,6 @@
 /**
  * useDualImageGeneration Hook
- * Generic hook for dual-image AI generation (e.g., baby prediction, couple futures)
+ * Generic hook for dual-image AI generation workflows
  * Sends image_urls array as required by FAL AI multi-image models
  */
 
