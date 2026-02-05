@@ -5,7 +5,6 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import { Alert } from "react-native";
 import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
@@ -21,11 +20,17 @@ export interface PhotoUploadTranslations {
   readonly permissionDenied?: string;
 }
 
+export interface PhotoUploadError {
+  readonly title: string;
+  readonly message: string;
+}
+
 export interface UsePhotoUploadStateProps {
   readonly config?: PhotoUploadConfig;
   readonly translations: PhotoUploadTranslations;
   readonly initialImage?: UploadedImage;
   readonly stepId?: string;
+  readonly onError?: (error: PhotoUploadError) => void;
 }
 
 export interface UsePhotoUploadStateReturn {
@@ -40,6 +45,7 @@ export const usePhotoUploadState = ({
   translations,
   initialImage,
   stepId,
+  onError,
 }: UsePhotoUploadStateProps): UsePhotoUploadStateReturn => {
   const [image, setImage] = useState<UploadedImage | null>(initialImage || null);
   const { pickImage, isLoading } = useMedia();
@@ -70,15 +76,15 @@ export const usePhotoUploadState = ({
       // Handle validation errors from design system
       if (result.error) {
         if (result.error === MediaValidationError.FILE_TOO_LARGE) {
-          Alert.alert(
-            translations.fileTooLarge,
-            translations.maxFileSize.replace("{size}", maxFileSizeMB.toString()),
-          );
+          onError?.({
+            title: translations.fileTooLarge,
+            message: translations.maxFileSize.replace("{size}", maxFileSizeMB.toString()),
+          });
         } else if (result.error === MediaValidationError.PERMISSION_DENIED) {
-          Alert.alert(
-            translations.error,
-            translations.permissionDenied ?? "Permission to access media library is required",
-          );
+          onError?.({
+            title: translations.error,
+            message: translations.permissionDenied ?? "Permission to access media library is required",
+          });
         }
         return;
       }
@@ -114,9 +120,12 @@ export const usePhotoUploadState = ({
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.error("[usePhotoUploadState] Error picking image", error);
       }
-      Alert.alert(translations.error, translations.uploadFailed);
+      onError?.({
+        title: translations.error,
+        message: translations.uploadFailed,
+      });
     }
-  }, [pickImage, maxFileSizeMB, translations]);
+  }, [pickImage, maxFileSizeMB, translations, onError]);
 
   const canContinue = image !== null && !isLoading;
 

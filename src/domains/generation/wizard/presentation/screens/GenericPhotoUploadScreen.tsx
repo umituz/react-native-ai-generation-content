@@ -3,10 +3,13 @@
  * Used by wizard domain for ANY photo upload step
  */
 
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   useAppDesignTokens,
+  useAlert,
+  AlertType,
+  AlertMode,
   ScreenLayout,
   AtomicText,
   NavigationHeader,
@@ -16,7 +19,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { PhotoUploadCard } from "../../../../../presentation/components";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
-import { usePhotoUploadState } from "../hooks/usePhotoUploadState";
+import { usePhotoUploadState, type PhotoUploadError } from "../hooks/usePhotoUploadState";
 import { WizardContinueButton } from "../components/WizardContinueButton";
 
 export interface PhotoUploadScreenTranslations {
@@ -61,6 +64,15 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
   stepId,
 }) => {
   const tokens = useAppDesignTokens();
+  const alert = useAlert();
+
+  const handleError = useCallback(
+    (error: PhotoUploadError) => {
+      alert.show(AlertType.ERROR, AlertMode.MODAL, error.title, error.message);
+    },
+    [alert],
+  );
+
   const { image, handlePickImage, canContinue } = usePhotoUploadState({
     config: { maxFileSizeMB: config.maxFileSizeMB },
     translations: {
@@ -71,6 +83,7 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
     },
     initialImage: existingImage || undefined,
     stepId,
+    onError: handleError,
   });
 
   const handleContinuePress = () => {
