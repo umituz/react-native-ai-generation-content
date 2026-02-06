@@ -53,7 +53,3 @@ export function useFilter({
     clearFilter
   };
 }
-
-// Backward compatibility aliases
-export const useMediaFilter = useFilter;
-export const useStatusFilter = useFilter;

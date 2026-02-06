@@ -5,6 +5,7 @@
 
 import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
 import { isSuccess, type Result } from "../../../../domain/types/result.types";
+import type { IAIProvider } from "../../../../domain/interfaces";
 import type {
   ImageToVideoRequest,
   ImageToVideoResult,
@@ -101,10 +102,9 @@ class ImageToVideoExecutor extends BaseExecutor<
   }
 
   protected async executeProvider(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    provider: any,
+    provider: IAIProvider,
     model: string,
-    input: unknown,
+    input: Record<string, unknown>,
     onProgress?: (progress: number) => void,
   ): Promise<unknown> {
     this.logInfo("Starting provider.subscribe()...");
@@ -160,7 +160,7 @@ const executor = new ImageToVideoExecutor();
 
 /**
  * Execute image-to-video generation
- * Public API maintained for backwards compatibility
+ * Public API
  */
 export async function executeImageToVideo(
   request: ImageToVideoRequest,
@@ -177,7 +177,7 @@ export async function executeImageToVideo(
     },
   );
 
-  // Convert Result<T, E> back to legacy format for backwards compatibility
+  // Convert Result<T, E> to return format
   if (isSuccess(result)) {
     return result.value;
   }
@@ -186,7 +186,7 @@ export async function executeImageToVideo(
 
 /**
  * Check if image-to-video is supported
- * Public API maintained for backwards compatibility
+ * Public API
  */
 export function hasImageToVideoSupport(): boolean {
   return executor.hasSupport();

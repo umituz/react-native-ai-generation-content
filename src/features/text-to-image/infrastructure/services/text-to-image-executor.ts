@@ -5,6 +5,7 @@
 
 import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
 import { isSuccess, type Result } from "../../../../domain/types/result.types";
+import type { IAIProvider } from "../../../../domain/interfaces";
 import type {
   TextToImageRequest,
   TextToImageResult,
@@ -92,7 +93,7 @@ function defaultExtractResult(
     return { imageUrl: dataUrl, imageUrls: [dataUrl] };
   }
 
-  // Legacy: check for 'image' field
+  // Check for 'image' field
   if (typeof r.image === "string") {
     return { imageUrl: r.image, imageUrls: [r.image] };
   }
@@ -121,10 +122,9 @@ class TextToImageExecutor extends BaseExecutor<
   }
 
   protected async executeProvider(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    provider: any,
+    provider: IAIProvider,
     model: string,
-    input: unknown,
+    input: Record<string, unknown>,
   ): Promise<unknown> {
     return provider.run(model, input);
   }
@@ -160,7 +160,7 @@ const executor = new TextToImageExecutor();
 
 /**
  * Execute text-to-image generation
- * Public API maintained for backwards compatibility
+ * Public API
  */
 export async function executeTextToImage(
   request: TextToImageRequest,
@@ -176,7 +176,7 @@ export async function executeTextToImage(
     },
   );
 
-  // Convert Result<T, E> back to legacy format for backwards compatibility
+  // Convert Result<T, E> to return format
   if (isSuccess(result)) {
     return result.value;
   }
@@ -185,7 +185,7 @@ export async function executeTextToImage(
 
 /**
  * Check if text-to-image is supported
- * Public API maintained for backwards compatibility
+ * Public API
  */
 export function hasTextToImageSupport(): boolean {
   return executor.hasSupport();

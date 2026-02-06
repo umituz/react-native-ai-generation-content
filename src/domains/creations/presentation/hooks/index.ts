@@ -11,7 +11,7 @@ export type {
   UseAdvancedFilterProps,
   UseAdvancedFilterReturn,
 } from "./advancedFilter.types";
-export { useFilter, useStatusFilter, useMediaFilter } from "./useFilter";
+export { useFilter } from "./useFilter";
 export type { UseFilterProps, UseFilterReturn } from "./useFilter";
 export { useGalleryFilters } from "./useGalleryFilters";
 export { useCreationPersistence } from "./useCreationPersistence";

@@ -10,6 +10,7 @@
 
 import { providerRegistry } from "../services";
 import { failure, success, type Result } from "../../domain/types/result.types";
+import type { IAIProvider } from "../../domain/interfaces";
 
 declare const __DEV__: boolean;
 
@@ -18,7 +19,7 @@ declare const __DEV__: boolean;
  */
 export interface BaseExecutorOptions<TInput, TOutput> {
   model: string;
-  buildInput: (request: TInput) => unknown;
+  buildInput: (request: TInput) => Record<string, unknown>;
   extractResult?: (result: unknown) => TOutput | undefined;
   onProgress?: (progress: number) => void;
 }
@@ -120,10 +121,9 @@ export abstract class BaseExecutor<TRequest, TResult, TOutput> {
    * Subclasses implement their specific provider interaction
    */
   protected abstract executeProvider(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    provider: any,
+    provider: IAIProvider,
     model: string,
-    input: unknown,
+    input: Record<string, unknown>,
     onProgress?: (progress: number) => void,
   ): Promise<unknown>;
 

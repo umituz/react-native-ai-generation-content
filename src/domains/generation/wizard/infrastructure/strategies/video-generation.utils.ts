@@ -24,7 +24,7 @@ export function getVideoFeatureType(scenario: WizardScenarioData): VideoFeatureT
     return featureType;
   }
 
-  // Fallback: Pattern matching for legacy scenarios
+  // Fallback: Pattern matching
   const lowerId = id.toLowerCase();
   for (const [pattern, type] of Object.entries(VIDEO_FEATURE_PATTERNS)) {
     if (lowerId.includes(pattern)) {

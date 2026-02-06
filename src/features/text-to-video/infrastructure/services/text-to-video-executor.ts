@@ -5,6 +5,7 @@
 
 import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
 import { isSuccess, type Result } from "../../../../domain/types/result.types";
+import type { IAIProvider } from "../../../../domain/interfaces";
 import type {
   TextToVideoRequest,
   TextToVideoResult,
@@ -81,10 +82,9 @@ class TextToVideoExecutor extends BaseExecutor<
   }
 
   protected async executeProvider(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    provider: any,
+    provider: IAIProvider,
     model: string,
-    input: unknown,
+    input: Record<string, unknown>,
     onProgress?: (progress: number) => void,
   ): Promise<unknown> {
     this.logInfo("Starting provider.run()...");
@@ -135,7 +135,7 @@ const executor = new TextToVideoExecutor();
 
 /**
  * Execute text-to-video generation
- * Public API maintained for backwards compatibility
+ * Public API
  */
 export async function executeTextToVideo(
   request: TextToVideoRequest,
@@ -151,7 +151,7 @@ export async function executeTextToVideo(
     },
   );
 
-  // Convert Result<T, E> back to legacy format for backwards compatibility
+  // Convert Result<T, E> to return format
   if (isSuccess(result)) {
     return result.value;
   }
@@ -160,7 +160,7 @@ export async function executeTextToVideo(
 
 /**
  * Check if text-to-video is supported
- * Public API maintained for backwards compatibility
+ * Public API
  */
 export function hasTextToVideoSupport(): boolean {
   return executor.hasSupport();
