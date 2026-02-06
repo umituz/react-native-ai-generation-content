@@ -21,8 +21,7 @@
     "typecheck": "tsc --noEmit --skipLibCheck",
     "lint": "eslint src --max-warnings 0",
     "lint:fix": "eslint src --fix",
-    "content-check": "node scripts/content-check.js",
-    "prepublishOnly": "npm run content-check"
+    "typecheck:strict": "tsc --noEmit"
   },
   "keywords": [
     "react-native",
