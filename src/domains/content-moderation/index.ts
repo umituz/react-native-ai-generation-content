@@ -50,7 +50,6 @@ export {
 
 export type {
   PatternMatch,
-  ModerationResult as ModeratorResult,
 } from "./infrastructure/services";
 
 // =============================================================================

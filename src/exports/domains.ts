@@ -39,7 +39,7 @@ export type {
   ContentType, ModerationSeverity, AgeRating, ViolationType, ModerationRule,
   ModerationResult, Violation, ModerationContext, ModerationConfig,
   SuggestionMessages, ValidationLimits, ContentFilterResult, IContentFilter, IModerator,
-  PatternMatch, ModerationResult as ModeratorResult,
+  PatternMatch,
 } from "../domains/content-moderation";
 export {
   contentModerationService, patternMatcherService, textModerator, imageModerator,

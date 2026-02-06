@@ -122,7 +122,7 @@ const createStyles = (tokens: DesignTokens) =>
       marginTop: -40,
     },
     scenarioTitle: {
-      ...tokens.typography.headingLarge,
+      ...tokens.typography.headlineLarge,
       color: tokens.colors.textPrimary,
       fontWeight: "900",
       marginBottom: 12,

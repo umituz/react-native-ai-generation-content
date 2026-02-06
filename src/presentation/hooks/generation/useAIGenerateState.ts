@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 
 export enum AIGenerateStep {
   INFO = "INFO",
@@ -16,8 +17,6 @@ export interface UploadedImage {
   height?: number;
   fileSize?: number;
 }
-
-import { useState, useCallback } from "react";
 
 export function useAIGenerateState() {
   const [currentStep, setCurrentStep] = useState<AIGenerateStep>(

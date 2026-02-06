@@ -4,15 +4,13 @@
  */
 
 import type {
+  ModerationResult,
   Violation,
   ViolationType,
   SuggestionMessages,
 } from "../../../domain/entities/moderation.types";
 
-export interface ModerationResult {
-  isAllowed: boolean;
-  violations: Violation[];
-}
+export type { ModerationResult };
 
 const DEFAULT_SUGGESTIONS: Record<string, string> = {
   explicit_content: "Remove explicit content",

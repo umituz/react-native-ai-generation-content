@@ -99,7 +99,7 @@ const createStyles = (tokens: DesignTokens) =>
     container: { flex: 1 },
     content: { flex: 1, alignItems: "center", paddingHorizontal: 32, paddingTop: 80, paddingBottom: 40 },
     iconContainer: { marginBottom: 24 },
-    title: { ...tokens.typography.headingMedium, color: tokens.colors.textPrimary, fontWeight: "700", marginBottom: 12, textAlign: "center" },
+    title: { ...tokens.typography.headlineSmall, color: tokens.colors.textPrimary, fontWeight: "700", marginBottom: 12, textAlign: "center" },
     message: { ...tokens.typography.bodyMedium, color: tokens.colors.textSecondary, textAlign: "center", lineHeight: 22, marginBottom: 24 },
     infoContainer: { flexDirection: "row", alignItems: "center", gap: 6, opacity: 0.7 },
     infoText: { ...tokens.typography.bodySmall, color: tokens.colors.textSecondary },

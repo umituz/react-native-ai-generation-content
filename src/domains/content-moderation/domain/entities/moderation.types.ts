@@ -34,8 +34,8 @@ export interface ModerationRule {
 export interface ModerationResult {
   isAllowed: boolean;
   violations: Violation[];
-  confidence: number;
-  suggestedAction: "allow" | "warn" | "block";
+  confidence?: number;
+  suggestedAction?: "allow" | "warn" | "block";
 }
 
 export interface Violation {
