@@ -130,5 +130,4 @@ export async function pollJob<T = unknown>(
   };
 }
 
-export { createJobPoller } from "./job-poller-factory";
 export type { PollJobOptions, PollJobResult } from "./job-poller.types";
