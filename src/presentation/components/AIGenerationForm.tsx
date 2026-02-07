@@ -113,7 +113,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
               styles={styleOptions}
               selectedStyle={selectedStyle}
               onStyleSelect={onStyleSelect}
-              title={translations.styleTitle}
+              label={translations.styleTitle}
             />
           )}
 
@@ -122,7 +122,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
               ratios={aspectRatios}
               selectedRatio={selectedAspectRatio}
               onRatioSelect={onAspectRatioSelect}
-              title={translations.aspectRatioTitle}
+              label={translations.aspectRatioTitle}
             />
           )}
 
@@ -131,7 +131,7 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
               duration={duration}
               durationOptions={durationOptions}
               onDurationSelect={onDurationSelect}
-              title={translations.durationTitle}
+              label={translations.durationTitle}
               formatLabel={formatDurationLabel}
             />
           )}

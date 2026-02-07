@@ -41,6 +41,7 @@ export function useVideoQueueGeneration(
   const requestIdRef = useRef<string | null>(null);
   const modelRef = useRef<string | null>(null);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isGeneratingRef = useRef(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Cleanup polling on unmount
@@ -57,6 +58,7 @@ export function useVideoQueueGeneration(
     creationIdRef.current = null;
     requestIdRef.current = null;
     modelRef.current = null;
+    isGeneratingRef.current = false;
     setIsGenerating(false);
   }, []);
 
@@ -138,6 +140,8 @@ export function useVideoQueueGeneration(
   const startGeneration = useCallback(
     async (input: unknown, prompt: string) => {
       if (!strategy.submitToQueue) { onError?.("Queue submission not available"); return; }
+      if (isGeneratingRef.current) return;
+      isGeneratingRef.current = true;
       setIsGenerating(true);
 
       // Save to Firestore FIRST (enables background visibility)

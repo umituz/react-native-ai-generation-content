@@ -16,14 +16,14 @@ export interface StyleSelectorProps {
   styles: StyleOption[];
   selectedStyle: string;
   onStyleSelect: (styleId: string) => void;
-  title: string;
+  label: string;
 }
 
 export const StyleSelector: React.FC<StyleSelectorProps> = ({
   styles,
   selectedStyle,
   onStyleSelect,
-  title,
+  label,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -37,7 +37,7 @@ export const StyleSelector: React.FC<StyleSelectorProps> = ({
           marginBottom: 12,
         }}
       >
-        {title}
+        {label}
       </AtomicText>
       <ScrollView
         horizontal

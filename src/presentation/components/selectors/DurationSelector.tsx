@@ -15,7 +15,7 @@ export interface DurationSelectorProps<T extends DurationValue> {
   duration: T;
   durationOptions: readonly T[];
   onDurationSelect: (duration: T) => void;
-  title: string;
+  label: string;
   formatLabel?: (duration: T) => string;
 }
 
@@ -23,7 +23,7 @@ export function DurationSelector<T extends DurationValue>({
   duration,
   durationOptions,
   onDurationSelect,
-  title,
+  label,
   formatLabel = (d) => `${d}s`,
 }: DurationSelectorProps<T>): React.ReactElement {
   const tokens = useAppDesignTokens();
@@ -38,7 +38,7 @@ export function DurationSelector<T extends DurationValue>({
           marginBottom: 12,
         }}
       >
-        {title}
+        {label}
       </AtomicText>
       <View style={componentStyles.durationGrid}>
         {durationOptions.map((sec) => (

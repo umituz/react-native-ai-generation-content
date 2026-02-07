@@ -53,4 +53,5 @@ export interface GenerationRequest {
   userId?: string;
   capability?: GenerationCapability;
   onProgress?: (progress: GenerationProgress) => void;
+  signal?: AbortSignal;
 }

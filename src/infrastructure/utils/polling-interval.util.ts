@@ -28,16 +28,3 @@ export function calculatePollingInterval(options: IntervalOptions): number {
   const interval = initialIntervalMs * Math.pow(backoffMultiplier, attempt - 1);
   return Math.min(interval, maxIntervalMs);
 }
-
-export function createPollingDelay(
-  attempt: number,
-  config?: Partial<PollingConfig>,
-): Promise<void> {
-  const interval = calculatePollingInterval({ attempt, config });
-
-  if (interval === 0) {
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve) => setTimeout(resolve, interval));
-}

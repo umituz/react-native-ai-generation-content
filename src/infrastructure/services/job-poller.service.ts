@@ -13,8 +13,6 @@ import type { PollJobOptions, PollJobResult } from "./job-poller.types";
 
 declare const __DEV__: boolean;
 
-const MAX_CONSECUTIVE_TRANSIENT_ERRORS = 5;
-
 /**
  * Poll job until completion with exponential backoff
  * Only reports 100% on actual completion
@@ -33,7 +31,7 @@ export async function pollJob<T = unknown>(
   } = options;
 
   const pollingConfig = { ...DEFAULT_POLLING_CONFIG, ...config };
-  const { maxAttempts } = pollingConfig;
+  const { maxAttempts, maxConsecutiveErrors } = pollingConfig;
 
   const startTime = Date.now();
   let consecutiveTransientErrors = 0;
@@ -96,7 +94,7 @@ export async function pollJob<T = unknown>(
       if (isTransientError(error)) {
         consecutiveTransientErrors++;
 
-        if (consecutiveTransientErrors >= MAX_CONSECUTIVE_TRANSIENT_ERRORS) {
+        if (consecutiveTransientErrors >= maxConsecutiveErrors) {
           return {
             success: false,
             error: error instanceof Error ? error : new Error(String(error)),

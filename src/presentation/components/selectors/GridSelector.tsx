@@ -16,7 +16,7 @@ export interface GridSelectorProps<T> {
   readonly options: readonly GridSelectorOption<T>[];
   readonly selectedValue: T;
   readonly onSelect: (value: T) => void;
-  readonly title?: string;
+  readonly label?: string;
   readonly columns?: number;
   readonly disabled?: boolean;
   readonly style?: ViewStyle;
@@ -26,7 +26,7 @@ export function GridSelector<T>({
   options,
   selectedValue,
   onSelect,
-  title,
+  label,
   columns = 2,
   disabled = false,
   style,
@@ -35,7 +35,7 @@ export function GridSelector<T>({
 
   return (
     <View style={[styles.section, style]}>
-      {title && (
+      {label && (
         <AtomicText
           type="bodyMedium"
           style={{
@@ -44,7 +44,7 @@ export function GridSelector<T>({
             marginBottom: 12,
           }}
         >
-          {title}
+          {label}
         </AtomicText>
       )}
       <View style={styles.grid}>
@@ -58,7 +58,7 @@ export function GridSelector<T>({
                 {
                   width: `${100 / columns - 4}%`,
                   backgroundColor: isSelected
-                    ? tokens.colors.primary + "15"
+                    ? tokens.colors.primary + "20"
                     : tokens.colors.surface,
                   borderColor: isSelected
                     ? tokens.colors.primary

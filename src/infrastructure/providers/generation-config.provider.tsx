@@ -4,7 +4,7 @@
  * For scenarios, use configureScenarios() from scenario-registry
  */
 
-import React, { createContext, useContext, type ReactNode } from "react";
+import React, { createContext, useContext, useCallback, useMemo, type ReactNode } from "react";
 
 declare const __DEV__: boolean;
 
@@ -43,7 +43,7 @@ export const GenerationConfigProvider: React.FC<
     console.log("[GenerationConfigProvider] Models:", configuredModels);
   }
 
-  const getModel = (featureType: keyof GenerationModels): string => {
+  const getModel = useCallback((featureType: keyof GenerationModels): string => {
     const model = models[featureType];
     if (!model) {
       const available = Object.keys(models).filter(
@@ -54,9 +54,9 @@ export const GenerationConfigProvider: React.FC<
       );
     }
     return model;
-  };
+  }, [models]);
 
-  const value: GenerationConfigValue = { models, getModel };
+  const value = useMemo<GenerationConfigValue>(() => ({ models, getModel }), [models, getModel]);
 
   return (
     <GenerationConfigContext.Provider value={value}>

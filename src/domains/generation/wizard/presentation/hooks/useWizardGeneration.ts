@@ -186,8 +186,10 @@ export const useWizardGeneration = (
     scenario,
     wizardData,
     isVideoMode,
-    videoGeneration,
-    photoGeneration,
+    videoGeneration.isGenerating,
+    videoGeneration.startGeneration,
+    photoGeneration.isGenerating,
+    photoGeneration.startGeneration,
     onError,
   ]);
 

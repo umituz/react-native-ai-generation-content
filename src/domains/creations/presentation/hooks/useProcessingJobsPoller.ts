@@ -5,7 +5,7 @@
  * Uses provider registry internally - no need to pass FAL functions
  */
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { QUEUE_STATUS, CREATION_STATUS } from "../../../../domain/constants/queue-status.constants";
 import {
@@ -43,9 +43,21 @@ export function useProcessingJobsPoller(
   const pollingRef = useRef<Set<string>>(new Set());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Find creations that need polling
-  const processingJobs = creations.filter(
-    (c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model,
+  // Find creations that need polling - stabilize reference with useMemo
+  const processingJobIds = useMemo(
+    () => creations
+      .filter((c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model)
+      .map((c) => c.id)
+      .join(","),
+    [creations],
+  );
+
+  const processingJobs = useMemo(
+    () => creations.filter(
+      (c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model,
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [processingJobIds],
   );
 
   const pollJob = useCallback(

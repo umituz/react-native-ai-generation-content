@@ -16,14 +16,14 @@ export interface AspectRatioSelectorProps {
   ratios: AspectRatioOption[];
   selectedRatio: string;
   onRatioSelect: (ratio: string) => void;
-  title: string;
+  label: string;
 }
 
 export const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
   ratios,
   selectedRatio,
   onRatioSelect,
-  title,
+  label,
 }) => {
   const tokens = useAppDesignTokens();
 
@@ -37,7 +37,7 @@ export const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
           marginBottom: 12,
         }}
       >
-        {title}
+        {label}
       </AtomicText>
       <View style={componentStyles.aspectRatioGrid}>
         {ratios.map((ratio) => (

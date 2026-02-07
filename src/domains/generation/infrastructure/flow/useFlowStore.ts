@@ -133,7 +133,8 @@ export const createFlowStore = (config: FlowStoreConfig) => {
       },
 
       updateProgress: (progress: number) => {
-        set({ generationProgress: progress, generationStatus: progress > 0 ? "generating" : "preparing" });
+        const generationStatus = progress >= 100 ? "completed" : progress > 0 ? "generating" : "preparing";
+        set({ generationProgress: progress, generationStatus });
       },
 
       setResult: (result: unknown) => {

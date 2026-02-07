@@ -62,17 +62,17 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
     queryKey: config.queryKey,
   });
 
+  const { executor, onProgress, onJobComplete, onJobError, onAllComplete } = options;
+
   const executeDirectly = useCallback(
     async (input: TInput): Promise<DirectExecutionResult<TResult>> => {
-      const { executor } = options;
-
       setIsProcessing(true);
       setProgress(0);
 
       try {
         const result = await executor.execute(input, (p) => {
           setProgress(p);
-          options.onProgress?.(p);
+          onProgress?.(p);
         });
 
         setProgress(100);
@@ -84,13 +84,11 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
         setIsProcessing(false);
       }
     },
-    [options],
+    [executor, onProgress],
   );
 
   const executeJob = useCallback(
     async (jobId: string, input: TInput) => {
-      const { executor } = options;
-
       try {
         updateJob({
           id: jobId,
@@ -114,7 +112,7 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
         const completedJob = getJob(jobId);
         if (completedJob) {
           await executor.onComplete?.(completedJob);
-          options.onJobComplete?.(completedJob);
+          onJobComplete?.(completedJob);
         }
 
         removeJob(jobId);
@@ -132,16 +130,16 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
             failedJob,
             error instanceof Error ? error : new Error(errorMsg),
           );
-          options.onJobError?.(failedJob);
+          onJobError?.(failedJob);
         }
       } finally {
         activeJobsRef.current.delete(jobId);
         if (activeJobsRef.current.size === 0) {
-          options.onAllComplete?.();
+          onAllComplete?.();
         }
       }
     },
-    [options, updateJob, removeJob, getJob],
+    [executor, onJobComplete, onJobError, onAllComplete, updateJob, removeJob, getJob],
   );
 
   const startJob = useCallback(

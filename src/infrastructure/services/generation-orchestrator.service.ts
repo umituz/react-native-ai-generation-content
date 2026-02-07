@@ -66,6 +66,7 @@ class GenerationOrchestratorService {
         model: request.model,
         requestId: submission.requestId,
         config: this.pollingConfig,
+        signal: request.signal,
         onStatusChange: async (status) => {
           if (this.onStatusUpdateCallback) {
             await this.onStatusUpdateCallback(submission.requestId, status.status);

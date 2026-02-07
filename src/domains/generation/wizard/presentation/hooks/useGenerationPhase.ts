@@ -33,10 +33,9 @@ export function useGenerationPhase(options?: UseGenerationPhaseOptions): Generat
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current;
 
-      if (elapsed < queuedDuration) {
-        setPhase("queued");
-      } else {
+      if (elapsed >= queuedDuration) {
         setPhase("processing");
+        clearInterval(interval);
       }
     }, 1000);
 

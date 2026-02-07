@@ -4,15 +4,13 @@
  * Sends image_urls array as required by FAL AI nano-banana/edit model
  */
 
-import { providerRegistry } from "./provider-registry.service";
+import { validateProvider } from "../utils/provider-validator.util";
+import { formatBase64 } from "../utils/base64.util";
 
 declare const __DEV__: boolean;
 
 /** Generation timeout in milliseconds (2 minutes) */
 const GENERATION_TIMEOUT_MS = 120000;
-
-/** Base64 image format prefix */
-const BASE64_IMAGE_PREFIX = "data:image/jpeg;base64,";
 
 /** Default model input values */
 const MODEL_INPUT_DEFAULTS = {
@@ -41,10 +39,6 @@ export interface MultiImageGenerationResult {
   readonly error?: string;
 }
 
-function formatBase64(base64: string): string {
-  return base64.startsWith("data:") ? base64 : `${BASE64_IMAGE_PREFIX}${base64}`;
-}
-
 /**
  * Execute image generation with multiple input images
  * Sends image_urls array as required by FAL AI API
@@ -52,10 +46,11 @@ function formatBase64(base64: string): string {
 export async function executeMultiImageGeneration(
   input: MultiImageGenerationInput,
 ): Promise<MultiImageGenerationResult> {
-  const provider = providerRegistry.getActiveProvider();
-  if (!provider?.isInitialized()) {
-    return { success: false, error: "AI provider not initialized" };
+  const validation = validateProvider("MultiImageExecutor");
+  if (!validation.success) {
+    return { success: false, error: validation.error };
   }
+  const provider = validation.provider;
 
   try {
     const imageUrls = input.photos.map(formatBase64);

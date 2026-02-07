@@ -29,7 +29,7 @@ export type {
 // Utils
 export {
   classifyError, isTransientError, isPermanentError, isResultNotReady, calculatePollingInterval,
-  createPollingDelay, checkStatusForErrors, isJobComplete, isJobProcessing, isJobFailed,
+  checkStatusForErrors, isJobComplete, isJobProcessing, isJobFailed,
   validateResult, extractOutputUrl, extractOutputUrls, extractVideoUrl, extractThumbnailUrl,
   extractAudioUrl, extractImageUrls, cleanBase64, addBase64Prefix, preparePhoto, preparePhotos,
   isValidBase64, getBase64Size, getBase64SizeMB, prepareImage, createDevCallbacks, createFeatureUtils,

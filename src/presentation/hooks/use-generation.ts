@@ -3,7 +3,7 @@
  * React hook for AI generation with progress tracking
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import type {
   GenerationRequest,
   GenerationResult,
@@ -38,6 +38,13 @@ export function useGeneration<T = unknown>(
   const [error, setError] = useState<string | null>(null);
 
   const abortRef = useRef(false);
+
+  // Abort on unmount to prevent state updates after unmount
+  useEffect(() => {
+    return () => {
+      abortRef.current = true;
+    };
+  }, []);
 
   const handleProgress = useCallback(
     (prog: GenerationProgress) => {
