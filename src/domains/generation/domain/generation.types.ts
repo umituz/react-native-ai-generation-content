@@ -13,11 +13,10 @@ export interface GenerationOptions {
 }
 
 // ============================================================================
-// Generation Result (re-exported from canonical source)
+// Generation Result (canonical source: domain/entities/generation.types)
 // ============================================================================
 
 import type { GenerationResult as _GenerationResult } from "../../../domain/entities/generation.types";
-export type { GenerationResult } from "../../../domain/entities/generation.types";
 
 // ============================================================================
 // Input Types (by generation type)

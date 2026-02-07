@@ -13,7 +13,7 @@
  */
 
 // Result Pattern
-export type { Result, Success, Failure } from "./types/result.types";
+export type { Result, Success, Failure } from "../domain/types/result.types";
 export {
   success,
   failure,
@@ -23,11 +23,11 @@ export {
   andThen,
   unwrap,
   unwrapOr,
-} from "./types/result.types";
+} from "../domain/types/result.types";
 
 // Error Types
-export { AIErrorType } from "./types/error.types";
-export type { AIErrorInfo, AIErrorMessages } from "./types/error.types";
+export { AIErrorType } from "../domain/entities/error.types";
+export type { AIErrorInfo, AIErrorMessages } from "../domain/entities/error.types";
 
 // Provider Types
 export type {
@@ -50,12 +50,14 @@ export type {
   // Input Data
   ImageFeatureInputData,
   VideoFeatureInputData,
-  // Provider Interfaces
-  IAIProviderLifecycle,
-  IAIProviderCapabilities,
-  IAIProviderJobManager,
-  IAIProviderExecutor,
-  IAIProviderImageFeatures,
-  IAIProviderVideoFeatures,
+  // Main Provider Interface
   IAIProvider,
-} from "./types/provider.types";
+} from "../domain/interfaces/ai-provider.interface";
+
+// Segregated provider sub-interfaces
+export type { IAIProviderLifecycle } from "../domain/interfaces/provider-lifecycle.interface";
+export type { IAIProviderCapabilities } from "../domain/interfaces/provider-capabilities.interface";
+export type { IAIProviderJobManager } from "../domain/interfaces/provider-job-manager.interface";
+export type { IAIProviderExecutor } from "../domain/interfaces/provider-executor.interface";
+export type { IAIProviderImageFeatures } from "../domain/interfaces/provider-image-features.interface";
+export type { IAIProviderVideoFeatures } from "../domain/interfaces/provider-video-features.interface";

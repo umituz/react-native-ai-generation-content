@@ -13,9 +13,10 @@ export type {
   NetworkService,
   AuthService,
   GenerationMetadata,
-  GenerationCapability,
   OrchestratorConfig,
 } from "./orchestrator.types";
+
+export type { GenerationCapability } from "../../domain/entities/generation.types";
 
 // Errors
 export {

@@ -31,7 +31,6 @@ export interface GenerationMetadata {
 }
 
 import type { GenerationCapability } from "../../domain/entities/generation.types";
-export type { GenerationCapability } from "../../domain/entities/generation.types";
 
 export interface OrchestratorConfig {
   creditService: CreditService;

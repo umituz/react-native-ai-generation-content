@@ -6,8 +6,8 @@
 import type {
   GenerationExecutor,
   GenerationOptions,
-  GenerationResult,
 } from "../../domain/generation.types";
+import type { GenerationResult } from "../../../../domain/entities/generation.types";
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 
 declare const __DEV__: boolean;

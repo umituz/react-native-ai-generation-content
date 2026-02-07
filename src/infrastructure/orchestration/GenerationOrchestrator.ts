@@ -12,9 +12,9 @@ import {
 } from "../../domains/content-moderation";
 import type {
   OrchestratorConfig,
-  GenerationCapability,
   GenerationMetadata,
 } from "./orchestrator.types";
+import type { GenerationCapability } from "../../domain/entities/generation.types";
 import {
   NetworkUnavailableError,
   InsufficientCreditsError,

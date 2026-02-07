@@ -20,7 +20,6 @@ export type {
 export type {
   GenerationExecutor,
   GenerationOptions,
-  GenerationResult,
   ImageGenerationInput,
   ImageGenerationOutput,
   VideoGenerationInput,
@@ -30,6 +29,8 @@ export type {
   TextToImageInput,
   TextToImageOutput,
 } from "./domain/generation.types";
+
+export type { GenerationResult } from "../../domain/entities/generation.types";
 
 export { ExecutorFactory, type GenerationType as ExecutorGenerationType } from "./infrastructure/executors/executor-factory";
 
