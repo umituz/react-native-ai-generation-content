@@ -30,15 +30,15 @@ try {
   const errorType = classifyError(error);
 
   switch (errorType) {
-    case AIErrorType.INSUFFICIENT_CREDITS:
-      // Handle insufficient credits
-      showPaywall();
+    case AIErrorType.AUTHENTICATION:
+      // Handle authentication error
+      showLoginScreen();
       break;
-    case AIErrorType.PROVIDER_ERROR:
-      // Handle provider error
-      showErrorMessage('Provider error occurred');
+    case AIErrorType.SERVER:
+      // Handle server error
+      showErrorMessage('Server error occurred');
       break;
-    case AIErrorType.NETWORK_ERROR:
+    case AIErrorType.NETWORK:
       // Handle network error
       showRetryOption();
       break;

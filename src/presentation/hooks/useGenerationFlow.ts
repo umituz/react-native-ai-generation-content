@@ -84,29 +84,26 @@ export const useGenerationFlow = ({
   const goNext = useCallback(() => {
     if (!canGoNext) return;
 
-    setState((prev) => {
-      const nextIndex = prev.currentStepIndex + 1;
+    const nextIndex = state.currentStepIndex + 1;
+    const isLastStep = nextIndex >= config.photoSteps.length;
 
-      if (nextIndex >= config.photoSteps.length) {
-        const newState = { ...prev, isComplete: true };
-        onComplete?.(newState);
-        return newState;
-      }
-
+    if (isLastStep) {
+      const newState = { ...state, isComplete: true };
+      setState(newState);
+      onComplete?.(newState);
+    } else {
+      setState((prev) => ({ ...prev, currentStepIndex: nextIndex }));
       onStepChange?.(nextIndex, config.photoSteps[nextIndex]);
-      return { ...prev, currentStepIndex: nextIndex };
-    });
-  }, [canGoNext, config.photoSteps, onComplete, onStepChange]);
+    }
+  }, [canGoNext, state, config.photoSteps, onComplete, onStepChange]);
 
   const goBack = useCallback(() => {
     if (!canGoBack) return;
 
-    setState((prev) => {
-      const prevIndex = prev.currentStepIndex - 1;
-      onStepChange?.(prevIndex, config.photoSteps[prevIndex]);
-      return { ...prev, currentStepIndex: prevIndex, isComplete: false };
-    });
-  }, [canGoBack, config.photoSteps, onStepChange]);
+    const prevIndex = state.currentStepIndex - 1;
+    setState((prev) => ({ ...prev, currentStepIndex: prevIndex, isComplete: false }));
+    onStepChange?.(prevIndex, config.photoSteps[prevIndex]);
+  }, [canGoBack, state.currentStepIndex, config.photoSteps, onStepChange]);
 
   const updatePhoto = useCallback((imageUri: string, previewUrl?: string) => {
     setState((prev) =>
@@ -159,12 +156,10 @@ export const useGenerationFlow = ({
   }, [config]);
 
   const complete = useCallback(() => {
-    setState((prev) => {
-      const newState = { ...prev, isComplete: true };
-      onComplete?.(newState);
-      return newState;
-    });
-  }, [onComplete]);
+    const newState = { ...state, isComplete: true };
+    setState(newState);
+    onComplete?.(newState);
+  }, [state, onComplete]);
 
   return {
     state,

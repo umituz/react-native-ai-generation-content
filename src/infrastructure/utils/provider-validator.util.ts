@@ -20,14 +20,14 @@ export function validateProvider(context: string): ProviderValidationResult {
   const provider = providerRegistry.getActiveProvider();
 
   if (!provider) {
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log(`[${context}] ERROR: No provider`);
     }
     return { success: false, error: "No AI provider configured" };
   }
 
   if (!provider.isInitialized()) {
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log(`[${context}] ERROR: Provider not initialized`);
     }
     return { success: false, error: "AI provider not initialized" };

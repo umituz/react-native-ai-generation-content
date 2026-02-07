@@ -3,7 +3,7 @@
  * Uses centralized useGenerationOrchestrator for consistent auth, credits, and error handling
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import {
   useGenerationOrchestrator,
   type GenerationStrategy,
@@ -29,7 +29,7 @@ export type {
 export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseImageToVideoFeatureReturn {
   const { config, callbacks, userId } = props;
   const [state, setState] = useState(INITIAL_STATE);
-  const currentCreationIdRef = useMemo(() => ({ value: "" }), []);
+  const currentCreationIdRef = useRef("");
 
   const strategy: GenerationStrategy<VideoGenerationInput, ImageToVideoResult> = useMemo(
     () => ({
@@ -38,7 +38,7 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
           console.log("[ImageToVideo] Executing generation, creationId:", input.creationId);
         }
 
-        currentCreationIdRef.value = input.creationId;
+        currentCreationIdRef.current = input.creationId;
         config.onProcessingStart?.();
 
         callbacks?.onGenerationStart?.({
@@ -46,7 +46,11 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
           type: "image-to-video",
           imageUri: input.imageUri,
           metadata: input.options as Record<string, unknown> | undefined,
-        }).catch(() => {});
+        }).catch((err) => {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.warn("[ImageToVideo] onGenerationStart failed:", err);
+          }
+        });
 
         const result = await executeImageToVideo(
           {
@@ -67,19 +71,25 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
           throw new Error(result.error || "Generation failed");
         }
 
+        const videoResult: ImageToVideoResult = {
+          success: true,
+          videoUrl: result.videoUrl,
+          thumbnailUrl: result.thumbnailUrl,
+        };
+
         setState((prev) => ({
           ...prev,
-          videoUrl: result.videoUrl ?? null,
-          thumbnailUrl: result.thumbnailUrl ?? null,
+          videoUrl: videoResult.videoUrl ?? null,
+          thumbnailUrl: videoResult.thumbnailUrl ?? null,
         }));
 
-        return result;
+        return videoResult;
       },
       getCreditCost: () => config.creditCost ?? 0,
       save: async (result) => {
-        if (result.success && result.videoUrl && state.imageUri && currentCreationIdRef.value) {
+        if (result.success && result.videoUrl && state.imageUri && currentCreationIdRef.current) {
           await callbacks?.onCreationSave?.({
-            creationId: currentCreationIdRef.value,
+            creationId: currentCreationIdRef.current,
             type: "image-to-video",
             videoUrl: result.videoUrl,
             thumbnailUrl: result.thumbnailUrl,
@@ -149,19 +159,20 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
           imageBase64,
           motionPrompt: effectiveMotionPrompt,
           options,
-          creationId: generateCreationId(),
+          creationId: generateCreationId("image-to-video"),
         };
 
-        await orchestrator.generate(input);
+        const genResult = await orchestrator.generate(input);
+        const videoResult = genResult as ImageToVideoResult | undefined;
         setState((prev) => ({ ...prev, isProcessing: false }));
-        return { success: true, videoUrl: state.videoUrl || undefined };
+        return { success: true, videoUrl: videoResult?.videoUrl || undefined };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Generation failed";
         setState((prev) => ({ ...prev, isProcessing: false, error: message }));
         return { success: false, error: message };
       }
     },
-    [state.imageUri, state.motionPrompt, state.videoUrl, config, callbacks, orchestrator],
+    [state.imageUri, state.motionPrompt, config, callbacks, orchestrator],
   );
 
   const reset = useCallback(() => {

@@ -13,14 +13,11 @@ export interface GenerationOptions {
 }
 
 // ============================================================================
-// Generation Result
+// Generation Result (re-exported from canonical source)
 // ============================================================================
 
-export interface GenerationResult<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
+import type { GenerationResult as _GenerationResult } from "../../../domain/entities/generation.types";
+export type { GenerationResult } from "../../../domain/entities/generation.types";
 
 // ============================================================================
 // Input Types (by generation type)
@@ -86,5 +83,5 @@ export interface GenerationExecutor<TInput, TOutput> {
     model: string,
     input: TInput,
     options?: GenerationOptions,
-  ): Promise<GenerationResult<TOutput>>;
+  ): Promise<_GenerationResult<TOutput>>;
 }

@@ -2,8 +2,8 @@ export {
   useAIGeneration,
   type UseAIGenerationProps,
   type UseAIGenerationReturn,
-  type AlertMessages,
 } from "./presentation/useAIGeneration.hook";
+export type { AlertMessages } from "../../presentation/hooks/generation/types";
 
 export { featureRegistry } from "./application/feature-registry";
 export { createGenerationStrategy } from "./application/generation-strategy.factory";

@@ -5,6 +5,8 @@
  */
 
 import { useGenerationOrchestrator } from "../../../presentation/hooks/generation/orchestrator";
+import type { AlertMessages } from "../../../presentation/hooks/generation/types";
+import { DEFAULT_ALERT_MESSAGES } from "../../../presentation/constants/alert-messages";
 import { createGenerationStrategy } from "../application/generation-strategy.factory";
 
 declare const __DEV__: boolean;
@@ -12,14 +14,6 @@ declare const __DEV__: boolean;
 // ============================================================================
 // Types
 // ============================================================================
-
-export interface AlertMessages {
-  networkError: string;
-  policyViolation: string;
-  saveFailed: string;
-  creditFailed: string;
-  unknown: string;
-}
 
 export interface UseAIGenerationProps {
   /** Feature ID from feature registry */
@@ -89,13 +83,7 @@ export function useAIGeneration(
   // Use orchestrator for lifecycle management
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
-    alertMessages: alertMessages || {
-      networkError: "No internet connection",
-      policyViolation: "Content policy violation",
-      saveFailed: "Failed to save",
-      creditFailed: "Failed to deduct credits",
-      unknown: "An error occurred",
-    },
+    alertMessages: alertMessages || DEFAULT_ALERT_MESSAGES,
     onSuccess,
     onError: onError ? (error) => onError(error.message) : undefined,
     onCreditsExhausted,

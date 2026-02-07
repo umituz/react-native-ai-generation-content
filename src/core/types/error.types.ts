@@ -1,36 +1,9 @@
 /**
  * AI Generation Error Types
- * Provider-agnostic error classification
+ * Re-exports from canonical domain source
  *
  * @module @umituz/react-native-ai-generation-content/core
  */
 
-export enum AIErrorType {
-  NETWORK = "NETWORK",
-  RATE_LIMIT = "RATE_LIMIT",
-  AUTHENTICATION = "AUTHENTICATION",
-  VALIDATION = "VALIDATION",
-  CONTENT_POLICY = "CONTENT_POLICY",
-  SERVER = "SERVER",
-  TIMEOUT = "TIMEOUT",
-  UNKNOWN = "UNKNOWN",
-}
-
-export interface AIErrorInfo {
-  type: AIErrorType;
-  messageKey: string;
-  retryable: boolean;
-  originalError?: unknown;
-  statusCode?: number;
-}
-
-export interface AIErrorMessages {
-  [AIErrorType.NETWORK]: string;
-  [AIErrorType.RATE_LIMIT]: string;
-  [AIErrorType.AUTHENTICATION]: string;
-  [AIErrorType.VALIDATION]: string;
-  [AIErrorType.CONTENT_POLICY]: string;
-  [AIErrorType.SERVER]: string;
-  [AIErrorType.TIMEOUT]: string;
-  [AIErrorType.UNKNOWN]: string;
-}
+export { AIErrorType } from "../../domain/entities/error.types";
+export type { AIErrorInfo, AIErrorMessages } from "../../domain/entities/error.types";

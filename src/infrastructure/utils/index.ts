@@ -13,3 +13,6 @@ export * from "./photo-generation";
 export * from "./feature-utils";
 export * from "./video-helpers";
 export * from "./provider-validator.util";
+export * from "./base64.util";
+export * from "./video-result-extractor.util";
+export * from "./id-generator.util";

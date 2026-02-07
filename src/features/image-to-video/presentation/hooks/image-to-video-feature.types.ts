@@ -10,7 +10,8 @@ import type {
   ImageToVideoFeatureCallbacks,
   ImageToVideoGenerateParams,
 } from "../../domain/types";
-import type { AlertMessages } from "../../../../presentation/hooks/generation";
+export { DEFAULT_ALERT_MESSAGES } from "../../../../presentation/constants/alert-messages";
+export { generateCreationId } from "../../../../infrastructure/utils/id-generator.util";
 
 export const INITIAL_STATE: ImageToVideoFeatureState = {
   imageUri: null,
@@ -20,14 +21,6 @@ export const INITIAL_STATE: ImageToVideoFeatureState = {
   isProcessing: false,
   progress: 0,
   error: null,
-};
-
-export const DEFAULT_ALERT_MESSAGES: AlertMessages = {
-  networkError: "No internet connection. Please check your network.",
-  policyViolation: "Content not allowed. Please try again.",
-  saveFailed: "Failed to save. Please try again.",
-  creditFailed: "Credit operation failed. Please try again.",
-  unknown: "An error occurred. Please try again.",
 };
 
 export interface UseImageToVideoFeatureProps {
@@ -54,6 +47,3 @@ export interface VideoGenerationInput {
   creationId: string;
 }
 
-export function generateCreationId(): string {
-  return `image-to-video_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-}

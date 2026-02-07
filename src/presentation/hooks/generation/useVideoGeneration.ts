@@ -4,7 +4,7 @@
  * Uses centralized orchestrator for credit/error handling
  */
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef } from "react";
 import { useGenerationOrchestrator } from "./orchestrator";
 import type { GenerationStrategy, AlertMessages } from "./types";
 import { executeVideoFeature } from "../../../infrastructure/services";
@@ -60,9 +60,13 @@ export const useVideoGeneration = <TResult>(
     [],
   );
 
+  const lastInputRef = useRef<DualImageVideoInput | null>(null);
+
   const strategy: GenerationStrategy<DualImageVideoInput, TResult> = useMemo(
     () => ({
       execute: async (input) => {
+        lastInputRef.current = input;
+
         const result = await executeVideoFeature(
           featureType,
           {
@@ -81,7 +85,7 @@ export const useVideoGeneration = <TResult>(
       getCreditCost: () => creditCost,
       save: buildCreation
         ? async (result, uid) => {
-            const creation = buildCreation(result, {} as DualImageVideoInput);
+            const creation = buildCreation(result, lastInputRef.current ?? {} as DualImageVideoInput);
             if (creation) {
               await repository.create(uid, creation);
             }

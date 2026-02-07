@@ -67,7 +67,7 @@ export function checkFalApiError(result: unknown): void {
     const errorType = firstError?.type || "unknown";
     const errorMsg = firstError?.msg || "Unknown API error";
 
-    if (__DEV__) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.error("[FalApiError] Detected error in result:", {
         type: errorType,
         message: errorMsg,
@@ -138,7 +138,7 @@ export function extractErrorMessage(
   // First check if this is a GenerationError with translation key
   const translationKey = getErrorTranslationKey(error);
   if (translationKey) {
-    if (__DEV__ && debugPrefix) {
+    if (typeof __DEV__ !== "undefined" && __DEV__ && debugPrefix) {
       console.error(`[${debugPrefix}] Error (translation key):`, translationKey);
     }
     return translationKey;
@@ -168,7 +168,7 @@ export function extractErrorMessage(
     }
   }
 
-  if (__DEV__ && debugPrefix) {
+  if (typeof __DEV__ !== "undefined" && __DEV__ && debugPrefix) {
     console.error(`[${debugPrefix}] Error:`, message, error);
   }
 

@@ -58,11 +58,15 @@ export const parseError = (err: unknown): GenerationError => {
   return createGenerationError("unknown", "Generation failed");
 };
 
+const VALID_ERROR_TYPES: readonly string[] = ["network", "credits", "policy", "save", "unknown"];
+
 const isGenerationError = (err: unknown): err is GenerationError => {
   return (
     typeof err === "object" &&
     err !== null &&
     "type" in err &&
-    "message" in err
+    "message" in err &&
+    typeof (err as GenerationError).type === "string" &&
+    VALID_ERROR_TYPES.includes((err as GenerationError).type)
   );
 };

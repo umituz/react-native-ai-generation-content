@@ -138,7 +138,7 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
       <AIGenerationForm
         onGenerate={handleProcess}
         isGenerating={feature.isProcessing}
-        progress={feature.progress}
+        isDisabled={!feature.imageUri}
         translations={{
           generateButton: translations.processButtonText,
           generatingButton: translations.processingText,

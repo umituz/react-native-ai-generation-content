@@ -45,7 +45,6 @@ export class GenerationOrchestrator {
   }
 
   async moderateContent(
-    _userId: string,
     contentType: "text" | "image",
     content: string,
     metadata?: GenerationMetadata,
@@ -97,7 +96,6 @@ export class GenerationOrchestrator {
   }
 
   async processCredits(
-    _userId: string,
     capability: GenerationCapability,
     metadata?: GenerationMetadata,
   ): Promise<number> {
@@ -121,7 +119,6 @@ export class GenerationOrchestrator {
   }
 
   async refundCreditsIfApplicable(
-    _userId: string,
     amount: number,
     error: unknown,
   ): Promise<void> {
@@ -135,8 +132,8 @@ export class GenerationOrchestrator {
           error.message.toLowerCase().includes("cancelled") ||
           error.message.toLowerCase().includes("user cancel")));
 
-    if (__DEV__) {
-      console.log("[GenerationOrchestrator] 🔄 Refund check:", {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[GenerationOrchestrator] Refund check:", {
         amount,
         isNonRefundable,
         errorType: error instanceof Error ? error.name : typeof error,
@@ -145,16 +142,22 @@ export class GenerationOrchestrator {
     }
 
     if (!isNonRefundable) {
-      const actualUserId = this.requireAuthenticatedUser();
+      try {
+        const actualUserId = this.requireAuthenticatedUser();
 
-      if (__DEV__) {
-        console.log("[GenerationOrchestrator] ✅ Refunding credits:", {
-          userId: actualUserId,
-          amount,
-        });
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[GenerationOrchestrator] Refunding credits:", {
+            userId: actualUserId,
+            amount,
+          });
+        }
+
+        await this.config.creditService.add(actualUserId, amount);
+      } catch (refundErr) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[GenerationOrchestrator] Refund failed:", refundErr);
+        }
       }
-
-      await this.config.creditService.add(actualUserId, amount);
     }
   }
 }

@@ -79,8 +79,8 @@ export interface StepDefinition<TConfig = unknown> {
   readonly component?: React.ComponentType<StepComponentProps>;
 }
 
-/** Flow Generation Status */
-export type FlowGenerationStatus = "idle" | "preparing" | "generating" | "completed" | "failed";
+/** Flow Generation Status - subset of GenerationStatus */
+export type FlowGenerationStatus = Extract<import("./generation.types").GenerationStatus, "idle" | "preparing" | "generating" | "completed" | "failed">;
 
 /** Flow State */
 export interface FlowState {

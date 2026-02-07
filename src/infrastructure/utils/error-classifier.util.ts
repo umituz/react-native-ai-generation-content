@@ -9,6 +9,7 @@ import {
   RATE_LIMIT_PATTERNS,
   AUTH_ERROR_PATTERNS,
   CONTENT_POLICY_PATTERNS,
+  VALIDATION_ERROR_PATTERNS,
   SERVER_ERROR_PATTERNS,
 } from "./error-patterns.constants";
 
@@ -33,7 +34,7 @@ function getStatusCode(error: unknown): number | undefined {
 }
 
 function logClassification(info: AIErrorInfo): AIErrorInfo {
-  if (__DEV__) {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[ErrorClassifier] Classified as:", {
       type: info.type,
       messageKey: info.messageKey,
@@ -47,7 +48,7 @@ export function classifyError(error: unknown): AIErrorInfo {
   const message = error instanceof Error ? error.message : String(error);
   const statusCode = getStatusCode(error);
 
-  if (__DEV__) {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[ErrorClassifier] Classifying error:", {
       message: message.slice(0, 100),
       statusCode,
@@ -82,6 +83,16 @@ export function classifyError(error: unknown): AIErrorInfo {
     return logClassification({
       type: AIErrorType.CONTENT_POLICY,
       messageKey: "error.contentPolicy",
+      retryable: false,
+      originalError: error,
+      statusCode,
+    });
+  }
+
+  if (matchesPatterns(message, VALIDATION_ERROR_PATTERNS)) {
+    return logClassification({
+      type: AIErrorType.VALIDATION,
+      messageKey: "error.validation",
       retryable: false,
       originalError: error,
       statusCode,
@@ -149,20 +160,26 @@ export function isResultNotReady(
   retryAttempt: number,
   maxRetries: number,
 ): boolean {
-  if (isPermanentError(error)) {
-    return false;
-  }
-
   const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
   const errorName = error instanceof Error ? error.constructor.name.toLowerCase() : "";
 
-  return (
+  // Check 404/not-found patterns first - these indicate the job is still processing
+  const isNotFoundPattern =
     message.includes("not found") ||
     message.includes("404") ||
     message.includes("still in progress") ||
     message.includes("result not ready") ||
     message.includes("request is still in progress") ||
-    message.includes("job result not found") ||
-    (errorName === "apierror" && retryAttempt < maxRetries - 1)
-  );
+    message.includes("job result not found");
+
+  if (isNotFoundPattern) {
+    return true;
+  }
+
+  // Only then check for permanent errors
+  if (isPermanentError(error)) {
+    return false;
+  }
+
+  return errorName === "apierror" && retryAttempt < maxRetries - 1;
 }

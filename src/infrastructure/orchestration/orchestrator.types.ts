@@ -30,11 +30,8 @@ export interface GenerationMetadata {
   [key: string]: unknown;
 }
 
-export type GenerationCapability =
-  | "text-to-image"
-  | "text-to-video"
-  | "image-to-video"
-  | "text-to-voice";
+import type { GenerationCapability } from "../../domain/entities/generation.types";
+export type { GenerationCapability } from "../../domain/entities/generation.types";
 
 export interface OrchestratorConfig {
   creditService: CreditService;

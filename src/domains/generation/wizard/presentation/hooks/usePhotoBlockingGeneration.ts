@@ -123,7 +123,7 @@ export function usePhotoBlockingGeneration(
       }
 
       // Start blocking generation
-      generate(input);
+      await generate(input);
     },
     [userId, scenario, persistence, generate],
   );

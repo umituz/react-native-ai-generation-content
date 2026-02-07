@@ -5,6 +5,10 @@
 
 import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
 import { isSuccess, type Result } from "../../../../domain/types/result.types";
+import {
+  defaultExtractVideoResult,
+  type ExtractedVideoResult,
+} from "../../../../infrastructure/utils/video-result-extractor.util";
 import type { IAIProvider } from "../../../../domain/interfaces";
 import type {
   TextToVideoRequest,
@@ -23,42 +27,6 @@ export interface ExecuteTextToVideoOptions {
   buildInput: TextToVideoInputBuilder;
   extractResult?: TextToVideoResultExtractor;
   onProgress?: (progress: number) => void;
-}
-
-/**
- * Extracted result structure from provider response
- */
-interface ExtractedVideoResult {
-  videoUrl?: string;
-  thumbnailUrl?: string;
-}
-
-/**
- * Default extractor for text-to-video results
- */
-function defaultExtractResult(
-  result: unknown,
-): ExtractedVideoResult | undefined {
-  if (typeof result !== "object" || result === null) return undefined;
-
-  const r = result as Record<string, unknown>;
-
-  if (typeof r.video === "string") {
-    return { videoUrl: r.video };
-  }
-
-  if (r.video && typeof r.video === "object") {
-    const video = r.video as Record<string, unknown>;
-    if (typeof video.url === "string") {
-      return {
-        videoUrl: video.url,
-        thumbnailUrl:
-          typeof r.thumbnail === "string" ? r.thumbnail : undefined,
-      };
-    }
-  }
-
-  return undefined;
 }
 
 /**
@@ -126,7 +94,7 @@ class TextToVideoExecutor extends BaseExecutor<
   protected getDefaultExtractor(): (
     result: unknown,
   ) => ExtractedVideoResult | undefined {
-    return defaultExtractResult;
+    return defaultExtractVideoResult;
   }
 }
 

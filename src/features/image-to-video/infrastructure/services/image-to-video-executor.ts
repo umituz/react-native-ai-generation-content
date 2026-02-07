@@ -5,6 +5,11 @@
 
 import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
 import { isSuccess, type Result } from "../../../../domain/types/result.types";
+import { checkFalApiError } from "../../../../infrastructure/utils";
+import {
+  defaultExtractVideoResult,
+  type ExtractedVideoResult,
+} from "../../../../infrastructure/utils/video-result-extractor.util";
 import type { IAIProvider } from "../../../../domain/interfaces";
 import type {
   ImageToVideoRequest,
@@ -21,14 +26,6 @@ export interface ExecuteImageToVideoOptions {
   buildInput: ImageToVideoInputBuilder;
   extractResult?: ImageToVideoResultExtractor;
   onProgress?: (progress: number) => void;
-}
-
-/**
- * Extracted result structure from provider response
- */
-interface ExtractedVideoResult {
-  videoUrl?: string;
-  thumbnailUrl?: string;
 }
 
 /**
@@ -50,34 +47,6 @@ const getProgressFromJobStatus = (status: string): number => {
       return 30;
   }
 };
-
-/**
- * Default extractor for image-to-video results
- */
-function defaultExtractResult(
-  result: unknown,
-): ExtractedVideoResult | undefined {
-  if (typeof result !== "object" || result === null) return undefined;
-
-  const r = result as Record<string, unknown>;
-
-  if (typeof r.video === "string") {
-    return { videoUrl: r.video };
-  }
-
-  if (r.video && typeof r.video === "object") {
-    const video = r.video as Record<string, unknown>;
-    if (typeof video.url === "string") {
-      return {
-        videoUrl: video.url,
-        thumbnailUrl:
-          typeof r.thumbnail === "string" ? r.thumbnail : undefined,
-      };
-    }
-  }
-
-  return undefined;
-}
 
 /**
  * Image-to-Video Executor using Template Method pattern
@@ -126,6 +95,10 @@ class ImageToVideoExecutor extends BaseExecutor<
     this.logInfo(
       `Subscribe resolved, result keys: ${result ? Object.keys(result as object) : "null"}`,
     );
+
+    // FAL can return errors with COMPLETED status - check for this
+    checkFalApiError(result);
+
     return result;
   }
 
@@ -151,7 +124,7 @@ class ImageToVideoExecutor extends BaseExecutor<
   protected getDefaultExtractor(): (
     result: unknown,
   ) => ExtractedVideoResult | undefined {
-    return defaultExtractResult;
+    return defaultExtractVideoResult;
   }
 }
 

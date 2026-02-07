@@ -4,7 +4,7 @@
  * Uses centralized orchestrator for credit/error handling
  */
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef } from "react";
 import { useGenerationOrchestrator } from "./orchestrator";
 import type { GenerationStrategy, AlertMessages } from "./types";
 import { executeImageFeature } from "../../../infrastructure/services";
@@ -105,9 +105,13 @@ export const useImageGeneration = <
     [],
   );
 
+  const lastInputRef = useRef<TInput | null>(null);
+
   const strategy: GenerationStrategy<TInput, TResult> = useMemo(
     () => ({
       execute: async (input) => {
+        lastInputRef.current = input;
+
         // Build executor input
         const executorInput = buildExecutorInput
           ? buildExecutorInput(input)
@@ -129,7 +133,7 @@ export const useImageGeneration = <
       getCreditCost: () => creditCost,
       save: buildCreation
         ? async (result, uid) => {
-            const creation = buildCreation(result, {} as TInput);
+            const creation = buildCreation(result, lastInputRef.current ?? {} as TInput);
             if (creation) {
               await repository.create(uid, creation);
             }

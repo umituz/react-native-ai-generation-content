@@ -3,12 +3,13 @@
  * Simplified hook for text-to-video generation
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import {
   useGenerationOrchestrator,
   type GenerationStrategy,
-  type AlertMessages,
 } from "../../../../presentation/hooks/generation";
+import { DEFAULT_ALERT_MESSAGES } from "../../../../presentation/constants/alert-messages";
+import { generateCreationId } from "../../../../infrastructure/utils/id-generator.util";
 import { executeTextToVideo } from "../../infrastructure/services";
 import type {
   TextToVideoFeatureState,
@@ -52,29 +53,17 @@ const INITIAL_STATE: TextToVideoFeatureState = {
   error: null,
 };
 
-const DEFAULT_ALERT_MESSAGES: AlertMessages = {
-  networkError: "No internet connection. Please check your network.",
-  policyViolation: "Content not allowed. Please try again.",
-  saveFailed: "Failed to save. Please try again.",
-  creditFailed: "Credit operation failed. Please try again.",
-  unknown: "An error occurred. Please try again.",
-};
-
 interface VideoGenerationInput {
   prompt: string;
   options?: TextToVideoOptions;
   creationId: string;
 }
 
-function generateCreationId(): string {
-  return `text-to-video_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-}
-
 export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTextToVideoFeatureReturn {
   const { config, callbacks, userId, buildInput, extractResult } = props;
   const [state, setState] = useState<TextToVideoFeatureState>(INITIAL_STATE);
 
-  const currentCreationIdRef = useMemo(() => ({ value: "" }), []);
+  const currentCreationIdRef = useRef("");
 
   const strategy: GenerationStrategy<VideoGenerationInput, TextToVideoResult> = useMemo(
     () => ({
@@ -83,14 +72,18 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
           console.log("[TextToVideo] Executing generation:", input.prompt.slice(0, 100));
         }
 
-        currentCreationIdRef.value = input.creationId;
+        currentCreationIdRef.current = input.creationId;
 
         callbacks.onGenerationStart?.({
           creationId: input.creationId,
           type: "text-to-video",
           prompt: input.prompt,
           metadata: input.options as Record<string, unknown> | undefined,
-        }).catch(() => {});
+        }).catch((err) => {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.warn("[TextToVideo] onGenerationStart failed:", err);
+          }
+        });
 
         const result = await executeTextToVideo(
           { prompt: input.prompt, userId, options: input.options },
@@ -105,19 +98,25 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
           throw new Error(result.error || "Generation failed");
         }
 
+        const videoResult: TextToVideoResult = {
+          success: true,
+          videoUrl: result.videoUrl,
+          thumbnailUrl: result.thumbnailUrl,
+        };
+
         setState((prev) => ({
           ...prev,
-          videoUrl: result.videoUrl ?? null,
-          thumbnailUrl: result.thumbnailUrl ?? null,
+          videoUrl: videoResult.videoUrl ?? null,
+          thumbnailUrl: videoResult.thumbnailUrl ?? null,
         }));
 
-        return result;
+        return videoResult;
       },
       getCreditCost: () => config.creditCost,
       save: async (result) => {
-        if (result.success && result.videoUrl && currentCreationIdRef.value) {
+        if (result.success && result.videoUrl && currentCreationIdRef.current) {
           await callbacks.onCreationSave?.({
-            creationId: currentCreationIdRef.value,
+            creationId: currentCreationIdRef.current,
             type: "text-to-video",
             videoUrl: result.videoUrl,
             thumbnailUrl: result.thumbnailUrl,
@@ -161,18 +160,19 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
         const input: VideoGenerationInput = {
           prompt: prompt.trim(),
           options: params,
-          creationId: generateCreationId(),
+          creationId: generateCreationId("text-to-video"),
         };
-        await orchestrator.generate(input);
+        const result = await orchestrator.generate(input);
+        const videoResult = result as TextToVideoResult | undefined;
         setState((prev) => ({ ...prev, isProcessing: false }));
-        return { success: true, videoUrl: state.videoUrl || undefined };
+        return { success: true, videoUrl: videoResult?.videoUrl || undefined };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Generation failed";
         setState((prev) => ({ ...prev, isProcessing: false, error: message }));
         return { success: false, error: message };
       }
     },
-    [state.prompt, state.videoUrl, orchestrator],
+    [state.prompt, orchestrator],
   );
 
   const reset = useCallback(() => {
