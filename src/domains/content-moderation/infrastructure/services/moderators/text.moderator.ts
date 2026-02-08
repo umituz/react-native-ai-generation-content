@@ -7,7 +7,7 @@ import type { Violation } from "../../../domain/entities/moderation.types";
 import { patternMatcherService } from "../pattern-matcher.service";
 import { rulesRegistry } from "../../rules/rules-registry";
 import { BaseModerator, type ModerationResult } from "./base.moderator";
-import { DEFAULT_MAX_TEXT_LENGTH } from "../../../../infrastructure/constants/content.constants";
+import { DEFAULT_MAX_TEXT_LENGTH } from "../../../../../infrastructure/constants/content.constants";
 
 declare const __DEV__: boolean;
 
