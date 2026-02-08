@@ -35,7 +35,6 @@ export interface UseBackgroundGenerationReturn<TInput, TResult> {
     input: TInput,
   ) => Promise<DirectExecutionResult<TResult>>;
   readonly cancelJob: (id: string) => void;
-  readonly retryJob: (id: string) => void;
   readonly pendingJobs: BackgroundJob<TInput, TResult>[];
   readonly activeJobCount: number;
   readonly hasActiveJobs: boolean;
@@ -173,21 +172,10 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
     [removeJob],
   );
 
-  const retryJob = useCallback(
-    (id: string) => {
-      const jobData = jobInputsRef.current.get(id);
-      if (!jobData) return;
-      removeJob(id);
-      void startJob(jobData.input, jobData.type);
-    },
-    [removeJob, startJob],
-  );
-
   return {
     startJob,
     executeDirectly,
     cancelJob,
-    retryJob,
     pendingJobs: jobs,
     activeJobCount: activeJobsRef.current.size,
     hasActiveJobs: activeJobsRef.current.size > 0,

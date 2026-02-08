@@ -53,8 +53,7 @@ export interface AIFeatureCallbacks<TRequest = unknown, TResult = unknown> {
   calculateCost: (multiplier?: number, _model?: string | null) => number;
   canAfford: (cost: number) => boolean;
   isAuthenticated: () => boolean;
-  /** Called when auth is required. Pass retryCallback to resume after auth. */
-  onAuthRequired: (retryCallback?: () => void) => void;
+  onAuthRequired: () => void;
   onCreditsRequired: (cost?: number) => void;
   onSuccess?: (result: TResult) => void;
   onError?: (error: string) => void;
@@ -98,8 +97,8 @@ export function useAIFeatureCallbacks<TRequest = unknown, TResult = unknown>(
     [creditCostPerUnit],
   );
 
-  const onAuthRequired = useCallback((retryCallback?: () => void) => {
-    showAuthModal(retryCallback);
+  const onAuthRequired = useCallback(() => {
+    showAuthModal();
   }, [showAuthModal]);
 
   const onCreditsRequired = useCallback(

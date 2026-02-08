@@ -8,7 +8,7 @@ export interface PollingConfig {
   initialIntervalMs: number;
   maxIntervalMs: number;
   backoffMultiplier: number;
-  maxConsecutiveErrors: number;
+  maxTotalTimeMs?: number;
 }
 
 export const DEFAULT_POLLING_CONFIG: PollingConfig = {
@@ -16,13 +16,11 @@ export const DEFAULT_POLLING_CONFIG: PollingConfig = {
   initialIntervalMs: 1000,
   maxIntervalMs: 3000,
   backoffMultiplier: 1.2,
-  maxConsecutiveErrors: 5,
 };
 
 export interface PollingState {
   attempt: number;
   lastProgress: number;
-  consecutiveErrors: number;
   startTime: number;
 }
 

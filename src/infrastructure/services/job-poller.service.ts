@@ -8,10 +8,7 @@ import { DEFAULT_POLLING_CONFIG } from "../../domain/entities";
 import { calculatePollingInterval } from "../utils/polling-interval.util";
 import { checkStatusForErrors, isJobComplete } from "../utils/status-checker.util";
 import { validateResult } from "../utils/result-validator.util";
-import { isTransientError } from "../utils/error-classifier.util";
 import type { PollJobOptions, PollJobResult } from "./job-poller.types";
-
-declare const __DEV__: boolean;
 
 /**
  * Poll job until completion with exponential backoff
@@ -31,10 +28,9 @@ export async function pollJob<T = unknown>(
   } = options;
 
   const pollingConfig = { ...DEFAULT_POLLING_CONFIG, ...config };
-  const { maxAttempts, maxConsecutiveErrors, maxTotalTimeMs } = pollingConfig;
+  const { maxAttempts, maxTotalTimeMs } = pollingConfig;
 
   const startTime = Date.now();
-  let consecutiveTransientErrors = 0;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // Check total time limit
@@ -102,28 +98,6 @@ export async function pollJob<T = unknown>(
         };
       }
     } catch (error) {
-      if (isTransientError(error)) {
-        consecutiveTransientErrors++;
-
-        if (consecutiveTransientErrors >= maxConsecutiveErrors) {
-          return {
-            success: false,
-            error: error instanceof Error ? error : new Error(String(error)),
-            attempts: attempt + 1,
-            elapsedMs: Date.now() - startTime,
-          };
-        }
-
-        if (attempt < maxAttempts - 1) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log(
-              `[JobPoller] Transient error, retrying (${attempt + 1}/${maxAttempts})`,
-            );
-          }
-          continue;
-        }
-      }
-
       return {
         success: false,
         error: error instanceof Error ? error : new Error(String(error)),

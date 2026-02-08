@@ -28,7 +28,7 @@ export type {
 
 // Utils
 export {
-  classifyError, isTransientError, isPermanentError, isResultNotReady, calculatePollingInterval,
+  classifyError, isPermanentError, isResultNotReady, calculatePollingInterval,
   checkStatusForErrors, isJobComplete, isJobProcessing, isJobFailed,
   validateResult, extractOutputUrl, extractOutputUrls, extractVideoUrl, extractThumbnailUrl,
   extractAudioUrl, extractImageUrls, cleanBase64, addBase64Prefix, preparePhoto, preparePhotos,

@@ -47,15 +47,11 @@ export type GenerationMode = "direct" | "queued";
 export interface BackgroundQueueConfig {
   readonly mode?: GenerationMode;
   readonly maxConcurrent?: number;
-  readonly retryCount?: number;
-  readonly retryDelayMs?: number;
   readonly queryKey?: readonly string[];
 }
 
 export const DEFAULT_QUEUE_CONFIG: Required<BackgroundQueueConfig> = {
   mode: "queued",
   maxConcurrent: 1,
-  retryCount: 2,
-  retryDelayMs: 2000,
   queryKey: ["ai", "background-jobs"],
 };

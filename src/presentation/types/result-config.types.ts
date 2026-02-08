@@ -78,7 +78,6 @@ export interface ResultActionButton {
 export interface ResultActionsConfig {
   share?: ResultActionButton;
   save?: ResultActionButton;
-  retry?: ResultActionButton;
   layout?: "horizontal" | "vertical" | "grid";
   buttonSpacing?: number;
   spacing?: {
@@ -168,12 +167,6 @@ export const DEFAULT_RESULT_CONFIG: ResultConfig = {
       icon: "download",
       variant: "secondary",
       position: "bottom",
-    },
-    retry: {
-      enabled: true,
-      icon: "refresh",
-      variant: "text",
-      position: "top",
     },
     layout: "horizontal",
     buttonSpacing: 10,

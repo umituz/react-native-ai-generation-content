@@ -17,7 +17,6 @@ export enum AIErrorType {
 export interface AIErrorInfo {
   type: AIErrorType;
   messageKey: string;
-  retryable: boolean;
   originalError?: unknown;
   statusCode?: number;
 }

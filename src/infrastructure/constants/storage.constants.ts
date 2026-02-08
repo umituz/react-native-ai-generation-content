@@ -12,12 +12,6 @@ export const DEFAULT_CREATIONS_PAGE_SIZE = 20;
 /** Maximum number of logs to keep in memory */
 export const MAX_LOG_ENTRIES = 1000;
 
-/** Maximum number of retries for database operations */
-export const MAX_DB_RETRIES = 3;
-
-/** Delay between database retry attempts (milliseconds) */
-export const DB_RETRY_DELAY_MS = 1000;
-
 /** Timeout for database operations (milliseconds) */
 export const DB_OPERATION_TIMEOUT_MS = 10000;
 
