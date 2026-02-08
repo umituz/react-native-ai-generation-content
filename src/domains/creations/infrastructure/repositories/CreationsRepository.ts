@@ -43,22 +43,17 @@ export class CreationsRepository
     collectionName: string,
     options?: RepositoryOptions,
   ) {
-     
+
     if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - Constructor start");
     super();
 
     const documentMapper = options?.documentMapper ?? mapDocumentToCreation;
 
-     
-    if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - Getting db");
-    const db = this.getDb();
-     
-    if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - db:", db ? "available" : "null");
-
-    this.pathResolver = new FirestorePathResolver(collectionName, db);
+    // Initialize with default database (will be resolved by FirestorePathResolver)
+    this.pathResolver = new FirestorePathResolver(collectionName, null);
     this.fetcher = new CreationsFetcher(this.pathResolver, documentMapper);
     this.writer = new CreationsWriter(this.pathResolver);
-     
+
     if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - Constructor end");
   }
 

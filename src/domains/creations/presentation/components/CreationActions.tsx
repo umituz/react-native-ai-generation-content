@@ -8,6 +8,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  type GestureResponderEvent,
 } from "react-native";
 import {
   useAppDesignTokens,
@@ -99,7 +100,7 @@ export function CreationActions({
             action.filled && styles.actionButtonFilled,
             action.disabled && styles.actionButtonDisabled,
           ]}
-          onPress={(e) => {
+          onPress={(e: GestureResponderEvent) => {
             e.stopPropagation();
             action.onPress();
           }}

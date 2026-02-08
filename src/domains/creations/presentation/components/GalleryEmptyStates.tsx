@@ -76,7 +76,7 @@ export function GalleryEmptyStates({
     if (isLoading && (!creations || creations?.length === 0)) {
         return (
             <View style={styles.skeletonContainer}>
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3].map((i: number) => (
                     <CreationCardSkeleton key={i} tokens={tokens} />
                 ))}
             </View>

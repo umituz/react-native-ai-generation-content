@@ -101,7 +101,7 @@ export function CreationsGrid<T extends CreationCardData>({
     <FlatList
       data={creations}
       renderItem={renderItem}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item: T) => item.id}
       ListHeaderComponent={ListHeaderComponent}
       ListEmptyComponent={ListEmptyComponent}
       contentContainerStyle={[

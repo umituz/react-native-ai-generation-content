@@ -4,6 +4,7 @@
  */
 
 import type { CreationTypeId, CreationStatus, CreationCategory } from "./creation-types";
+import { getCategoryForCreation } from "./creation-categories";
 
 /**
  * Filter options for querying creations
@@ -118,7 +119,6 @@ export function calculateCreationStats(
   }
 
   // Calculate category counts based on OUTPUT content (most reliable)
-  const { getCategoryForCreation } = require("./creation-categories");
   for (const creation of creations) {
     const category = getCategoryForCreation(creation) as Exclude<CreationCategory, "all">;
     stats.byCategory[category]++;

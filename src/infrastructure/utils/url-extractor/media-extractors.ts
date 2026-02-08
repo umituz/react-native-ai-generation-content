@@ -47,14 +47,16 @@ export function extractImageUrls(result: unknown): string[] {
     return urls;
   }
 
-  // Check images array
-  if (Array.isArray(resultObj.images)) {
+  // Check images array with bounds checking
+  if (Array.isArray(resultObj.images) && resultObj.images.length > 0) {
     for (const img of resultObj.images) {
+      if (!img) continue; // Skip null/undefined items
+
       if (typeof img === "string" && img.length > 0) {
         urls.push(img);
-      } else if (img && typeof img === "object") {
+      } else if (typeof img === "object") {
         const imgObj = img as Record<string, unknown>;
-        if (typeof imgObj.url === "string") {
+        if (typeof imgObj.url === "string" && imgObj.url.length > 0) {
           urls.push(imgObj.url);
         }
       }

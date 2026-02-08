@@ -28,7 +28,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   filterButtons = [],
   showFilter = true,
   style,
-}) => {
+}: GalleryHeaderProps) => {
   const tokens = useAppDesignTokens();
   const styles = useStyles(tokens);
 
@@ -44,7 +44,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
       </View>
       {showFilter && filterButtons.length > 0 && (
         <View style={styles.filterRow}>
-          {filterButtons.map((btn) => (
+          {filterButtons.map((btn: FilterButtonConfig) => (
             <TouchableOpacity
               key={btn.id}
               onPress={() => {

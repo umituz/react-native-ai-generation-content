@@ -65,7 +65,7 @@ export function useAIFeatureGate(
   // Configure feature gate from subscription package
   const { requireFeature: requireFeatureFromPackage } = useFeatureGate({
     isAuthenticated,
-    onShowAuthModal: (cb) => showAuthModal(cb),
+    onShowAuthModal: (cb?: () => void) => showAuthModal(cb),
     hasSubscription: isPremium,
     creditBalance,
     requiredCredits: creditCost,

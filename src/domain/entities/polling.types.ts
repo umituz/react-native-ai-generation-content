@@ -9,6 +9,7 @@ export interface PollingConfig {
   maxIntervalMs: number;
   backoffMultiplier: number;
   maxTotalTimeMs?: number;
+  maxConsecutiveErrors?: number;
 }
 
 export const DEFAULT_POLLING_CONFIG: PollingConfig = {

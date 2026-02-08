@@ -143,7 +143,7 @@ export function classifyError(error: unknown): AIErrorInfo {
 
 export function isTransientError(error: unknown): boolean {
   const info = classifyError(error);
-  return info.retryable;
+  return info.retryable ?? false;
 }
 
 export function isPermanentError(error: unknown): boolean {

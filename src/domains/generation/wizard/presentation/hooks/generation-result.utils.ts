@@ -31,8 +31,10 @@ function checkForErrors(result: FalResult): void {
   // Check for FAL API error format: {detail: [{msg, type}]}
   if (result.detail && Array.isArray(result.detail) && result.detail.length > 0) {
     const firstError = result.detail[0];
-    const errorType = firstError?.type || "unknown";
-    const errorMsg = firstError?.msg || "Generation failed";
+    if (!firstError) return;
+
+    const errorType = firstError.type || "unknown";
+    const errorMsg = firstError.msg || "Generation failed";
 
     // Map error type to translation key
     if (errorType === "content_policy_violation") {
@@ -47,7 +49,7 @@ function checkForErrors(result: FalResult): void {
   }
 
   // Check for simple error field
-  if (result.error) {
+  if (result.error && typeof result.error === "string" && result.error.length > 0) {
     throw new Error(result.error);
   }
 }
@@ -62,25 +64,28 @@ export function extractResultUrl(result: FalResult): GenerationUrls {
   checkForErrors(result);
 
   // Video result
-  if (result.video?.url) {
+  if (result.video?.url && typeof result.video.url === "string") {
     return { videoUrl: result.video.url };
   }
 
   // Output URL (some models return direct URL)
-  if (typeof result.output === "string" && result.output.startsWith("http")) {
+  if (typeof result.output === "string" && result.output.length > 0 && result.output.startsWith("http")) {
     if (result.output.includes(".mp4") || result.output.includes("video")) {
       return { videoUrl: result.output };
     }
     return { imageUrl: result.output };
   }
 
-  // Images array (most image models)
-  if (result.images?.[0]?.url) {
-    return { imageUrl: result.images[0].url };
+  // Images array (most image models) with bounds checking
+  if (result.images && Array.isArray(result.images) && result.images.length > 0) {
+    const firstImage = result.images[0];
+    if (firstImage?.url && typeof firstImage.url === "string") {
+      return { imageUrl: firstImage.url };
+    }
   }
 
   // Single image
-  if (result.image?.url) {
+  if (result.image?.url && typeof result.image.url === "string") {
     return { imageUrl: result.image.url };
   }
 

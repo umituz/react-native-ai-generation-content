@@ -77,11 +77,13 @@ export function validateResult(
 
     if (typeof value === "object" && value !== null) {
       const nested = value as Record<string, unknown>;
+      // Cache Object.keys result for performance
+      const nestedKeys = Object.keys(nested);
       return !!(
         nested.url ||
         nested.image_url ||
         nested.video_url ||
-        Object.keys(nested).length > 0
+        nestedKeys.length > 0
       );
     }
 

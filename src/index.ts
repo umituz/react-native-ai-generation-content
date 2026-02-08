@@ -17,6 +17,3 @@ export * from "./exports/domains";
 
 // Features
 export * from "./exports/features";
-
-// Utils
-export { distinctBy } from "./utils/arrayUtils";

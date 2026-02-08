@@ -70,6 +70,9 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
   };
 
   const store = storeRef.current;
+  if (!store) {
+    throw new Error("Flow store not initialized");
+  }
   const state = store();
   const totalSteps = config.steps.length;
 

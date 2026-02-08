@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import {
   AtomicText,
@@ -6,7 +6,6 @@ import {
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 
-declare const __DEV__: boolean;
 import { StyleSelector } from "./selectors/StyleSelector";
 import { DurationSelector } from "./selectors/DurationSelector";
 import { AspectRatioSelector } from "./selectors/AspectRatioSelector";

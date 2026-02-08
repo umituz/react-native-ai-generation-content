@@ -27,7 +27,7 @@ export const StatusFilterSheet: React.FC<FilterSheetConfig> = ({
   onClear,
   title,
   clearLabel
-}) => (
+}: FilterSheetConfig) => (
   <FilterSheet
     visible={visible}
     onClose={onClose}
@@ -49,7 +49,7 @@ export const MediaFilterSheet: React.FC<FilterSheetConfig> = ({
   onClear,
   title,
   clearLabel
-}) => (
+}: FilterSheetConfig) => (
   <FilterSheet
     visible={visible}
     onClose={onClose}

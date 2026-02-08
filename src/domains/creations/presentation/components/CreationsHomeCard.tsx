@@ -165,7 +165,7 @@ export function CreationsHomeCard({
       <FlatList
         data={displayItems}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item: Creation) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.thumbnailList}

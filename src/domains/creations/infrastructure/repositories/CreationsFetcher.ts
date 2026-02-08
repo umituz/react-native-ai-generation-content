@@ -52,7 +52,7 @@ export class CreationsFetcher {
             });
 
             // Filter out soft-deleted creations
-            return allCreations.filter((creation) => !creation.deletedAt);
+            return allCreations.filter((creation: Creation) => !creation.deletedAt);
         } catch (error) {
             if (__DEV__) {
 
@@ -132,7 +132,7 @@ export class CreationsFetcher {
                     return creation;
                 });
 
-                const filtered = allCreations.filter((c) => !c.deletedAt);
+                const filtered = allCreations.filter((c: Creation) => !c.deletedAt);
 
                 if (__DEV__) {
                     console.log("[CreationsFetcher] Realtime update:", filtered.length);
@@ -140,7 +140,7 @@ export class CreationsFetcher {
 
                 onData(filtered);
             },
-            (error) => {
+            (error: Error) => {
                 if (__DEV__) {
                     console.error("[CreationsFetcher] subscribeToAll() ERROR", error);
                 }

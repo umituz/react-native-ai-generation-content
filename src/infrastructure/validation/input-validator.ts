@@ -50,7 +50,12 @@ export function sanitizeString(input: unknown): string {
     .trim()
     .replace(/[<>]/g, "") // Remove potential HTML tags
     .replace(/javascript:/gi, "") // Remove javascript: protocol
+    .replace(/data:/gi, "") // Remove data: protocol
+    .replace(/vbscript:/gi, "") // Remove vbscript: protocol
     .replace(/on\w+\s*=/gi, "") // Remove event handlers
+    .replace(/--/g, "") // Remove SQL comment sequences
+    .replace(/;\s*drop\s+/gi, "") // Remove SQL injection attempts
+    .replace(/['"\\]/g, "") // Remove quotes and backslashes
     .slice(0, 10000); // Limit length
 }
 

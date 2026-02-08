@@ -6,7 +6,7 @@
 
 import { extractErrorMessage, checkFalApiError, validateProvider, prepareVideoInputData } from "../utils";
 import { extractVideoResult } from "../utils/url-extractor";
-import { VIDEO_TIMEOUT_MS } from "../constants";
+import { DEFAULT_MAX_POLL_TIME_MS } from "../constants";
 import type { VideoFeatureType } from "../../domain/interfaces";
 import type { ExecuteVideoFeatureOptions, VideoFeatureResult, VideoFeatureRequest } from "./video-feature-executor.types";
 
@@ -38,7 +38,7 @@ export async function executeVideoFeature(
     const input = provider.buildVideoFeatureInput(featureType, inputData);
 
     const result = await provider.subscribe(model, input, {
-      timeoutMs: VIDEO_TIMEOUT_MS,
+      timeoutMs: DEFAULT_MAX_POLL_TIME_MS,
       onQueueUpdate: (status) => onStatusChange?.(status.status),
     });
 

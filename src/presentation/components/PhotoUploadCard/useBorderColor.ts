@@ -27,5 +27,5 @@ export function useBorderColor({
     if (isValid === true) return tokens.colors.success;
     if (isValid === false) return tokens.colors.error;
     return tokens.colors.borderLight;
-  }, [isValidating, isValid, showValidationStatus, tokens]);
+  }, [isValidating, isValid, showValidationStatus, tokens.colors.borderLight, tokens.colors.primary, tokens.colors.success, tokens.colors.error]);
 }

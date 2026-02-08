@@ -50,7 +50,7 @@ export function checkStatusForErrors(
     safeString(status, "message");
   const hasStatusError = statusError.length > 0;
 
-  // Check logs array for ERROR/FATAL level logs
+  // Check logs array for ERROR/FATAL level logs with bounds checking
   const rawLogs = (status as JobStatus)?.logs;
   const logs = Array.isArray(rawLogs) ? rawLogs : [];
   const errorLogs = logs.filter((log: AILogEntry) => {
@@ -59,14 +59,17 @@ export function checkStatusForErrors(
   });
   const hasErrorLog = errorLogs.length > 0;
 
-  // Extract error message from logs
-  const errorLogMessage =
-    errorLogs.length > 0
-      ? (errorLogs[0] as AILogEntry & { text?: string; content?: string })
-        ?.message ||
-      (errorLogs[0] as AILogEntry & { text?: string })?.text ||
-      (errorLogs[0] as AILogEntry & { content?: string })?.content
-      : undefined;
+  // Extract error message from logs with safer access
+  let errorLogMessage: string | undefined;
+  if (errorLogs.length > 0) {
+    const firstErrorLog = errorLogs[0];
+    if (firstErrorLog && typeof firstErrorLog === "object") {
+      errorLogMessage =
+        safeString(firstErrorLog, "message") ||
+        safeString(firstErrorLog, "text") ||
+        safeString(firstErrorLog, "content");
+    }
+  }
 
   // Combine error messages
   const errorMessage = statusError || errorLogMessage;
@@ -78,7 +81,7 @@ export function checkStatusForErrors(
   return {
     status: statusString,
     hasError: hasStatusError || hasErrorLog,
-    errorMessage: errorMessage ? String(errorMessage) : undefined,
+    errorMessage: errorMessage && errorMessage.length > 0 ? errorMessage : undefined,
     shouldStop,
   };
 }

@@ -52,16 +52,6 @@ class Logger {
     }
   }
 
-  private formatMessage(entry: LogEntry): string {
-    const levelName = LogLevel[entry.level];
-    const timestamp = new Date(entry.timestamp).toISOString();
-    const contextStr = entry.context
-      ? ` ${JSON.stringify(entry.context)}`
-      : "";
-    const errorStr = entry.error ? ` ${entry.error.message}` : "";
-    return `[${timestamp}] [${levelName}] ${entry.message}${contextStr}${errorStr}`;
-  }
-
   debug(message: string, context?: LogContext): void {
     if (!this.shouldLog(LogLevel.DEBUG)) return;
 
@@ -182,4 +172,3 @@ export function setProductionMode(): void {
   logger.setMinLevel(LogLevel.WARN);
 }
 
-export type { LogEntry, LogContext };

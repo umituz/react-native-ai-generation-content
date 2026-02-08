@@ -14,7 +14,6 @@ import type {
  * Build steps from scenario configuration
  */
 export const buildStepsFromScenario = (
-  scenarioId: string,
   config: ScenarioStepConfig,
 ): DynamicStepDefinition[] => {
   const steps: DynamicStepDefinition[] = [];

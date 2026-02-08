@@ -21,7 +21,7 @@ export const CreationImageViewer: React.FC<CreationImageViewerProps> = ({
     onDismiss,
     onIndexChange,
     onImageEdit,
-}) => {
+}: CreationImageViewerProps) => {
     const handleImageChange = useCallback(async (uri: string, idx: number) => {
         const creation = creations[idx];
         if (creation && onImageEdit) {

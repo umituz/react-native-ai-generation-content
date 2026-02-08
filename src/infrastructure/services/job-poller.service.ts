@@ -28,9 +28,10 @@ export async function pollJob<T = unknown>(
   } = options;
 
   const pollingConfig = { ...DEFAULT_POLLING_CONFIG, ...config };
-  const { maxAttempts, maxTotalTimeMs } = pollingConfig;
+  const { maxAttempts, maxTotalTimeMs, maxConsecutiveErrors } = pollingConfig;
 
   const startTime = Date.now();
+  let consecutiveTransientErrors = 0;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // Check total time limit
@@ -97,13 +98,21 @@ export async function pollJob<T = unknown>(
           elapsedMs: Date.now() - startTime,
         };
       }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error : new Error(String(error)),
-        attempts: attempt + 1,
-        elapsedMs: Date.now() - startTime,
-      };
+    } catch {
+      consecutiveTransientErrors++;
+
+      // Check if we've hit max consecutive transient errors
+      if (maxConsecutiveErrors && consecutiveTransientErrors >= maxConsecutiveErrors) {
+        return {
+          success: false,
+          error: new Error(`Too many consecutive errors (${consecutiveTransientErrors})`),
+          attempts: attempt + 1,
+          elapsedMs: Date.now() - startTime,
+        };
+      }
+
+      // Continue polling on transient errors
+      continue;
     }
   }
 

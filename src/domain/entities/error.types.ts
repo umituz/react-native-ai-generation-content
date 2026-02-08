@@ -19,6 +19,7 @@ export interface AIErrorInfo {
   messageKey: string;
   originalError?: unknown;
   statusCode?: number;
+  retryable?: boolean;
 }
 
 export interface AIErrorMessages {

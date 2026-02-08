@@ -8,7 +8,7 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { QUEUE_STATUS, CREATION_STATUS } from "../../../../domain/constants/queue-status.constants";
-import { GALLERY_POLL_INTERVAL_MS } from "../../../../infrastructure/constants/polling.constants";
+import { DEFAULT_POLL_INTERVAL_MS } from "../../../../infrastructure/constants/polling.constants";
 import {
   extractResultUrl,
   type FalResult,
@@ -41,16 +41,6 @@ export function useProcessingJobsPoller(
 
   const pollingRef = useRef<Set<string>>(new Set());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Find creations that need polling - use Set for O(1) lookups
-  const processingJobIds = useMemo(
-    () => new Set(
-      creations
-        .filter((c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model)
-        .map((c) => c.id)
-    ),
-    [creations],
-  );
 
   const processingJobs = useMemo(
     () => creations.filter(
@@ -126,15 +116,17 @@ export function useProcessingJobsPoller(
     // Set up interval polling
     intervalRef.current = setInterval(() => {
       processingJobs.forEach((job) => void pollJob(job));
-    }, POLL_INTERVAL_MS);
+    }, DEFAULT_POLL_INTERVAL_MS);
 
     return () => {
+      // Clear polling set first to prevent new operations
+      pollingRef.current.clear();
+
+      // Then clear interval
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      // Clear polling set to prevent memory leak
-      pollingRef.current.clear();
     };
   }, [enabled, userId, processingJobs, pollJob]);
 

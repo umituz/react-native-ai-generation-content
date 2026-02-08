@@ -16,7 +16,7 @@ export const CreationRating: React.FC<CreationRatingProps> = ({
   size = 32,
   onRate,
   readonly = false,
-}) => {
+}: CreationRatingProps) => {
   const tokens = useAppDesignTokens();
 
   return (

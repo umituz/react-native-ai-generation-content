@@ -91,30 +91,6 @@ function containsPromptInjection(content: string): boolean {
   });
 }
 
-// Kept for reference but no longer used directly - using safer functions above
-const MALICIOUS_CODE_PATTERNS = [
-  /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-  /javascript:/gi,
-  /on\w+\s*=/gi,
-];
-
-const PROMPT_INJECTION_PATTERNS = [
-  /ignore\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompts?|rules?)/gi,
-  /disregard\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompts?)/gi,
-  /forget\s+(all\s+)?(previous|prior|your)\s+(instructions?|prompts?|rules?)/gi,
-  /you\s+are\s+now\s+(a|an)\s+/gi,
-  /act\s+as\s+(if|though)\s+you/gi,
-  /pretend\s+(you\s+are|to\s+be)/gi,
-  /bypass\s+(your\s+)?(safety|content|moderation)/gi,
-  /override\s+(your\s+)?(restrictions?|limitations?|rules?)/gi,
-  /jailbreak/gi,
-  /DAN\s*mode/gi,
-  /developer\s+mode\s+(enabled|on|activated)/gi,
-  /system\s*:\s*/gi,
-  /\[system\]/gi,
-  /<<\s*sys\s*>>/gi,
-];
-
 class TextModerator extends BaseModerator {
   private maxLength = DEFAULT_MAX_TEXT_LENGTH;
 

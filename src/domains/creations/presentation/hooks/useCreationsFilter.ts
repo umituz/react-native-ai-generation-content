@@ -27,7 +27,7 @@ export function useCreationsFilter({
 }: UseCreationsFilterProps): UseCreationsFilterReturn {
 
   const filtered = useMemo(() => {
-    if (!creations) return [];
+    if (!creations || creations.length === 0) return [];
 
     return creations.filter((creation) => {
       // Status filter
