@@ -3,4 +3,4 @@
  */
 
 export { debug } from "./debug.util";
-export type { DebugOptions };
+export type { DebugOptions } from "./debug.util";

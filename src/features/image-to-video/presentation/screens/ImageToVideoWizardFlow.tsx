@@ -3,26 +3,19 @@
  * Step-based wizard flow for image-to-video generation
  */
 
-import React, { useMemo, useCallback, useEffect, useRef } from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
 import { GenericWizardFlow } from "../../../../domains/generation/wizard/presentation/components";
 import { IMAGE_TO_VIDEO_WIZARD_CONFIG } from "../../../../domains/generation/wizard/configs";
 import { useAIFeatureGate } from "../../../../domains/access-control";
-import type { WizardScenarioData } from "../../../../domains/generation/wizard/presentation/hooks/useWizardGeneration";
+import {
+  createDefaultAlerts,
+  createScenarioData,
+  useWizardFlowHandlers,
+  AutoSkipPreview,
+} from "../../../shared";
 import type { BaseWizardFlowProps } from "../../../../domains/generation/wizard/presentation/components/WizardFlow.types";
-import type { AlertMessages } from "../../../../presentation/hooks/generation/types";
-
-const AutoSkipPreview: React.FC<{ onContinue: () => void }> = ({ onContinue }) => {
-  const hasContinued = useRef(false);
-  useEffect(() => {
-    if (!hasContinued.current) {
-      hasContinued.current = true;
-      onContinue();
-    }
-  }, [onContinue]);
-  return null;
-};
 
 export type ImageToVideoWizardFlowProps = BaseWizardFlowProps;
 
@@ -41,46 +34,33 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
 
   const tokens = useAppDesignTokens();
 
-  // Centralized access control - handles offline, auth, credits, paywall
   const { requireFeature } = useAIFeatureGate({
     creditCost,
     onNetworkError,
   });
 
-  const scenario: WizardScenarioData = useMemo(
-    () => ({
-      id: "image-to-video",
-      outputType: "video",
-      inputType: "single",
-      model,
-      title: t("image2video.title"),
-    }),
-    [model, t],
+  const scenario = useMemo(
+    () =>
+      createScenarioData(
+        {
+          id: "image-to-video",
+          outputType: "video",
+          inputType: "single",
+          model,
+          titleKey: "image2video.title",
+        },
+        t
+      ),
+    [model, t]
   );
 
-  const defaultAlerts = useMemo<AlertMessages>(
-    () => ({
-      networkError: t("common.errors.network"),
-      policyViolation: t("common.errors.policy"),
-      saveFailed: t("common.errors.saveFailed"),
-      creditFailed: t("common.errors.creditFailed"),
-      unknown: t("common.errors.unknown"),
-    }),
-    [t],
-  );
+  const defaultAlerts = useMemo(() => createDefaultAlerts(t), [t]);
 
-  const handleGenerationStart = useCallback(
-    (_data: Record<string, unknown>, proceed: () => void) => {
-      // Use centralized access control - checks offline, auth, credits
-      requireFeature(proceed);
-    },
-    [requireFeature],
-  );
-
-  const handleGenerationComplete = useCallback(() => {
-    onGenerationComplete?.();
-    onBack();
-  }, [onGenerationComplete, onBack]);
+  const { handleGenerationStart, handleGenerationComplete } = useWizardFlowHandlers({
+    requireFeature,
+    onGenerationComplete,
+    onBack,
+  });
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>

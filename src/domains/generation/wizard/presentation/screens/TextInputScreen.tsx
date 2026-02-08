@@ -5,16 +5,16 @@
  */
 
 import React, { useState, useCallback, useMemo } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 import {
   AtomicText,
   AtomicButton,
-  AtomicIcon,
   useAppDesignTokens,
   ScreenLayout,
   NavigationHeader,
   type DesignTokens,
 } from "@umituz/react-native-design-system";
+import { ContinueButton } from "#presentation/components/buttons";
 import type { TextInputScreenProps } from "./TextInputScreen.types";
 
 export type {
@@ -57,33 +57,11 @@ export const TextInputScreen: React.FC<TextInputScreenProps> = ({
         title=""
         onBackPress={onBack}
         rightElement={
-          <TouchableOpacity
+          <ContinueButton
+            label={translations.continueButton}
+            canContinue={canContinue}
             onPress={handleContinue}
-            activeOpacity={0.7}
-            disabled={!canContinue}
-            style={[
-              styles.continueButton,
-              {
-                backgroundColor: canContinue ? tokens.colors.primary : tokens.colors.surfaceVariant,
-                opacity: canContinue ? 1 : 0.5,
-              },
-            ]}
-          >
-            <AtomicText
-              type="bodyMedium"
-              style={[
-                styles.continueText,
-                { color: canContinue ? tokens.colors.onPrimary : tokens.colors.textSecondary },
-              ]}
-            >
-              {translations.continueButton}
-            </AtomicText>
-            <AtomicIcon
-              name="arrow-forward"
-              size="sm"
-              color={canContinue ? "onPrimary" : "textSecondary"}
-            />
-          </TouchableOpacity>
+          />
         }
       />
       <ScreenLayout
@@ -178,16 +156,5 @@ const createStyles = (tokens: DesignTokens) =>
     },
     exampleButton: {
       marginBottom: tokens.spacing.xs,
-    },
-    continueButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: tokens.spacing.md,
-      paddingVertical: tokens.spacing.xs,
-      borderRadius: tokens.borders.radius.full,
-    },
-    continueText: {
-      fontWeight: "800",
-      marginRight: 4,
     },
   });

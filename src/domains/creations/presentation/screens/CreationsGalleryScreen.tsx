@@ -1,12 +1,10 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import { View, FlatList, RefreshControl, TouchableOpacity } from "react-native";
+import { View, FlatList, RefreshControl } from "react-native";
 import {
   useAppDesignTokens,
   FilterSheet,
   ScreenLayout,
   useAppFocusEffect,
-  AtomicIcon,
-  AtomicText,
 } from "@umituz/react-native-design-system";
 import { useCreations } from "../hooks/useCreations";
 import { useDeleteCreation } from "../hooks/useDeleteCreation";
@@ -15,8 +13,10 @@ import { useGalleryFilters } from "../hooks/useGalleryFilters";
 import { useGalleryCallbacks } from "../hooks/useGalleryCallbacks";
 import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
 import { GalleryResultPreview } from "../components/GalleryResultPreview";
+import { GalleryScreenHeader } from "#domains/creations/presentation/components/GalleryScreenHeader";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import { getPreviewUrl } from "../../domain/utils";
+import { createFilterButtons, createItemTitle } from "../utils/filter-buttons.util";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsGalleryScreenProps } from "./creations-gallery.types";
 import { creationsGalleryStyles as styles } from "./creations-gallery.styles";
@@ -44,7 +44,6 @@ export function CreationsGalleryScreen({
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
   const deleteMutation = useDeleteCreation({ userId, repository });
 
-  // Poll FAL queue for "processing" creations (enables true background generation)
   useProcessingJobsPoller({
     userId,
     creations: creations ?? [],
@@ -84,38 +83,24 @@ export function CreationsGalleryScreen({
 
   useAppFocusEffect(useCallback(() => { void refetch(); }, [refetch]));
 
-  const filterButtons = useMemo(() => {
-    const buttons = [];
-    if (showStatusFilter) {
-      buttons.push({
-        id: "status",
-        label: t(config.translations.statusFilterTitle ?? "creations.filter.status"),
-        icon: "list-outline",
-        isActive: filters.statusFilter.hasActiveFilter,
-        onPress: filters.openStatusFilter,
-      });
-    }
-    if (showMediaFilter) {
-      buttons.push({
-        id: "media",
-        label: t(config.translations.mediaFilterTitle ?? "creations.filter.media"),
-        icon: "grid-outline",
-        isActive: filters.mediaFilter.hasActiveFilter,
-        onPress: filters.openMediaFilter,
-      });
-    }
-    return buttons;
-  }, [showStatusFilter, showMediaFilter, filters, t, config.translations]);
+  const filterButtons = useMemo(() =>
+    createFilterButtons({
+      showStatusFilter,
+      showMediaFilter,
+      statusFilterActive: filters.statusFilter.hasActiveFilter,
+      mediaFilterActive: filters.mediaFilter.hasActiveFilter,
+      statusFilterLabel: t(config.translations.statusFilterTitle ?? "creations.filter.status"),
+      mediaFilterLabel: t(config.translations.mediaFilterTitle ?? "creations.filter.media"),
+      onStatusFilterPress: filters.openStatusFilter,
+      onMediaFilterPress: filters.openMediaFilter,
+    }),
+    [showStatusFilter, showMediaFilter, filters, t, config.translations]
+  );
 
-  const getItemTitle = useCallback((item: Creation): string => {
-    // Use custom title function if provided
-    if (getCreationTitle) {
-      return getCreationTitle({ type: item.type, metadata: item.metadata });
-    }
-    // Default: use type config label
-    const typeConfig = config.types?.find((tc) => tc.id === item.type);
-    return typeConfig?.labelKey ? t(typeConfig.labelKey) : item.type.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-  }, [config.types, t, getCreationTitle]);
+  const getItemTitle = useCallback((item: Creation): string =>
+    createItemTitle(item, { types: config.types, getCreationTitle }, t),
+    [config.types, t, getCreationTitle]
+  );
 
   const renderItem = useCallback(({ item }: { item: Creation }) => (
     <CreationCard
@@ -143,7 +128,7 @@ export function CreationsGalleryScreen({
         />
       </View>
     );
-  }, [creations, isLoading, filters.filtered.length, filters.processingCount, showFilter, filterButtons, t, config, tokens]);
+  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, tokens]);
 
   const renderEmpty = useMemo(() => (
     <GalleryEmptyStates
@@ -167,26 +152,8 @@ export function CreationsGalleryScreen({
 
   const screenHeader = useMemo(() => {
     if (!onBack) return undefined;
-    
-    return (
-      <View style={styles.screenHeader}>
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
-          <AtomicIcon
-            name="chevron-left"
-            customSize={28}
-            customColor={tokens.colors.textPrimary}
-          />
-        </TouchableOpacity>
-        <AtomicText
-          type="titleLarge"
-          style={{ color: tokens.colors.textPrimary }}
-        >
-          {t(config.translations.title)}
-        </AtomicText>
-        <View style={styles.placeholder} />
-      </View>
-    );
-  }, [onBack, tokens, t, config]);
+    return <GalleryScreenHeader title={t(config.translations.title)} onBack={onBack} />;
+  }, [onBack, t, config.translations.title]);
 
   if (showPreview) {
     return (

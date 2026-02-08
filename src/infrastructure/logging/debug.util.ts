@@ -5,7 +5,7 @@
 
 type LogLevel = "log" | "warn" | "error" | "info";
 
-interface DebugOptions {
+export interface DebugOptions {
   readonly tag?: string;
 }
 

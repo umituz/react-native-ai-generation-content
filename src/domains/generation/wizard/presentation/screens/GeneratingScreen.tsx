@@ -7,7 +7,7 @@
 
 import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
-import { useAppDesignTokens, AtomicText } from "@umituz/react-native-design-system";
+import { useAppDesignTokens, AtomicText, ScreenLayout } from "@umituz/react-native-design-system";
 import { useGenerationPhase } from "../hooks/useGenerationPhase";
 import { IndeterminateProgressBar } from "../components/IndeterminateProgressBar";
 
@@ -25,7 +25,6 @@ export interface GeneratingScreenProps {
     };
   };
   readonly t: (key: string) => string;
-  /** Called when user dismisses the screen - generation continues in background */
   readonly onDismiss?: () => void;
 }
 
@@ -37,13 +36,6 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
 }) => {
   const tokens = useAppDesignTokens();
   const phase = useGenerationPhase();
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[GeneratingScreen] Rendering", {
-      phase,
-      scenarioId: scenario?.id,
-    });
-  }
 
   const messages = useMemo(() => {
     const custom = scenario?.generatingMessages;
@@ -69,48 +61,49 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
   }, [phase, t, messages.waitMessage]);
 
   return (
-    <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
-      <View style={styles.content}>
-        <ActivityIndicator size="large" color={tokens.colors.primary} />
+    <ScreenLayout backgroundColor={tokens.colors.backgroundPrimary}>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <ActivityIndicator size="large" color={tokens.colors.primary} />
 
-        <AtomicText type="headlineMedium" style={styles.title}>
-          {messages.title}
-        </AtomicText>
-
-        <AtomicText type="bodyMedium" style={[styles.message, { color: tokens.colors.textSecondary }]}>
-          {statusMessage}
-        </AtomicText>
-
-        <View style={styles.progressContainer}>
-          <IndeterminateProgressBar
-            backgroundColor={tokens.colors.surfaceVariant}
-            fillColor={tokens.colors.primary}
-          />
-        </View>
-
-        {scenario && (
-          <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary }]}>
-            {scenario.title || scenario.id}
+          <AtomicText type="headlineMedium" style={styles.title}>
+            {messages.title}
           </AtomicText>
-        )}
 
-        <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary }]}>
-          {messages.hint}
-        </AtomicText>
+          <AtomicText type="bodyMedium" style={[styles.message, { color: tokens.colors.textSecondary }]}>
+            {statusMessage}
+          </AtomicText>
 
-        {/* Background hint - tap to dismiss */}
-        {onDismiss && (
-          <TouchableOpacity
-            style={[styles.backgroundHintButton, { borderColor: tokens.colors.primary }]}
-            onPress={onDismiss}
-          >
-            <AtomicText type="bodyLarge" style={[styles.backgroundHint, { color: tokens.colors.primary }]}>
-              {messages.backgroundHint}
+          <View style={styles.progressContainer}>
+            <IndeterminateProgressBar
+              backgroundColor={tokens.colors.surfaceVariant}
+              fillColor={tokens.colors.primary}
+            />
+          </View>
+
+          {scenario && (
+            <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary }]}>
+              {scenario.title || scenario.id}
             </AtomicText>
-          </TouchableOpacity>
-        )}
+          )}
+
+          <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary }]}>
+            {messages.hint}
+          </AtomicText>
+
+          {onDismiss && (
+            <TouchableOpacity
+              style={[styles.backgroundHintButton, { borderColor: tokens.colors.primary }]}
+              onPress={onDismiss}
+            >
+              <AtomicText type="bodyLarge" style={[styles.backgroundHint, { color: tokens.colors.primary }]}>
+                {messages.backgroundHint}
+              </AtomicText>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-    </View>
+    </ScreenLayout>
   );
 };
 

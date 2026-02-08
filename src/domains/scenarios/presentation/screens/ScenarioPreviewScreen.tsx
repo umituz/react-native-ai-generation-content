@@ -4,16 +4,17 @@
  */
 
 import React, { useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {
   AtomicText,
+  AtomicIcon,
   useAppDesignTokens,
   ScreenLayout,
   type DesignTokens,
   HeroSection,
-  AtomicIcon,
   NavigationHeader,
 } from "@umituz/react-native-design-system";
+import { ContinueButton } from "#presentation/components/buttons";
 import type { ScenarioData } from "../../domain/scenario.types";
 
 export interface ScenarioPreviewTranslations {
@@ -45,30 +46,11 @@ export const ScenarioPreviewScreen: React.FC<ScenarioPreviewScreenProps> = ({
         title=""
         onBackPress={onBack}
         rightElement={
-          <TouchableOpacity
+          <ContinueButton
+            label={translations.continueButton}
+            canContinue={true}
             onPress={onContinue}
-            activeOpacity={0.7}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: tokens.colors.primary,
-              paddingHorizontal: tokens.spacing.md,
-              paddingVertical: tokens.spacing.xs,
-              borderRadius: tokens.borders.radius.full,
-            }}
-          >
-            <AtomicText
-              type="bodyMedium"
-              style={{
-                fontWeight: "800",
-                color: tokens.colors.onPrimary,
-                marginRight: 4,
-              }}
-            >
-              {translations.continueButton}
-            </AtomicText>
-            <AtomicIcon name="arrow-forward" size="sm" color="onPrimary" />
-          </TouchableOpacity>
+          />
         }
       />
       <ScreenLayout
