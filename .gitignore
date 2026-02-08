@@ -30,3 +30,4 @@ coverage/
 *.local
 .env
 .env.*
+package-lock.json
