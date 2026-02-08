@@ -52,7 +52,7 @@ export const useFaceDetection = ({ aiAnalyzer, model }: UseFaceDetectionProps): 
     setState(initialState);
   }, []);
 
-  const isValid = state.result ? isValidFace(state.result) : false;
+  const isValid = state.result !== null && state.result !== undefined ? isValidFace(state.result) : false;
 
   return {
     state,

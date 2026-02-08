@@ -13,22 +13,42 @@ export interface StatusCheckResult {
 }
 
 /**
+ * Type guard to check if object has a property
+ */
+function hasProperty<K extends PropertyKey>(
+  obj: unknown,
+  prop: K
+): obj is Record<K, unknown> {
+  return typeof obj === "object" && obj !== null && prop in obj;
+}
+
+/**
+ * Safely get a string property from an object
+ */
+function safeString(obj: unknown, key: PropertyKey): string {
+  if (hasProperty(obj, key)) {
+    const value = obj[key];
+    return typeof value === "string" ? value : String(value ?? "");
+  }
+  return "";
+}
+
+/**
  * Check job status response for errors
  * Detects errors even if status is not explicitly FAILED
  */
 export function checkStatusForErrors(
   status: JobStatus | Record<string, unknown>,
 ): StatusCheckResult {
-  const statusString = String(
-    (status as Record<string, unknown>)?.status || "",
-  ).toUpperCase();
+  // Safely extract status string
+  const statusString = safeString(status, "status").toUpperCase();
 
   // Check for error in status response fields
   const statusError =
-    (status as Record<string, unknown>)?.error ||
-    (status as Record<string, unknown>)?.detail ||
-    (status as Record<string, unknown>)?.message;
-  const hasStatusError = !!statusError;
+    safeString(status, "error") ||
+    safeString(status, "detail") ||
+    safeString(status, "message");
+  const hasStatusError = statusError.length > 0;
 
   // Check logs array for ERROR/FATAL level logs
   const rawLogs = (status as JobStatus)?.logs;

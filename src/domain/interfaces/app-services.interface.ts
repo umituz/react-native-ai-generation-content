@@ -5,6 +5,17 @@
  */
 
 /**
+ * Metadata types for credit cost calculation
+ */
+export interface CreditCostMetadata {
+  readonly model?: string;
+  readonly duration?: number;
+  readonly resolution?: string;
+  readonly quality?: string;
+  readonly [key: string]: string | number | boolean | undefined;
+}
+
+/**
  * Network service interface
  * Handles network availability checks
  */
@@ -52,7 +63,7 @@ export interface ICreditService {
    */
   calculateCost: (
     capability: string,
-    metadata?: Record<string, unknown>,
+    metadata?: CreditCostMetadata,
   ) => number;
 }
 
@@ -92,6 +103,13 @@ export interface IAuthService {
 }
 
 /**
+ * Analytics event data
+ */
+export interface AnalyticsEventData {
+  readonly [key: string]: string | number | boolean | null | undefined;
+}
+
+/**
  * Analytics service interface (optional)
  * Tracks events for analytics
  */
@@ -101,7 +119,7 @@ export interface IAnalyticsService {
    * @param event - Event name
    * @param data - Event data
    */
-  track: (event: string, data: Record<string, unknown>) => void;
+  track: (event: string, data: AnalyticsEventData) => void;
 }
 
 /**

@@ -21,10 +21,6 @@ export type {
   ImageSelectionGridTranslations as ImageToVideoSelectionGridTranslations,
 } from "./ImageSelectionGrid";
 
-// Hero Section - Using AIGenerationHero from common components
-// export { HeroSection as ImageToVideoHeroSection } from "./HeroSection";
-// export type { HeroSectionProps as ImageToVideoHeroSectionProps } from "./HeroSection";
-
 // Action Components
 export { GenerateButton as ImageToVideoGenerateButton } from "../../../../presentation/components/buttons";
 export type { GenerateButtonProps as ImageToVideoGenerateButtonProps } from "../../../../presentation/components/buttons";

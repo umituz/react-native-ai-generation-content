@@ -8,6 +8,7 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { QUEUE_STATUS, CREATION_STATUS } from "../../../../domain/constants/queue-status.constants";
+import { GALLERY_POLL_INTERVAL_MS } from "../../../../infrastructure/constants/polling.constants";
 import {
   extractResultUrl,
   type FalResult,
@@ -16,8 +17,6 @@ import type { Creation } from "../../domain/entities/Creation";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 
 declare const __DEV__: boolean;
-
-const POLL_INTERVAL_MS = 5000; // Gallery polls slower than wizard
 
 export interface UseProcessingJobsPollerConfig {
   readonly userId?: string | null;
@@ -43,12 +42,13 @@ export function useProcessingJobsPoller(
   const pollingRef = useRef<Set<string>>(new Set());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Find creations that need polling - stabilize reference with useMemo
+  // Find creations that need polling - use Set for O(1) lookups
   const processingJobIds = useMemo(
-    () => creations
-      .filter((c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model)
-      .map((c) => c.id)
-      .join(","),
+    () => new Set(
+      creations
+        .filter((c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model)
+        .map((c) => c.id)
+    ),
     [creations],
   );
 
@@ -56,8 +56,7 @@ export function useProcessingJobsPoller(
     () => creations.filter(
       (c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model,
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [processingJobIds],
+    [creations],
   );
 
   const pollJob = useCallback(
@@ -134,6 +133,8 @@ export function useProcessingJobsPoller(
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      // Clear polling set to prevent memory leak
+      pollingRef.current.clear();
     };
   }, [enabled, userId, processingJobs, pollJob]);
 

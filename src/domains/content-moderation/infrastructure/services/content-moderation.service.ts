@@ -103,7 +103,8 @@ class ContentModerationService {
       0
     );
 
-    return Math.min(1.0, score / 2);
+    // Only divide by 2 if we have violations, otherwise return 1.0
+    return violations.length > 0 ? Math.min(1.0, score / Math.max(1, violations.length)) : 1.0;
   }
 
   private determineAction(

@@ -31,18 +31,29 @@ export async function pollJob<T = unknown>(
   } = options;
 
   const pollingConfig = { ...DEFAULT_POLLING_CONFIG, ...config };
-  const { maxAttempts, maxConsecutiveErrors } = pollingConfig;
+  const { maxAttempts, maxConsecutiveErrors, maxTotalTimeMs } = pollingConfig;
 
   const startTime = Date.now();
   let consecutiveTransientErrors = 0;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    // Check total time limit
+    const elapsedMs = Date.now() - startTime;
+    if (maxTotalTimeMs && elapsedMs >= maxTotalTimeMs) {
+      return {
+        success: false,
+        error: new Error(`Polling timeout after ${elapsedMs}ms`),
+        attempts: attempt + 1,
+        elapsedMs,
+      };
+    }
+
     if (signal?.aborted) {
       return {
         success: false,
         error: new Error("Polling aborted"),
         attempts: attempt + 1,
-        elapsedMs: Date.now() - startTime,
+        elapsedMs,
       };
     }
 

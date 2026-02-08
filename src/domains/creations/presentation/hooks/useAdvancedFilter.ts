@@ -88,10 +88,19 @@ export function useAdvancedFilter<T extends FilterableCreation>({
     setFilter(DEFAULT_CREATION_FILTER);
   }, []);
 
-  const hasActiveFilters =
-    filter.type !== "all" || filter.status !== "all" || !!filter.searchQuery;
-  const activeMediaFilter = (filter.type as string) || "all";
-  const activeStatusFilter = (filter.status as string) || "all";
+  const hasActiveFilters = useMemo(
+    () =>
+      filter.type !== "all" || filter.status !== "all" || !!filter.searchQuery,
+    [filter.type, filter.status, filter.searchQuery]
+  );
+  const activeMediaFilter = useMemo(
+    () => (filter.type as string) || "all",
+    [filter.type]
+  );
+  const activeStatusFilter = useMemo(
+    () => (filter.status as string) || "all",
+    [filter.status]
+  );
 
   return {
     filtered,

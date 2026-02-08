@@ -10,8 +10,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { providerRegistry } from "../../../../../infrastructure/services/provider-registry.service";
 import { extractResultUrl, type FalResult, type GenerationUrls } from "./generation-result.utils";
 import { QUEUE_STATUS } from "../../../../../domain/constants/queue-status.constants";
-
-const POLL_INTERVAL_MS = 3000;
+import { DEFAULT_POLL_INTERVAL_MS } from "../../../../../infrastructure/constants/polling.constants";
 import type { CreationPersistence } from "../../infrastructure/utils/creation-persistence.util";
 import type { WizardStrategy } from "../../infrastructure/strategies/wizard-strategy.types";
 import type { WizardScenarioData } from "./wizard-generation.types";
@@ -179,7 +178,7 @@ export function useVideoQueueGeneration(
         }
       }
 
-      pollingRef.current = setInterval(() => void pollQueueStatus(), POLL_INTERVAL_MS);
+      pollingRef.current = setInterval(() => void pollQueueStatus(), DEFAULT_POLL_INTERVAL_MS);
       void pollQueueStatus();
     },
     [userId, scenario, persistence, strategy, pollQueueStatus, onError],

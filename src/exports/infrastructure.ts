@@ -41,6 +41,29 @@ export type {
   PhotoInput, PreparedImage, ImageSelector, VideoSaver, AlertFunction, FeatureUtilsConfig, VideoAlertFunction,
 } from "../infrastructure/utils";
 
+// Validation
+export {
+  sanitizeString,
+  validateString,
+  validateNumber,
+  validateURL,
+  validateEmail,
+  validateBase64,
+  validateObject,
+  validateArray,
+  combineValidationResults,
+  sanitizeAndValidate,
+  validateAIPrompt,
+  validateImageData,
+  validateUserId,
+  validateCreationId,
+} from "../infrastructure/validation/input-validator";
+export type {
+  ValidationResult,
+  StringValidationOptions,
+  NumericValidationOptions,
+} from "../infrastructure/validation/input-validator";
+
 // Orchestration
 export type {
   CreditService, PaywallService, NetworkService, AuthService,

@@ -3,10 +3,6 @@
  * Provider-agnostic AI generation orchestration
  */
 
-if (typeof __DEV__ !== "undefined" && __DEV__) {
-  console.log("📍 [LIFECYCLE] @umituz/react-native-ai-generation-content/index.ts - Module loading");
-}
-
 // Domain Layer
 export * from "./exports/domain";
 

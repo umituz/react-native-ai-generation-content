@@ -43,21 +43,10 @@ export const AIGenerationForm: React.FC<AIGenerationFormProps> = ({
   translations,
   children,
 }) => {
-  if (__DEV__) {
-    console.log("[AIGenerationForm] RENDERING NOW - hideGenerateButton:", hideGenerateButton);
-  }
-
   const tokens = useAppDesignTokens();
   const isAdvancedVisible = showAdvanced !== undefined ? showAdvanced : true;
-  // Button is disabled if: external isDisabled is true, OR prompt validation fails (when prompt is used)
   const promptInvalid = onPromptChange ? !prompt?.trim() : false;
   const buttonIsDisabled = isDisabled || promptInvalid;
-
-  useEffect(() => {
-    if (__DEV__) {
-      console.log("[AIGenerationForm] MOUNTED/UPDATED - prompt:", prompt, "isGenerating:", isGenerating, "buttonIsDisabled:", buttonIsDisabled, "hideGenerateButton:", hideGenerateButton);
-    }
-  }, [prompt, isGenerating, buttonIsDisabled, hideGenerateButton]);
 
   return (
     <>

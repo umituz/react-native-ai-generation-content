@@ -43,8 +43,15 @@ export class CreationsWriter {
       await setDoc(docRef, data);
       if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[CreationsWriter] create() success");
     } catch (error) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) console.error("[CreationsWriter] create() error", error);
-      throw error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] create() error", {
+          userId,
+          creationId: creation.id,
+          error: errorMessage,
+        });
+      }
+      throw new Error(`Failed to create creation ${creation.id}: ${errorMessage}`);
     }
   }
 
@@ -52,7 +59,12 @@ export class CreationsWriter {
     if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[CreationsWriter] update()", { userId, id });
 
     const docRef = this.pathResolver.getDocRef(userId, id);
-    if (!docRef) return false;
+    if (!docRef) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] update() - Firestore not initialized", { userId, id });
+      }
+      return false;
+    }
 
     try {
       const updateData: Record<string, unknown> = {};
@@ -62,7 +74,14 @@ export class CreationsWriter {
       await updateDoc(docRef, updateData);
       return true;
     } catch (error) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) console.error("[CreationsWriter] update() error", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] update() error", {
+          userId,
+          creationId: id,
+          error: errorMessage,
+        });
+      }
       return false;
     }
   }
@@ -73,7 +92,15 @@ export class CreationsWriter {
     try {
       await updateDoc(docRef, { deletedAt: new Date() });
       return true;
-    } catch {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] delete() error", {
+          userId,
+          creationId,
+          error: errorMessage,
+        });
+      }
       return false;
     }
   }
@@ -84,7 +111,15 @@ export class CreationsWriter {
     try {
       await deleteDoc(docRef);
       return true;
-    } catch {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] hardDelete() error", {
+          userId,
+          creationId,
+          error: errorMessage,
+        });
+      }
       return false;
     }
   }
@@ -95,7 +130,15 @@ export class CreationsWriter {
     try {
       await updateDoc(docRef, { deletedAt: null });
       return true;
-    } catch {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] restore() error", {
+          userId,
+          creationId,
+          error: errorMessage,
+        });
+      }
       return false;
     }
   }
@@ -106,7 +149,16 @@ export class CreationsWriter {
     try {
       await updateDoc(docRef, { isShared });
       return true;
-    } catch {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] updateShared() error", {
+          userId,
+          creationId,
+          isShared,
+          error: errorMessage,
+        });
+      }
       return false;
     }
   }
@@ -118,7 +170,10 @@ export class CreationsWriter {
     const docRef = this.pathResolver.getDocRef(userId, creationId);
     if (!docRef) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[CreationsWriter] updateFavorite() - no docRef");
+        console.warn("[CreationsWriter] updateFavorite() - Firestore not initialized", {
+          userId,
+          creationId,
+        });
       }
       return false;
     }
@@ -129,8 +184,14 @@ export class CreationsWriter {
       }
       return true;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.error("[CreationsWriter] updateFavorite() error", error);
+        console.error("[CreationsWriter] updateFavorite() error", {
+          userId,
+          creationId,
+          isFavorite,
+          error: errorMessage,
+        });
       }
       return false;
     }
@@ -143,19 +204,41 @@ export class CreationsWriter {
     try {
       await updateDoc(docRef, { rating, ratedAt: new Date() });
       if (description || rating) {
-        await submitFeedback({
-          userId,
-          userEmail: null,
-          type: "creation_rating",
-          title: `Creation Rating: ${rating} Stars`,
-          description: description || `User rated creation ${rating} stars`,
-          rating,
-          status: "pending",
-        });
+        try {
+          await submitFeedback({
+            userId,
+            userEmail: null,
+            type: "creation_rating",
+            title: `Creation Rating: ${rating} Stars`,
+            description: description || `User rated creation ${rating} stars`,
+            rating,
+            status: "pending",
+          });
+        } catch (feedbackError) {
+          // Log but don't fail - the rating was saved successfully
+          const feedbackErrorMessage = feedbackError instanceof Error
+            ? feedbackError.message
+            : String(feedbackError);
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.warn("[CreationsWriter] rate() - feedback submission failed", {
+              userId,
+              creationId,
+              error: feedbackErrorMessage,
+            });
+          }
+        }
       }
       return true;
     } catch (error) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) console.error("[CreationsWriter] rate() error", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[CreationsWriter] rate() error", {
+          userId,
+          creationId,
+          rating,
+          error: errorMessage,
+        });
+      }
       return false;
     }
   }
