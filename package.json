@@ -42,6 +42,7 @@
     "@umituz/react-native-auth": "^3.6.25"
   },
   "peerDependencies": {
+    "expo": ">=54.0.0",
     "@react-navigation/native": ">=6.0.0",
     "@tanstack/react-query": ">=5.0.0",
     "@umituz/react-native-subscription": ">=2.23.0",
@@ -49,7 +50,7 @@
     "expo-video": ">=1.0.0",
     "firebase": ">=10.0.0",
     "react": ">=19.0.0",
-    "react-native": ">=0.81.0",
+    "react-native": "0.81.4",
     "react-native-safe-area-context": ">=5.0.0",
     "@umituz/react-native-design-system": ">=4.0.0"
   },
@@ -97,7 +98,7 @@
     "expo-web-browser": "^12.0.0",
     "firebase": "^12.6.0",
     "react": "19.1.0",
-    "react-native": "0.81.5",
+    "react-native": "0.81.4",
     "react-native-gesture-handler": "^2.30.0",
     "react-native-purchases": "^9.7.1",
     "react-native-safe-area-context": "^5.6.2",
