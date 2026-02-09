@@ -20,8 +20,8 @@ export {
   filterScenariosByCategory,
   getScenarioCategories,
   findScenarioById,
-} from "./infrastructure/scenario-helpers";
-export type { AppScenarioConfig } from "./infrastructure/scenario-helpers";
+} from "./infrastructure/scenario-utils";
+export type { AppScenarioConfig } from "./infrastructure/scenario-utils";
 
 // Scenario Registry - Singleton for app configuration
 export {

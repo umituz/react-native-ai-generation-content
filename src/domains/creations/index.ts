@@ -168,7 +168,7 @@ export {
   getLocalizedTitle,
   getFilterCategoriesFromConfig,
   getTranslatedTypes,
-} from "./presentation/utils/filterUtils";
+} from "./presentation/utils/gallery-filters";
 
 // =============================================================================
 // PRESENTATION LAYER - Screens

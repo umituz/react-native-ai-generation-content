@@ -6,7 +6,7 @@
  */
 
 import React, { useCallback, useState, useEffect } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView } from "react-native";
 import {
   useAppDesignTokens,
   useResponsive,
@@ -15,6 +15,7 @@ import {
 import { AIGenerationForm } from "../components/AIGenerationForm";
 import { AIGenerationResult } from "../components/display/AIGenerationResult";
 import { GenerationProgressContent } from "../components/GenerationProgressContent";
+import { layoutStyles } from "./layout-styles";
 import type { SingleImageFeatureLayoutProps } from "./types";
 
 export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> = ({
@@ -64,7 +65,7 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
     return (
       <View
         style={[
-          styles.processingContainer,
+          layoutStyles.processingContainer,
           { backgroundColor: tokens.colors.backgroundPrimary },
         ]}
       >
@@ -88,8 +89,8 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
   if (feature.processedUrl && renderCustomResult && feature.imageUri) {
     return (
       <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
+        style={[layoutStyles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
+        contentContainerStyle={layoutStyles.content}
         showsVerticalScrollIndicator={false}
       >
         {renderCustomResult({
@@ -107,8 +108,8 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
   if (feature.processedUrl && renderResult) {
     return (
       <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
+        style={[layoutStyles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
+        contentContainerStyle={layoutStyles.content}
         showsVerticalScrollIndicator={false}
       >
         <AIGenerationResult
@@ -131,8 +132,8 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
   // Input view
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-      contentContainerStyle={styles.content}
+      style={[layoutStyles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
+      contentContainerStyle={layoutStyles.content}
       showsVerticalScrollIndicator={false}
     >
       <AIGenerationForm
@@ -148,7 +149,7 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
         {description && (
           <AtomicText
             type="bodyLarge"
-            style={[styles.description, { color: tokens.colors.textSecondary }]}
+            style={[layoutStyles.description, { color: tokens.colors.textSecondary }]}
           >
             {description}
           </AtomicText>
@@ -166,23 +167,3 @@ export const SingleImageFeatureLayout: React.FC<SingleImageFeatureLayoutProps> =
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingVertical: 16,
-  },
-  description: {
-    textAlign: "center",
-    marginHorizontal: 24,
-    marginBottom: 24,
-    lineHeight: 24,
-  },
-  processingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

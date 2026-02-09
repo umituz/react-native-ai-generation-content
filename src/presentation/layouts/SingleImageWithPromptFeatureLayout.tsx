@@ -7,7 +7,7 @@
  */
 
 import React, { useCallback, useState, useEffect } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView } from "react-native";
 import {
   useAppDesignTokens,
   useResponsive,
@@ -16,6 +16,7 @@ import {
 import { AIGenerationForm } from "../components/AIGenerationForm";
 import { AIGenerationResult } from "../components/display/AIGenerationResult";
 import { GenerationProgressContent } from "../components/GenerationProgressContent";
+import { layoutStyles } from "./layout-styles";
 import type { SingleImageWithPromptFeatureLayoutProps } from "./types";
 
 export const SingleImageWithPromptFeatureLayout: React.FC<SingleImageWithPromptFeatureLayoutProps> = ({
@@ -70,7 +71,7 @@ export const SingleImageWithPromptFeatureLayout: React.FC<SingleImageWithPromptF
     return (
       <View
         style={[
-          styles.processingContainer,
+          layoutStyles.processingContainer,
           { backgroundColor: tokens.colors.backgroundPrimary },
         ]}
       >
@@ -94,8 +95,8 @@ export const SingleImageWithPromptFeatureLayout: React.FC<SingleImageWithPromptF
   if (feature.processedUrl) {
     return (
       <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
+        style={[layoutStyles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
+        contentContainerStyle={layoutStyles.content}
         showsVerticalScrollIndicator={false}
       >
         <AIGenerationResult
@@ -118,8 +119,8 @@ export const SingleImageWithPromptFeatureLayout: React.FC<SingleImageWithPromptF
   // Input view
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-      contentContainerStyle={styles.content}
+      style={[layoutStyles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
+      contentContainerStyle={layoutStyles.content}
       showsVerticalScrollIndicator={false}
     >
       <AIGenerationForm
@@ -135,7 +136,7 @@ export const SingleImageWithPromptFeatureLayout: React.FC<SingleImageWithPromptF
         {description && (
           <AtomicText
             type="bodyLarge"
-            style={[styles.description, { color: tokens.colors.textSecondary }]}
+            style={[layoutStyles.description, { color: tokens.colors.textSecondary }]}
           >
             {description}
           </AtomicText>
@@ -156,22 +157,3 @@ export const SingleImageWithPromptFeatureLayout: React.FC<SingleImageWithPromptF
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingVertical: 16,
-  },
-  description: {
-    textAlign: "center",
-    marginHorizontal: 24,
-    marginBottom: 24,
-    lineHeight: 24,
-  },
-  processingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

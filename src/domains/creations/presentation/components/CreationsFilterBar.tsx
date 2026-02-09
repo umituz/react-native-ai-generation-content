@@ -136,4 +136,4 @@ export type { FilterButton, CreationsFilterBarProps } from "./CreationsFilterBar
 export {
   createMediaFilterButtons,
   createStatusFilterButtons,
-} from "./CreationsFilterBar.helpers";
+} from "./filter-bar-utils";

@@ -5,12 +5,10 @@
 
 import type { Violation } from "../../../domain/entities/moderation.types";
 import { BaseModerator, type ModerationResult } from "./base.moderator";
-
-const DEFAULT_PROTOCOLS = ["http:", "https:", "file:"];
-const DEFAULT_MAX_URI_LENGTH = 2048;
+import { VIDEO_PROTOCOLS, DEFAULT_MAX_URI_LENGTH } from "../../constants/moderation.constants";
 
 class VideoModerator extends BaseModerator {
-  private allowedProtocols = DEFAULT_PROTOCOLS;
+  private allowedProtocols: readonly string[] = VIDEO_PROTOCOLS;
   private maxUriLength = DEFAULT_MAX_URI_LENGTH;
 
   setAllowedProtocols(protocols: string[]): void {

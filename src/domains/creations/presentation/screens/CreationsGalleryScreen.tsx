@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import React, { useMemo, useCallback } from "react";
 import { View, FlatList, RefreshControl } from "react-native";
 import {
   useAppDesignTokens,
@@ -11,11 +11,11 @@ import { useDeleteCreation } from "../hooks/useDeleteCreation";
 import { useProcessingJobsPoller } from "../hooks/useProcessingJobsPoller";
 import { useGalleryFilters } from "../hooks/useGalleryFilters";
 import { useGalleryCallbacks } from "../hooks/useGalleryCallbacks";
+import { useGalleryState } from "../hooks/useGalleryState";
 import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
 import { GalleryResultPreview } from "../components/GalleryResultPreview";
 import { GalleryScreenHeader } from "../components/GalleryScreenHeader";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
-import { getPreviewUrl } from "../../domain/utils";
 import { createFilterButtons, createItemTitle } from "../utils/filter-buttons.util";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsGalleryScreenProps } from "./creations-gallery.types";
@@ -37,9 +37,6 @@ export function CreationsGalleryScreen({
   getCreationTitle,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
-  const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
-  const [showRatingPicker, setShowRatingPicker] = useState(false);
-  const hasAutoSelectedRef = useRef(false);
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
   const deleteMutation = useDeleteCreation({ userId, repository });
@@ -51,15 +48,8 @@ export function CreationsGalleryScreen({
     enabled: !!userId && (creations?.length ?? 0) > 0,
   });
 
-  useEffect(() => {
-    if (initialCreationId && creations && creations.length > 0 && !hasAutoSelectedRef.current) {
-      const creation = creations.find((c) => c.id === initialCreationId);
-      if (creation) {
-        hasAutoSelectedRef.current = true;
-        setSelectedCreation(creation);
-      }
-    }
-  }, [initialCreationId, creations]);
+  // Gallery state management
+  const galleryState = useGalleryState({ initialCreationId, creations });
 
   const callbacks = useGalleryCallbacks({
     userId,
@@ -68,9 +58,9 @@ export function CreationsGalleryScreen({
     t,
     deleteMutation,
     refetch: async () => { await refetch(); },
-    setSelectedCreation,
-    setShowRatingPicker,
-    selectedCreation,
+    setSelectedCreation: galleryState.setSelectedCreation,
+    setShowRatingPicker: galleryState.setShowRatingPicker,
+    selectedCreation: galleryState.selectedCreation,
     onTryAgain,
   });
 
@@ -145,30 +135,25 @@ export function CreationsGalleryScreen({
     />
   ), [isLoading, creations, filters.isFiltered, tokens, t, config, emptyActionLabel, onEmptyAction, filters.clearAllFilters]);
 
-  const selectedImageUrl = selectedCreation ? (getPreviewUrl(selectedCreation.output) || selectedCreation.uri) : undefined;
-  const selectedVideoUrl = selectedCreation?.output?.videoUrl;
-  const hasMediaToShow = selectedImageUrl || selectedVideoUrl;
-  const showPreview = selectedCreation && hasMediaToShow;
-
   const screenHeader = useMemo(() => {
     if (!onBack) return undefined;
     return <GalleryScreenHeader title={t(config.translations.title)} onBack={onBack} />;
   }, [onBack, t, config.translations.title]);
 
-  if (showPreview) {
+  if (galleryState.showPreview && galleryState.selectedCreation) {
     return (
       <GalleryResultPreview
-        selectedCreation={selectedCreation}
-        imageUrl={selectedVideoUrl ? undefined : selectedImageUrl}
-        videoUrl={selectedVideoUrl}
-        showRatingPicker={showRatingPicker}
+        selectedCreation={galleryState.selectedCreation}
+        imageUrl={galleryState.selectedVideoUrl ? undefined : galleryState.selectedImageUrl}
+        videoUrl={galleryState.selectedVideoUrl}
+        showRatingPicker={galleryState.showRatingPicker}
         config={config}
         t={t}
         onBack={callbacks.handleBack}
         onTryAgain={callbacks.handleTryAgain}
         onRate={callbacks.handleOpenRatingPicker}
         onSubmitRating={callbacks.handleSubmitRating}
-        onCloseRating={() => setShowRatingPicker(false)}
+        onCloseRating={() => galleryState.setShowRatingPicker(false)}
       />
     );
   }

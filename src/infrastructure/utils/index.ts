@@ -4,6 +4,10 @@
 
 export * from "./error-classifier.util";
 export * from "./error-message-extractor.util";
+export * from "./error-handling.util";
+export * from "./validation.util";
+export * from "./type-guards.util";
+export * from "./api-client.util";
 export * from "./polling-interval.util";
 export * from "./progress-calculator.util";
 export * from "./status-checker.util";

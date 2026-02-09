@@ -6,7 +6,7 @@
  */
 
 import React, { useCallback, useState, useEffect } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView } from "react-native";
 import {
   useAppDesignTokens,
   AtomicText,
@@ -14,6 +14,7 @@ import {
 import { AIGenerationForm } from "../components/AIGenerationForm";
 import { AIGenerationResult } from "../components/display/AIGenerationResult";
 import { GenerationProgressContent } from "../components/GenerationProgressContent";
+import { layoutStyles } from "./layout-styles";
 import type { DualImageVideoFeatureLayoutProps } from "./types";
 
 export const DualImageVideoFeatureLayout: React.FC<DualImageVideoFeatureLayoutProps> = ({
@@ -62,7 +63,7 @@ export const DualImageVideoFeatureLayout: React.FC<DualImageVideoFeatureLayoutPr
     return (
       <View
         style={[
-          styles.processingContainer,
+          layoutStyles.processingContainer,
           { backgroundColor: tokens.colors.backgroundPrimary },
         ]}
       >
@@ -86,8 +87,8 @@ export const DualImageVideoFeatureLayout: React.FC<DualImageVideoFeatureLayoutPr
   if (feature.processedVideoUrl) {
     return (
       <ScrollView
-        style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-        contentContainerStyle={styles.content}
+        style={[layoutStyles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
+        contentContainerStyle={layoutStyles.content}
         showsVerticalScrollIndicator={false}
       >
         <AIGenerationResult
@@ -108,8 +109,8 @@ export const DualImageVideoFeatureLayout: React.FC<DualImageVideoFeatureLayoutPr
   // Input view
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
-      contentContainerStyle={styles.content}
+      style={[layoutStyles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}
+      contentContainerStyle={layoutStyles.content}
       showsVerticalScrollIndicator={false}
     >
       <AIGenerationForm
@@ -125,7 +126,7 @@ export const DualImageVideoFeatureLayout: React.FC<DualImageVideoFeatureLayoutPr
         {description && (
           <AtomicText
             type="bodyLarge"
-            style={[styles.description, { color: tokens.colors.textSecondary }]}
+            style={[layoutStyles.description, { color: tokens.colors.textSecondary }]}
           >
             {description}
           </AtomicText>
@@ -146,22 +147,3 @@ export const DualImageVideoFeatureLayout: React.FC<DualImageVideoFeatureLayoutPr
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingVertical: 16,
-  },
-  description: {
-    textAlign: "center",
-    marginHorizontal: 24,
-    marginBottom: 24,
-    lineHeight: 24,
-  },
-  processingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
