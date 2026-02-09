@@ -13,7 +13,7 @@ import { useGalleryFilters } from "../hooks/useGalleryFilters";
 import { useGalleryCallbacks } from "../hooks/useGalleryCallbacks";
 import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
 import { GalleryResultPreview } from "../components/GalleryResultPreview";
-import { GalleryScreenHeader } from "#domains/creations/presentation/components/GalleryScreenHeader";
+import { GalleryScreenHeader } from "../components/GalleryScreenHeader";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import { getPreviewUrl } from "../../domain/utils";
 import { createFilterButtons, createItemTitle } from "../utils/filter-buttons.util";

@@ -14,7 +14,7 @@ import {
   HeroSection,
   NavigationHeader,
 } from "@umituz/react-native-design-system";
-import { ContinueButton } from "#presentation/components/buttons";
+import { ContinueButton } from "../../../../presentation/components/buttons";
 import type { ScenarioData } from "../../domain/scenario.types";
 
 export interface ScenarioPreviewTranslations {

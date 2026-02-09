@@ -23,12 +23,6 @@
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
-      "#domain/*": ["./src/domain/*"],
-      "#infrastructure/*": ["./src/infrastructure/*"],
-      "#presentation/*": ["./src/presentation/*"],
-      "#features/*": ["./src/features/*"],
-      "#domains/*": ["./src/domains/*"],
-      "#utils/*": ["./src/utils/*"],
       "@ai-generation/content-moderation": ["./src/domains/content-moderation"],
       "@ai-generation/content-moderation/*": ["./src/domains/content-moderation/*"],
       "@ai-generation/creations": ["./src/domains/creations"],
@@ -53,8 +47,6 @@
     "dist",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "**/node_modules/**",
-    "src/domains/generation/wizard/presentation/screens/**",
-    "src/domains/generation/wizard/presentation/steps/**"
+    "**/node_modules/**"
   ]
 }

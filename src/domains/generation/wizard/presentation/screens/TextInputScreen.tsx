@@ -14,7 +14,7 @@ import {
   NavigationHeader,
   type DesignTokens,
 } from "@umituz/react-native-design-system";
-import { ContinueButton } from "#presentation/components/buttons";
+import { ContinueButton } from "../../../../../presentation/components/buttons";
 import type { TextInputScreenProps } from "./TextInputScreen.types";
 
 export type {
