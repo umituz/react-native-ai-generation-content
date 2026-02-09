@@ -42,23 +42,22 @@
     "@umituz/react-native-auth": "^3.6.25"
   },
   "peerDependencies": {
-    "expo": ">=54.0.0",
     "@react-navigation/native": ">=6.0.0",
     "@tanstack/react-query": ">=5.0.0",
+    "@umituz/react-native-design-system": ">=4.0.0",
     "@umituz/react-native-subscription": ">=2.23.0",
     "@umituz/react-native-video-editor": ">=1.0.0",
+    "expo": ">=54.0.0",
     "expo-video": ">=1.0.0",
     "firebase": ">=10.0.0",
     "react": ">=19.0.0",
     "react-native": "0.81.4",
-    "react-native-safe-area-context": ">=5.0.0",
-    "@umituz/react-native-design-system": ">=4.0.0"
+    "react-native-safe-area-context": ">=5.0.0"
   },
   "devDependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@gorhom/bottom-sheet": "^5.2.8",
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "@react-native-community/datetimepicker": "^8.5.1",
     "@react-native-community/slider": "^5.1.1",
     "@react-navigation/bottom-tabs": "^7.9.0",
     "@react-navigation/native": "^7.1.26",
@@ -69,7 +68,7 @@
     "@types/react": "~19.1.10",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
-    "@umituz/react-native-design-system": "^4.23.42",
+    "@umituz/react-native-design-system": "^4.23.79",
     "@umituz/react-native-firebase": "^1.13.87",
     "@umituz/react-native-subscription": "^2.27.23",
     "eslint": "^9.39.2",
@@ -103,7 +102,6 @@
     "react-native-purchases": "^9.7.1",
     "react-native-safe-area-context": "^5.6.2",
     "react-native-svg": "^15.15.1",
-    "rn-emoji-keyboard": "^1.7.0",
     "typescript": "^5.9.0",
     "zustand": "^5.0.2"
   },
