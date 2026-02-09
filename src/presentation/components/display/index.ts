@@ -8,4 +8,7 @@ export {
   type AIGenerationResultProps,
   type AIGenerationResultAction,
 } from "./AIGenerationResult";
-export { ErrorDisplay, type ErrorDisplayProps } from "./ErrorDisplay";
+export {
+  ExceptionErrorState as ErrorDisplay,
+  ExceptionEmptyState,
+} from "@umituz/react-native-design-system";

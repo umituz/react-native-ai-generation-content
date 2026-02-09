@@ -5,7 +5,7 @@ export { PendingJobProgressBar } from "./PendingJobProgressBar";
 export { PendingJobCardActions } from "./PendingJobCardActions";
 export { PromptInput } from "./PromptInput";
 export { AIGenerationHero } from "./AIGenerationHero";
-export { ErrorBoundary, withErrorBoundary } from "./ErrorBoundary";
+export { ErrorBoundary, withErrorBoundary } from "@umituz/react-native-design-system/exception";
 export * from "./StylePresetsGrid";
 export * from "./AIGenerationForm";
 export * from "./AIGenerationForm.types";
