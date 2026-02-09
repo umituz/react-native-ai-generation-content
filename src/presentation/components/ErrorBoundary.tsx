@@ -4,7 +4,7 @@
  * Displays a fallback UI instead of crashing the entire app
  */
 
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import React, { ErrorInfo, ReactNode } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 interface ErrorBoundaryProps {
@@ -18,7 +18,7 @@ interface ErrorBoundaryState {
   readonly error?: Error;
 }
 
-export class ErrorBoundary extends Component<
+export class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {
