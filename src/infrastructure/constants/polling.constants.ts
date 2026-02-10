@@ -3,29 +3,31 @@
  * All timeout, interval, and retry related constants
  */
 
+import { env } from "../config/env.config";
+
 /** Default polling interval for job status checks (milliseconds) */
-export const DEFAULT_POLL_INTERVAL_MS = 3000;
+export const DEFAULT_POLL_INTERVAL_MS = env.pollDefaultIntervalMs;
 
 /** Gallery polling interval (slower than wizard) */
-export const GALLERY_POLL_INTERVAL_MS = 5000;
+export const GALLERY_POLL_INTERVAL_MS = env.pollGalleryIntervalMs;
 
 /** Maximum number of polling attempts before timeout */
-export const DEFAULT_MAX_POLL_ATTEMPTS = 100;
+export const DEFAULT_MAX_POLL_ATTEMPTS = env.pollMaxAttempts;
 
 /** Maximum consecutive transient errors before aborting */
-export const DEFAULT_MAX_CONSECUTIVE_ERRORS = 5;
+export const DEFAULT_MAX_CONSECUTIVE_ERRORS = env.pollMaxConsecutiveErrors;
 
-/** Maximum total time for polling (milliseconds) - ~5 minutes */
-export const DEFAULT_MAX_POLL_TIME_MS = 5 * 60 * 1000;
+/** Maximum total time for polling (milliseconds) */
+export const DEFAULT_MAX_POLL_TIME_MS = env.pollMaxTimeMs;
 
 /** Minimum backoff delay (milliseconds) */
-export const MIN_BACKOFF_DELAY_MS = 1000;
+export const MIN_BACKOFF_DELAY_MS = env.pollMinBackoffDelayMs;
 
 /** Maximum backoff delay (milliseconds) */
-export const MAX_BACKOFF_DELAY_MS = 30000;
+export const MAX_BACKOFF_DELAY_MS = env.pollMaxBackoffDelayMs;
 
 /** Exponential backoff base multiplier */
-export const BACKOFF_MULTIPLIER = 1.5;
+export const BACKOFF_MULTIPLIER = env.pollBackoffMultiplier;
 
 /** Progress percentage to report when job completes */
 export const COMPLETION_PROGRESS = 100;

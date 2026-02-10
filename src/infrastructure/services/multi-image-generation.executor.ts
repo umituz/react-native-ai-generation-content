@@ -6,11 +6,12 @@
 
 import { validateProvider } from "../utils/provider-validator.util";
 import { formatBase64 } from "../utils/base64.util";
+import { env } from "../config/env.config";
 
 declare const __DEV__: boolean;
 
-/** Generation timeout in milliseconds (2 minutes) */
-const GENERATION_TIMEOUT_MS = 120000;
+/** Generation timeout in milliseconds */
+const GENERATION_TIMEOUT_MS = env.generationMultiImageTimeoutMs;
 
 /** Default model input values */
 const MODEL_INPUT_DEFAULTS = {

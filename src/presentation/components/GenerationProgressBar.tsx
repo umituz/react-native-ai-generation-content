@@ -6,6 +6,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { AtomicText, useAppDesignTokens } from "@umituz/react-native-design-system";
+import { clampProgress, roundProgress } from "../../infrastructure/utils/progress.utils";
 
 export interface GenerationProgressBarProps {
     progress: number;
@@ -21,7 +22,7 @@ export const GenerationProgressBar: React.FC<GenerationProgressBarProps> = ({
     backgroundColor,
 }) => {
     const tokens = useAppDesignTokens();
-    const clampedProgress = Math.max(0, Math.min(100, progress));
+    const clampedProgress = clampProgress(progress);
 
     return (
         <View style={styles.container}>
@@ -47,7 +48,7 @@ export const GenerationProgressBar: React.FC<GenerationProgressBarProps> = ({
                     { color: textColor || tokens.colors.textPrimary },
                 ]}
             >
-                {Math.round(clampedProgress)}%
+                {roundProgress(clampedProgress)}%
             </AtomicText>
         </View>
     );

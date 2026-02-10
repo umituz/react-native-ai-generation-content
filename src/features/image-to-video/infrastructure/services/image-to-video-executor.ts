@@ -17,6 +17,7 @@ import type {
   ImageToVideoInputBuilder,
   ImageToVideoResultExtractor,
 } from "../../domain/types";
+import { env } from "../../../../infrastructure/config/env.config";
 
 /**
  * Options for image-to-video execution
@@ -89,7 +90,7 @@ class ImageToVideoExecutor extends BaseExecutor<
         const progress = getProgressFromJobStatus(status.status);
         onProgress?.(progress);
       },
-      timeoutMs: 300000, // 5 minutes timeout for video generation
+      timeoutMs: env.generationVideoTimeoutMs,
     });
 
     this.logInfo(

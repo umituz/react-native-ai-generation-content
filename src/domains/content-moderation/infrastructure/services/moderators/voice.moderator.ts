@@ -7,11 +7,10 @@ import type { Violation } from "../../../domain/entities/moderation.types";
 import { patternMatcherService } from "../pattern-matcher.service";
 import { rulesRegistry } from "../../rules/rules-registry";
 import { BaseModerator, type ModerationResult } from "./base.moderator";
-
-const DEFAULT_MAX_LENGTH = 5000;
+import { env } from "../../../../../infrastructure/config/env.config";
 
 class VoiceModerator extends BaseModerator {
-  private maxLength = DEFAULT_MAX_LENGTH;
+  private maxLength = env.moderationVoiceMaxLength;
 
   setMaxLength(length: number): void {
     this.maxLength = length;

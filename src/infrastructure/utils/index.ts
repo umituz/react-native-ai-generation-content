@@ -10,6 +10,7 @@ export * from "./type-guards.util";
 export * from "./api-client.util";
 export * from "./polling-interval.util";
 export * from "./progress-calculator.util";
+export * from "./progress.utils";
 export * from "./status-checker.util";
 export * from "./result-validator.util";
 export * from "./url-extractor.util";

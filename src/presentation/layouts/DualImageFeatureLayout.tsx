@@ -5,7 +5,7 @@
  * Note: No Modal wrapper - shows fullscreen progress when processing (FutureUS pattern)
  */
 
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback } from "react";
 import { View, ScrollView } from "react-native";
 import {
   useAppDesignTokens,
@@ -16,6 +16,7 @@ import { AIGenerationForm } from "../components/AIGenerationForm";
 import { AIGenerationResult } from "../components/display/AIGenerationResult";
 import { GenerationProgressContent } from "../components/GenerationProgressContent";
 import { layoutStyles } from "./layout-styles";
+import { useProgressDismiss } from "../hooks/useProgressDismiss";
 import type { DualImageFeatureLayoutProps } from "./types";
 
 export const DualImageFeatureLayout: React.FC<DualImageFeatureLayoutProps> = ({
@@ -33,17 +34,9 @@ export const DualImageFeatureLayout: React.FC<DualImageFeatureLayoutProps> = ({
   const imageSize = screenWidth - horizontalPadding * 2;
 
   // Background generation: user can dismiss progress but generation continues
-  const [isProgressDismissed, setIsProgressDismissed] = useState(false);
-
-  useEffect(() => {
-    if (feature.isProcessing) {
-      setIsProgressDismissed(false);
-    }
-  }, [feature.isProcessing]);
-
-  const handleDismissProgress = useCallback(() => {
-    setIsProgressDismissed(true);
-  }, []);
+  const { isProgressDismissed, handleDismissProgress } = useProgressDismiss(
+    feature.isProcessing
+  );
 
   const handleProcess = useCallback(() => {
     void feature.process();

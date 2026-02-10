@@ -41,6 +41,7 @@ export function useVideoQueueGeneration(
   const modelRef = useRef<string | null>(null);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isGeneratingRef = useRef(false);
+  const isPollingRef = useRef(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Cleanup polling on unmount
@@ -58,6 +59,7 @@ export function useVideoQueueGeneration(
     requestIdRef.current = null;
     modelRef.current = null;
     isGeneratingRef.current = false;
+    isPollingRef.current = false;
     setIsGenerating(false);
   }, []);
 
@@ -98,11 +100,15 @@ export function useVideoQueueGeneration(
   );
 
   const pollQueueStatus = useCallback(async () => {
+    // Guard against concurrent polls
+    if (isPollingRef.current) return;
+
     const requestId = requestIdRef.current;
     const model = modelRef.current;
     const provider = providerRegistry.getActiveProvider();
     if (!requestId || !model || !provider) return;
 
+    isPollingRef.current = true;
     try {
       const status = await provider.getJobStatus(model, requestId);
       if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[VideoQueueGeneration] Poll:", status.status);
@@ -133,6 +139,8 @@ export function useVideoQueueGeneration(
         console.error("[VideoQueueGeneration] Poll error:", errorMessage);
       }
       await handleError(errorMessage);
+    } finally {
+      isPollingRef.current = false;
     }
   }, [handleComplete, handleError]);
 
@@ -179,6 +187,7 @@ export function useVideoQueueGeneration(
       }
 
       pollingRef.current = setInterval(() => void pollQueueStatus(), DEFAULT_POLL_INTERVAL_MS);
+      // Immediate poll to avoid waiting for first interval tick
       void pollQueueStatus();
     },
     [userId, scenario, persistence, strategy, pollQueueStatus, onError],

@@ -3,6 +3,8 @@
  * Database and storage related constants
  */
 
+import { env } from "../config/env.config";
+
 /** Maximum number of creations to fetch in one query */
 export const MAX_CREATIONS_FETCH_LIMIT = 100;
 
@@ -13,10 +15,10 @@ export const DEFAULT_CREATIONS_PAGE_SIZE = 20;
 export const MAX_LOG_ENTRIES = 1000;
 
 /** Timeout for database operations (milliseconds) */
-export const DB_OPERATION_TIMEOUT_MS = 10000;
+export const DB_OPERATION_TIMEOUT_MS = env.storageDbOperationTimeoutMs;
 
 /** Maximum cache size for frequently accessed data */
-export const MAX_CACHE_SIZE = 100;
+export const MAX_CACHE_SIZE = env.storageMaxCacheSize;
 
 /** Cache TTL for creations (milliseconds) - 5 minutes */
 export const CREATIONS_CACHE_TTL_MS = 5 * 60 * 1000;

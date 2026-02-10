@@ -14,3 +14,5 @@ export {
   getAuthService,
   getAnalyticsService,
 } from "./app-services.config";
+
+export { env } from "./env.config";

@@ -11,6 +11,23 @@ import type { Creation } from "../../../../creations/domain/entities/Creation";
 
 declare const __DEV__: boolean;
 
+/**
+ * Type guard to check if result is a valid Creation object
+ */
+function isCreation(result: unknown): result is Creation {
+  if (!result || typeof result !== "object") {
+    return false;
+  }
+  const creation = result as Partial<Creation>;
+  return (
+    typeof creation.id === "string" &&
+    typeof creation.uri === "string" &&
+    typeof creation.type === "string" &&
+    creation.createdAt instanceof Date &&
+    typeof creation.isShared === "boolean"
+  );
+}
+
 export interface UseWizardFlowHandlersProps {
   readonly currentStepIndex: number;
   readonly flowSteps: StepDefinition[];
@@ -64,7 +81,17 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
         console.log("[WizardFlowHandlers] Generation completed");
       }
       setResult(result);
-      setCurrentCreation(result as Creation);
+
+      // Use type guard to safely check if result is a Creation
+      if (isCreation(result)) {
+        setCurrentCreation(result);
+      } else {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.warn("[WizardFlowHandlers] Result is not a valid Creation object:", result);
+        }
+        setCurrentCreation(null);
+      }
+
       onGenerationComplete?.(result);
       if (!skipResultStep) nextStep();
     },

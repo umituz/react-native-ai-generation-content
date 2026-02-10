@@ -6,6 +6,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { clampProgress } from "../../infrastructure/utils/progress.utils";
 
 export interface PendingJobProgressBarProps {
     progress: number;
@@ -19,6 +20,7 @@ export const PendingJobProgressBar: React.FC<PendingJobProgressBarProps> = ({
     fillColor,
 }) => {
     const tokens = useAppDesignTokens();
+    const clampedProgress = clampProgress(progress);
 
     return (
         <View
@@ -32,7 +34,7 @@ export const PendingJobProgressBar: React.FC<PendingJobProgressBarProps> = ({
                     styles.progressFill,
                     {
                         backgroundColor: fillColor || tokens.colors.primary,
-                        width: `${Math.max(0, Math.min(100, progress))}%`,
+                        width: `${clampedProgress}%`,
                     },
                 ]}
             />

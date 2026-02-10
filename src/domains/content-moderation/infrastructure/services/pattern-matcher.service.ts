@@ -3,6 +3,8 @@
  * Utility service for regex pattern matching with security validations
  */
 
+import { env } from "../../../../infrastructure/config/env.config";
+
 export interface PatternMatch {
   pattern: string;
   matched: boolean;
@@ -34,8 +36,7 @@ function isValidRegexPattern(pattern: string): boolean {
   }
 
   // Limit pattern length to prevent potential attacks
-  const MAX_PATTERN_LENGTH = 1000;
-  if (pattern.length > MAX_PATTERN_LENGTH) {
+  if (pattern.length > env.validationMaxPatternLength) {
     return false;
   }
 

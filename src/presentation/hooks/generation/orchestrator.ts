@@ -47,7 +47,11 @@ export const useGenerationOrchestrator = <TInput, TResult>(
     (status: "success" | "error", result?: TResult, error?: GenerationError) => {
       if (!lifecycle?.onComplete) return;
       const delay = lifecycle.completeDelay ?? 500;
-      setTimeout(() => { if (isMountedRef.current) lifecycle.onComplete?.(status, result, error); }, delay);
+      const timeoutId = setTimeout(() => {
+        if (isMountedRef.current) lifecycle.onComplete?.(status, result, error);
+      }, delay);
+      // Store timeout ID for cleanup (if component unmounts during delay)
+      return () => clearTimeout(timeoutId);
     },
     [lifecycle],
   );
@@ -91,7 +95,10 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       setState({ ...INITIAL_STATE, status: "checking", isGenerating: true });
 
       try {
-        if (!offlineStore.isOnline) throw createGenerationError("network", alertMessages.networkError);
+        // Check online status inside the try block to avoid dependency on offlineStore.isOnline
+        if (!offlineStore.isOnline) {
+          throw createGenerationError("network", alertMessages.networkError);
+        }
 
         // Pre-validate credits before generation to catch concurrent consumption
         const creditCost = strategy.getCreditCost();
@@ -129,7 +136,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         isGeneratingRef.current = false;
       }
     },
-    [moderation, alertMessages, offlineStore.isOnline, strategy, checkCredits, onCreditsExhausted, executeGeneration, showError, onError, handleLifecycleComplete],
+    [moderation, alertMessages, strategy, checkCredits, onCreditsExhausted, executeGeneration, showError, onError, handleLifecycleComplete],
   );
 
   const reset = useCallback(() => {

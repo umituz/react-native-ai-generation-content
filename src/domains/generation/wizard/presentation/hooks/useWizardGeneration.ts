@@ -8,7 +8,7 @@
  * States: IDLE → PREPARING → GENERATING → COMPLETED/ERROR → IDLE
  */
 
-import { useEffect, useReducer, useMemo } from "react";
+import { useEffect, useReducer, useMemo, useRef } from "react";
 import { createWizardStrategy, buildWizardInput } from "../../infrastructure/strategies";
 import { createCreationPersistence } from "../../infrastructure/utils/creation-persistence.util";
 import { useVideoQueueGeneration } from "./useVideoQueueGeneration";
@@ -96,6 +96,16 @@ export const useWizardGeneration = (
   // State machine: replaces multiple useRef flags
   const [state, dispatch] = useReducer(generationReducer, { status: "IDLE" });
 
+  // Mounted ref to prevent state updates after unmount
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const persistence = useMemo(() => createCreationPersistence(), []);
   const strategy = useMemo(
     () => createWizardStrategy({ scenario, creditCost }),
@@ -140,6 +150,9 @@ export const useWizardGeneration = (
 
       buildWizardInput(wizardData, scenario)
         .then(async (input) => {
+          // Check if component is still mounted
+          if (!isMountedRef.current) return;
+
           if (!input) {
             dispatch({ type: "ERROR", error: "Failed to build generation input" });
             onError?.("Failed to build generation input");
@@ -161,9 +174,15 @@ export const useWizardGeneration = (
             await photoGeneration.startGeneration(input, typedInput.prompt || "");
           }
 
-          dispatch({ type: "COMPLETE" });
+          // Check again before final state update
+          if (isMountedRef.current) {
+            dispatch({ type: "COMPLETE" });
+          }
         })
         .catch((error) => {
+          // Check if component is still mounted before error handling
+          if (!isMountedRef.current) return;
+
           const errorMsg = error?.message || "error.generation.unknown";
           if (typeof __DEV__ !== "undefined" && __DEV__) {
             console.error("[WizardGeneration] Build input error:", errorMsg, error);

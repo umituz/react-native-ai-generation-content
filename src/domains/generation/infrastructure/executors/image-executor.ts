@@ -11,6 +11,7 @@ import type {
 } from "../../domain/generation.types";
 import type { GenerationResult } from "../../../../domain/entities/generation.types";
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
+import { env } from "../../../../infrastructure/config/env.config";
 
 declare const __DEV__: boolean;
 
@@ -56,7 +57,7 @@ export class ImageExecutor
       options?.onProgress?.(10);
 
       const result = await provider.subscribe(model, modelInput, {
-        timeoutMs: options?.timeoutMs ?? 300000,
+        timeoutMs: options?.timeoutMs ?? env.generationImageTimeoutMs,
         onQueueUpdate: (status) => {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
             console.log("[ImageExecutor] Queue status:", status.status);

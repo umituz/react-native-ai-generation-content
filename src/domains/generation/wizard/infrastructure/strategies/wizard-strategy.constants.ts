@@ -4,9 +4,10 @@
  */
 
 import type { VideoFeatureType } from "../../../../../domain/interfaces";
+import { env } from "../../../../../infrastructure/config/env.config";
 
-/** Generation timeout in milliseconds (2 minutes) */
-export const GENERATION_TIMEOUT_MS = 120000;
+/** Generation timeout in milliseconds */
+export const GENERATION_TIMEOUT_MS = env.generationImageTimeoutMs;
 
 /** Base64 image format prefix */
 export const BASE64_IMAGE_PREFIX = "data:image/jpeg;base64,";
