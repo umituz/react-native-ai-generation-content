@@ -1,19 +1,10 @@
-/**
- * useVideoQueueGeneration Hook
- * Handles video generation via FAL queue with background support
- * - Submits to queue for non-blocking generation
- * - Polls for completion status
- * - Supports background generation (user can dismiss wizard)
- */
-
 import { useEffect, useRef, useCallback, useState } from "react";
-import { providerRegistry } from "../../../../../infrastructure/services/provider-registry.service";
-import { extractResultUrl, type FalResult, type GenerationUrls } from "./generation-result.utils";
-import { QUEUE_STATUS } from "../../../../../domain/constants/queue-status.constants";
+import { pollQueueStatus } from "./videoQueuePoller";
 import { DEFAULT_POLL_INTERVAL_MS } from "../../../../../infrastructure/constants/polling.constants";
 import type { CreationPersistence } from "../../infrastructure/utils/creation-persistence.util";
 import type { WizardStrategy } from "../../infrastructure/strategies/wizard-strategy.types";
 import type { WizardScenarioData } from "./wizard-generation.types";
+import type { GenerationUrls } from "./generation-result.utils";
 
 declare const __DEV__: boolean;
 
@@ -31,9 +22,7 @@ export interface UseVideoQueueGenerationReturn {
   readonly startGeneration: (input: unknown, prompt: string) => Promise<void>;
 }
 
-export function useVideoQueueGeneration(
-  props: UseVideoQueueGenerationProps,
-): UseVideoQueueGenerationReturn {
+export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): UseVideoQueueGenerationReturn {
   const { userId, scenario, persistence, strategy, onSuccess, onError } = props;
 
   const creationIdRef = useRef<string | null>(null);
@@ -44,7 +33,6 @@ export function useVideoQueueGeneration(
   const isPollingRef = useRef(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Cleanup polling on unmount
   useEffect(() => {
     return () => {
       if (pollingRef.current) {
@@ -74,7 +62,7 @@ export function useVideoQueueGeneration(
             videoUrl: urls.videoUrl,
           });
         } catch (err) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) console.error("[VideoQueueGeneration] updateToCompleted error:", err);
+          if (__DEV__) console.error("[VideoQueueGeneration] updateToCompleted error:", err);
         }
       }
       resetRefs();
@@ -90,7 +78,7 @@ export function useVideoQueueGeneration(
         try {
           await persistence.updateToFailed(userId, creationId, errorMsg);
         } catch (err) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) console.error("[VideoQueueGeneration] updateToFailed error:", err);
+          if (__DEV__) console.error("[VideoQueueGeneration] updateToFailed error:", err);
         }
       }
       resetRefs();
@@ -99,75 +87,52 @@ export function useVideoQueueGeneration(
     [userId, persistence, onError, resetRefs],
   );
 
-  const pollQueueStatus = useCallback(async () => {
-    // Guard against concurrent polls
-    if (isPollingRef.current) return;
-
+  const pollStatus = useCallback(async () => {
     const requestId = requestIdRef.current;
     const model = modelRef.current;
-    const provider = providerRegistry.getActiveProvider();
-    if (!requestId || !model || !provider) return;
+    if (!requestId || !model) return;
 
-    isPollingRef.current = true;
-    try {
-      const status = await provider.getJobStatus(model, requestId);
-      if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[VideoQueueGeneration] Poll:", status.status);
-
-      if (status.status === QUEUE_STATUS.COMPLETED || status.status === QUEUE_STATUS.FAILED) {
-        if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; }
-        if (status.status === QUEUE_STATUS.COMPLETED) {
-          try {
-            const result = await provider.getJobResult<FalResult>(model, requestId);
-            await handleComplete(extractResultUrl(result));
-          } catch (resultErr) {
-            // Handle errors when getting/extracting result (e.g., ValidationError, content policy)
-            const errorMessage = resultErr instanceof Error ? resultErr.message : "Generation failed";
-            if (typeof __DEV__ !== "undefined" && __DEV__) {
-              console.error("[VideoQueueGeneration] Result error:", errorMessage);
-            }
-            await handleError(errorMessage);
-          }
-        } else {
-          await handleError("Generation failed");
-        }
-      }
-    } catch (err) {
-      // Handle polling errors - stop polling and show error to user
-      if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; }
-      const errorMessage = err instanceof Error ? err.message : "Generation failed";
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.error("[VideoQueueGeneration] Poll error:", errorMessage);
-      }
-      await handleError(errorMessage);
-    } finally {
-      isPollingRef.current = false;
-    }
+    await pollQueueStatus({
+      requestId,
+      model,
+      isPollingRef,
+      pollingRef,
+      onComplete: handleComplete,
+      onError: handleError,
+    });
   }, [handleComplete, handleError]);
 
   const startGeneration = useCallback(
     async (input: unknown, prompt: string) => {
-      if (!strategy.submitToQueue) { onError?.("Queue submission not available"); return; }
+      if (!strategy.submitToQueue) {
+        onError?.("Queue submission not available");
+        return;
+      }
       if (isGeneratingRef.current) return;
+
       isGeneratingRef.current = true;
       setIsGenerating(true);
 
-      // Save to Firestore FIRST (enables background visibility)
       let creationId: string | null = null;
       if (userId && prompt) {
         try {
           creationId = await persistence.saveAsProcessing(userId, {
-            scenarioId: scenario.id, scenarioTitle: scenario.title || scenario.id, prompt,
+            scenarioId: scenario.id,
+            scenarioTitle: scenario.title || scenario.id,
+            prompt,
           });
           creationIdRef.current = creationId;
-          if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[VideoQueueGeneration] Saved:", creationId);
+          if (__DEV__) console.log("[VideoQueueGeneration] Saved:", creationId);
         } catch (err) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) console.error("[VideoQueueGeneration] save error:", err);
+          if (__DEV__) console.error("[VideoQueueGeneration] save error:", err);
         }
       }
 
       const queueResult = await strategy.submitToQueue(input);
       if (!queueResult.success || !queueResult.requestId || !queueResult.model) {
-        if (creationId && userId) await persistence.updateToFailed(userId, creationId, queueResult.error || "Queue submission failed");
+        if (creationId && userId) {
+          await persistence.updateToFailed(userId, creationId, queueResult.error || "Queue submission failed");
+        }
         setIsGenerating(false);
         onError?.(queueResult.error || "Queue submission failed");
         return;
@@ -176,21 +141,19 @@ export function useVideoQueueGeneration(
       requestIdRef.current = queueResult.requestId;
       modelRef.current = queueResult.model;
 
-      // Update with requestId for background polling
       if (creationId && userId) {
         try {
           await persistence.updateRequestId(userId, creationId, queueResult.requestId, queueResult.model);
-          if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[VideoQueueGeneration] Updated requestId:", queueResult.requestId);
+          if (__DEV__) console.log("[VideoQueueGeneration] Updated requestId:", queueResult.requestId);
         } catch (err) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) console.error("[VideoQueueGeneration] updateRequestId error:", err);
+          if (__DEV__) console.error("[VideoQueueGeneration] updateRequestId error:", err);
         }
       }
 
-      pollingRef.current = setInterval(() => void pollQueueStatus(), DEFAULT_POLL_INTERVAL_MS);
-      // Immediate poll to avoid waiting for first interval tick
-      void pollQueueStatus();
+      pollingRef.current = setInterval(() => void pollStatus(), DEFAULT_POLL_INTERVAL_MS);
+      void pollStatus();
     },
-    [userId, scenario, persistence, strategy, pollQueueStatus, onError],
+    [userId, scenario, persistence, strategy, pollStatus, onError],
   );
 
   return { isGenerating, startGeneration };

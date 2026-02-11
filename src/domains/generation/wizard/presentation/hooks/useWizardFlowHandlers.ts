@@ -1,32 +1,9 @@
-/**
- * Wizard Flow Handlers Hook
- * Extracts callback handlers from WizardFlowContent
- */
-
 import { useCallback } from "react";
 import { AlertType, AlertMode, useAlert } from "@umituz/react-native-design-system";
 import { StepType, type StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 import type { Creation } from "../../../../creations/domain/entities/Creation";
-
-declare const __DEV__: boolean;
-
-/**
- * Type guard to check if result is a valid Creation object
- */
-function isCreation(result: unknown): result is Creation {
-  if (!result || typeof result !== "object") {
-    return false;
-  }
-  const creation = result as Partial<Creation>;
-  return (
-    typeof creation.id === "string" &&
-    typeof creation.uri === "string" &&
-    typeof creation.type === "string" &&
-    creation.createdAt instanceof Date &&
-    typeof creation.isShared === "boolean"
-  );
-}
+import { isCreation } from "./typeGuards";
 
 export interface UseWizardFlowHandlersProps {
   readonly currentStepIndex: number;
@@ -77,21 +54,8 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
 
   const handleGenerationComplete = useCallback(
     (result: unknown) => {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[WizardFlowHandlers] Generation completed");
-      }
       setResult(result);
-
-      // Use type guard to safely check if result is a Creation
-      if (isCreation(result)) {
-        setCurrentCreation(result);
-      } else {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.warn("[WizardFlowHandlers] Result is not a valid Creation object:", result);
-        }
-        setCurrentCreation(null);
-      }
-
+      setCurrentCreation(isCreation(result) ? result : null);
       onGenerationComplete?.(result);
       if (!skipResultStep) nextStep();
     },
@@ -100,43 +64,17 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
 
   const handleGenerationError = useCallback(
     (errorMessage: string) => {
-      // Ensure we have a meaningful error message
       const safeErrorMessage = errorMessage?.trim() || "error.generation.unknown";
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[WizardFlowHandlers] Generation error:", {
-          original: errorMessage,
-          safe: safeErrorMessage,
-        });
-      }
-      // Translate error key if it looks like a translation key
-      const displayMessage = safeErrorMessage.startsWith("error.")
-        ? t(safeErrorMessage)
-        : safeErrorMessage;
-      // Show error alert to user
-      alert.show(
-        AlertType.ERROR,
-        AlertMode.MODAL,
-        t("common.error"),
-        displayMessage,
-      );
-      // Notify parent component
+      const displayMessage = safeErrorMessage.startsWith("error.") ? t(safeErrorMessage) : safeErrorMessage;
+      alert.show(AlertType.ERROR, AlertMode.MODAL, t("common.error"), displayMessage);
       onGenerationError?.(safeErrorMessage);
-      // Close the wizard
       onBack?.();
     },
     [alert, t, onGenerationError, onBack],
   );
 
   const handleDismissGenerating = useCallback(() => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[WizardFlowHandlers] Dismissing - generation continues");
-    }
-    alert.show(
-      AlertType.INFO,
-      AlertMode.TOAST,
-      t("generator.backgroundTitle"),
-      t("generator.backgroundMessage"),
-    );
+    alert.show(AlertType.INFO, AlertMode.TOAST, t("generator.backgroundTitle"), t("generator.backgroundMessage"));
     onBack?.();
   }, [alert, t, onBack]);
 
@@ -147,18 +85,7 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
 
   const handleNextStep = useCallback(() => {
     const nextStepDef = flowSteps[currentStepIndex + 1];
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[WizardFlowHandlers] handleNextStep", {
-        currentStepIndex,
-        nextStepType: nextStepDef?.type,
-        isGenerating: nextStepDef?.type === StepType.GENERATING,
-        hasOnGenerationStart: !!onGenerationStart,
-      });
-    }
     if (nextStepDef?.type === StepType.GENERATING && onGenerationStart) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[WizardFlowHandlers] Calling onGenerationStart callback");
-      }
       onGenerationStart(customData, nextStep);
       return;
     }
@@ -179,12 +106,7 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
       const success = await repository.rate(userId, currentCreation.id, rating, description);
       if (success) {
         setHasRated(true);
-        alert.show(
-          AlertType.SUCCESS,
-          AlertMode.TOAST,
-          t("result.rateSuccessTitle"),
-          t("result.rateSuccessMessage"),
-        );
+        alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("result.rateSuccessTitle"), t("result.rateSuccessMessage"));
       }
       setShowRatingPicker(false);
     },
