@@ -89,6 +89,10 @@ export function useAIFeatureGate(
         onNetworkError?.();
         return;
       }
+      // Wait for credits to load before proceeding
+      if (!isCreditsLoaded) {
+        return;
+      }
       // Then auth/credit checks via subscription package
       requireFeatureFromPackage(() => {
         const result = action();
@@ -105,7 +109,7 @@ export function useAIFeatureGate(
         }
       });
     },
-    [isOffline, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
+    [isOffline, isCreditsLoaded, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
   );
 
   return {
