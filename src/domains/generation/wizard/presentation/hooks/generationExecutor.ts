@@ -1,7 +1,7 @@
 import { buildWizardInput } from "../../infrastructure/strategies";
 import type { WizardScenarioData } from "./wizard-generation.types";
 import type { Scenario } from "../../../../scenarios/domain/scenario.types";
-import type { GenerationAction } from "./wizard-state-machine";
+import type { GenerationAction } from "./generationStateMachine";
 
 declare const __DEV__: boolean;
 

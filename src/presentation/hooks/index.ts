@@ -43,18 +43,18 @@ export type {
   UseGenerationReturn,
 } from "./use-generation";
 
-export { usePendingJobs } from "./use-pending-jobs";
+export { usePendingJobs } from "../../domains/background/presentation/hooks/use-pending-jobs";
 export type {
   UsePendingJobsOptions,
   UsePendingJobsReturn,
-} from "./use-pending-jobs";
+} from "../../domains/background/presentation/hooks/use-pending-jobs";
 
-export { useBackgroundGeneration } from "./use-background-generation";
+export { useBackgroundGeneration } from "../../domains/background/presentation/hooks/use-background-generation";
 export type {
   UseBackgroundGenerationOptions,
   UseBackgroundGenerationReturn,
   DirectExecutionResult,
-} from "./use-background-generation";
+} from "../../domains/background/presentation/hooks/use-background-generation";
 
 export { useGenerationFlow } from "./useGenerationFlow";
 export type {
