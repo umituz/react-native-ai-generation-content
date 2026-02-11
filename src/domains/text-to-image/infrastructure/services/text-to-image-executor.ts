@@ -12,93 +12,13 @@ import type {
   TextToImageInputBuilder,
   TextToImageResultExtractor,
 } from "../../domain/types";
+import { defaultExtractImageResult, type ExtractedImageResult } from "../utils/imageResultExtractor";
 
-/**
- * Options for text-to-image execution
- */
 export interface ExecuteTextToImageOptions {
   model: string;
   buildInput: TextToImageInputBuilder;
   extractResult?: TextToImageResultExtractor;
   onProgress?: (progress: number) => void;
-}
-
-/**
- * Extracted result structure from provider response
- */
-interface ExtractedImageResult {
-  imageUrl?: string;
-  imageUrls?: string[];
-}
-
-/**
- * Extract images from provider response object
- */
-function extractImagesFromObject(
-  obj: Record<string, unknown>,
-): string[] | null {
-  // Direct images array
-  if (Array.isArray(obj.images)) {
-    const urls = obj.images
-      .map((img) => {
-        if (typeof img === "string") return img;
-        if (img && typeof img === "object" && "url" in img) {
-          return (img as { url: string }).url;
-        }
-        return null;
-      })
-      .filter((url): url is string => url !== null);
-
-    if (urls.length > 0) return urls;
-  }
-  return null;
-}
-
-/**
- * Default extractor for text-to-image results
- */
-function defaultExtractResult(
-  result: unknown,
-): ExtractedImageResult | undefined {
-  if (typeof result !== "object" || result === null) {
-    return undefined;
-  }
-
-  const r = result as Record<string, unknown>;
-
-  // Check nested 'data' object first (common API wrapper format)
-  if (r.data && typeof r.data === "object") {
-    const dataObj = r.data as Record<string, unknown>;
-    const urls = extractImagesFromObject(dataObj);
-    if (urls) {
-      return { imageUrl: urls[0], imageUrls: urls };
-    }
-  }
-
-  // Check direct 'images' array
-  const directUrls = extractImagesFromObject(r);
-  if (directUrls) {
-    return { imageUrl: directUrls[0], imageUrls: directUrls };
-  }
-
-  // Check for imageUrl (data URL)
-  if (typeof r.imageUrl === "string") {
-    return { imageUrl: r.imageUrl, imageUrls: [r.imageUrl] };
-  }
-
-  // Fallback: construct data URL from imageBase64
-  if (typeof r.imageBase64 === "string") {
-    const mimeType = typeof r.mimeType === "string" ? r.mimeType : "image/png";
-    const dataUrl = `data:${mimeType};base64,${r.imageBase64}`;
-    return { imageUrl: dataUrl, imageUrls: [dataUrl] };
-  }
-
-  // Check for 'image' field
-  if (typeof r.image === "string") {
-    return { imageUrl: r.image, imageUrls: [r.image] };
-  }
-
-  return undefined;
 }
 
 /**
@@ -151,7 +71,7 @@ class TextToImageExecutor extends BaseExecutor<
   protected getDefaultExtractor(): (
     result: unknown,
   ) => ExtractedImageResult | undefined {
-    return defaultExtractResult;
+    return defaultExtractImageResult;
   }
 }
 
