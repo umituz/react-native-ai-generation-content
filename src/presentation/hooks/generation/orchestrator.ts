@@ -58,6 +58,9 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
   const executeGeneration = useCallback(
     async (input: TInput) => {
+      const creditDeducted = await deductCredit(strategy.getCreditCost());
+      if (!creditDeducted) throw createGenerationError("credits", alertMessages.creditFailed);
+
       setState((prev) => ({ ...prev, status: "generating" }));
       if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[Orchestrator] Starting generation");
 
@@ -71,9 +74,6 @@ export const useGenerationOrchestrator = <TInput, TResult>(
           throw createGenerationError("save", alertMessages.saveFailed, saveErr instanceof Error ? saveErr : undefined);
         }
       }
-
-      const creditDeducted = await deductCredit(strategy.getCreditCost());
-      if (!creditDeducted) throw createGenerationError("credits", alertMessages.creditFailed);
 
       if (isMountedRef.current) setState({ status: "success", isGenerating: false, result, error: null });
       if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[Orchestrator] Generation SUCCESS");
