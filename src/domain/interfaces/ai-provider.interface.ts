@@ -155,7 +155,7 @@ export interface VideoFeatureInputData {
 
 import type { IAIProviderLifecycle } from "./provider-lifecycle.interface";
 import type { IAIProviderCapabilities } from "./provider-capabilities.interface";
-import type { IAIProviderJobManager } from "./provider-job-manager.interface";
+import type { IAIProviderJobManager } from "../../domains/background/domain/interfaces/provider-job-manager.interface";
 import type { IAIProviderExecutor } from "./provider-executor.interface";
 import type { IAIProviderImageFeatures } from "./provider-image-features.interface";
 import type { IAIProviderVideoFeatures } from "./provider-video-features.interface";

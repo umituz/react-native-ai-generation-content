@@ -2,8 +2,8 @@
  * Job Poller Type Definitions
  */
 
-import type { IAIProvider, JobStatus } from "../../domain/interfaces";
-import type { PollingConfig } from "../../domain/entities";
+import type { IAIProvider, JobStatus } from "../../../../domain/interfaces/ai-provider.interface";
+import type { PollingConfig } from "../../../../domain/entities/polling.types";
 
 export interface PollJobOptions {
   provider: IAIProvider;

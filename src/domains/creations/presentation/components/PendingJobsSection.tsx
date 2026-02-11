@@ -6,7 +6,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { AtomicText, useAppDesignTokens } from "@umituz/react-native-design-system";
-import type { BackgroundJob } from "../../../../domain/entities/job.types";
+import type { BackgroundJob } from "../../../background/domain/entities/job.types";
 import { PendingJobCard } from "../../../../presentation/components/PendingJobCard";
 
 export interface PendingJobsSectionProps {

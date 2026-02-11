@@ -3,7 +3,7 @@
  * Single Responsibility: Async job submission, status checking, and result retrieval
  */
 
-import type { JobSubmission, JobStatus } from "./ai-provider.interface";
+import type { JobSubmission, JobStatus } from "../../../../domain/interfaces/ai-provider.interface";
 
 export interface IAIProviderJobManager {
   /**

@@ -3,7 +3,7 @@
  * Creates pre-configured job poller instances
  */
 
-import type { PollingConfig } from "../../domain/entities";
+import type { PollingConfig } from "../../../../domain/entities/polling.types";
 import type { PollJobOptions } from "./job-poller.types";
 import { pollJob } from "./job-poller.service";
 

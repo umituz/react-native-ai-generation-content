@@ -3,7 +3,7 @@
  * Checks job status responses for errors
  */
 
-import type { JobStatus, AILogEntry } from "../../domain/interfaces";
+import type { JobStatus, AILogEntry } from "../../../../domain/interfaces/ai-provider.interface";
 
 export interface StatusCheckResult {
   status: string;

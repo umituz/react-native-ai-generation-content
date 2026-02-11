@@ -4,7 +4,7 @@
  * Reports only real status - no fake progress
  */
 
-import { DEFAULT_POLLING_CONFIG } from "../../domain/entities";
+import { DEFAULT_POLLING_CONFIG } from "../../../../domain/entities/polling.types";
 import { calculatePollingInterval } from "../utils/polling-interval.util";
 import { checkStatusForErrors, isJobComplete } from "../utils/status-checker.util";
 import { validateResult } from "../utils/result-validator.util";
