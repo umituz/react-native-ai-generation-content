@@ -9,17 +9,11 @@ import type {
   ImageToVideoFormActions,
   ImageToVideoFormDefaults,
   AnimationStyleId,
-  MusicMoodId,
   VideoDuration,
 } from "../../domain/types";
-import {
-  DEFAULT_ANIMATION_STYLE_ID,
-  DEFAULT_MUSIC_MOOD_ID,
-  DEFAULT_VIDEO_DURATION,
-} from "../../domain/constants";
 
 export interface UseFormStateOptions {
-  defaults?: ImageToVideoFormDefaults;
+  defaults: ImageToVideoFormDefaults;
 }
 
 export interface UseFormStateReturn {
@@ -27,19 +21,17 @@ export interface UseFormStateReturn {
   actions: ImageToVideoFormActions;
 }
 
-function createInitialState(defaults?: ImageToVideoFormDefaults): ImageToVideoFormState {
+function createInitialState(defaults: ImageToVideoFormDefaults): ImageToVideoFormState {
   return {
     selectedImages: [],
-    animationStyle: defaults?.animationStyle ?? DEFAULT_ANIMATION_STYLE_ID,
-    duration: defaults?.duration ?? DEFAULT_VIDEO_DURATION,
-    musicMood: defaults?.musicMood ?? DEFAULT_MUSIC_MOOD_ID,
-    customAudioUri: null,
+    animationStyle: defaults.animationStyle,
+    duration: defaults.duration,
     motionPrompt: "",
   };
 }
 
-export function useFormState(options?: UseFormStateOptions): UseFormStateReturn {
-  const { defaults } = options ?? {};
+export function useFormState(options: UseFormStateOptions): UseFormStateReturn {
+  const { defaults } = options;
 
   const [state, setState] = useState<ImageToVideoFormState>(() =>
     createInitialState(defaults)
@@ -71,14 +63,6 @@ export function useFormState(options?: UseFormStateOptions): UseFormStateReturn 
     setState((prev) => ({ ...prev, duration }));
   }, []);
 
-  const setMusicMood = useCallback((mood: MusicMoodId) => {
-    setState((prev) => ({ ...prev, musicMood: mood }));
-  }, []);
-
-  const setCustomAudioUri = useCallback((uri: string | null) => {
-    setState((prev) => ({ ...prev, customAudioUri: uri }));
-  }, []);
-
   const setMotionPrompt = useCallback((prompt: string) => {
     setState((prev) => ({ ...prev, motionPrompt: prompt }));
   }, []);
@@ -94,8 +78,6 @@ export function useFormState(options?: UseFormStateOptions): UseFormStateReturn 
       removeImage,
       setAnimationStyle,
       setDuration,
-      setMusicMood,
-      setCustomAudioUri,
       setMotionPrompt,
       reset,
     }),
@@ -105,8 +87,6 @@ export function useFormState(options?: UseFormStateOptions): UseFormStateReturn 
       removeImage,
       setAnimationStyle,
       setDuration,
-      setMusicMood,
-      setCustomAudioUri,
       setMotionPrompt,
       reset,
     ]

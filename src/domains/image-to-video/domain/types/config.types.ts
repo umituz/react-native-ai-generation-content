@@ -9,7 +9,6 @@ import type { ImageToVideoFormState } from "./form.types";
 export interface ImageToVideoCallbacks {
   onGenerate: (formState: ImageToVideoFormState) => Promise<void>;
   onSelectImages?: () => Promise<string[]>;
-  onSelectCustomAudio?: () => Promise<string | null>;
   onCreditCheck?: (cost: number) => boolean;
   onShowPaywall?: (cost: number) => void;
   onSuccess?: (result: ImageToVideoResult) => void;
@@ -19,7 +18,6 @@ export interface ImageToVideoCallbacks {
 export interface ImageToVideoFormConfig {
   maxImages?: number;
   creditCost?: number;
-  enableCustomAudio?: boolean;
   enableMotionPrompt?: boolean;
 }
 
@@ -28,7 +26,6 @@ export interface ImageToVideoTranslationsExtended {
     selectedImages: string;
     animationStyle: string;
     durationPerImage: string;
-    addMusic: string;
   };
   imageSelection: {
     selectImages: string;
@@ -37,9 +34,6 @@ export interface ImageToVideoTranslationsExtended {
   };
   duration: {
     totalVideo: string;
-  };
-  music: {
-    customAudioSelected: string;
   };
   hero: {
     title: string;

@@ -13,7 +13,6 @@ import type {
   ImageToVideoFormActions,
   ImageToVideoGenerationState,
   ImageToVideoCallbacks,
-  MusicMoodId,
 } from "../../domain/types";
 
 export interface UseImageToVideoFormOptions extends UseFormStateOptions {
@@ -25,7 +24,6 @@ export interface UseImageToVideoFormReturn {
   actions: ImageToVideoFormActions;
   generationState: ImageToVideoGenerationState;
   handleGenerate: () => Promise<void>;
-  handleMusicSelect: (moodId: MusicMoodId) => void;
   handleSelectImages: () => Promise<void>;
   isReady: boolean;
 }
@@ -41,25 +39,6 @@ export function useImageToVideoForm(
     formState: state,
     callbacks,
   });
-
-  const handleMusicSelect = useCallback(
-    (moodId: MusicMoodId) => {
-      if (moodId === "custom" && callbacks.onSelectCustomAudio) {
-        callbacks.onSelectCustomAudio().then((uri) => {
-          if (uri) {
-            actions.setCustomAudioUri(uri);
-            actions.setMusicMood("custom");
-          }
-        });
-      } else {
-        actions.setMusicMood(moodId);
-        if (moodId !== "custom") {
-          actions.setCustomAudioUri(null);
-        }
-      }
-    },
-    [callbacks, actions]
-  );
 
   const handleSelectImages = useCallback(async () => {
     if (__DEV__) {
@@ -100,7 +79,6 @@ export function useImageToVideoForm(
       actions,
       generationState,
       handleGenerate,
-      handleMusicSelect,
       handleSelectImages,
       isReady,
     }),
@@ -109,7 +87,6 @@ export function useImageToVideoForm(
       actions,
       generationState,
       handleGenerate,
-      handleMusicSelect,
       handleSelectImages,
       isReady,
     ]

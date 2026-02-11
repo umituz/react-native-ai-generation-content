@@ -45,19 +45,6 @@ export type {
 } from "./domain";
 
 // =============================================================================
-// DOMAIN LAYER - Constants
-// =============================================================================
-
-export {
-  DEFAULT_ANIMATION_STYLES as IMAGE_TO_VIDEO_ANIMATION_STYLES,
-  DEFAULT_ANIMATION_STYLE_ID as IMAGE_TO_VIDEO_DEFAULT_ANIMATION,
-  DEFAULT_DURATION_OPTIONS as IMAGE_TO_VIDEO_DURATION_OPTIONS,
-  DEFAULT_VIDEO_DURATION as IMAGE_TO_VIDEO_DEFAULT_DURATION,
-  DEFAULT_FORM_VALUES as IMAGE_TO_VIDEO_FORM_DEFAULTS,
-  DEFAULT_FORM_CONFIG as IMAGE_TO_VIDEO_CONFIG,
-} from "./domain";
-
-// =============================================================================
 // INFRASTRUCTURE LAYER
 // =============================================================================
 

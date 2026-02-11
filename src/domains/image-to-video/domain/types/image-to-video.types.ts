@@ -4,7 +4,6 @@
  */
 
 import type { AnimationStyleId } from "./animation.types";
-import type { MusicMoodId } from "./music.types";
 import type { VideoDuration } from "./duration.types";
 
 export interface ImageToVideoOptions {
@@ -13,7 +12,6 @@ export interface ImageToVideoOptions {
   aspectRatio?: "16:9" | "9:16" | "1:1";
   fps?: number;
   animationStyle?: AnimationStyleId;
-  musicMood?: MusicMoodId;
 }
 
 export interface ImageToVideoGenerateParams extends ImageToVideoOptions {
@@ -28,10 +26,8 @@ export interface ImageToVideoRequest {
   motionPrompt?: string;
   options?: ImageToVideoOptions;
   allImages?: string[];
-  customAudioUri?: string | null;
   animationStyle?: AnimationStyleId;
   duration?: VideoDuration;
-  musicMood?: MusicMoodId;
   model?: string;
 }
 

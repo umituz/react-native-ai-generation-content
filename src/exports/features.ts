@@ -72,9 +72,6 @@ export type {
   ImageToVideoSelectionGridTranslations, ImageToVideoGenerateButtonProps,
 } from "../domains/image-to-video";
 export {
-  IMAGE_TO_VIDEO_ANIMATION_STYLES, IMAGE_TO_VIDEO_DEFAULT_ANIMATION,
-  IMAGE_TO_VIDEO_DURATION_OPTIONS, IMAGE_TO_VIDEO_DEFAULT_DURATION,
-  IMAGE_TO_VIDEO_FORM_DEFAULTS, IMAGE_TO_VIDEO_CONFIG,
   executeImageToVideo, hasImageToVideoSupport,
   useImageToVideoFormState, useImageToVideoGeneration, useImageToVideoForm, useImageToVideoFeature,
   ImageToVideoAnimationStyleSelector, ImageToVideoDurationSelector,
