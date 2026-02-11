@@ -5,9 +5,6 @@
 export { providerRegistry } from "./provider-registry.service";
 export { generationOrchestrator } from "./generation-orchestrator.service";
 export type { OrchestratorConfig } from "./generation-orchestrator.service";
-export { pollJob } from "./job-poller.service";
-export { createJobPoller } from "./job-poller-factory";
-export type { PollJobOptions, PollJobResult } from "./job-poller.service";
 export {
   executeImageFeature,
   hasImageFeatureSupport,

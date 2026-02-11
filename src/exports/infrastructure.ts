@@ -15,12 +15,12 @@ export {
 
 // Services
 export {
-  providerRegistry, generationOrchestrator, pollJob, createJobPoller,
+  providerRegistry, generationOrchestrator,
   executeImageFeature, hasImageFeatureSupport, executeVideoFeature, hasVideoFeatureSupport,
   submitVideoFeatureToQueue, executeMultiImageGeneration,
 } from "../infrastructure/services";
 export type {
-  OrchestratorConfig, PollJobOptions, PollJobResult, ImageResultExtractor,
+  OrchestratorConfig, ImageResultExtractor,
   ExecuteImageFeatureOptions, ImageFeatureResult, ImageFeatureRequest,
   ExecuteVideoFeatureOptions, VideoFeatureResult, VideoFeatureRequest,
   MultiImageGenerationInput, MultiImageGenerationResult,

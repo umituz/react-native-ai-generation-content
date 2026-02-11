@@ -10,7 +10,7 @@ import type {
   PollingConfig,
 } from "../../domain/entities";
 import { classifyError } from "../utils/error-classifier.util";
-import { pollJob } from "./job-poller.service";
+import { pollJob } from "../../domains/background/infrastructure/services/job-poller.service";
 import { ProviderValidator } from "./provider-validator";
 
 declare const __DEV__: boolean;
