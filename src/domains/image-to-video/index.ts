@@ -10,9 +10,6 @@
 // Animation Types
 export type { AnimationStyle, AnimationStyleId } from "./domain";
 
-// Music Types
-export type { MusicMood, MusicMoodId } from "./domain";
-
 // Duration Types
 export type { VideoDuration, DurationOption } from "./domain";
 
@@ -54,8 +51,6 @@ export type {
 export {
   DEFAULT_ANIMATION_STYLES as IMAGE_TO_VIDEO_ANIMATION_STYLES,
   DEFAULT_ANIMATION_STYLE_ID as IMAGE_TO_VIDEO_DEFAULT_ANIMATION,
-  DEFAULT_MUSIC_MOODS as IMAGE_TO_VIDEO_MUSIC_MOODS,
-  DEFAULT_MUSIC_MOOD_ID as IMAGE_TO_VIDEO_DEFAULT_MUSIC,
   DEFAULT_DURATION_OPTIONS as IMAGE_TO_VIDEO_DURATION_OPTIONS,
   DEFAULT_VIDEO_DURATION as IMAGE_TO_VIDEO_DEFAULT_DURATION,
   DEFAULT_FORM_VALUES as IMAGE_TO_VIDEO_FORM_DEFAULTS,
@@ -101,7 +96,6 @@ export type {
 export {
   ImageToVideoAnimationStyleSelector,
   ImageToVideoDurationSelector,
-  ImageToVideoMusicMoodSelector,
   ImageToVideoSelectionGrid,
   ImageToVideoGenerateButton,
 } from "./presentation";
@@ -109,7 +103,6 @@ export {
 export type {
   ImageToVideoAnimationStyleSelectorProps,
   ImageToVideoDurationSelectorProps,
-  ImageToVideoMusicMoodSelectorProps,
   ImageToVideoSelectionGridProps,
   ImageToVideoSelectionGridTranslations,
   ImageToVideoGenerateButtonProps,

@@ -55,7 +55,7 @@ export {
 
 // Image-to-Video Feature
 export type {
-  AnimationStyle, AnimationStyleId, MusicMood, MusicMoodId,
+  AnimationStyle, AnimationStyleId,
   VideoDuration, DurationOption as ImageToVideoDurationOption,
   ImageToVideoFormState, ImageToVideoFormActions, ImageToVideoFormDefaults,
   ImageToVideoCallbacks, ImageToVideoFormConfig, ImageToVideoTranslationsExtended,
@@ -68,18 +68,17 @@ export type {
   UseImageToVideoFormOptions, UseImageToVideoFormReturn,
   UseImageToVideoFeatureProps, UseImageToVideoFeatureReturn,
   ImageToVideoAnimationStyleSelectorProps, ImageToVideoDurationSelectorProps,
-  ImageToVideoMusicMoodSelectorProps, ImageToVideoSelectionGridProps,
+  ImageToVideoSelectionGridProps,
   ImageToVideoSelectionGridTranslations, ImageToVideoGenerateButtonProps,
 } from "../domains/image-to-video";
 export {
   IMAGE_TO_VIDEO_ANIMATION_STYLES, IMAGE_TO_VIDEO_DEFAULT_ANIMATION,
-  IMAGE_TO_VIDEO_MUSIC_MOODS, IMAGE_TO_VIDEO_DEFAULT_MUSIC,
   IMAGE_TO_VIDEO_DURATION_OPTIONS, IMAGE_TO_VIDEO_DEFAULT_DURATION,
   IMAGE_TO_VIDEO_FORM_DEFAULTS, IMAGE_TO_VIDEO_CONFIG,
   executeImageToVideo, hasImageToVideoSupport,
   useImageToVideoFormState, useImageToVideoGeneration, useImageToVideoForm, useImageToVideoFeature,
   ImageToVideoAnimationStyleSelector, ImageToVideoDurationSelector,
-  ImageToVideoMusicMoodSelector, ImageToVideoSelectionGrid, ImageToVideoGenerateButton,
+  ImageToVideoSelectionGrid, ImageToVideoGenerateButton,
 } from "../domains/image-to-video";
 
 // Wizard Flows

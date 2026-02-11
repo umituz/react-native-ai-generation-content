@@ -8,11 +8,6 @@ export {
 } from "./animation.constants";
 
 export {
-  DEFAULT_MUSIC_MOODS,
-  DEFAULT_MUSIC_MOOD_ID,
-} from "./music.constants";
-
-export {
   DEFAULT_DURATION_OPTIONS,
   DEFAULT_VIDEO_DURATION,
 } from "./duration.constants";

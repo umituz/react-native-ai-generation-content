@@ -10,10 +10,6 @@ export type { AnimationStyleSelectorProps as ImageToVideoAnimationStyleSelectorP
 export { DurationSelector as ImageToVideoDurationSelector } from "./DurationSelector";
 export type { DurationSelectorProps as ImageToVideoDurationSelectorProps } from "./DurationSelector";
 
-// Music Mood Selector
-export { MusicMoodSelector as ImageToVideoMusicMoodSelector } from "./MusicMoodSelector";
-export type { MusicMoodSelectorProps as ImageToVideoMusicMoodSelectorProps } from "./MusicMoodSelector";
-
 // Image Selection Grid
 export { ImageSelectionGrid as ImageToVideoSelectionGrid } from "./ImageSelectionGrid";
 export type {

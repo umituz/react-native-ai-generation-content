@@ -1,9 +1,6 @@
 // Animation Types
 export type { AnimationStyle, AnimationStyleId } from "./animation.types";
 
-// Music Types
-export type { MusicMood, MusicMoodId } from "./music.types";
-
 // Duration Types
 export type { VideoDuration, DurationOption } from "./duration.types";
 
