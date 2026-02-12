@@ -132,7 +132,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
   return {
     generationState: {
       isGenerating,
-      error: error?.message || null,
+      error: error?.message === undefined ? null : error.message,
     },
     totalCost,
     handleGenerate,

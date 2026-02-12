@@ -39,6 +39,10 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
     onNetworkError,
   });
 
+  if (!alertMessages) {
+    throw new Error("TextToImageWizardFlow: alertMessages is required");
+  }
+
   const scenario = useMemo(
     () =>
       createScenarioData(
@@ -54,8 +58,6 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
     [model, t]
   );
 
-  const defaultAlerts = useMemo(() => createDefaultAlerts(t), [t]);
-
   const { handleGenerationStart, handleGenerationComplete } = useWizardFlowHandlers({
     requireFeature,
     onGenerationComplete,
@@ -68,7 +70,7 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
         featureConfig={TEXT_TO_IMAGE_WIZARD_CONFIG}
         scenario={scenario}
         userId={userId}
-        alertMessages={alertMessages ?? defaultAlerts}
+        alertMessages={alertMessages}
         creditCost={creditCost}
         skipResultStep={true}
         onGenerationStart={handleGenerationStart}
