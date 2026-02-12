@@ -48,7 +48,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
   const { formState, callbacks, onPromptCleared } = options;
 
   // Get userId from callbacks (from app layer via useAIFeatureCallbacks)
-  const userId = callbacks.userId ?? undefined;
+  const userId = callbacks.userId;
 
   const totalCost = callbacks.calculateCost(formState.numImages, formState.selectedModel);
 
