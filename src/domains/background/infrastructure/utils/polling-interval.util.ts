@@ -1,6 +1,5 @@
 /**
  * Polling Interval Calculator
- * Calculates polling intervals with exponential backoff
  */
 
 import {
@@ -10,16 +9,12 @@ import {
 
 export interface IntervalOptions {
   attempt: number;
-  config?: Partial<PollingConfig>;
+  config: PollingConfig;
 }
 
 export function calculatePollingInterval(options: IntervalOptions): number {
   const { attempt, config } = options;
-  const {
-    initialIntervalMs = DEFAULT_POLLING_CONFIG.initialIntervalMs,
-    maxIntervalMs = DEFAULT_POLLING_CONFIG.maxIntervalMs,
-    backoffMultiplier = DEFAULT_POLLING_CONFIG.backoffMultiplier,
-  } = config ?? {};
+  const { initialIntervalMs, maxIntervalMs, backoffMultiplier } = config;
 
   if (attempt === 0) {
     return 0;

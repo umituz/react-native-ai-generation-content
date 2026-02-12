@@ -44,11 +44,13 @@ export {
   PHOTOREALISTIC_RENDERING,
   NATURAL_POSE_GUIDELINES,
   MASTER_BASE_PROMPT,
+} from './domain/base/constants';
+export {
   createPhotorealisticPrompt,
   createTransformationPrompt,
   enhanceExistingPrompt,
-} from './domain/entities/BasePromptStructure';
-export type { CreatePromptOptions } from './domain/entities/BasePromptStructure';
+} from './domain/base/creators';
+export type { CreatePromptOptions } from './domain/base/types';
 
 export {
   MULTI_PERSON_PRESERVATION_RULES,

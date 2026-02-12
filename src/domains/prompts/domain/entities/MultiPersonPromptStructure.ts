@@ -1,4 +1,4 @@
-import { IDENTITY_PRESERVATION_CORE, NATURAL_POSE_GUIDELINES, PHOTOREALISTIC_RENDERING } from "./BasePromptStructure";
+import { IDENTITY_PRESERVATION_CORE, NATURAL_POSE_GUIDELINES, PHOTOREALISTIC_RENDERING } from "../base/constants";
 
 /**
  * Multi-person identity preservation rules

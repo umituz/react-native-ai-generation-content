@@ -1,27 +1,19 @@
 /**
  * AI Generation Orchestrator
- * Single Responsibility: Orchestrate common AI generation business operations
- *
- * Generic orchestrator for 100+ apps with dependency injection
- * Handles: Network check, content moderation, credit processing, refunds
+ * Orchestrates AI generation business operations
  */
 
 import {
   contentModerationService,
   ContentPolicyViolationError,
 } from "../../domains/content-moderation";
-import type {
-  OrchestratorConfig,
-  GenerationMetadata,
-} from "./orchestrator.types";
+import type { OrchestratorConfig, GenerationMetadata } from "./orchestrator.types";
 import type { GenerationCapability } from "../../domain/entities/generation.types";
 import {
   NetworkUnavailableError,
   InsufficientCreditsError,
   AuthenticationRequiredError,
 } from "./orchestrator.errors";
-
-declare const __DEV__: boolean;
 
 export class GenerationOrchestrator {
   constructor(private config: OrchestratorConfig) {}
@@ -84,8 +76,7 @@ export class GenerationOrchestrator {
     const creditCost = this.calculateCreditCost(capability, metadata);
     const actualUserId = this.requireAuthenticatedUser();
 
-    const currentCredits =
-      await this.config.creditService.getBalance(actualUserId);
+    const currentCredits = await this.config.creditService.getBalance(actualUserId);
 
     if (currentCredits < creditCost) {
       this.config.paywallService.show(creditCost);
@@ -102,13 +93,9 @@ export class GenerationOrchestrator {
     const actualUserId = this.requireAuthenticatedUser();
     const creditCost = this.calculateCreditCost(capability, metadata);
 
-    const currentCredits =
-      await this.config.creditService.getBalance(actualUserId);
+    const currentCredits = await this.config.creditService.getBalance(actualUserId);
 
-    const success = await this.config.creditService.deduct(
-      actualUserId,
-      creditCost,
-    );
+    const success = await this.config.creditService.deduct(actualUserId, creditCost);
 
     if (!success) {
       this.config.paywallService.show(creditCost);
@@ -118,10 +105,7 @@ export class GenerationOrchestrator {
     return creditCost;
   }
 
-  async refundCreditsIfApplicable(
-    amount: number,
-    error: unknown,
-  ): Promise<void> {
+  async refundCreditsIfApplicable(amount: number, error: unknown): Promise<void> {
     if (amount <= 0) return;
 
     const isNonRefundable =
@@ -132,31 +116,12 @@ export class GenerationOrchestrator {
           error.message.toLowerCase().includes("cancelled") ||
           error.message.toLowerCase().includes("user cancel")));
 
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[GenerationOrchestrator] Refund check:", {
-        amount,
-        isNonRefundable,
-        errorType: error instanceof Error ? error.name : typeof error,
-        errorMessage: error instanceof Error ? error.message : String(error),
-      });
-    }
-
     if (!isNonRefundable) {
       try {
         const actualUserId = this.requireAuthenticatedUser();
-
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[GenerationOrchestrator] Refunding credits:", {
-            userId: actualUserId,
-            amount,
-          });
-        }
-
         await this.config.creditService.add(actualUserId, amount);
-      } catch (refundErr) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error("[GenerationOrchestrator] Refund failed:", refundErr);
-        }
+      } catch {
+        // Silently fail refund - non-critical operation
       }
     }
   }

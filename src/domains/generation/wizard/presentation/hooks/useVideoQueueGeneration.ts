@@ -1,26 +1,15 @@
+/**
+ * Video Queue Generation Hook
+ */
+
 import { useEffect, useRef, useCallback, useState } from "react";
 import { pollQueueStatus } from "./videoQueuePoller";
 import { DEFAULT_POLL_INTERVAL_MS } from "../../../../../infrastructure/constants/polling.constants";
-import type { CreationPersistence } from "../../infrastructure/utils/creation-persistence.util";
-import type { WizardStrategy } from "../../infrastructure/strategies/wizard-strategy.types";
-import type { WizardScenarioData } from "./wizard-generation.types";
 import type { GenerationUrls } from "./generation-result.utils";
-
-declare const __DEV__: boolean;
-
-export interface UseVideoQueueGenerationProps {
-  readonly userId?: string;
-  readonly scenario: WizardScenarioData;
-  readonly persistence: CreationPersistence;
-  readonly strategy: WizardStrategy;
-  readonly onSuccess?: (result: unknown) => void;
-  readonly onError?: (error: string) => void;
-}
-
-export interface UseVideoQueueGenerationReturn {
-  readonly isGenerating: boolean;
-  readonly startGeneration: (input: unknown, prompt: string) => Promise<void>;
-}
+import type {
+  UseVideoQueueGenerationProps,
+  UseVideoQueueGenerationReturn,
+} from "./use-video-queue-generation.types";
 
 export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): UseVideoQueueGenerationReturn {
   const { userId, scenario, persistence, strategy, onSuccess, onError } = props;
@@ -54,16 +43,14 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
   const handleComplete = useCallback(
     async (urls: GenerationUrls) => {
       const creationId = creationIdRef.current;
-      if (creationId && userId) {
+      if (creationId && userId && (urls.videoUrl || urls.imageUrl)) {
         try {
           await persistence.updateToCompleted(userId, creationId, {
-            uri: urls.videoUrl || urls.imageUrl || "",
+            uri: urls.videoUrl || urls.imageUrl,
             imageUrl: urls.imageUrl,
             videoUrl: urls.videoUrl,
           });
-        } catch (err) {
-          if (__DEV__) console.error("[VideoQueueGeneration] updateToCompleted error:", err);
-        }
+        } catch {}
       }
       resetRefs();
       onSuccess?.(urls);
@@ -77,9 +64,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       if (creationId && userId) {
         try {
           await persistence.updateToFailed(userId, creationId, errorMsg);
-        } catch (err) {
-          if (__DEV__) console.error("[VideoQueueGeneration] updateToFailed error:", err);
-        }
+        } catch {}
       }
       resetRefs();
       onError?.(errorMsg);
@@ -122,10 +107,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
             prompt,
           });
           creationIdRef.current = creationId;
-          if (__DEV__) console.log("[VideoQueueGeneration] Saved:", creationId);
-        } catch (err) {
-          if (__DEV__) console.error("[VideoQueueGeneration] save error:", err);
-        }
+        } catch {}
       }
 
       const queueResult = await strategy.submitToQueue(input);
@@ -144,10 +126,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       if (creationId && userId) {
         try {
           await persistence.updateRequestId(userId, creationId, queueResult.requestId, queueResult.model);
-          if (__DEV__) console.log("[VideoQueueGeneration] Updated requestId:", queueResult.requestId);
-        } catch (err) {
-          if (__DEV__) console.error("[VideoQueueGeneration] updateRequestId error:", err);
-        }
+        } catch {}
       }
 
       pollingRef.current = setInterval(() => void pollStatus(), DEFAULT_POLL_INTERVAL_MS);

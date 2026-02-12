@@ -1,5 +1,4 @@
- 
-if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository.ts - Module loading");
+declare const __DEV__: boolean;
 
 import { BaseRepository, FirestorePathResolver } from "@umituz/react-native-firebase";
 import type {
@@ -43,8 +42,6 @@ export class CreationsRepository
     collectionName: string,
     options?: RepositoryOptions,
   ) {
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - Constructor start");
     super();
 
     const documentMapper = options?.documentMapper ?? mapDocumentToCreation;
@@ -53,8 +50,6 @@ export class CreationsRepository
     this.pathResolver = new FirestorePathResolver(collectionName, null);
     this.fetcher = new CreationsFetcher(this.pathResolver, documentMapper);
     this.writer = new CreationsWriter(this.pathResolver);
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) console.log("📍 [LIFECYCLE] CreationsRepository - Constructor end");
   }
 
   async getAll(userId: string): Promise<Creation[]> {

@@ -16,7 +16,7 @@ import type {
 import { DEFAULT_FORM_VALUES } from "../../domain/constants/options.constants";
 
 export interface UseFormStateOptions {
-  defaults?: TextToImageFormDefaults;
+  defaults: Required<TextToImageFormDefaults>;
 }
 
 export interface UseFormStateReturn {
@@ -24,38 +24,53 @@ export interface UseFormStateReturn {
   actions: TextToImageFormActions;
 }
 
-export function useFormState(options?: UseFormStateOptions): UseFormStateReturn {
-  const defaults = useMemo(
-    () => ({ ...DEFAULT_FORM_VALUES, ...options?.defaults }),
-    [options?.defaults]
-  );
+function validateDefaults(defaults: TextToImageFormDefaults): asserts defaults is Required<TextToImageFormDefaults> {
+  if (!defaults.aspectRatio) {
+    throw new Error("useFormState: defaults.aspectRatio is required");
+  }
+  if (!defaults.size) {
+    throw new Error("useFormState: defaults.size is required");
+  }
+  if (!defaults.numImages) {
+    throw new Error("useFormState: defaults.numImages is required");
+  }
+  if (defaults.guidanceScale === undefined) {
+    throw new Error("useFormState: defaults.guidanceScale is required");
+  }
+  if (!defaults.outputFormat) {
+    throw new Error("useFormState: defaults.outputFormat is required");
+  }
+  if (!defaults.selectedStyle) {
+    throw new Error("useFormState: defaults.selectedStyle is required");
+  }
+}
+
+export function useFormState(options: UseFormStateOptions): UseFormStateReturn {
+  const defaults = useMemo(() => {
+    validateDefaults(options.defaults);
+    return options.defaults;
+  }, [options.defaults]);
 
   const [prompt, setPrompt] = useState("");
-  const [aspectRatio, setAspectRatio] = useState<AspectRatio>(
-    defaults.aspectRatio ?? "9:16"
-  );
-  const [size, setSize] = useState<ImageSize>(defaults.size ?? "512x512");
-  const [numImages, setNumImages] = useState<NumImages>(defaults.numImages ?? 1);
+  const [aspectRatio, setAspectRatio] = useState<AspectRatio>(defaults.aspectRatio);
+  const [size, setSize] = useState<ImageSize>(defaults.size);
+  const [numImages, setNumImages] = useState<NumImages>(defaults.numImages);
   const [negativePrompt, setNegativePrompt] = useState("");
-  const [guidanceScale, setGuidanceScale] = useState(defaults.guidanceScale ?? 7.5);
+  const [guidanceScale, setGuidanceScale] = useState(defaults.guidanceScale);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
-  const [outputFormat, setOutputFormat] = useState<OutputFormat>(
-    defaults.outputFormat ?? "png"
-  );
-  const [selectedStyle, setSelectedStyle] = useState(
-    defaults.selectedStyle ?? "realistic"
-  );
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>(defaults.outputFormat);
+  const [selectedStyle, setSelectedStyle] = useState(defaults.selectedStyle);
 
   const reset = useCallback(() => {
     setPrompt("");
-    setAspectRatio(defaults.aspectRatio ?? "9:16");
-    setSize(defaults.size ?? "512x512");
-    setNumImages(defaults.numImages ?? 1);
+    setAspectRatio(defaults.aspectRatio);
+    setSize(defaults.size);
+    setNumImages(defaults.numImages);
     setNegativePrompt("");
-    setGuidanceScale(defaults.guidanceScale ?? 7.5);
+    setGuidanceScale(defaults.guidanceScale);
     setSelectedModel(null);
-    setOutputFormat(defaults.outputFormat ?? "png");
-    setSelectedStyle(defaults.selectedStyle ?? "realistic");
+    setOutputFormat(defaults.outputFormat);
+    setSelectedStyle(defaults.selectedStyle);
   }, [defaults]);
 
   const state: TextToImageFormState = useMemo(

@@ -1,6 +1,5 @@
 /**
- * useFlowStore
- * Zustand store for multi-step flow state management
+ * Flow Store - Zustand store for multi-step flow state management
  */
 
 import { createStore } from "@umituz/react-native-design-system";
@@ -8,12 +7,8 @@ import type {
   FlowState,
   FlowActions,
   FlowUploadedImageData,
-  StepDefinition,
 } from "../../../../domain/entities/flow-config.types";
-
-interface FlowStoreState extends FlowState {
-  stepDefinitions: readonly StepDefinition[];
-}
+import type { FlowStoreState, FlowStoreConfig } from "./use-flow-store.types";
 
 const createInitialState = (): FlowState => ({
   currentStepId: "",
@@ -33,14 +28,7 @@ const createInitialState = (): FlowState => ({
   generationError: undefined,
 });
 
-interface FlowStoreConfig {
-  steps: readonly StepDefinition[];
-  initialStepId?: string;
-  initialStepIndex?: number;
-}
-
 export const createFlowStore = (config: FlowStoreConfig) => {
-  // Support both initialStepId and initialStepIndex
   let initialIndex = 0;
 
   if (config.initialStepIndex !== undefined) {
@@ -74,76 +62,58 @@ export const createFlowStore = (config: FlowStoreConfig) => {
       nextStep: () => {
         const { stepDefinitions, currentStepIndex, completedSteps, currentStepId } = get();
         const nextIndex = currentStepIndex + 1;
-        if (nextIndex < stepDefinitions.length) {
-          const nextStep = stepDefinitions[nextIndex];
-          const newCompleted = completedSteps.includes(currentStepId)
+        if (nextIndex >= stepDefinitions.length) return;
+        set({
+          currentStepId: stepDefinitions[nextIndex].id,
+          currentStepIndex: nextIndex,
+          completedSteps: completedSteps.includes(currentStepId)
             ? completedSteps
-            : [...completedSteps, currentStepId];
-
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[FlowStore] nextStep", {
-              fromIndex: currentStepIndex,
-              toIndex: nextIndex,
-              fromStep: currentStepId,
-              toStep: nextStep.id,
-              toStepType: nextStep.type,
-            });
-          }
-
-          set({ currentStepId: nextStep.id, currentStepIndex: nextIndex, completedSteps: newCompleted });
-        }
+            : [...completedSteps, currentStepId],
+        });
       },
 
       previousStep: () => {
         const { stepDefinitions, currentStepIndex } = get();
         if (currentStepIndex > 0) {
-          const prevStep = stepDefinitions[currentStepIndex - 1];
-          set({ currentStepId: prevStep.id, currentStepIndex: currentStepIndex - 1 });
+          set({
+            currentStepId: stepDefinitions[currentStepIndex - 1].id,
+            currentStepIndex: currentStepIndex - 1,
+          });
         }
       },
 
       setCategory: (category: unknown) => set({ selectedCategory: category }),
       setScenario: (scenario: unknown) => set({ selectedScenario: scenario }),
 
-      setPartnerImage: (partnerId: string, image: FlowUploadedImageData | undefined) => {
-        const { partners } = get();
-        set({ partners: { ...partners, [partnerId]: image } });
-      },
+      setPartnerImage: (partnerId: string, image: FlowUploadedImageData | undefined) =>
+        set({ partners: { ...get().partners, [partnerId]: image } }),
 
-      setPartnerName: (partnerId: string, name: string) => {
-        const { partnerNames } = get();
-        set({ partnerNames: { ...partnerNames, [partnerId]: name } });
-      },
+      setPartnerName: (partnerId: string, name: string) =>
+        set({ partnerNames: { ...get().partnerNames, [partnerId]: name } }),
 
       setTextInput: (text: string) => set({ textInput: text }),
       setVisualStyle: (styleId: string) => set({ visualStyle: styleId }),
 
-      setSelectedFeatures: (featureType: string, ids: readonly string[]) => {
-        const { selectedFeatures } = get();
-        set({ selectedFeatures: { ...selectedFeatures, [featureType]: ids } });
-      },
+      setSelectedFeatures: (featureType: string, ids: readonly string[]) =>
+        set({ selectedFeatures: { ...get().selectedFeatures, [featureType]: ids } }),
 
-      setCustomData: (key: string, value: unknown) => {
-        const { customData } = get();
-        set({ customData: { ...customData, [key]: value } });
-      },
+      setCustomData: (key: string, value: unknown) =>
+        set({ customData: { ...get().customData, [key]: value } }),
 
-      startGeneration: () => {
-        set({ generationStatus: "preparing", generationProgress: 0, generationError: undefined });
-      },
+      startGeneration: () =>
+        set({ generationStatus: "preparing", generationProgress: 0, generationError: undefined }),
 
-      updateProgress: (progress: number) => {
-        const generationStatus = progress >= 100 ? "completed" : progress > 0 ? "generating" : "preparing";
-        set({ generationProgress: progress, generationStatus });
-      },
+      updateProgress: (progress: number) =>
+        set({
+          generationProgress: progress,
+          generationStatus: progress >= 100 ? "completed" : progress > 0 ? "generating" : "preparing",
+        }),
 
-      setResult: (result: unknown) => {
-        set({ generationResult: result, generationStatus: "completed", generationProgress: 100 });
-      },
+      setResult: (result: unknown) =>
+        set({ generationResult: result, generationStatus: "completed", generationProgress: 100 }),
 
-      setError: (error: string) => {
-        set({ generationError: error, generationStatus: "failed", generationProgress: 0 });
-      },
+      setError: (error: string) =>
+        set({ generationError: error, generationStatus: "failed", generationProgress: 0 }),
 
       reset: () => {
         const { stepDefinitions } = get();
@@ -153,9 +123,7 @@ export const createFlowStore = (config: FlowStoreConfig) => {
 
       completeStep: (stepId: string) => {
         const { completedSteps } = get();
-        if (!completedSteps.includes(stepId)) {
-          set({ completedSteps: [...completedSteps, stepId] });
-        }
+        if (!completedSteps.includes(stepId)) set({ completedSteps: [...completedSteps, stepId] });
       },
     }),
   });

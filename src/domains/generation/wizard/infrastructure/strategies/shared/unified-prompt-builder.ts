@@ -6,7 +6,7 @@
  */
 
 import { createMultiPersonPrompt } from "../../../../../prompts/domain/entities/MultiPersonPromptStructure";
-import { createPhotorealisticPrompt } from "../../../../../prompts/domain/entities/BasePromptStructure";
+import { createPhotorealisticPrompt } from "../../../../../prompts/domain/base/creators";
 
 export interface BuildPromptOptions {
   /** Base scenario prompt (aiPrompt from scenario config) */
