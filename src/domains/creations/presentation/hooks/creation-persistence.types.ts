@@ -21,7 +21,7 @@ export interface BaseProcessingResult {
 }
 
 export interface UseCreationPersistenceReturn {
-  readonly onProcessingStart: <T extends BaseProcessingStartData>(data: T) => void;
-  readonly onProcessingComplete: <T extends BaseProcessingResult>(result: T) => void;
-  readonly onError: (error: string, creationId?: string) => void;
+  readonly onProcessingStart: <T extends BaseProcessingStartData>(data: T) => Promise<void>;
+  readonly onProcessingComplete: <T extends BaseProcessingResult>(result: T) => Promise<void>;
+  readonly onError: (error: string, creationId?: string) => Promise<void>;
 }

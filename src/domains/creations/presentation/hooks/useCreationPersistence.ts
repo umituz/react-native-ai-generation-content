@@ -25,7 +25,7 @@ export function useCreationPersistence(
   const repository = useMemo(() => createCreationsRepository(collectionName), [collectionName]);
 
   const onProcessingStart = useCallback(
-    <T extends BaseProcessingStartData>(data: T) => {
+    async <T extends BaseProcessingStartData>(data: T): Promise<void> => {
       if (!userId) return;
       const { creationId, ...rest } = data;
       const cleanMetadata = Object.fromEntries(
@@ -41,23 +41,23 @@ export function useCreationPersistence(
         isFavorite: false,
         metadata: cleanMetadata,
       };
-      repository.create(userId, creation);
+      await repository.create(userId, creation);
     },
     [userId, repository, type]
   );
 
   const onProcessingComplete = useCallback(
-    <T extends BaseProcessingResult>(result: T) => {
+    async <T extends BaseProcessingResult>(result: T): Promise<void> => {
       if (!userId || !result.creationId) return;
 
       const validation = runAllValidations(result.imageUrl, result.videoUrl);
       if (!validation.isValid) {
-        markCreationAsFailed(repository, userId, result.creationId, validation.error!);
+        await markCreationAsFailed(repository, userId, result.creationId, validation.error!);
         return;
       }
 
       const uri = result.imageUrl || result.videoUrl || "";
-      repository.update(userId, result.creationId, {
+      await repository.update(userId, result.creationId, {
         [CREATION_FIELDS.URI]: uri,
         [CREATION_FIELDS.STATUS]: CREATION_STATUS.COMPLETED,
         [CREATION_FIELDS.OUTPUT]: result.imageUrl
@@ -75,9 +75,9 @@ export function useCreationPersistence(
   );
 
   const onError = useCallback(
-    (error: string, creationId?: string) => {
+    async (error: string, creationId?: string): Promise<void> => {
       if (!userId || !creationId) return;
-      markCreationAsFailed(repository, userId, creationId, error);
+      await markCreationAsFailed(repository, userId, creationId, error);
     },
     [userId, repository]
   );

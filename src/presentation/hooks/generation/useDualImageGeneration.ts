@@ -51,19 +51,17 @@ export const useDualImageGeneration = (
   const strategy: GenerationStrategy<GenerationInput, string> = useMemo(
     () => ({
       execute: async (input) => {
-        setProgress(30);
+        // Don't use fake progress - let UI show indeterminate loading
         const result = await executeMultiImageGeneration({
           photos: [input.sourceBase64, input.targetBase64],
           prompt: getPrompt(),
           model,
         });
-        setProgress(90);
 
         if (!result.success || !result.imageUrl) {
           throw new Error(result.error || "Generation failed");
         }
 
-        setProgress(100);
         return result.imageUrl;
       },
       getCreditCost: () => creditCost,
@@ -87,12 +85,14 @@ export const useDualImageGeneration = (
       return;
     }
 
-    setProgress(10);
+    // Progress will be indeterminate - no fake percentages
+    setProgress(-1); // -1 indicates indeterminate/unknown progress
     try {
       await orchestrator.generate({
         sourceBase64: sourceImage.base64,
         targetBase64: targetImage.base64,
       });
+      setProgress(100); // Only set to 100 when actually complete
     } catch {
       setProgress(0);
     }
