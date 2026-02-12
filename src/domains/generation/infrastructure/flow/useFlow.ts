@@ -25,12 +25,9 @@ interface UseFlowReturn extends FlowState, FlowActions {
   getPartnerName: (partnerId: string) => string;
 }
 
-let flowStoreInstance: FlowStoreType | null = null;
-
 export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
   const storeRef = useRef<FlowStoreType | null>(null);
   const prevConfigRef = useRef<{ initialStepIndex?: number; initialStepId?: string; stepsCount: number } | undefined>(undefined);
-  const isResettingRef = useRef(false);
 
   // Detect config changes (initialStepIndex, initialStepId, or steps changed)
   const configChanged =
@@ -39,27 +36,19 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
       prevConfigRef.current.initialStepId !== config.initialStepId ||
       prevConfigRef.current.stepsCount !== config.steps.length);
 
-  // If config changed, reset and recreate store (with guard against multiple resets)
-  if (configChanged && !isResettingRef.current) {
-    isResettingRef.current = true;
-    if (flowStoreInstance) {
-      flowStoreInstance.getState().reset();
-    }
-    flowStoreInstance = null;
+  // If config changed, reset and recreate store (per-component instance)
+  if (configChanged && storeRef.current) {
+    storeRef.current.getState().reset();
     storeRef.current = null;
-    isResettingRef.current = false;
   }
 
-  // Initialize store if needed
-  if (!storeRef.current && !isResettingRef.current) {
-    if (!flowStoreInstance) {
-      flowStoreInstance = createFlowStore({
-        steps: config.steps,
-        initialStepId: config.initialStepId,
-        initialStepIndex: config.initialStepIndex,
-      });
-    }
-    storeRef.current = flowStoreInstance;
+  // Initialize store if needed (per-component instance)
+  if (!storeRef.current) {
+    storeRef.current = createFlowStore({
+      steps: config.steps,
+      initialStepId: config.initialStepId,
+      initialStepIndex: config.initialStepIndex,
+    });
   }
 
   // Store current config for next render comparison
@@ -115,9 +104,8 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
   };
 };
 
+// Note: resetFlowStore is no longer needed as each component instance maintains its own store
+// If you need to reset flow state, use the reset() action from the useFlow hook
 export const resetFlowStore = () => {
-  if (flowStoreInstance) {
-    flowStoreInstance.getState().reset();
-  }
-  flowStoreInstance = null;
+  console.warn('resetFlowStore is deprecated. Each component now maintains its own flow store instance.');
 };

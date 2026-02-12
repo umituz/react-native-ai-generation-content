@@ -95,8 +95,20 @@ export class CreationsFetcher {
     ): UnsubscribeFunction {
         const userCollection = this.pathResolver.getUserCollection(userId);
         if (!userCollection) {
+            const error = new Error(`[CreationsFetcher] Cannot subscribe: Invalid user collection for userId: ${userId}`);
+            if (__DEV__) {
+                console.error(error.message);
+            }
+            // Return empty array immediately
             onData([]);
-            return () => {};
+            // Report error to callback
+            onError?.(error);
+            // Return no-op unsubscribe function (no listener was created)
+            return () => {
+                if (__DEV__) {
+                    console.log("[CreationsFetcher] No-op unsubscribe called (no listener was created)");
+                }
+            };
         }
 
         // Optimized query with server-side filtering

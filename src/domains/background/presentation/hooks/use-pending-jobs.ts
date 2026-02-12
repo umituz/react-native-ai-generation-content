@@ -22,7 +22,9 @@ export interface UsePendingJobsReturn<TInput = unknown, TResult = unknown> {
   readonly addJob: (input: AddJobInput<TInput>) => void;
   readonly addJobAsync: (input: AddJobInput<TInput>) => Promise<BackgroundJob<TInput, TResult>>;
   readonly updateJob: (input: UpdateJobInput) => void;
+  readonly updateJobAsync: (input: UpdateJobInput) => Promise<{ id: string; updates: Partial<BackgroundJob<TInput, TResult>> }>;
   readonly removeJob: (id: string) => void;
+  readonly removeJobAsync: (id: string) => Promise<string>;
   readonly clearCompleted: () => void;
   readonly clearFailed: () => void;
   readonly getJob: (id: string) => BackgroundJob<TInput, TResult> | undefined;
@@ -116,7 +118,9 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
     addJob: addJobMutation.mutate,
     addJobAsync: addJobMutation.mutateAsync,
     updateJob: updateJobMutation.mutate,
+    updateJobAsync: updateJobMutation.mutateAsync,
     removeJob: removeJobMutation.mutate,
+    removeJobAsync: removeJobMutation.mutateAsync,
     clearCompleted: clearCompletedMutation.mutate,
     clearFailed: clearFailedMutation.mutate,
     getJob,

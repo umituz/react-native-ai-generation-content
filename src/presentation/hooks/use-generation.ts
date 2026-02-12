@@ -37,27 +37,40 @@ export function useGeneration<T = unknown>(
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const abortControllerRef = useRef<AbortController | null>(null);
   const abortRef = useRef(false);
 
   // Abort on unmount to prevent state updates after unmount
   useEffect(() => {
     return () => {
       abortRef.current = true;
+      abortControllerRef.current?.abort();
     };
   }, []);
 
-  const handleProgress = useCallback(
-    (prog: GenerationProgress) => {
-      if (abortRef.current) return;
-      setProgress(prog);
-      options.onProgress?.(prog);
-    },
-    [options],
-  );
+  // Stabilize callbacks to prevent unnecessary re-renders
+  const onSuccessRef = useRef(options.onSuccess);
+  const onErrorRef = useRef(options.onError);
+  const onProgressRef = useRef(options.onProgress);
+
+  useEffect(() => {
+    onSuccessRef.current = options.onSuccess;
+    onErrorRef.current = options.onError;
+    onProgressRef.current = options.onProgress;
+  }, [options.onSuccess, options.onError, options.onProgress]);
+
+  const handleProgress = useCallback((prog: GenerationProgress) => {
+    if (abortRef.current) return;
+    setProgress(prog);
+    onProgressRef.current?.(prog);
+  }, []);
 
   const generate = useCallback(
     async (input: Record<string, unknown>, userId?: string) => {
+      // Create new AbortController for this generation
+      abortControllerRef.current = new AbortController();
       abortRef.current = false;
+
       setIsGenerating(true);
       setError(null);
       setResult(null);
@@ -70,38 +83,42 @@ export function useGeneration<T = unknown>(
           userId,
           capability: options.capability,
           onProgress: handleProgress,
+          signal: abortControllerRef.current.signal,
         };
 
         const genResult = await generationOrchestrator.generate<T>(request);
 
-        if (abortRef.current) return;
+        if (abortRef.current || abortControllerRef.current.signal.aborted) return;
 
         setResult(genResult);
 
         if (genResult.success) {
-          options.onSuccess?.(genResult);
+          onSuccessRef.current?.(genResult);
         } else if (genResult.error) {
           setError(genResult.error);
-          options.onError?.(genResult.error);
+          onErrorRef.current?.(genResult.error);
         }
       } catch (err) {
-        if (abortRef.current) return;
+        if (abortRef.current || abortControllerRef.current?.signal.aborted) return;
 
         const errorMessage =
           err instanceof Error ? err.message : "error.unknown";
         setError(errorMessage);
-        options.onError?.(errorMessage);
+        onErrorRef.current?.(errorMessage);
       } finally {
-        if (!abortRef.current) {
+        if (!abortRef.current && !abortControllerRef.current?.signal.aborted) {
           setIsGenerating(false);
         }
+        abortControllerRef.current = null;
       }
     },
-    [options, handleProgress],
+    [options.model, options.capability, handleProgress],
   );
 
   const reset = useCallback(() => {
     abortRef.current = true;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
     setResult(null);
     setProgress(null);
     setIsGenerating(false);

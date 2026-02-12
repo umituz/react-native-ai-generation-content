@@ -21,7 +21,7 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const { jobs, addJobAsync, updateJob, removeJob, getJob } = usePendingJobs<
+  const { jobs, addJobAsync, updateJob, updateJobAsync, removeJob, removeJobAsync, getJob } = usePendingJobs<
     TInput,
     TResult
   >({
@@ -43,14 +43,15 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
         input,
         executor,
         updateJob,
-        removeJob,
+        updateJobAsync,
+        removeJobAsync,
         getJob,
         activeJobsRef,
         onJobComplete,
         onJobError,
         onAllComplete,
       }),
-    [executor, onJobComplete, onJobError, onAllComplete, updateJob, removeJob, getJob],
+    [executor, onJobComplete, onJobError, onAllComplete, updateJob, updateJobAsync, removeJobAsync, getJob],
   );
 
   const startJob = useCallback(
