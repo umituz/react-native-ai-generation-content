@@ -105,12 +105,14 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
     // Auth and credit checks should be handled by useFeatureGate before calling this
     // Only keeping prompt validation here
 
+    const trimmedNegativePrompt = formState.negativePrompt.trim();
+
     const request: TextToImageGenerationRequest = {
       prompt: trimmedPrompt,
-      model: formState.selectedModel ?? undefined,
+      model: formState.selectedModel === null ? undefined : formState.selectedModel,
       aspectRatio: formState.aspectRatio,
       size: formState.size,
-      negativePrompt: formState.negativePrompt.trim() || undefined,
+      negativePrompt: trimmedNegativePrompt === "" ? undefined : trimmedNegativePrompt,
       guidanceScale: formState.guidanceScale,
       numImages: formState.numImages,
       style: formState.selectedStyle,
