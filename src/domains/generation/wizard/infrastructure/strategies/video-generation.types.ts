@@ -59,3 +59,87 @@ export function validatePhotoCount(
 
   return { isValid: true };
 }
+
+/**
+ * Type guard for WizardVideoInput
+ * Validates runtime input and provides type safety
+ */
+export function isWizardVideoInput(input: unknown): input is WizardVideoInput {
+  if (!input || typeof input !== "object") {
+    return false;
+  }
+
+  const obj = input as Record<string, unknown>;
+
+  // prompt is required
+  if (typeof obj.prompt !== "string" || obj.prompt.length === 0) {
+    return false;
+  }
+
+  // Optional fields validation
+  if (obj.sourceImageBase64 !== undefined && typeof obj.sourceImageBase64 !== "string") {
+    return false;
+  }
+
+  if (obj.targetImageBase64 !== undefined && typeof obj.targetImageBase64 !== "string") {
+    return false;
+  }
+
+  if (obj.duration !== undefined && typeof obj.duration !== "number") {
+    return false;
+  }
+
+  if (obj.aspectRatio !== undefined && typeof obj.aspectRatio !== "string") {
+    return false;
+  }
+
+  if (obj.resolution !== undefined && typeof obj.resolution !== "string") {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Validates and casts input to WizardVideoInput
+ * Throws descriptive error if validation fails
+ */
+export function validateWizardVideoInput(input: unknown): WizardVideoInput {
+  if (!isWizardVideoInput(input)) {
+    const errors: string[] = [];
+
+    if (!input || typeof input !== "object") {
+      throw new Error("Invalid input: expected object");
+    }
+
+    const obj = input as Record<string, unknown>;
+
+    if (typeof obj.prompt !== "string" || obj.prompt.length === 0) {
+      errors.push("prompt (string, required)");
+    }
+
+    if (obj.sourceImageBase64 !== undefined && typeof obj.sourceImageBase64 !== "string") {
+      errors.push("sourceImageBase64 (string, optional)");
+    }
+
+    if (obj.targetImageBase64 !== undefined && typeof obj.targetImageBase64 !== "string") {
+      errors.push("targetImageBase64 (string, optional)");
+    }
+
+    if (obj.duration !== undefined && typeof obj.duration !== "number") {
+      errors.push("duration (number, optional)");
+    }
+
+    if (obj.aspectRatio !== undefined && typeof obj.aspectRatio !== "string") {
+      errors.push("aspectRatio (string, optional)");
+    }
+
+    if (obj.resolution !== undefined && typeof obj.resolution !== "string") {
+      errors.push("resolution (string, optional)");
+    }
+
+    throw new Error(`Invalid WizardVideoInput: ${errors.join(", ")}`);
+  }
+
+  return input;
+}

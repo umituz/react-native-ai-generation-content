@@ -21,7 +21,7 @@ export abstract class BaseExecutor<TRequest, TResult, TOutput> {
     options: BaseExecutorOptions<TRequest, TOutput>,
   ): Promise<Result<TResult, string>> {
     const providerResult = this.getProvider();
-    if (providerResult.error) return failure(providerResult.error);
+    if (providerResult.error || !providerResult.provider) return failure(providerResult.error);
 
     const validationError = this.validateRequest(request);
     if (validationError) {
@@ -88,7 +88,7 @@ export abstract class BaseExecutor<TRequest, TResult, TOutput> {
     return success(this.transformResult(extracted as TOutput));
   }
 
-  private log(level: "info" | "error", message: string): void {
+  protected log(level: "info" | "error", message: string): void {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       const fn = level === "error" ? console.error : console.log;
       fn(`[${this.logPrefix}] ${message}`);

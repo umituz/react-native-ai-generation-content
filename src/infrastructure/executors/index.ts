@@ -4,4 +4,4 @@
  */
 
 export { BaseExecutor } from "./base-executor";
-export type { BaseExecutorOptions } from "./base-executor";
+export type { BaseExecutorOptions } from "./base-executor.types";

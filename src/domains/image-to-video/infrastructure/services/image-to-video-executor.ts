@@ -14,6 +14,9 @@ import type { ImageToVideoRequest, ImageToVideoResult } from "../../domain/types
 import { env } from "../../../../infrastructure/config/env.config";
 import type { ExecuteImageToVideoOptions } from "./image-to-video-executor.types";
 
+// Export types
+export type { ExecuteImageToVideoOptions };
+
 const STATUS_PROGRESS: Record<string, number> = {
   queued: 10,
   in_queue: 15,
@@ -41,17 +44,17 @@ class ImageToVideoExecutor extends BaseExecutor<
     input: Record<string, unknown>,
     onProgress?: (progress: number) => void,
   ): Promise<unknown> {
-    this.logInfo("Starting provider.subscribe()...");
+    this.log("info", "Starting provider.subscribe()...");
 
     const result = await provider.subscribe(model, input, {
       onQueueUpdate: (status: { status: string; queuePosition?: number }) => {
-        this.logInfo(`Queue: ${status.status}, pos: ${status.queuePosition}`);
+        this.log("info", `Queue: ${status.status}, pos: ${status.queuePosition}`);
         onProgress?.(STATUS_PROGRESS[status.status.toLowerCase()] ?? 30);
       },
       timeoutMs: env.generationVideoTimeoutMs,
     });
 
-    this.logInfo(`Complete, keys: ${result ? Object.keys(result as object) : "null"}`);
+    this.log("info", `Complete, keys: ${result ? Object.keys(result as object) : "null"}`);
     checkFalApiError(result);
     return result;
   }

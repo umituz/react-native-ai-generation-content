@@ -10,7 +10,6 @@ import { GenericWizardFlow } from "../../../../domains/generation/wizard/present
 import { TEXT_TO_IMAGE_WIZARD_CONFIG } from "../../../../domains/generation/wizard/configs";
 import { useAIFeatureGate } from "../../../../domains/access-control";
 import {
-  createDefaultAlerts,
   createScenarioData,
   useWizardFlowHandlers,
   AutoSkipPreview,

@@ -55,7 +55,7 @@ class TextToVideoExecutor extends BaseExecutor<
     input: Record<string, unknown>,
     onProgress?: (progress: number) => void,
   ): Promise<unknown> {
-    this.logInfo("Starting provider.run()...");
+    this.log("info","Starting provider.run()...");
 
     // Provider reports real progress via callback
     const result = await provider.run(model, input, {
@@ -68,7 +68,7 @@ class TextToVideoExecutor extends BaseExecutor<
       },
     });
 
-    this.logInfo("provider.run() completed");
+    this.log("info","provider.run() completed");
     return result;
   }
 

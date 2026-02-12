@@ -6,7 +6,6 @@ export * from "./error-classifier.util";
 export * from "./error-message-extractor.util";
 export * from "./error-handling.util";
 export * from "./validation.util";
-export * from "./type-guards.util";
 export * from "./api-client.util";
 export * from "../../domains/background/infrastructure/utils/polling-interval.util";
 export * from "./progress-calculator.util";
@@ -21,3 +20,8 @@ export * from "./provider-validator.util";
 export * from "./base64.util";
 export * from "./video-result-extractor.util";
 export * from "./id-generator.util";
+
+// Export type guards (avoiding duplicate exports)
+export { hasProperty, hasProperties } from "./structure-guards";
+export { isObject, isNonEmptyString, isArray, isNumber, isFunction } from "./primitive-guards";
+export { isCreationWithOutput, isWizardData } from "./domain-guards";

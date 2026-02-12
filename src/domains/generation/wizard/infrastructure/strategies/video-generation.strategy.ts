@@ -15,7 +15,7 @@ import { extractPrompt, extractDuration, extractAspectRatio, extractResolution }
 import { extractPhotosAsBase64 } from "./shared/photo-extraction.utils";
 import { getVideoFeatureType } from "./video-generation.utils";
 import type { WizardVideoInput, CreateVideoStrategyOptions } from "./video-generation.types";
-import { validatePhotoCount } from "./video-generation.types";
+import { validatePhotoCount, validateWizardVideoInput } from "./video-generation.types";
 
 declare const __DEV__: boolean;
 
@@ -76,7 +76,8 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
 
   return {
     execute: async (input: unknown) => {
-      const videoInput = input as WizardVideoInput;
+      // Runtime validation with descriptive errors
+      const videoInput = validateWizardVideoInput(input);
 
       const result = await executeVideoFeature(videoFeatureType, {
         sourceImageBase64: videoInput.sourceImageBase64,
@@ -97,7 +98,8 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
     },
 
     submitToQueue: async (input: unknown) => {
-      const videoInput = input as WizardVideoInput;
+      // Runtime validation with descriptive errors
+      const videoInput = validateWizardVideoInput(input);
 
       const result = await submitVideoFeatureToQueue(videoFeatureType, {
         sourceImageBase64: videoInput.sourceImageBase64,

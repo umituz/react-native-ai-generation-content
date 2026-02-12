@@ -46,7 +46,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       if (creationId && userId && (urls.videoUrl || urls.imageUrl)) {
         try {
           await persistence.updateToCompleted(userId, creationId, {
-            uri: urls.videoUrl || urls.imageUrl,
+            uri: (urls.videoUrl || urls.imageUrl) ?? "",
             imageUrl: urls.imageUrl,
             videoUrl: urls.videoUrl,
           });
@@ -123,7 +123,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       requestIdRef.current = queueResult.requestId;
       modelRef.current = queueResult.model;
 
-      if (creationId && userId) {
+      if (creationId && userId && queueResult.requestId && queueResult.model) {
         try {
           await persistence.updateRequestId(userId, creationId, queueResult.requestId, queueResult.model);
         } catch {}

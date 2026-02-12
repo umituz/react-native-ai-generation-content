@@ -13,10 +13,9 @@ import type {
   TextToImageFormActions,
   TextToImageFormDefaults,
 } from "../../domain/types/form.types";
-import { DEFAULT_FORM_VALUES } from "../../domain/constants/options.constants";
 
 export interface UseFormStateOptions {
-  defaults: Required<TextToImageFormDefaults>;
+  defaults: TextToImageFormDefaults;
 }
 
 export interface UseFormStateReturn {

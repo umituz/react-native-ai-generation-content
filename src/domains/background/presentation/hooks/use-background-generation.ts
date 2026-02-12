@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useMemo } from "react";
 import { usePendingJobs } from "./use-pending-jobs";
 import { executeDirectGeneration, executeQueuedJob } from "../../infrastructure/executors/backgroundJobExecutor";
 import { DEFAULT_QUEUE_CONFIG } from "../../domain/entities/job.types";
@@ -85,13 +85,23 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
     [removeJob],
   );
 
+  // Calculate active jobs from TanStack Query state (not ref) for reactivity
+  // Active jobs are those currently processing or queued
+  const activeJobs = useMemo(
+    () => jobs.filter((job) => job.status === "processing" || job.status === "queued"),
+    [jobs]
+  );
+
+  const activeJobCount = activeJobs.length;
+  const hasActiveJobs = activeJobCount > 0;
+
   return {
     startJob,
     executeDirectly,
     cancelJob,
     pendingJobs: jobs,
-    activeJobCount: activeJobsRef.current.size,
-    hasActiveJobs: activeJobsRef.current.size > 0,
+    activeJobCount,
+    hasActiveJobs,
     isProcessing,
     progress,
   };

@@ -19,7 +19,7 @@ export async function fetchWithTimeout<T>(
   const { retries = 0 } = options;
 
   const operation = async (): Promise<T> => {
-    const response = await executeRequest<T>(url, options);
+    const response = await executeRequest(url, options);
 
     if (!isSuccessResponse(response)) {
       const errorMessage = await extractErrorMessage(response);

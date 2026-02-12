@@ -144,7 +144,7 @@ export class CreationsFetcher {
                 if (__DEV__) {
                     console.error("[CreationsFetcher] Realtime subscription error:", {
                         error: error.message,
-                        code: (error as any).code,
+                        code: (error as { code?: string }).code,
                         userId,
                     });
                 }

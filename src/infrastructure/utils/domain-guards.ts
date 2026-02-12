@@ -2,7 +2,8 @@
  * Domain-Specific Type Guards
  */
 
-import { hasProperty, isObject } from "./structure-guards";
+import { hasProperty } from "./structure-guards";
+import { isObject } from "./primitive-guards";
 import { isNonEmptyString } from "./primitive-guards";
 
 /**

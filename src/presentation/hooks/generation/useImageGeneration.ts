@@ -15,6 +15,9 @@ import type {
   DualImageInput,
 } from "./use-image-generation.types";
 
+// Export types
+export type { ImageGenerationConfig, ImageGenerationInput, SingleImageInput, DualImageInput } from "./use-image-generation.types";
+
 const isDualImageInput = (input: ImageGenerationInput): input is DualImageInput =>
   "sourceImageBase64" in input && "targetImageBase64" in input;
 

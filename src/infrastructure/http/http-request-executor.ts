@@ -11,7 +11,7 @@ import type { RequestOptions } from "./api-client.types";
 /**
  * Executes HTTP request with timeout
  */
-export async function executeRequest<T>(
+export async function executeRequest(
   url: string,
   options: RequestOptions = {}
 ): Promise<Response> {

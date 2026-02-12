@@ -24,8 +24,8 @@ export interface UseFormStateReturn {
 function createInitialState(defaults: ImageToVideoFormDefaults): ImageToVideoFormState {
   return {
     selectedImages: [],
-    animationStyle: defaults.animationStyle,
-    duration: defaults.duration,
+    animationStyle: defaults.animationStyle ?? "none",
+    duration: defaults.duration ?? 3,
     motionPrompt: "",
   };
 }

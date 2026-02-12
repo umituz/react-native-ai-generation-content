@@ -10,6 +10,56 @@ import { checkStatusForErrors, isJobComplete } from "../utils/status-checker.uti
 import { validateResult } from "../utils/result-validator.util";
 import type { PollJobOptions, PollJobResult } from "./job-poller.types";
 
+declare const __DEV__: boolean;
+
+/**
+ * Wraps a promise with abort signal support
+ * Rejects if signal is aborted before promise resolves
+ */
+function withAbortSignal<T>(
+  promise: Promise<T>,
+  signal: AbortSignal | undefined,
+  timeoutMs?: number,
+): Promise<T> {
+  if (!signal && !timeoutMs) {
+    return promise;
+  }
+
+  return new Promise<T>((resolve, reject) => {
+    // Handle abort signal
+    if (signal?.aborted) {
+      reject(new Error("Operation aborted"));
+      return;
+    }
+
+    const abortHandler = () => {
+      reject(new Error("Operation aborted"));
+    };
+
+    signal?.addEventListener("abort", abortHandler, { once: true });
+
+    // Handle timeout
+    let timeoutId: NodeJS.Timeout | undefined;
+    if (timeoutMs) {
+      timeoutId = setTimeout(() => {
+        reject(new Error(`Operation timeout after ${timeoutMs}ms`));
+      }, timeoutMs);
+    }
+
+    promise
+      .then((result) => {
+        signal?.removeEventListener("abort", abortHandler);
+        if (timeoutId) clearTimeout(timeoutId);
+        resolve(result);
+      })
+      .catch((error) => {
+        signal?.removeEventListener("abort", abortHandler);
+        if (timeoutId) clearTimeout(timeoutId);
+        reject(error);
+      });
+  });
+}
+
 /**
  * Poll job until completion with exponential backoff
  * Only reports 100% on actual completion
@@ -60,7 +110,12 @@ export async function pollJob<T = unknown>(
     }
 
     try {
-      const status = await provider.getJobStatus(model, requestId);
+      // Wrap provider calls with abort signal support and timeout (30s default)
+      const status = await withAbortSignal(
+        provider.getJobStatus(model, requestId),
+        signal,
+        30000,
+      );
       onStatusChange?.(status);
 
       const statusCheck = checkStatusForErrors(status);
@@ -77,7 +132,12 @@ export async function pollJob<T = unknown>(
       consecutiveTransientErrors = 0;
 
       if (isJobComplete(status)) {
-        const result = await provider.getJobResult<T>(model, requestId);
+        // Wrap result retrieval with abort signal support and timeout (60s for larger results)
+        const result = await withAbortSignal(
+          provider.getJobResult<T>(model, requestId),
+          signal,
+          60000,
+        );
 
         const validation = validateResult(result);
         if (!validation.isValid) {
@@ -98,11 +158,29 @@ export async function pollJob<T = unknown>(
           elapsedMs: Date.now() - startTime,
         };
       }
-    } catch {
+    } catch (error) {
       consecutiveTransientErrors++;
+
+      if (__DEV__) {
+        console.warn("[JobPoller] Transient error during polling", {
+          attempt: attempt + 1,
+          requestId,
+          model,
+          consecutiveErrors: consecutiveTransientErrors,
+          error: error instanceof Error ? error.message : String(error),
+          code: (error as { code?: string })?.code,
+        });
+      }
 
       // Check if we've hit max consecutive transient errors
       if (maxConsecutiveErrors && consecutiveTransientErrors >= maxConsecutiveErrors) {
+        if (__DEV__) {
+          console.error("[JobPoller] Max consecutive errors reached", {
+            maxConsecutiveErrors,
+            requestId,
+            model,
+          });
+        }
         return {
           success: false,
           error: new Error(`Too many consecutive errors (${consecutiveTransientErrors})`),

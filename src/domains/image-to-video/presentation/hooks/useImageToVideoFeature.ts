@@ -1,11 +1,12 @@
 import { useState, useCallback, useMemo, useRef } from "react";
 import { useGenerationOrchestrator } from "../../../../presentation/hooks/generation";
 import { createImageToVideoStrategy } from "./imageToVideoStrategy";
-import type {
-  UseImageToVideoFeatureProps,
-  UseImageToVideoFeatureReturn,
+import type { ImageToVideoCallbacks } from "../../domain/types";
+import {
   INITIAL_STATE,
   DEFAULT_ALERT_MESSAGES,
+  type UseImageToVideoFeatureProps,
+  type UseImageToVideoFeatureReturn,
 } from "./image-to-video-feature.types";
 
 export type {
@@ -26,7 +27,7 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
     () =>
       createImageToVideoStrategy({
         config,
-        callbacks,
+        callbacks: callbacks as ImageToVideoCallbacks | undefined,
         buildInput: config.buildInput,
         extractResult: config.extractResult,
         userId,
@@ -40,14 +41,17 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages: DEFAULT_ALERT_MESSAGES,
-    onCreditsExhausted: () => callbacks.onShowPaywall?.(config.creditCost ?? 0),
-    onSuccess: (result) => {
-      config.onProcessingComplete?.();
-      callbacks.onGenerate?.(result);
+    onCreditsExhausted: () => callbacks?.onShowPaywall?.(config.creditCost ?? 0),
+    onSuccess: (result: unknown) => {
+      const typedResult = result as { success: boolean; videoUrl?: string; thumbnailUrl?: string };
+      if (typedResult.success && typedResult.videoUrl) {
+        config.onProcessingComplete?.(typedResult);
+        callbacks?.onGenerate?.(typedResult);
+      }
     },
     onError: (err) => {
-      config.onProcessingError?.(err.message);
-      callbacks.onError?.(err.message);
+      config.onError?.(err.message);
+      callbacks?.onError?.(err.message);
     },
   });
 
@@ -60,8 +64,8 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
   }, []);
 
   const generate = useCallback(
-    async (params?: any) => {
-      const imageUri = params?.imageUri || state.imageUri;
+    async (params?: unknown): Promise<{ success: boolean; videoUrl?: string; thumbnailUrl?: string; error?: string }> => {
+      const imageUri = (params && typeof params === "object" && "imageUri" in params ? (params as { imageUri?: string }).imageUri : undefined) || state.imageUri;
       if (!imageUri) {
         const error = "Image is required";
         setState((prev) => ({ ...prev, error }));
@@ -74,11 +78,12 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
         const result = await orchestrator.generate({
           imageUrl: imageUri,
           prompt: state.motionPrompt || "",
-          options: params,
+          options: params && typeof params === "object" ? params : undefined,
           creationId: `image-to-video-${Date.now()}`,
         });
         setState((prev) => ({ ...prev, isProcessing: false }));
-        return result;
+        const typedResult = result as { success: boolean; videoUrl?: string; thumbnailUrl?: string; error?: string };
+        return typedResult;
       } catch (error) {
         const message = error instanceof Error ? error.message : "Generation failed";
         setState((prev) => ({ ...prev, isProcessing: false, error: message }));

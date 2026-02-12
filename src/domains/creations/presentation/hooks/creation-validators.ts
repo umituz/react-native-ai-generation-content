@@ -14,7 +14,6 @@ import {
 } from "../../domain/constants";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 
-declare const __DEV__: boolean;
 
 export interface ValidationResult {
   isValid: boolean;

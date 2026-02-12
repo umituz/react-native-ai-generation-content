@@ -4,7 +4,6 @@
 
 import type {
   FlowState,
-  FlowActions,
   StepDefinition,
 } from "../../../../domain/entities/flow-config.types";
 

@@ -52,7 +52,7 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
     hasSubscription: isPremium,
     creditBalance,
     requiredCredits: creditCost,
-    onShowPaywall: openPaywall,
+    onShowPaywall: () => openPaywall(),
     isCreditsLoaded,
   });
 

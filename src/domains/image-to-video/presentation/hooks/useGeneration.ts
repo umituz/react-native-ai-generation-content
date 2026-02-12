@@ -1,9 +1,9 @@
 /**
  * Generation Hook for Image-to-Video
- * Manages generation state and execution
+ * Manages generation state and execution with abort support
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import type {
   ImageToVideoFormState,
   ImageToVideoGenerationState,
@@ -36,19 +36,45 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
     INITIAL_GENERATION_STATE
   );
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const isMountedRef = useRef(true);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
+  // Stabilize callbacks to prevent unnecessary re-renders
+  const onErrorRef = useRef(callbacks.onError);
+  const onGenerateRef = useRef(callbacks.onGenerate);
+
+  useEffect(() => {
+    onErrorRef.current = callbacks.onError;
+    onGenerateRef.current = callbacks.onGenerate;
+  }, [callbacks.onError, callbacks.onGenerate]);
+
   const setProgress = useCallback((progress: number) => {
+    if (!isMountedRef.current) return;
     setGenerationState((prev) => ({ ...prev, progress }));
   }, []);
 
   const setError = useCallback((error: string | null) => {
+    if (!isMountedRef.current) return;
     setGenerationState((prev) => ({ ...prev, error, isGenerating: false }));
   }, []);
 
   const handleGenerate = useCallback(async () => {
     if (formState.selectedImages.length === 0) {
-      callbacks.onError?.("No images selected");
+      onErrorRef.current?.("No images selected");
       return;
     }
+
+    // Create new AbortController for this generation
+    abortControllerRef.current = new AbortController();
 
     setGenerationState({
       isGenerating: true,
@@ -57,18 +83,25 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
     });
 
     try {
-      await callbacks.onGenerate(formState);
+      await onGenerateRef.current(formState);
+
+      if (!isMountedRef.current || abortControllerRef.current.signal.aborted) return;
+
       setGenerationState((prev) => ({ ...prev, isGenerating: false, progress: 100 }));
     } catch (error) {
+      if (!isMountedRef.current || abortControllerRef.current.signal.aborted) return;
+
       const errorMessage = error instanceof Error ? error.message : String(error);
       setGenerationState({
         isGenerating: false,
         progress: 0,
         error: errorMessage,
       });
-      callbacks.onError?.(errorMessage);
+      onErrorRef.current?.(errorMessage);
+    } finally {
+      abortControllerRef.current = null;
     }
-  }, [formState, callbacks]);
+  }, [formState]);
 
   const isReady = useMemo(
     () => formState.selectedImages.length > 0 && !generationState.isGenerating,

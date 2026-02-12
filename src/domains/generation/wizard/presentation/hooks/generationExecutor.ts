@@ -1,19 +1,18 @@
 import { buildWizardInput } from "../../infrastructure/strategies";
 import type { WizardScenarioData } from "./wizard-generation.types";
-import type { Scenario } from "../../../../scenarios/domain/scenario.types";
 import type { GenerationAction } from "./generationStateMachine";
 
 declare const __DEV__: boolean;
 
 interface ExecuteGenerationParams {
-  wizardData: WizardScenarioData;
-  scenario: Scenario;
+  wizardData: Record<string, unknown>;
+  scenario: WizardScenarioData;
   isVideoMode: boolean;
   isMountedRef: React.MutableRefObject<boolean>;
   dispatch: React.Dispatch<GenerationAction>;
   onError?: (error: string) => void;
-  videoGenerationFn: (input: any, prompt: string) => Promise<void>;
-  photoGenerationFn: (input: any, prompt: string) => Promise<void>;
+  videoGenerationFn: (input: unknown, prompt: string) => Promise<void>;
+  photoGenerationFn: (input: unknown, prompt: string) => Promise<void>;
 }
 
 export const executeWizardGeneration = async (params: ExecuteGenerationParams): Promise<void> => {
@@ -52,10 +51,10 @@ export const executeWizardGeneration = async (params: ExecuteGenerationParams): 
     if (isMountedRef.current) {
       dispatch({ type: "COMPLETE" });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (!isMountedRef.current) return;
 
-    const errorMsg = error?.message || "error.generation.unknown";
+    const errorMsg = (error instanceof Error ? error.message : String(error)) || "error.generation.unknown";
     if (__DEV__) {
       console.error("[WizardGeneration] Error:", errorMsg, error);
     }

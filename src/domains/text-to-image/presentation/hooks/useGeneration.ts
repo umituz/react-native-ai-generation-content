@@ -72,7 +72,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
 
   // Use orchestrator
   const { generate, isGenerating, error } = useGenerationOrchestrator(strategy, {
-    userId,
+    userId: userId ?? undefined,
     alertMessages: DEFAULT_ALERT_MESSAGES,
     onCreditsExhausted: () => callbacks.onCreditsRequired?.(totalCost),
     onSuccess: (result) => {
@@ -132,7 +132,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
   return {
     generationState: {
       isGenerating,
-      error: error?.message === undefined ? null : error.message,
+      error: error?.message ?? null,
     },
     totalCost,
     handleGenerate,

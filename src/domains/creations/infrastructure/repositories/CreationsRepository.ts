@@ -1,4 +1,3 @@
-declare const __DEV__: boolean;
 
 import { BaseRepository, FirestorePathResolver } from "@umituz/react-native-firebase";
 import type {

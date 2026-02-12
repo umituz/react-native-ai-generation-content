@@ -2,10 +2,7 @@
  * Polling Interval Calculator
  */
 
-import {
-  DEFAULT_POLLING_CONFIG,
-  type PollingConfig,
-} from "../../../../domain/entities/polling.types";
+import type { PollingConfig } from "../../../../domain/entities/polling.types";
 
 export interface IntervalOptions {
   attempt: number;

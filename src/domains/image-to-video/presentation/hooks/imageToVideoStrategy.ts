@@ -1,7 +1,7 @@
 import { executeImageToVideo } from "../../infrastructure/services";
 import type { GenerationStrategy } from "../../../../presentation/hooks/generation";
 import type {
-  ImageToVideoConfig,
+  ImageToVideoFeatureConfig,
   ImageToVideoCallbacks,
   ImageToVideoResult,
   ImageToVideoOptions,
@@ -17,8 +17,8 @@ interface VideoGenerationInput {
 }
 
 interface CreateStrategyParams {
-  config: ImageToVideoConfig;
-  callbacks: ImageToVideoCallbacks;
+  config: ImageToVideoFeatureConfig;
+  callbacks?: ImageToVideoCallbacks;
   buildInput: ImageToVideoInputBuilder;
   extractResult?: ImageToVideoResultExtractor;
   userId: string;
@@ -30,22 +30,21 @@ interface CreateStrategyParams {
 export const createImageToVideoStrategy = (
   params: CreateStrategyParams,
 ): GenerationStrategy<VideoGenerationInput, ImageToVideoResult> => {
-  const { config, callbacks, buildInput, extractResult, userId, currentPrompt, creationIdRef, updateState } = params;
+  const { config, callbacks, buildInput, extractResult, userId, creationIdRef, updateState } = params;
 
   return {
     execute: async (input) => {
       creationIdRef.current = input.creationId;
 
-      callbacks.onGenerationStart?.({
+      callbacks?.onGenerationStart?.({
         creationId: input.creationId,
         type: "image-to-video",
-        imageUrl: input.imageUrl,
-        prompt: input.prompt,
+        imageUri: input.imageUrl,
         metadata: input.options as Record<string, unknown> | undefined,
       }).catch(() => {});
 
       const result = await executeImageToVideo(
-        { imageUrl: input.imageUrl, prompt: input.prompt, userId, options: input.options },
+        { imageUri: input.imageUrl, userId, motionPrompt: input.prompt, options: input.options },
         { model: config.model, buildInput, extractResult },
       );
 
@@ -61,15 +60,15 @@ export const createImageToVideoStrategy = (
         thumbnailUrl: result.thumbnailUrl,
       };
     },
-    getCreditCost: () => config.creditCost,
+    getCreditCost: () => config.creditCost ?? 0,
     save: async (result) => {
       if (result.success && result.videoUrl && creationIdRef.current) {
-        await callbacks.onCreationSave?.({
+        await callbacks?.onCreationSave?.({
           creationId: creationIdRef.current,
           type: "image-to-video",
           videoUrl: result.videoUrl,
           thumbnailUrl: result.thumbnailUrl,
-          prompt: currentPrompt,
+          imageUri: "",
         });
       }
     },

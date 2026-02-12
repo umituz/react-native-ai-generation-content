@@ -5,6 +5,7 @@
 
 import type { ImageToVideoResult } from "./image-to-video.types";
 import type { ImageToVideoFormState } from "./form.types";
+import type { ImageToVideoGenerationStartData, ImageToVideoCreationData } from "./image-to-video-callbacks.types";
 
 export interface ImageToVideoCallbacks {
   onGenerate: (formState: ImageToVideoFormState) => Promise<void>;
@@ -13,6 +14,8 @@ export interface ImageToVideoCallbacks {
   onShowPaywall?: (cost: number) => void;
   onSuccess?: (result: ImageToVideoResult) => void;
   onError?: (error: string) => void;
+  onGenerationStart?: (data: ImageToVideoGenerationStartData) => Promise<void>;
+  onCreationSave?: (data: ImageToVideoCreationData) => Promise<void>;
 }
 
 export interface ImageToVideoFormConfig {

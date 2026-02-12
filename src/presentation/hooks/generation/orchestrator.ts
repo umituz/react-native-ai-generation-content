@@ -33,6 +33,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   const [state, setState] = useState<GenerationState<TResult>>(INITIAL_STATE);
   const isGeneratingRef = useRef(false);
   const isMountedRef = useRef(true);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
@@ -40,7 +41,10 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
   useEffect(() => {
     isMountedRef.current = true;
-    return () => { isMountedRef.current = false; };
+    return () => {
+      isMountedRef.current = false;
+      abortControllerRef.current?.abort();
+    };
   }, []);
 
   const handleLifecycleComplete = useCallback(
@@ -91,6 +95,8 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[Orchestrator] generate() called");
       if (isGeneratingRef.current) return;
 
+      // Create new AbortController for this generation
+      abortControllerRef.current = new AbortController();
       isGeneratingRef.current = true;
       setState({ ...INITIAL_STATE, status: "checking", isGenerating: true });
 
@@ -98,6 +104,11 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         // Check online status inside the try block to avoid dependency on offlineStore.isOnline
         if (!offlineStore.isOnline) {
           throw createGenerationError("network", alertMessages.networkError);
+        }
+
+        // Check if aborted
+        if (abortControllerRef.current.signal.aborted) {
+          throw new Error("Generation aborted");
         }
 
         // Pre-validate credits before generation to catch concurrent consumption
@@ -109,6 +120,11 @@ export const useGenerationOrchestrator = <TInput, TResult>(
           }
           onCreditsExhausted?.();
           throw createGenerationError("credits", alertMessages.creditFailed);
+        }
+
+        // Check if aborted before moderation
+        if (abortControllerRef.current.signal.aborted) {
+          throw new Error("Generation aborted");
         }
 
         return await handleModeration({
@@ -125,6 +141,14 @@ export const useGenerationOrchestrator = <TInput, TResult>(
           handleLifecycleComplete,
         });
       } catch (err) {
+        // Don't show error if aborted
+        if (abortControllerRef.current?.signal.aborted) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] Generation aborted");
+          }
+          return;
+        }
+
         const error = parseError(err);
         if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[Orchestrator] Error:", error);
         if (isMountedRef.current) setState({ status: "error", isGenerating: false, result: null, error });
@@ -134,12 +158,15 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         throw error;
       } finally {
         isGeneratingRef.current = false;
+        abortControllerRef.current = null;
       }
     },
-    [moderation, alertMessages, strategy, checkCredits, onCreditsExhausted, executeGeneration, showError, onError, handleLifecycleComplete],
+    [offlineStore.isOnline, moderation, alertMessages, strategy, checkCredits, onCreditsExhausted, executeGeneration, showError, onError, handleLifecycleComplete],
   );
 
   const reset = useCallback(() => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
     setState(INITIAL_STATE);
     isGeneratingRef.current = false;
   }, []);

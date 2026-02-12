@@ -11,7 +11,10 @@ import {
   ANTI_REALISM_SEGMENTS,
   ANATOMY_NEGATIVE_SEGMENTS,
 } from "../../domain/entities/image-prompt-segments";
-import type { ImagePromptResult, ImagePromptBuilderOptions } from "./image-prompt-builder.types";
+import type { ImagePromptResult, ImagePromptBuilderOptions, AnimeSelfiePromptResult } from "./image-prompt-builder.types";
+
+// Export types
+export type { ImagePromptResult, ImagePromptBuilderOptions, AnimeSelfiePromptResult };
 
 export class ImagePromptBuilder {
   private positiveSegments: string[] = [];
@@ -96,3 +99,6 @@ export class ImagePromptBuilder {
     };
   }
 }
+
+// Export utility functions
+export { createAnimeSelfiePrompt, createStyleTransferPrompt } from "../utils/prompt-creators.util";
