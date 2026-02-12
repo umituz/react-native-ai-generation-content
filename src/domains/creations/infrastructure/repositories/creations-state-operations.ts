@@ -4,19 +4,19 @@
  */
 
 import { updateDoc } from "firebase/firestore";
-import { type FirestorePathResolver } from "@umituz/react-native-firebase";
+import type { GetDocRef } from "./CreationsFetcher";
 import { submitFeedback } from "@umituz/react-native-subscription";
 
 /**
  * Updates the shared status of a creation
  */
 export async function updateCreationShared(
-  pathResolver: FirestorePathResolver,
+  getDocRef: GetDocRef,
   userId: string,
   creationId: string,
   isShared: boolean
 ): Promise<boolean> {
-  const docRef = pathResolver.getDocRef(userId, creationId);
+  const docRef = getDocRef(userId, creationId);
   if (!docRef) return false;
 
   try {
@@ -31,12 +31,12 @@ export async function updateCreationShared(
  * Updates the favorite status of a creation
  */
 export async function updateCreationFavorite(
-  pathResolver: FirestorePathResolver,
+  getDocRef: GetDocRef,
   userId: string,
   creationId: string,
   isFavorite: boolean
 ): Promise<boolean> {
-  const docRef = pathResolver.getDocRef(userId, creationId);
+  const docRef = getDocRef(userId, creationId);
   if (!docRef) return false;
 
   try {
@@ -51,13 +51,13 @@ export async function updateCreationFavorite(
  * Rates a creation and optionally submits feedback
  */
 export async function rateCreation(
-  pathResolver: FirestorePathResolver,
+  getDocRef: GetDocRef,
   userId: string,
   creationId: string,
   rating: number,
   description?: string
 ): Promise<boolean> {
-  const docRef = pathResolver.getDocRef(userId, creationId);
+  const docRef = getDocRef(userId, creationId);
   if (!docRef) return false;
 
   try {

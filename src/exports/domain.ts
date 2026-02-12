@@ -33,3 +33,11 @@ export type { ImageProcessingMode, ModeConfig, ModeCatalog } from "../domain/ent
 export {
   DEFAULT_PROCESSING_MODES, getModeConfig, getFreeModes, getPremiumModes, getPromptRequiredModes,
 } from "../domain/constants/processing-modes.constants";
+
+// Access Control
+export { useAIFeatureGate } from "../domains/access-control";
+export type {
+  AIFeatureGateOptions,
+  AIFeatureGateReturn,
+  AIFeatureGateHook,
+} from "../domains/access-control";

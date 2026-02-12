@@ -1,122 +1,86 @@
 /**
  * Creation Delete Operations
+ * Single Responsibility: Delete/restore operations with centralized error handling
  */
 
 import { updateDoc, deleteDoc } from "firebase/firestore";
-import { type FirestorePathResolver } from "@umituz/react-native-firebase";
-
-declare const __DEV__: boolean;
+import type { GetDocRef } from "./CreationsFetcher";
+import { logOperationError, logOperationSuccess, logInvalidRef } from "./creation-error-handler.util";
 
 /**
- * Soft deletes a creation
+ * Soft deletes a creation by setting deletedAt timestamp
  */
 export async function deleteCreation(
-  pathResolver: FirestorePathResolver,
+  getDocRef: GetDocRef,
   userId: string,
   creationId: string
 ): Promise<boolean> {
-  const docRef = pathResolver.getDocRef(userId, creationId);
+  const docRef = getDocRef(userId, creationId);
+  const context = { userId, creationId };
+
   if (!docRef) {
-    if (__DEV__) {
-      console.error("[CreationDelete] Cannot delete: Invalid document reference", {
-        userId,
-        creationId,
-      });
-    }
+    logInvalidRef("Delete", context);
     return false;
   }
 
   try {
     await updateDoc(docRef, { deletedAt: new Date() });
-    if (__DEV__) {
-      console.log("[CreationDelete] Soft deleted successfully", { userId, creationId });
-    }
+    logOperationSuccess("Delete", context);
     return true;
   } catch (error) {
-    if (__DEV__) {
-      console.error("[CreationDelete] Soft delete failed", {
-        userId,
-        creationId,
-        error: error instanceof Error ? error.message : String(error),
-        code: (error as { code?: string })?.code,
-      });
-    }
+    logOperationError("Delete", context, error);
     return false;
   }
 }
 
 /**
- * Hard deletes a creation
+ * Permanently deletes a creation from Firestore
  */
 export async function hardDeleteCreation(
-  pathResolver: FirestorePathResolver,
+  getDocRef: GetDocRef,
   userId: string,
   creationId: string
 ): Promise<boolean> {
-  const docRef = pathResolver.getDocRef(userId, creationId);
+  const docRef = getDocRef(userId, creationId);
+  const context = { userId, creationId };
+
   if (!docRef) {
-    if (__DEV__) {
-      console.error("[CreationDelete] Cannot hard delete: Invalid document reference", {
-        userId,
-        creationId,
-      });
-    }
+    logInvalidRef("HardDelete", context);
     return false;
   }
 
   try {
     await deleteDoc(docRef);
-    if (__DEV__) {
-      console.log("[CreationDelete] Hard deleted successfully", { userId, creationId });
-    }
+    logOperationSuccess("HardDelete", context);
     return true;
   } catch (error) {
-    if (__DEV__) {
-      console.error("[CreationDelete] Hard delete failed", {
-        userId,
-        creationId,
-        error: error instanceof Error ? error.message : String(error),
-        code: (error as { code?: string })?.code,
-      });
-    }
+    logOperationError("HardDelete", context, error);
     return false;
   }
 }
 
 /**
- * Restores a soft-deleted creation
+ * Restores a soft-deleted creation by clearing deletedAt
  */
 export async function restoreCreation(
-  pathResolver: FirestorePathResolver,
+  getDocRef: GetDocRef,
   userId: string,
   creationId: string
 ): Promise<boolean> {
-  const docRef = pathResolver.getDocRef(userId, creationId);
+  const docRef = getDocRef(userId, creationId);
+  const context = { userId, creationId };
+
   if (!docRef) {
-    if (__DEV__) {
-      console.error("[CreationDelete] Cannot restore: Invalid document reference", {
-        userId,
-        creationId,
-      });
-    }
+    logInvalidRef("Restore", context);
     return false;
   }
 
   try {
     await updateDoc(docRef, { deletedAt: null });
-    if (__DEV__) {
-      console.log("[CreationDelete] Restored successfully", { userId, creationId });
-    }
+    logOperationSuccess("Restore", context);
     return true;
   } catch (error) {
-    if (__DEV__) {
-      console.error("[CreationDelete] Restore failed", {
-        userId,
-        creationId,
-        error: error instanceof Error ? error.message : String(error),
-        code: (error as { code?: string })?.code,
-      });
-    }
+    logOperationError("Restore", context, error);
     return false;
   }
 }

@@ -3,7 +3,7 @@
  */
 
 import { updateDoc } from "firebase/firestore";
-import { type FirestorePathResolver } from "@umituz/react-native-firebase";
+import type { GetDocRef } from "./CreationsFetcher";
 import type { Creation } from "../../domain/entities/Creation";
 import { CREATION_FIELDS, type CreationFieldName } from "../../domain/constants";
 
@@ -34,12 +34,12 @@ export const UPDATABLE_FIELDS: ReadonlyArray<CreationFieldName> = [
  * Updates a creation document
  */
 export async function updateCreation(
-  pathResolver: FirestorePathResolver,
+  getDocRef: GetDocRef,
   userId: string,
   id: string,
   updates: Partial<Creation>
 ): Promise<boolean> {
-  const docRef = pathResolver.getDocRef(userId, id);
+  const docRef = getDocRef(userId, id);
 
   if (!docRef) {
     throw new Error(

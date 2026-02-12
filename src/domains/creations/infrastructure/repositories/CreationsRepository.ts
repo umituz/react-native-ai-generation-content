@@ -1,5 +1,5 @@
 
-import { BaseRepository, FirestorePathResolver } from "@umituz/react-native-firebase";
+import { BaseRepository } from "@umituz/react-native-firebase";
 import type {
   ICreationsRepository,
   CreationsSubscriptionCallback,
@@ -22,10 +22,9 @@ export interface RepositoryOptions {
 /**
  * Creations Repository Implementation
  * Delegates to specialized classes for different responsibilities
- * 
+ *
  * Architecture:
- * - Extends BaseRepository for centralized database access
- * - Uses FirestorePathResolver for path resolution
+ * - Extends BaseRepository for database access and path resolution
  * - Uses CreationsFetcher for read operations
  * - Uses CreationsWriter for write operations
  * - Standard path: users/{userId}/{collectionName}
@@ -33,7 +32,6 @@ export interface RepositoryOptions {
 export class CreationsRepository
   extends BaseRepository
   implements ICreationsRepository {
-  private readonly pathResolver: FirestorePathResolver;
   private readonly fetcher: CreationsFetcher;
   private readonly writer: CreationsWriter;
 
@@ -41,14 +39,20 @@ export class CreationsRepository
     collectionName: string,
     options?: RepositoryOptions,
   ) {
-    super();
+    super(collectionName);
 
     const documentMapper = options?.documentMapper ?? mapDocumentToCreation;
 
-    // Initialize with default database (will be resolved by FirestorePathResolver)
-    this.pathResolver = new FirestorePathResolver(collectionName, null);
-    this.fetcher = new CreationsFetcher(this.pathResolver, documentMapper);
-    this.writer = new CreationsWriter(this.pathResolver);
+    // Pass BaseRepository methods directly to dependencies
+    this.fetcher = new CreationsFetcher(
+      (userId) => this.getUserCollection(userId),
+      (userId, docId) => this.getDocRef(userId, docId),
+      documentMapper
+    );
+    this.writer = new CreationsWriter(
+      (userId) => this.getUserCollection(userId),
+      (userId, docId) => this.getDocRef(userId, docId)
+    );
   }
 
   async getAll(userId: string): Promise<Creation[]> {

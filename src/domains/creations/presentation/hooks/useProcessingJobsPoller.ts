@@ -5,7 +5,7 @@
  * Uses provider registry internally - no need to pass FAL functions
  */
 
-import { useEffect, useRef, useCallback, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { QUEUE_STATUS, CREATION_STATUS } from "../../../../domain/constants/queue-status.constants";
 import { DEFAULT_POLL_INTERVAL_MS } from "../../../../infrastructure/constants/polling.constants";
@@ -49,57 +49,56 @@ export function useProcessingJobsPoller(
     [creations],
   );
 
-  const pollJob = useCallback(
-    async (creation: Creation) => {
-      if (!userId || !creation.requestId || !creation.model) return;
-      if (pollingRef.current.has(creation.id)) return;
+  // Use ref for stable function reference to prevent effect re-runs
+  const pollJobRef = useRef<((creation: Creation) => Promise<void>) | undefined>(undefined);
 
-      const provider = providerRegistry.getActiveProvider();
-      if (!provider || !provider.isInitialized()) return;
+  pollJobRef.current = async (creation: Creation) => {
+    if (!userId || !creation.requestId || !creation.model) return;
+    if (pollingRef.current.has(creation.id)) return;
 
-      pollingRef.current.add(creation.id);
+    const provider = providerRegistry.getActiveProvider();
+    if (!provider || !provider.isInitialized()) return;
 
-      try {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[ProcessingJobsPoller] Checking status:", creation.id);
-        }
+    pollingRef.current.add(creation.id);
 
-        const status = await provider.getJobStatus(creation.model, creation.requestId);
-
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[ProcessingJobsPoller] Status:", creation.id, status.status);
-        }
-
-        if (status.status === QUEUE_STATUS.COMPLETED) {
-          const result = await provider.getJobResult<FalResult>(creation.model, creation.requestId);
-          const urls = extractResultUrl(result);
-          if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Completed:", creation.id, urls);
-
-          const uri = urls.videoUrl || urls.imageUrl || "";
-          await repository.update(userId, creation.id, {
-            status: CREATION_STATUS.COMPLETED,
-            uri,
-            output: urls,
-          });
-        } else if (status.status === QUEUE_STATUS.FAILED) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Failed:", creation.id);
-
-          await repository.update(userId, creation.id, {
-            status: CREATION_STATUS.FAILED,
-            metadata: { error: "Generation failed" },
-          });
-        }
-        // If still IN_PROGRESS or IN_QUEUE, we'll check again next interval
-      } catch (error) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error("[ProcessingJobsPoller] Poll error:", creation.id, error);
-        }
-      } finally {
-        pollingRef.current.delete(creation.id);
+    try {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[ProcessingJobsPoller] Checking status:", creation.id);
       }
-    },
-    [userId, repository],
-  );
+
+      const status = await provider.getJobStatus(creation.model, creation.requestId);
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[ProcessingJobsPoller] Status:", creation.id, status.status);
+      }
+
+      if (status.status === QUEUE_STATUS.COMPLETED) {
+        const result = await provider.getJobResult<FalResult>(creation.model, creation.requestId);
+        const urls = extractResultUrl(result);
+        if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Completed:", creation.id, urls);
+
+        const uri = urls.videoUrl || urls.imageUrl || "";
+        await repository.update(userId, creation.id, {
+          status: CREATION_STATUS.COMPLETED,
+          uri,
+          output: urls,
+        });
+      } else if (status.status === QUEUE_STATUS.FAILED) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Failed:", creation.id);
+
+        await repository.update(userId, creation.id, {
+          status: CREATION_STATUS.FAILED,
+          metadata: { error: "Generation failed" },
+        });
+      }
+    } catch (error) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[ProcessingJobsPoller] Poll error:", creation.id, error);
+      }
+    } finally {
+      pollingRef.current.delete(creation.id);
+    }
+  };
 
   useEffect(() => {
     if (!enabled || !userId || processingJobs.length === 0) {
@@ -111,11 +110,11 @@ export function useProcessingJobsPoller(
     }
 
     // Initial poll
-    processingJobs.forEach((job) => void pollJob(job));
+    processingJobs.forEach((job) => pollJobRef.current?.(job));
 
     // Set up interval polling
     intervalRef.current = setInterval(() => {
-      processingJobs.forEach((job) => void pollJob(job));
+      processingJobs.forEach((job) => pollJobRef.current?.(job));
     }, DEFAULT_POLL_INTERVAL_MS);
 
     return () => {
@@ -128,7 +127,7 @@ export function useProcessingJobsPoller(
         intervalRef.current = null;
       }
     };
-  }, [enabled, userId, processingJobs, pollJob]);
+  }, [enabled, userId, processingJobs]);
 
   return {
     processingCount: processingJobs.length,

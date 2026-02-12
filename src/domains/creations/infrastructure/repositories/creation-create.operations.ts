@@ -3,18 +3,19 @@
  */
 
 import { setDoc } from "firebase/firestore";
-import { type FirestorePathResolver } from "@umituz/react-native-firebase";
+import type { GetUserCollection, GetDocRef } from "./CreationsFetcher";
 import type { Creation, CreationDocument } from "../../domain/entities/Creation";
 
 /**
  * Creates a new creation document
  */
 export async function createCreation(
-  pathResolver: FirestorePathResolver,
+  _getUserCollection: GetUserCollection,
+  getDocRef: GetDocRef,
   userId: string,
   creation: Creation
 ): Promise<void> {
-  const docRef = pathResolver.getDocRef(userId, creation.id);
+  const docRef = getDocRef(userId, creation.id);
   if (!docRef) throw new Error("Firestore not initialized");
 
   const data: CreationDocument = {
