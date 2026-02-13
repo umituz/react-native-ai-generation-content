@@ -46,7 +46,7 @@ export async function buildImageInput(
   // Extract style for text-to-image
   const styleValue = extractSelection(wizardData.style);
   const style = typeof styleValue === "string" ? styleValue : undefined;
-  const interactionStyle = (scenario.interactionStyle as InteractionStyle) ?? "natural";
+  const interactionStyle = scenario.interactionStyle as InteractionStyle | undefined;
   const promptType = scenario.promptType;
 
   return { photos, prompt: finalPrompt, style, interactionStyle, promptType };

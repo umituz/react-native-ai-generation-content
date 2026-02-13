@@ -9,6 +9,6 @@ export {
   type AIGenerationResultAction,
 } from "./AIGenerationResult";
 export {
-  ExceptionErrorState as ErrorDisplay,
-  ExceptionEmptyState,
+  EmptyState as ErrorDisplay,
+  EmptyState as ExceptionEmptyState,
 } from "@umituz/react-native-design-system";

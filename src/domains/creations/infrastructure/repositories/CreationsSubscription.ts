@@ -5,7 +5,7 @@
  */
 
 import { query, orderBy, onSnapshot, where } from "firebase/firestore";
-import type { GetUserCollection } from "./CreationsFetcher";
+import type { IPathResolver } from "@umituz/react-native-firebase";
 import type { DocumentMapper } from "../../domain/value-objects/CreationsConfig";
 import type { CreationDocument } from "../../domain/entities/Creation";
 import type { CreationsSubscriptionCallback, UnsubscribeFunction } from "../../domain/repositories/ICreationsRepository";
@@ -13,14 +13,9 @@ import { CREATION_FIELDS } from "../../domain/constants";
 
 declare const __DEV__: boolean;
 
-/**
- * Handles realtime subscriptions for creations
- * Optimized with server-side filtering (80% data reduction)
- */
 export class CreationsSubscription {
     constructor(
-        private readonly getUserCollection: GetUserCollection,
-        _getDocRef: unknown, // Not used in subscription, but accepted for consistent interface
+        private readonly pathResolver: IPathResolver,
         private readonly documentMapper: DocumentMapper,
     ) { }
 
@@ -29,7 +24,7 @@ export class CreationsSubscription {
         onData: CreationsSubscriptionCallback,
         onError?: (error: Error) => void,
     ): UnsubscribeFunction {
-        const userCollection = this.getUserCollection(userId);
+        const userCollection = this.pathResolver.getUserCollection(userId);
 
         if (!userCollection) {
             const error = new Error(`[CreationsSubscription] Invalid user collection: ${userId}`);

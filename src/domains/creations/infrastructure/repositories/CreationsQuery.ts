@@ -5,20 +5,16 @@
  */
 
 import { getDocs, getDoc, query, orderBy, where } from "firebase/firestore";
-import type { GetUserCollection, GetDocRef } from "./CreationsFetcher";
+import type { IPathResolver } from "@umituz/react-native-firebase";
 import type { DocumentMapper } from "../../domain/value-objects/CreationsConfig";
 import type { Creation, CreationDocument } from "../../domain/entities/Creation";
 import { CREATION_FIELDS } from "../../domain/constants";
 
 declare const __DEV__: boolean;
 
-/**
- * Handles query operations for creations
- */
 export class CreationsQuery {
     constructor(
-        private readonly getUserCollection: GetUserCollection,
-        private readonly getDocRef: GetDocRef,
+        private readonly pathResolver: IPathResolver,
         private readonly documentMapper: DocumentMapper,
     ) { }
 
@@ -27,7 +23,7 @@ export class CreationsQuery {
      * Optimized query: Server-side filtering for non-deleted items
      */
     async getAll(userId: string): Promise<Creation[]> {
-        const userCollection = this.getUserCollection(userId);
+        const userCollection = this.pathResolver.getUserCollection(userId);
         if (!userCollection) return [];
 
         try {
@@ -63,7 +59,7 @@ export class CreationsQuery {
      * Get a single creation by ID
      */
     async getById(userId: string, id: string): Promise<Creation | null> {
-        const docRef = this.getDocRef(userId, id);
+        const docRef = this.pathResolver.getDocRef(userId, id);
         if (!docRef) return null;
 
         try {

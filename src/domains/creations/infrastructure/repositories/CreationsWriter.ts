@@ -1,51 +1,42 @@
-/**
- * Creations Writer
- * Main class that orchestrates all creation write operations
- */
-
-import type { GetUserCollection, GetDocRef } from "./CreationsFetcher";
+import type { IPathResolver } from "@umituz/react-native-firebase";
 import type { Creation } from "../../domain/entities/Creation";
 import * as operations from "./creations-operations";
 import * as stateOperations from "./creations-state-operations";
 
-/**
- * Handles write operations for creations
- */
 export class CreationsWriter {
   constructor(
-    private readonly getUserCollection: GetUserCollection,
-    private readonly getDocRef: GetDocRef,
+    private readonly pathResolver: IPathResolver,
   ) {}
 
   async create(userId: string, creation: Creation): Promise<void> {
-    return operations.createCreation(this.getUserCollection, this.getDocRef, userId, creation);
+    return operations.createCreation(this.pathResolver, userId, creation);
   }
 
   async update(userId: string, id: string, updates: Partial<Creation>): Promise<boolean> {
-    return operations.updateCreation(this.getDocRef, userId, id, updates);
+    return operations.updateCreation(this.pathResolver, userId, id, updates);
   }
 
   async delete(userId: string, creationId: string): Promise<boolean> {
-    return operations.deleteCreation(this.getDocRef, userId, creationId);
+    return operations.deleteCreation(this.pathResolver, userId, creationId);
   }
 
   async hardDelete(userId: string, creationId: string): Promise<boolean> {
-    return operations.hardDeleteCreation(this.getDocRef, userId, creationId);
+    return operations.hardDeleteCreation(this.pathResolver, userId, creationId);
   }
 
   async restore(userId: string, creationId: string): Promise<boolean> {
-    return operations.restoreCreation(this.getDocRef, userId, creationId);
+    return operations.restoreCreation(this.pathResolver, userId, creationId);
   }
 
   async updateShared(userId: string, creationId: string, isShared: boolean): Promise<boolean> {
-    return stateOperations.updateCreationShared(this.getDocRef, userId, creationId, isShared);
+    return stateOperations.updateCreationShared(this.pathResolver, userId, creationId, isShared);
   }
 
   async updateFavorite(userId: string, creationId: string, isFavorite: boolean): Promise<boolean> {
-    return stateOperations.updateCreationFavorite(this.getDocRef, userId, creationId, isFavorite);
+    return stateOperations.updateCreationFavorite(this.pathResolver, userId, creationId, isFavorite);
   }
 
   async rate(userId: string, creationId: string, rating: number, description?: string): Promise<boolean> {
-    return stateOperations.rateCreation(this.getDocRef, userId, creationId, rating, description);
+    return stateOperations.rateCreation(this.pathResolver, userId, creationId, rating, description);
   }
 }

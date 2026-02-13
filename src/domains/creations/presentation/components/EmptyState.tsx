@@ -18,7 +18,7 @@ interface EmptyStateProps {
 export function EmptyState({
   title,
   description,
-  iconName = "images-outline",
+  iconName = "image",
   actionLabel,
   onAction,
 }: EmptyStateProps) {

@@ -21,7 +21,7 @@ export async function executeVideoFeature(
 ): Promise<VideoFeatureResult> {
   const validation = validateProvider(`VideoExecutor:${featureType}`);
   if (!validation.success) {
-    return { success: false, error: validation.error };
+    return { success: false, error: ("error" in validation ? validation.error : "Provider validation failed") };
   }
 
   const { provider } = validation;
@@ -78,7 +78,7 @@ export async function submitVideoFeatureToQueue(
 ): Promise<{ success: boolean; requestId?: string; model?: string; error?: string }> {
   const validation = validateProvider(`VideoExecutor:${featureType}`);
   if (!validation.success) {
-    return { success: false, error: validation.error };
+    return { success: false, error: ("error" in validation ? validation.error : "Provider validation failed") };
   }
 
   const { provider } = validation;

@@ -38,7 +38,7 @@ export async function executeImageFeature(
 ): Promise<ImageFeatureResult> {
   const validation = validateProvider(`Image:${featureType}`);
   if (!validation.success) {
-    return { success: false, error: validation.error };
+    return { success: false, error: ("error" in validation ? validation.error : "Provider validation failed") };
   }
 
   const { provider } = validation;

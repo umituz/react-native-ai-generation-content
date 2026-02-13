@@ -43,16 +43,8 @@ export class CreationsRepository
 
     const documentMapper = options?.documentMapper ?? mapDocumentToCreation;
 
-    // Pass BaseRepository methods directly to dependencies
-    this.fetcher = new CreationsFetcher(
-      (userId) => this.getUserCollection(userId),
-      (userId, docId) => this.getDocRef(userId, docId),
-      documentMapper
-    );
-    this.writer = new CreationsWriter(
-      (userId) => this.getUserCollection(userId),
-      (userId, docId) => this.getDocRef(userId, docId)
-    );
+    this.fetcher = new CreationsFetcher(this, documentMapper);
+    this.writer = new CreationsWriter(this);
   }
 
   async getAll(userId: string): Promise<Creation[]> {

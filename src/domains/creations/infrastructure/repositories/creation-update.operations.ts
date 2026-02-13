@@ -3,15 +3,12 @@
  */
 
 import { updateDoc } from "firebase/firestore";
-import type { GetDocRef } from "./CreationsFetcher";
+import type { IPathResolver } from "@umituz/react-native-firebase";
 import type { Creation } from "../../domain/entities/Creation";
 import { CREATION_FIELDS, type CreationFieldName } from "../../domain/constants";
 
 declare const __DEV__: boolean;
 
-/**
- * Updatable fields list
- */
 export const UPDATABLE_FIELDS: ReadonlyArray<CreationFieldName> = [
   CREATION_FIELDS.URI,
   CREATION_FIELDS.STATUS,
@@ -30,16 +27,13 @@ export const UPDATABLE_FIELDS: ReadonlyArray<CreationFieldName> = [
   "type" as CreationFieldName,
 ] as const;
 
-/**
- * Updates a creation document
- */
 export async function updateCreation(
-  getDocRef: GetDocRef,
+  pathResolver: IPathResolver,
   userId: string,
   id: string,
   updates: Partial<Creation>
 ): Promise<boolean> {
-  const docRef = getDocRef(userId, id);
+  const docRef = pathResolver.getDocRef(userId, id);
 
   if (!docRef) {
     throw new Error(

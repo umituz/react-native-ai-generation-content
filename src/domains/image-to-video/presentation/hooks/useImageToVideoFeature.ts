@@ -27,7 +27,7 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
     () =>
       createImageToVideoStrategy({
         config,
-        callbacks: callbacks as ImageToVideoCallbacks | undefined,
+        callbacks: callbacks as unknown as ImageToVideoCallbacks | undefined,
         buildInput: config.buildInput,
         extractResult: config.extractResult,
         userId,

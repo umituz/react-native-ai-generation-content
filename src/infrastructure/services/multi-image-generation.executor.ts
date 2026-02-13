@@ -49,7 +49,7 @@ export async function executeMultiImageGeneration(
 ): Promise<MultiImageGenerationResult> {
   const validation = validateProvider("MultiImageExecutor");
   if (!validation.success) {
-    return { success: false, error: validation.error };
+    return { success: false, error: ("error" in validation ? validation.error : "Provider validation failed") };
   }
   const provider = validation.provider;
 

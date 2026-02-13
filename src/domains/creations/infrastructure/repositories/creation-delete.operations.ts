@@ -4,18 +4,18 @@
  */
 
 import { updateDoc, deleteDoc } from "firebase/firestore";
-import type { GetDocRef } from "./CreationsFetcher";
+import type { IPathResolver } from "./CreationsFetcher";
 import { logOperationError, logOperationSuccess, logInvalidRef } from "./creation-error-handler.util";
 
 /**
  * Soft deletes a creation by setting deletedAt timestamp
  */
 export async function deleteCreation(
-  getDocRef: GetDocRef,
+  pathResolver: IPathResolver,
   userId: string,
   creationId: string
 ): Promise<boolean> {
-  const docRef = getDocRef(userId, creationId);
+  const docRef = pathResolver.getDocRef(userId, creationId);
   const context = { userId, creationId };
 
   if (!docRef) {
@@ -37,11 +37,11 @@ export async function deleteCreation(
  * Permanently deletes a creation from Firestore
  */
 export async function hardDeleteCreation(
-  getDocRef: GetDocRef,
+  pathResolver: IPathResolver,
   userId: string,
   creationId: string
 ): Promise<boolean> {
-  const docRef = getDocRef(userId, creationId);
+  const docRef = pathResolver.getDocRef(userId, creationId);
   const context = { userId, creationId };
 
   if (!docRef) {
@@ -63,11 +63,11 @@ export async function hardDeleteCreation(
  * Restores a soft-deleted creation by clearing deletedAt
  */
 export async function restoreCreation(
-  getDocRef: GetDocRef,
+  pathResolver: IPathResolver,
   userId: string,
   creationId: string
 ): Promise<boolean> {
-  const docRef = getDocRef(userId, creationId);
+  const docRef = pathResolver.getDocRef(userId, creationId);
   const context = { userId, creationId };
 
   if (!docRef) {
