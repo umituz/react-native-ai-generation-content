@@ -18,6 +18,7 @@ export async function createCreation(
     type: creation.type,
     uri: creation.uri,
     createdAt: creation.createdAt,
+    deletedAt: null,
     metadata: creation.metadata || {},
     isShared: creation.isShared || false,
     isFavorite: creation.isFavorite || false,

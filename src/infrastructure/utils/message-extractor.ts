@@ -2,8 +2,7 @@
  * Error Message Extraction Functions
  */
 
-import { GenerationErrorType } from "./extraction-types";
-import { isGenerationError } from "./error-factory";
+import { GenerationErrorType, isGenerationError } from "./error-factory";
 
 declare const __DEV__: boolean;
 

@@ -11,7 +11,7 @@ import { QUEUE_STATUS, CREATION_STATUS } from "../../../../domain/constants/queu
 import { DEFAULT_POLL_INTERVAL_MS } from "../../../../infrastructure/constants/polling.constants";
 import {
   extractResultUrl,
-  type FalResult,
+  type GenerationResult,
 } from "../../../generation/wizard/presentation/hooks/generation-result.utils";
 import type { Creation } from "../../domain/entities/Creation";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
@@ -54,12 +54,15 @@ export function useProcessingJobsPoller(
 
   pollJobRef.current = async (creation: Creation) => {
     if (!userId || !creation.requestId || !creation.model) return;
+
     if (pollingRef.current.has(creation.id)) return;
+    pollingRef.current.add(creation.id);
 
     const provider = providerRegistry.getActiveProvider();
-    if (!provider || !provider.isInitialized()) return;
-
-    pollingRef.current.add(creation.id);
+    if (!provider || !provider.isInitialized()) {
+      pollingRef.current.delete(creation.id);
+      return;
+    }
 
     try {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -73,7 +76,7 @@ export function useProcessingJobsPoller(
       }
 
       if (status.status === QUEUE_STATUS.COMPLETED) {
-        const result = await provider.getJobResult<FalResult>(creation.model, creation.requestId);
+        const result = await provider.getJobResult<GenerationResult>(creation.model, creation.requestId);
         const urls = extractResultUrl(result);
         if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Completed:", creation.id, urls);
 

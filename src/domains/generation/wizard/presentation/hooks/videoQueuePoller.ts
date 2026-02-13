@@ -1,5 +1,5 @@
 import { providerRegistry } from "../../../../../infrastructure/services/provider-registry.service";
-import { extractResultUrl, type FalResult, type GenerationUrls } from "./generation-result.utils";
+import { extractResultUrl, type GenerationUrls } from "./generation-result.utils";
 import { QUEUE_STATUS } from "../../../../../domain/constants/queue-status.constants";
 
 declare const __DEV__: boolean;
@@ -34,7 +34,7 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
 
       if (status.status === QUEUE_STATUS.COMPLETED) {
         try {
-          const result = await provider.getJobResult<FalResult>(model, requestId);
+          const result = await provider.getJobResult(model, requestId);
           await onComplete(extractResultUrl(result));
         } catch (resultErr) {
           const errorMessage = resultErr instanceof Error ? resultErr.message : "Generation failed";

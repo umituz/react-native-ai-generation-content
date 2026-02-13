@@ -3,11 +3,16 @@
  * Infrastructure: Orchestrates request execution with error handling
  */
 
-import { withErrorHandling, getErrorMessage, retryWithBackoff, isNetworkError } from "../utils/error-handling.util";
+import { withErrorHandling } from "../utils/error-handlers";
+import { getErrorMessage } from "../utils/error-extractors";
+import { retryWithBackoff } from "../utils/error-retry";
+import { isNetworkError } from "../utils/error-classifiers";
 import { env } from "../config/env.config";
 import type { RequestOptions, ApiResponse } from "./api-client.types";
 import { executeRequest, isSuccessResponse, extractErrorMessage } from "./http-request-executor";
 import { parseResponse, createSuccessResponse, createErrorResponse } from "./http-response-parser";
+
+declare const __DEV__: boolean;
 
 /**
  * Fetches data with timeout, retry, and error handling
@@ -41,7 +46,9 @@ export async function fetchWithTimeout<T>(
       return operation();
     },
     (error) => {
-      console.error("[API Client] Request failed:", error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[API Client] Request failed:", error);
+      }
     }
   );
 
@@ -49,5 +56,9 @@ export async function fetchWithTimeout<T>(
     return createErrorResponse(getErrorMessage(result.error));
   }
 
-  return createSuccessResponse(result.data ?? null as T);
+  if (result.data === undefined) {
+    return createErrorResponse("No data received from server");
+  }
+
+  return createSuccessResponse(result.data);
 }

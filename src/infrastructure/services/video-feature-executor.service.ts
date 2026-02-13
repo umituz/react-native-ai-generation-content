@@ -4,7 +4,7 @@
  * Output: video URL
  */
 
-import { extractErrorMessage, checkFalApiError, validateProvider, prepareVideoInputData } from "../utils";
+import { extractErrorMessage, validateProvider, prepareVideoInputData } from "../utils";
 import { extractVideoResult } from "../utils/url-extractor";
 import { DEFAULT_MAX_POLL_TIME_MS } from "../constants";
 import type { VideoFeatureType } from "../../domain/interfaces";
@@ -41,8 +41,6 @@ export async function executeVideoFeature(
       timeoutMs: DEFAULT_MAX_POLL_TIME_MS,
       onQueueUpdate: (status) => onStatusChange?.(status.status),
     });
-
-    checkFalApiError(result);
 
     const videoUrl = (extractResult ?? extractVideoResult)(result);
 

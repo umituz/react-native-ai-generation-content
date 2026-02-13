@@ -57,10 +57,10 @@ export interface CreationDocument {
   readonly isShared: boolean;
   readonly isFavorite?: boolean;
   readonly rating?: number;
-  readonly ratedAt?: FirebaseTimestamp | Date;
+  readonly ratedAt?: FirebaseTimestamp | Date | null;
   readonly createdAt: FirebaseTimestamp | Date;
-  readonly completedAt?: FirebaseTimestamp | Date;
-  readonly deletedAt?: FirebaseTimestamp | Date;
+  readonly completedAt?: FirebaseTimestamp | Date | null;
+  readonly deletedAt?: FirebaseTimestamp | Date | null;
   // Background job tracking - FAL queue requestId and model
   readonly requestId?: string;
   readonly model?: string;

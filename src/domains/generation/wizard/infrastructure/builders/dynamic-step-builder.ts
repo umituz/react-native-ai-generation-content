@@ -8,6 +8,7 @@ import { StepType } from "../../../../../domain/entities/flow-config.types";
 import type { StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import type { WizardStepConfig } from "../../domain/entities/wizard-step.types";
 import type { WizardFeatureConfig, ScenarioBasedConfig } from "../../domain/entities/wizard-feature.types";
+import { buildWizardConfigFromScenario } from "../../domain/entities/wizard-feature.types";
 
 /**
  * Convert wizard step config to flow step definition
@@ -104,7 +105,6 @@ export const quickBuildWizard = (
   featureId: string,
   scenarioConfig: ScenarioBasedConfig,
 ): StepDefinition[] => {
-  const { buildWizardConfigFromScenario } = require("../../domain/entities/wizard-feature.types");
   const wizardConfig = buildWizardConfigFromScenario(featureId, scenarioConfig);
   return buildFlowStepsFromWizard(wizardConfig, {
     includePreview: true,

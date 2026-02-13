@@ -2,7 +2,21 @@
  * Error Factory Functions
  */
 
-import type { GenerationError, GenerationErrorTypeValue } from "./extraction-types";
+export const GenerationErrorType = {
+  CONTENT_POLICY: "content_policy",
+  RATE_LIMIT: "rate_limit",
+  TIMEOUT: "timeout",
+  VALIDATION: "validation",
+  NETWORK: "network",
+  UNKNOWN: "unknown",
+} as const;
+
+export type GenerationErrorTypeValue = typeof GenerationErrorType[keyof typeof GenerationErrorType];
+
+export interface GenerationError extends Error {
+  errorType: GenerationErrorTypeValue;
+  translationKey: string;
+}
 
 /**
  * Create a structured generation error

@@ -104,8 +104,10 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
   };
 };
 
-// Note: resetFlowStore is no longer needed as each component instance maintains its own store
-// If you need to reset flow state, use the reset() action from the useFlow hook
+declare const __DEV__: boolean;
+
 export const resetFlowStore = () => {
-  console.warn('resetFlowStore is deprecated. Each component now maintains its own flow store instance.');
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.warn('resetFlowStore is deprecated. Each component now maintains its own flow store instance.');
+  }
 };

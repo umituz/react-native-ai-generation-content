@@ -2,11 +2,16 @@
  * Infrastructure Utils
  */
 
-export * from "./error-classifier.util";
-export * from "./error-message-extractor.util";
-export * from "./error-handling.util";
+export * from "./error-classification";
+export * from "./error-classifiers";
+export * from "./error-extractors";
+export * from "./error-handlers";
+export * from "./error-factory";
+export * from "./error-types";
+export * from "./message-extractor";
+export * from "./classifier-helpers";
+export * from "./result-polling";
 export * from "./validation.util";
-export * from "./api-client.util";
 export * from "../../domains/background/infrastructure/utils/polling-interval.util";
 export * from "./progress-calculator.util";
 export * from "./progress.utils";

@@ -16,6 +16,11 @@ export function createTimeoutController(
   }
 
   const controller = new AbortController();
-  setTimeout(() => controller.abort(), timeout);
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  controller.signal.addEventListener('abort', () => {
+    clearTimeout(timeoutId);
+  }, { once: true });
+
   return controller;
 }

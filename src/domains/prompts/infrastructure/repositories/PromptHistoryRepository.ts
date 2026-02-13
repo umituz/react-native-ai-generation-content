@@ -7,74 +7,34 @@ export class PromptHistoryRepository implements IPromptHistoryRepository {
   private readonly maxStorageSize = 100;
 
   save(prompt: GeneratedPrompt): Promise<AIPromptResult<void>> {
-    try {
-      this.storage.push(prompt);
-      this.trimStorage();
-      return Promise.resolve({ success: true, data: undefined });
-    } catch {
-      return Promise.resolve({
-        success: false,
-        error: 'STORAGE_ERROR',
-        message: 'Failed to save prompt to history'
-      });
-    }
+    this.storage.push(prompt);
+    this.trimStorage();
+    return Promise.resolve({ success: true, data: undefined });
   }
 
   findRecent(limit: number = 50): Promise<AIPromptResult<GeneratedPrompt[]>> {
-    try {
-      const prompts = this.storage.slice(-limit);
-      return Promise.resolve({ success: true, data: prompts });
-    } catch {
-      return Promise.resolve({
-        success: false,
-        error: 'STORAGE_ERROR',
-        message: 'Failed to retrieve recent prompts'
-      });
-    }
+    const prompts = this.storage.slice(-limit);
+    return Promise.resolve({ success: true, data: prompts });
   }
 
   findByTemplateId(
     templateId: string,
     limit: number = 20
   ): Promise<AIPromptResult<GeneratedPrompt[]>> {
-    try {
-      const prompts = this.storage
-        .filter(prompt => prompt.templateId === templateId)
-        .slice(-limit);
-      return Promise.resolve({ success: true, data: prompts });
-    } catch {
-      return Promise.resolve({
-        success: false,
-        error: 'STORAGE_ERROR',
-        message: 'Failed to retrieve prompts by template ID'
-      });
-    }
+    const prompts = this.storage
+      .filter(prompt => prompt.templateId === templateId)
+      .slice(-limit);
+    return Promise.resolve({ success: true, data: prompts });
   }
 
   delete(id: string): Promise<AIPromptResult<void>> {
-    try {
-      this.storage = this.storage.filter(prompt => prompt.id !== id);
-      return Promise.resolve({ success: true, data: undefined });
-    } catch {
-      return Promise.resolve({
-        success: false,
-        error: 'STORAGE_ERROR',
-        message: 'Failed to delete prompt'
-      });
-    }
+    this.storage = this.storage.filter(prompt => prompt.id !== id);
+    return Promise.resolve({ success: true, data: undefined });
   }
 
   clear(): Promise<AIPromptResult<void>> {
-    try {
-      this.storage = [];
-      return Promise.resolve({ success: true, data: undefined });
-    } catch {
-      return Promise.resolve({
-        success: false,
-        error: 'STORAGE_ERROR',
-        message: 'Failed to clear prompt history'
-      });
-    }
+    this.storage = [];
+    return Promise.resolve({ success: true, data: undefined });
   }
 
   private trimStorage(): void {

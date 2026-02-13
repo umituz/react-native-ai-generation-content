@@ -9,7 +9,7 @@ import type {
   GenerationResult,
   PollingConfig,
 } from "../../domain/entities";
-import { classifyError } from "../utils/error-classifier.util";
+import { classifyError } from "../utils/error-classification";
 import { pollJob } from "../../domains/background/infrastructure/services/job-poller.service";
 import { ProviderValidator } from "./provider-validator";
 

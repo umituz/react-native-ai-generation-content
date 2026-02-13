@@ -38,4 +38,5 @@ export interface JobStatus {
   logs?: AILogEntry[];
   queuePosition?: number;
   eta?: number;
+  requestId?: string;
 }

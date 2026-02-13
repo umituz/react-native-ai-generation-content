@@ -27,9 +27,12 @@ export function useGenerationPhase(options?: UseGenerationPhaseOptions): Generat
   const { queuedDuration = 5000 } = options ?? {};
 
   const [phase, setPhase] = useState<GenerationPhase>("queued");
-  const startTimeRef = useRef(Date.now());
+  const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
+    startTimeRef.current = Date.now();
+    setPhase("queued");
+
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current;
 

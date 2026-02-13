@@ -25,13 +25,13 @@ export async function retryWithBackoff<T>(
 
   let lastError: Error | undefined;
 
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       return await operation();
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(getErrorMessage(error));
 
-      if (attempt === maxRetries || !shouldRetry(lastError)) {
+      if (!shouldRetry(lastError)) {
         throw lastError;
       }
 
@@ -40,5 +40,5 @@ export async function retryWithBackoff<T>(
     }
   }
 
-  throw lastError!;
+  throw lastError ?? new Error("Operation failed after retries");
 }

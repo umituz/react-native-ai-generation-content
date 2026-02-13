@@ -4,7 +4,6 @@
 
 import { BaseExecutor } from "../../../../infrastructure/executors/base-executor";
 import { isSuccess, type Result } from "../../../../domain/types/result.types";
-import { checkFalApiError } from "../../../../infrastructure/utils";
 import {
   defaultExtractVideoResult,
   type ExtractedVideoResult,
@@ -55,7 +54,6 @@ class ImageToVideoExecutor extends BaseExecutor<
     });
 
     this.log("info", `Complete, keys: ${result ? Object.keys(result as object) : "null"}`);
-    checkFalApiError(result);
     return result;
   }
 

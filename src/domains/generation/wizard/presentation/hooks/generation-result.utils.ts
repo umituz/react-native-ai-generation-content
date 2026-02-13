@@ -1,21 +1,21 @@
 /**
  * Generation Result Utilities
- * Shared utilities for extracting and processing generation results
+ * Provider-agnostic utilities for extracting generation results
  */
 
-export interface FalErrorDetail {
+export interface GenerationErrorDetail {
   msg?: string;
   type?: string;
   loc?: string[];
   input?: string;
 }
 
-export interface FalResult {
+export interface GenerationResult {
   video?: { url?: string };
   output?: string;
   images?: Array<{ url?: string }>;
   image?: { url?: string };
-  detail?: FalErrorDetail[];
+  detail?: GenerationErrorDetail[];
   error?: string;
 }
 
@@ -27,8 +27,7 @@ export interface GenerationUrls {
 /**
  * Check if result contains an error and throw with appropriate message
  */
-function checkForErrors(result: FalResult): void {
-  // Check for FAL API error format: {detail: [{msg, type}]}
+function checkForErrors(result: GenerationResult): void {
   if (result.detail && Array.isArray(result.detail) && result.detail.length > 0) {
     const firstError = result.detail[0];
     if (!firstError) return;
@@ -36,7 +35,6 @@ function checkForErrors(result: FalResult): void {
     const errorType = firstError.type || "unknown";
     const errorMsg = firstError.msg || "Generation failed";
 
-    // Map error type to translation key
     if (errorType === "content_policy_violation") {
       throw new Error("error.generation.content_policy");
     }
@@ -48,27 +46,23 @@ function checkForErrors(result: FalResult): void {
     throw new Error(errorMsg);
   }
 
-  // Check for simple error field
   if (result.error && typeof result.error === "string" && result.error.length > 0) {
     throw new Error(result.error);
   }
 }
 
 /**
- * Extracts image/video URL from FAL result
- * Handles various result formats from different FAL models
+ * Extracts image/video URL from generation result
+ * Handles various result formats from different providers
  * Throws error if result contains error information
  */
-export function extractResultUrl(result: FalResult): GenerationUrls {
-  // First check for errors in the result
+export function extractResultUrl(result: GenerationResult): GenerationUrls {
   checkForErrors(result);
 
-  // Video result
   if (result.video?.url && typeof result.video.url === "string") {
     return { videoUrl: result.video.url };
   }
 
-  // Output URL (some models return direct URL)
   if (typeof result.output === "string" && result.output.length > 0 && result.output.startsWith("http")) {
     if (result.output.includes(".mp4") || result.output.includes("video")) {
       return { videoUrl: result.output };
@@ -76,7 +70,6 @@ export function extractResultUrl(result: FalResult): GenerationUrls {
     return { imageUrl: result.output };
   }
 
-  // Images array (most image models) with bounds checking
   if (result.images && Array.isArray(result.images) && result.images.length > 0) {
     const firstImage = result.images[0];
     if (firstImage?.url && typeof firstImage.url === "string") {
@@ -84,7 +77,6 @@ export function extractResultUrl(result: FalResult): GenerationUrls {
     }
   }
 
-  // Single image
   if (result.image?.url && typeof result.image.url === "string") {
     return { imageUrl: result.image.url };
   }

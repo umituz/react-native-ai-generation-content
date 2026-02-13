@@ -54,13 +54,22 @@ export async function rateCreation(
   userId: string,
   creationId: string,
   rating: number,
-  _description?: string
+  description?: string
 ): Promise<boolean> {
   const docRef = pathResolver.getDocRef(userId, creationId);
   if (!docRef) return false;
 
   try {
-    await updateDoc(docRef, { rating, ratedAt: new Date() });
+    const updates: Record<string, unknown> = {
+      rating,
+      ratedAt: new Date(),
+    };
+
+    if (description) {
+      updates.ratingText = description;
+    }
+
+    await updateDoc(docRef, updates);
     return true;
   } catch {
     return false;
