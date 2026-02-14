@@ -38,11 +38,10 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
   const { isAuthenticated: rawIsAuth, isAnonymous } = useAuth();
   const { showAuthModal } = useAuthModalStore();
   const { isPremium } = usePremium();
-  const { credits, isLoading: isCreditsLoading } = useCredits();
+  const { credits, isCreditsLoaded, isLoading: isCreditsLoading } = useCredits();
   const { openPaywall } = usePaywallVisibility();
 
   const isAuthenticated = rawIsAuth && !isAnonymous;
-  const isCreditsLoaded = !isCreditsLoading;
   const creditBalance = credits?.credits ?? 0;
   const hasCredits = creditBalance >= creditCost;
 
@@ -68,13 +67,13 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
         return;
       }
 
-      if (!isCreditsLoaded) return;
+      if (isAuthenticated && !isCreditsLoaded) return;
 
       requireFeatureFromPackage(() => {
         handlePromiseResult(action(), onSuccess, onError);
       });
     },
-    [isOffline, isCreditsLoaded, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
+    [isOffline, isAuthenticated, isCreditsLoaded, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
   );
 
   return {
