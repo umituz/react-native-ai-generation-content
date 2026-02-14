@@ -9,6 +9,8 @@ export interface TextInputScreenTranslations {
   readonly continueButton: string;
   readonly backButton?: string;
   readonly examplesTitle?: string;
+  readonly contentNotAllowed?: string;
+  readonly contentNotAllowedMessage?: string;
 }
 
 export interface TextInputScreenConfig {

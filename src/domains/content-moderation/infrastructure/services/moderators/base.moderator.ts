@@ -13,7 +13,7 @@ import type {
 export type { ModerationResult };
 
 const DEFAULT_SUGGESTIONS: Record<string, string> = {
-  explicit_content: "Remove explicit content",
+  explicit_content: "Romantic and intimate content is not supported. Please try creating content with single subjects or non-intimate scenarios.",
   violence: "Remove violent content",
   hate_speech: "Remove discriminatory language",
   harassment: "Remove harassing content",

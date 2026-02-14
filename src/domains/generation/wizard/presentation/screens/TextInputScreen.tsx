@@ -13,8 +13,12 @@ import {
   ScreenLayout,
   NavigationHeader,
   type DesignTokens,
+  useAlert,
+  AlertType,
+  AlertMode,
 } from "@umituz/react-native-design-system";
 import { ContinueButton } from "../../../../../presentation/components/buttons";
+import { contentModerationService } from "../../../../../domains/content-moderation";
 import type { TextInputScreenProps } from "./TextInputScreen.types";
 
 export type {
@@ -33,17 +37,36 @@ export const TextInputScreen: React.FC<TextInputScreenProps> = ({
   onContinue,
 }) => {
   const tokens = useAppDesignTokens();
+  const alert = useAlert();
   const [text, setText] = useState(initialValue);
 
   const minLength = config?.minLength ?? 3;
   const maxLength = config?.maxLength ?? 1000;
   const canContinue = text.trim().length >= minLength;
 
-  const handleContinue = useCallback(() => {
-    if (canContinue) {
-      onContinue(text.trim());
+  const handleContinue = useCallback(async () => {
+    if (!canContinue) return;
+
+    const trimmedText = text.trim();
+
+    const moderationResult = await contentModerationService.moderate({
+      contentType: "text",
+      content: trimmedText,
+    });
+
+    if (!moderationResult.isAllowed) {
+      const violation = moderationResult.violations[0];
+      alert.show(
+        AlertType.ERROR,
+        AlertMode.MODAL,
+        translations.contentNotAllowed || "Content Not Allowed",
+        violation?.suggestion || translations.contentNotAllowedMessage || "This type of content is not supported. Please try a different prompt."
+      );
+      return;
     }
-  }, [canContinue, text, onContinue]);
+
+    onContinue(trimmedText);
+  }, [canContinue, text, onContinue, alert, translations]);
 
   const handleExampleSelect = useCallback((example: string) => {
     setText(example);

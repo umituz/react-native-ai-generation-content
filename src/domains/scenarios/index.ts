@@ -13,9 +13,6 @@ export type {
   Scenario,
 } from "./domain/Scenario";
 
-// Enums
-export { ScenarioCategory } from "./domain/ScenarioCategory";
-
 // Scenario Helpers - For app-level configuration
 export {
   createScenariosForApp,

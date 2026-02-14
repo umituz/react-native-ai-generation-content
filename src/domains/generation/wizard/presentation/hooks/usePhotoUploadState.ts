@@ -4,7 +4,7 @@
  * Uses design system's useMedia hook for media picking with built-in validation
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
@@ -49,10 +49,10 @@ export const usePhotoUploadState = ({
 }: UsePhotoUploadStateProps): UsePhotoUploadStateReturn => {
   const [image, setImage] = useState<UploadedImage | null>(initialImage || null);
   const { pickImage, isLoading } = useMedia();
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const maxFileSizeMB = config?.maxFileSizeMB ?? MEDIA_CONSTANTS.MAX_IMAGE_SIZE_MB;
 
-  // Reset state when stepId changes (new step = new photo)
   useEffect(() => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[usePhotoUploadState] Step changed, resetting image", { stepId, hasInitialImage: !!initialImage });
@@ -60,12 +60,40 @@ export const usePhotoUploadState = ({
     setImage(initialImage || null);
   }, [stepId, initialImage]);
 
+  useEffect(() => {
+    if (isLoading) {
+      timeoutRef.current = setTimeout(() => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.warn("[usePhotoUploadState] Image picker timeout - possible stuck state");
+        }
+        onError?.({
+          title: translations.error,
+          message: "Image selection is taking too long. Please try again.",
+        });
+      }, 30000);
+    } else {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [isLoading, onError, translations]);
+
   const clearImage = useCallback(() => {
     setImage(null);
   }, []);
 
   const handlePickImage = useCallback(async () => {
     try {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[usePhotoUploadState] Starting image pick");
+      }
+
       const result = await pickImage({
         allowsEditing: true,
         aspect: [1, 1],
@@ -73,8 +101,11 @@ export const usePhotoUploadState = ({
         maxFileSizeMB,
       });
 
-      // Handle validation errors from design system
       if (result.error) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[usePhotoUploadState] Validation error", result.error);
+        }
+
         if (result.error === MediaValidationError.FILE_TOO_LARGE) {
           onError?.({
             title: translations.fileTooLarge,
@@ -90,6 +121,9 @@ export const usePhotoUploadState = ({
       }
 
       if (result.canceled || !result.assets || result.assets.length === 0) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[usePhotoUploadState] Image pick canceled");
+        }
         return;
       }
 

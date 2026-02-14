@@ -99,9 +99,36 @@ const personalInfoRules: ModerationRule[] = [
   },
 ];
 
+const intimateContentRules: ModerationRule[] = [
+  {
+    id: "intimate-001",
+    name: "Romantic and Intimate Content",
+    description: "Detects romantic and intimate content requests",
+    contentTypes: ["text"],
+    severity: "high",
+    violationType: "explicit_content",
+    patterns: [
+      "\\bkiss(ing|es|ed)?\\b",
+      "\\bhug(ging|s|ged)?\\b",
+      "\\bromantic\\b",
+      "\\bintimate\\b",
+      "\\bcouple\\b.*\\b(kissing|hugging|embracing)\\b",
+      "\\b(kissing|hugging|embracing)\\b.*\\bcouple\\b",
+      "\\blove\\b.*\\bscene\\b",
+      "\\bsensual\\b",
+      "\\bseductive\\b",
+      "\\bpassionate\\b.*\\b(kiss|embrace)\\b",
+      "\\btwo people\\b.*\\b(kissing|hugging|embracing)\\b",
+      "\\bpeople\\b.*\\b(kissing|hugging|embracing)\\b",
+    ],
+    enabled: true,
+  },
+];
+
 export const defaultModerationRules: ModerationRule[] = [
   ...violenceRules,
   ...hateSpeechRules,
   ...illegalActivityRules,
   ...personalInfoRules,
+  ...intimateContentRules,
 ];

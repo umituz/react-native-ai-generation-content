@@ -20,3 +20,11 @@ export { featureRegistry } from "./domains/generation";
 // Generation Wizard
 export { GenericWizardFlow } from "./domains/generation/wizard";
 export type { GenericWizardFlowProps } from "./domains/generation/wizard";
+
+// Wizard Configs and Types
+export {
+  TEXT_TO_IMAGE_WIZARD_CONFIG,
+  TEXT_TO_VIDEO_WIZARD_CONFIG,
+  IMAGE_TO_VIDEO_WIZARD_CONFIG,
+} from "./domains/generation/wizard";
+export type { WizardScenarioData } from "./domains/generation/wizard";
