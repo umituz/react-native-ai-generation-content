@@ -49,7 +49,7 @@ export const usePhotoUploadState = ({
 }: UsePhotoUploadStateProps): UsePhotoUploadStateReturn => {
   const [image, setImage] = useState<UploadedImage | null>(initialImage || null);
   const { pickImage, isLoading } = useMedia();
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const maxFileSizeMB = config?.maxFileSizeMB ?? MEDIA_CONSTANTS.MAX_IMAGE_SIZE_MB;
 
