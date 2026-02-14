@@ -13,6 +13,20 @@ export const PHOTOREALISTIC_BASE = {
 } as const;
 
 /**
+ * Photorealistic rendering requirements for AI generation
+ * Detailed instructions for achieving photorealistic quality
+ */
+export const PHOTOREALISTIC_RENDERING = `PHOTOREALISTIC RENDERING REQUIREMENTS:
+- Ultra-high resolution (8K quality)
+- Natural skin tones and textures
+- Realistic fabric and material properties
+- Accurate shadows and reflections
+- Professional color grading
+- Cinema-quality depth of field
+- Natural lighting and exposure
+- Authentic environmental details` as const;
+
+/**
  * Creative prompt constants for non-realistic AI generation
  * Used for meme, cartoon, or stylized content generation
  */
@@ -24,14 +38,14 @@ export const CREATIVE_BASE = {
  * Creates a photorealistic AI prompt by combining scene description with quality modifiers
  * Used for realistic image/video generation (future us, video apps)
  * @param scene - The scene-specific description (what's happening, who, where)
- * @param lightingOverride - Optional custom lighting description
+ * @param options - Optional configuration (customInstructions for lighting override)
  * @returns Complete photorealistic prompt
  */
 export const createPhotorealisticPrompt = (
   scene: string,
-  lightingOverride?: string,
+  options?: { customInstructions?: string },
 ): string => {
-  const lighting = lightingOverride ?? PHOTOREALISTIC_BASE.lighting;
+  const lighting = options?.customInstructions ?? PHOTOREALISTIC_BASE.lighting;
   return `${PHOTOREALISTIC_BASE.quality}, ${scene}, ${lighting}`;
 };
 

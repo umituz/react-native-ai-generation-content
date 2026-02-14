@@ -13,6 +13,9 @@ export type {
   Scenario,
 } from "./domain/Scenario";
 
+// Enums
+export { ScenarioCategory } from "./domain/ScenarioCategory";
+
 // Scenario Helpers - For app-level configuration
 export {
   createScenariosForApp,
@@ -37,6 +40,10 @@ export type { ConfiguredScenario } from "./infrastructure/scenario-registry";
 export {
   createStoryTemplate,
   createCreativePrompt,
+  createPhotorealisticPrompt,
+  PHOTOREALISTIC_BASE,
+  PHOTOREALISTIC_RENDERING,
+  CREATIVE_BASE,
 } from "./infrastructure/utils/scenario-utils";
 
 // Wizard Configurations - App-agnostic, classifies by INPUT REQUIREMENTS

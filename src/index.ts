@@ -10,3 +10,13 @@ export * from "./exports/features";
 
 // Creations Domain
 export * from "./domains/creations";
+
+// Scenarios Domain
+export * from "./domains/scenarios";
+
+// Generation Domain (Feature Registry)
+export { featureRegistry } from "./domains/generation";
+
+// Generation Wizard
+export { GenericWizardFlow } from "./domains/generation/wizard";
+export type { GenericWizardFlowProps } from "./domains/generation/wizard";
