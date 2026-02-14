@@ -29,21 +29,35 @@ export function validateImageData(input: unknown): ValidationResult {
     return { isValid: false, errors: ["Image data must be a string"] };
   }
 
-  if (input.startsWith("http://") || input.startsWith("https://")) {
-    return validateURL(input);
+  const trimmed = input.trim();
+
+  // Validate HTTP/HTTPS URLs
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return validateURL(trimmed);
   }
 
-  if (input.startsWith("data:image/")) {
-    const base64Part = input.split(",")[1];
-    if (!base64Part) {
+  // Validate data URI format
+  if (trimmed.startsWith("data:image/")) {
+    const parts = trimmed.split(",");
+    if (parts.length !== 2) {
       return { isValid: false, errors: ["Invalid data URI format"] };
+    }
+    const base64Part = parts[1];
+    if (!base64Part || base64Part.length === 0) {
+      return { isValid: false, errors: ["Invalid data URI: missing base64 data"] };
     }
     return validateBase64(base64Part);
   }
 
+  // Validate standalone base64 string (fallback)
+  const base64Result = validateBase64(trimmed);
+  if (base64Result.isValid) {
+    return base64Result;
+  }
+
   return {
     isValid: false,
-    errors: ["Image data must be a URL or base64 data URI"],
+    errors: ["Image data must be a URL, base64 data URI, or valid base64 string"],
   };
 }
 

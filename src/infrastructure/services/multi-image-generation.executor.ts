@@ -6,6 +6,7 @@
 
 import { validateProvider } from "../utils/provider-validator.util";
 import { formatBase64 } from "../utils/base64.util";
+import { validateURL } from "../validation/base-validator";
 import { env } from "../config/env.config";
 
 declare const __DEV__: boolean;
@@ -59,7 +60,9 @@ export async function executeMultiImageGeneration(
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[MultiImageExecutor] Generation started", {
         imageCount: imageUrls.length,
-        model: input.model,
+        hasModel: !!input.model,
+        hasPrompt: !!input.prompt,
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -77,12 +80,31 @@ export async function executeMultiImageGeneration(
     });
 
     const rawResult = result as Record<string, unknown>;
-    const data = (rawResult?.data ?? rawResult) as { images?: Array<{ url: string }> };
-    const imageUrl = data?.images?.[0]?.url;
+    const data = rawResult?.data ?? rawResult;
 
-    return imageUrl
-      ? { success: true, imageUrl }
-      : { success: false, error: "No image generated" };
+    // Type-safe extraction of image URL
+    if (data && typeof data === "object" && "images" in data) {
+      const images = (data as { images?: unknown }).images;
+      if (Array.isArray(images) && images.length > 0) {
+        const firstImage = images[0];
+        if (firstImage && typeof firstImage === "object" && "url" in firstImage) {
+          const imageUrl = (firstImage as { url?: unknown }).url;
+          if (typeof imageUrl === "string" && imageUrl.length > 0) {
+            // Validate URL for security
+            const urlValidation = validateURL(imageUrl);
+            if (!urlValidation.isValid) {
+              return {
+                success: false,
+                error: `Invalid image URL received: ${urlValidation.errors.join(", ")}`
+              };
+            }
+            return { success: true, imageUrl };
+          }
+        }
+      }
+    }
+
+    return { success: false, error: "No image generated" };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Generation failed";
     if (typeof __DEV__ !== "undefined" && __DEV__) {

@@ -45,9 +45,9 @@ class GenerationOrchestratorService {
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[Orchestrator] Generate started:", {
-        model: request.model,
-        capability: request.capability,
-        provider: provider.providerId,
+        hasModel: !!request.model,
+        hasCapability: !!request.capability,
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -56,8 +56,8 @@ class GenerationOrchestratorService {
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] Job submitted:", {
-          requestId: submission.requestId,
-          provider: provider.providerId,
+          hasRequestId: !!submission.requestId,
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -91,9 +91,9 @@ class GenerationOrchestratorService {
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] Generate completed:", {
-          requestId: submission.requestId,
           duration: `${duration}ms`,
           success: true,
+          timestamp: new Date().toISOString(),
         });
       }
 

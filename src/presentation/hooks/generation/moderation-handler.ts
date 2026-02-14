@@ -52,10 +52,9 @@ export async function handleModeration<TInput, TResult>(
           isGeneratingRef.current = false;
           if (isMountedRef.current) resetState();
         },
-        async () => {
-          try {
-            await executeGeneration(input);
-          } catch (err) {
+        () => {
+          // Return the promise to allow proper error handling chain
+          return executeGeneration(input).catch((err) => {
             const error = parseError(err);
             if (isMountedRef.current) {
               setState({ status: "error", isGenerating: false, result: null, error });
@@ -63,9 +62,10 @@ export async function handleModeration<TInput, TResult>(
             showError("Error", getAlertMessage(error, alertMessages));
             onError?.(error);
             handleLifecycleComplete("error", undefined, error);
-          } finally {
+            throw error; // Re-throw to allow caller to handle
+          }).finally(() => {
             isGeneratingRef.current = false;
-          }
+          });
         },
       );
       return undefined;

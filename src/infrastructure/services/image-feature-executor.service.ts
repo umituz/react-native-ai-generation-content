@@ -6,6 +6,7 @@
 
 import { extractErrorMessage, validateProvider, prepareImageInputData } from "../utils";
 import { extractImageResult } from "../utils/url-extractor";
+import { validateURL } from "../validation/base-validator";
 import type { ImageResultExtractor } from "../utils/url-extractor";
 import type { ImageFeatureType } from "../../domain/interfaces";
 
@@ -60,6 +61,15 @@ export async function executeImageFeature(
 
     if (!imageUrl) {
       return { success: false, error: "No image in response" };
+    }
+
+    // Validate the extracted URL for security (prevent SSRF, invalid protocols, etc.)
+    const urlValidation = validateURL(imageUrl);
+    if (!urlValidation.isValid) {
+      return {
+        success: false,
+        error: `Invalid image URL received: ${urlValidation.errors.join(", ")}`
+      };
     }
 
     return {

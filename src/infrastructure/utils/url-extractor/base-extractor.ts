@@ -41,8 +41,11 @@ export function extractOutputUrl(
   const topMedia =
     (resultObj.image as Record<string, unknown>) ||
     (resultObj.video as Record<string, unknown>);
-  if (topMedia && typeof topMedia === "object" && typeof topMedia.url === "string") {
-    return topMedia.url;
+  if (topMedia && typeof topMedia === "object") {
+    const url = topMedia.url;
+    if (typeof url === "string" && url.length > 0) {
+      return url;
+    }
   }
 
   // Check nested data/output objects

@@ -11,17 +11,30 @@ export function sanitizeString(input: unknown): string {
     return "";
   }
 
-  return input
-    .trim()
+  let sanitized = input.trim();
+
+  // Remove dangerous HTML tags and protocols
+  sanitized = sanitized
     .replace(/[<>]/g, "")
     .replace(/javascript:/gi, "")
-    .replace(/data:/gi, "")
+    .replace(/data:(?!image\/)/gi, "") // Allow data:image/ for valid use cases
     .replace(/vbscript:/gi, "")
-    .replace(/on\w+\s*=/gi, "")
+    .replace(/file:/gi, "")
+    .replace(/on\w+\s*=/gi, "");
+
+  // Remove SQL injection patterns
+  sanitized = sanitized
     .replace(/--/g, "")
     .replace(/;\s*drop\s+/gi, "")
-    .replace(/['"\\]/g, "")
-    .slice(0, 10000);
+    .replace(/;\s*delete\s+/gi, "")
+    .replace(/;\s*insert\s+/gi, "")
+    .replace(/;\s*update\s+/gi, "");
+
+  // Remove Unicode escape sequences that could bypass filters
+  sanitized = sanitized.replace(/\\u[\da-fA-F]{4}/g, "");
+
+  // Limit length to prevent DoS
+  return sanitized.slice(0, 10000);
 }
 
 /**

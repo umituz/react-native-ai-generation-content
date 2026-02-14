@@ -6,6 +6,7 @@
 
 import { extractErrorMessage, validateProvider, prepareVideoInputData } from "../utils";
 import { extractVideoResult } from "../utils/url-extractor";
+import { validateURL } from "../validation/base-validator";
 import { DEFAULT_MAX_POLL_TIME_MS } from "../constants";
 import type { VideoFeatureType } from "../../domain/interfaces";
 import type { ExecuteVideoFeatureOptions, VideoFeatureResult, VideoFeatureRequest } from "./video-feature-executor.types";
@@ -46,6 +47,15 @@ export async function executeVideoFeature(
 
     if (!videoUrl) {
       return { success: false, error: "No video in response" };
+    }
+
+    // Validate URL for security (prevent SSRF, invalid protocols, etc.)
+    const urlValidation = validateURL(videoUrl);
+    if (!urlValidation.isValid) {
+      return {
+        success: false,
+        error: `Invalid video URL received: ${urlValidation.errors.join(", ")}`
+      };
     }
 
     return {

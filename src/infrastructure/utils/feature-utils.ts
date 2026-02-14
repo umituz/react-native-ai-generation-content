@@ -5,6 +5,7 @@
 
 import { readFileAsBase64 } from "@umituz/react-native-design-system";
 import { getAuthService, getCreditService, getPaywallService, isAppServicesConfigured } from "../config/app-services.config";
+import { env } from "../config/env.config";
 
 declare const __DEV__: boolean;
 
@@ -35,6 +36,15 @@ export async function prepareImage(uri: string): Promise<string> {
 
     if (!base64) {
       throw new Error("[prepareImage] Failed to convert image to base64");
+    }
+
+    // Validate base64 size to prevent memory exhaustion
+    const maxSizeBytes = env.validationMaxBase64SizeMb * 1024 * 1024;
+    if (base64.length > maxSizeBytes) {
+      throw new Error(
+        `[prepareImage] Image exceeds maximum size of ${env.validationMaxBase64SizeMb}MB. ` +
+        `Current size: ${(base64.length / (1024 * 1024)).toFixed(2)}MB`
+      );
     }
 
     return base64;

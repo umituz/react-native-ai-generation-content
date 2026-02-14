@@ -36,7 +36,7 @@ export const AIGenerationConfig: React.FC<AIGenerationConfigProps> = ({
       {images.length > 0 && (
         <View style={styles.imagePreviewContainer}>
           {images.map((img, index) => (
-            <View key={index} style={styles.imageWrapper}>
+            <View key={img.uri || `image-${index}`} style={styles.imageWrapper}>
               <Image
                 source={{ uri: img.previewUrl || img.uri }}
                 style={styles.previewImage}

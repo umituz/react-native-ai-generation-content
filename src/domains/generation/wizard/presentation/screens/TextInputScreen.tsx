@@ -104,7 +104,7 @@ export const TextInputScreen: React.FC<TextInputScreenProps> = ({
             </AtomicText>
             {examplePrompts.slice(0, 4).map((example, index) => (
               <AtomicButton
-                key={index}
+                key={`${example}-${index}`}
                 variant="outline"
                 size="sm"
                 onPress={() => handleExampleSelect(example)}

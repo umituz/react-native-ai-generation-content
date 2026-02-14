@@ -30,7 +30,7 @@ export interface UseTextToVideoFormReturn {
   setSoundEnabled: (enabled: boolean) => void;
   setProfessionalMode: (enabled: boolean) => void;
   setFrames: (frames: FrameData[]) => void;
-  handleFrameChange: (index: number) => void;
+  handleFrameChange: (fromIndex: number, toIndex: number) => void;
   handleFrameDelete: (index: number) => void;
   selectExamplePrompt: (prompt: string) => void;
   reset: () => void;
@@ -88,19 +88,38 @@ export function useTextToVideoForm(
     setState((prev) => ({ ...prev, professionalMode }));
   }, []);
 
-  const handleFrameChange = useCallback((index: number) => {
-    if (__DEV__) {
-       
-      console.log("[TextToVideoForm] Frame change requested:", index);
-    }
-  }, []);
+  const handleFrameChange = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      if (fromIndex < 0 || fromIndex >= frames.length || toIndex < 0 || toIndex >= frames.length) {
+        if (__DEV__) {
+          console.warn("[TextToVideoForm] Invalid frame indices:", { fromIndex, toIndex, length: frames.length });
+        }
+        return;
+      }
+
+      if (fromIndex === toIndex) return;
+
+      setFrames((prevFrames) => {
+        const newFrames = [...prevFrames];
+        const [movedFrame] = newFrames.splice(fromIndex, 1);
+        newFrames.splice(toIndex, 0, movedFrame);
+        return newFrames;
+      });
+    },
+    [frames.length],
+  );
 
   const handleFrameDelete = useCallback(
     (index: number) => {
-      const newFrames = frames.filter((f) => f.order !== index);
-      setFrames(newFrames);
+      if (index < 0 || index >= frames.length) {
+        if (__DEV__) {
+          console.warn("[TextToVideoForm] Invalid frame index:", index);
+        }
+        return;
+      }
+      setFrames((prevFrames) => prevFrames.filter((_, i) => i !== index));
     },
-    [frames],
+    [frames.length],
   );
 
   const selectExamplePrompt = useCallback(

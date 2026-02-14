@@ -52,7 +52,7 @@ export function GridSelector<T>({
           const isSelected = selectedValue === option.value;
           return (
             <TouchableOpacity
-              key={index}
+              key={`${option.label}-${index}`}
               style={[
                 styles.card,
                 {

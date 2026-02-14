@@ -54,7 +54,7 @@ export const ImageSelectionGrid: React.FC<ImageSelectionGridProps> = ({
       >
         {images.map((uri, index) => (
           <GridImageItem
-            key={index}
+            key={uri}
             styles={styles}
             uri={uri}
             index={index}
