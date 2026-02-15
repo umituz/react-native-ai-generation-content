@@ -17,16 +17,34 @@ import type {
   AIFeatureGateReturn,
 } from "../types/access-control.types";
 
+declare const __DEV__: boolean;
+
 const handlePromiseResult = (
   result: void | Promise<void>,
   onSuccess?: () => void,
   onError?: (error: Error) => void,
 ): void => {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[AIFeatureGate] handlePromiseResult - isPromise:", result instanceof Promise);
+  }
   if (result instanceof Promise) {
     result
-      .then(() => onSuccess?.())
-      .catch((err) => onError?.(err instanceof Error ? err : new Error(String(err))));
+      .then(() => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[AIFeatureGate] Promise resolved, calling onSuccess");
+        }
+        onSuccess?.();
+      })
+      .catch((err) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[AIFeatureGate] Promise rejected:", err);
+        }
+        onError?.(err instanceof Error ? err : new Error(String(err)));
+      });
   } else {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[AIFeatureGate] Sync result, calling onSuccess");
+    }
     onSuccess?.();
   }
 };
@@ -62,18 +80,45 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
 
   const requireFeature = useCallback(
     (action: () => void | Promise<void>): void => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[AIFeatureGate] requireFeature called:", {
+          isOffline,
+          isAuthenticated,
+          isCreditsLoaded,
+          isPremium,
+          creditBalance,
+          creditCost,
+          hasCredits,
+        });
+      }
+
       if (isOffline) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[AIFeatureGate] BLOCKED: User is offline");
+        }
         onNetworkError?.();
         return;
       }
 
-      if (isAuthenticated && !isCreditsLoaded) return;
+      if (isAuthenticated && !isCreditsLoaded) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[AIFeatureGate] BLOCKED: User authenticated but credits not loaded yet");
+        }
+        return;
+      }
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[AIFeatureGate] Calling requireFeatureFromPackage");
+      }
 
       requireFeatureFromPackage(() => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[AIFeatureGate] Inside requireFeatureFromPackage callback - executing action");
+        }
         handlePromiseResult(action(), onSuccess, onError);
       });
     },
-    [isOffline, isAuthenticated, isCreditsLoaded, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
+    [isOffline, isAuthenticated, isCreditsLoaded, isPremium, creditBalance, creditCost, hasCredits, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
   );
 
   return {
