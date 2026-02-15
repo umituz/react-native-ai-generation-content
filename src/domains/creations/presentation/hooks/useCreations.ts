@@ -38,6 +38,23 @@ export function useCreations({
     }
   }, []);
 
+  const onDataCallback = useCallback((creations: Creation[]) => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[useCreations] Realtime update:", creations.length);
+    }
+    setData(creations);
+    setIsLoading(false);
+    setError(null);
+  }, []);
+
+  const onErrorCallback = useCallback((err: Error) => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.error("[useCreations] Realtime listener error:", err);
+    }
+    setError(err);
+    setIsLoading(false);
+  }, []);
+
   useEffect(() => {
     if (!userId || !enabled) {
       setData([]);
@@ -52,24 +69,7 @@ export function useCreations({
     setIsLoading(true);
     setError(null);
 
-    const unsubscribe = repository.subscribeToAll(
-      userId,
-      (creations) => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[useCreations] Realtime update:", creations.length);
-        }
-        setData(creations);
-        setIsLoading(false);
-        setError(null);
-      },
-      (err) => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error("[useCreations] Realtime listener error:", err);
-        }
-        setError(err);
-        setIsLoading(false);
-      },
-    );
+    const unsubscribe = repository.subscribeToAll(userId, onDataCallback, onErrorCallback);
 
     return () => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -77,7 +77,7 @@ export function useCreations({
       }
       unsubscribe();
     };
-  }, [userId, repository, enabled]);
+  }, [userId, repository, enabled, onDataCallback, onErrorCallback]);
 
   return { data, isLoading, error, refetch };
 }

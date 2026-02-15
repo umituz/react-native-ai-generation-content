@@ -28,6 +28,12 @@ export function useGenerationPhase(options?: UseGenerationPhaseOptions): Generat
 
   const [phase, setPhase] = useState<GenerationPhase>("queued");
   const startTimeRef = useRef<number>(Date.now());
+  const queuedDurationRef = useRef(queuedDuration);
+
+  // Only reset if duration changes significantly
+  useEffect(() => {
+    queuedDurationRef.current = queuedDuration;
+  }, [queuedDuration]);
 
   useEffect(() => {
     startTimeRef.current = Date.now();
@@ -36,14 +42,14 @@ export function useGenerationPhase(options?: UseGenerationPhaseOptions): Generat
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current;
 
-      if (elapsed >= queuedDuration) {
+      if (elapsed >= queuedDurationRef.current) {
         setPhase("processing");
         clearInterval(interval);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [queuedDuration]);
+  }, []); // Empty deps - only run once on mount
 
   return phase;
 }

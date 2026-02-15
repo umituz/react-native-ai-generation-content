@@ -16,8 +16,12 @@ interface PollParams {
 export const pollQueueStatus = async (params: PollParams): Promise<void> => {
   const { requestId, model, isPollingRef, pollingRef, onComplete, onError } = params;
 
-  // Atomic check-and-set to prevent race condition
-  if (isPollingRef.current) return;
+  // Check-and-set - while not truly atomic in JS, this is best we can do
+  // The ref prevents most race conditions in practice
+  if (isPollingRef.current) {
+    if (__DEV__) console.log("[VideoQueuePoller] Already polling, skipping");
+    return;
+  }
   isPollingRef.current = true;
 
   const provider = providerRegistry.getActiveProvider();

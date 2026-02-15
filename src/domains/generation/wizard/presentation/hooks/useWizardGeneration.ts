@@ -66,6 +66,15 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     onCreditsExhausted,
   });
 
+  // Use refs for functions to avoid effect re-runs
+  const videoStartGenerationRef = useRef(videoGeneration.startGeneration);
+  const photoStartGenerationRef = useRef(photoGeneration.startGeneration);
+
+  useEffect(() => {
+    videoStartGenerationRef.current = videoGeneration.startGeneration;
+    photoStartGenerationRef.current = photoGeneration.startGeneration;
+  }, [videoGeneration.startGeneration, photoGeneration.startGeneration]);
+
   useEffect(() => {
     const isAlreadyGenerating = videoGeneration.isGenerating || photoGeneration.isGenerating;
 
@@ -80,8 +89,8 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
         isMountedRef,
         dispatch,
         onError,
-        videoGenerationFn: videoGeneration.startGeneration,
-        photoGenerationFn: photoGeneration.startGeneration,
+        videoGenerationFn: videoStartGenerationRef.current,
+        photoGenerationFn: photoStartGenerationRef.current,
       }).catch((error) => {
         // Catch any unhandled errors from executeWizardGeneration
         if (isMountedRef.current) {
@@ -102,9 +111,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     wizardData,
     isVideoMode,
     videoGeneration.isGenerating,
-    videoGeneration.startGeneration,
     photoGeneration.isGenerating,
-    photoGeneration.startGeneration,
     onError,
   ]);
 

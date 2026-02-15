@@ -30,6 +30,13 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
         clearInterval(pollingRef.current);
         pollingRef.current = null;
       }
+      // Reset all refs on unmount
+      isGeneratingRef.current = false;
+      isPollingRef.current = false;
+      creationIdRef.current = null;
+      requestIdRef.current = null;
+      modelRef.current = null;
+      setIsGenerating(false);
     };
   }, []);
 
@@ -45,10 +52,20 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
   const handleComplete = useCallback(
     async (urls: GenerationUrls) => {
       const creationId = creationIdRef.current;
-      if (creationId && userId && (urls.videoUrl || urls.imageUrl)) {
+      const uri = (urls.videoUrl || urls.imageUrl) ?? "";
+
+      // Validate non-empty URI
+      if (!creationId || !userId || !uri || uri.trim() === "") {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[VideoQueue] Invalid completion data:", { creationId, userId, uri });
+        }
+        return;
+      }
+
+      if (creationId && userId) {
         try {
           await persistence.updateToCompleted(userId, creationId, {
-            uri: (urls.videoUrl || urls.imageUrl) ?? "",
+            uri,
             imageUrl: urls.imageUrl,
             videoUrl: urls.videoUrl,
           });

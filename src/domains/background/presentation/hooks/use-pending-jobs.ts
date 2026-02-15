@@ -59,7 +59,14 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
     onSuccess: (newJob: BackgroundJob<TInput, TResult>) => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old: BackgroundJob<TInput, TResult>[] | undefined) => [newJob, ...(old ?? [])],
+        (old: BackgroundJob<TInput, TResult>[] | undefined) => {
+          // Check if job already exists to prevent duplicates
+          const exists = old?.some((job) => job.id === newJob.id);
+          if (exists) {
+            return old ?? [];
+          }
+          return [newJob, ...(old ?? [])];
+        },
       );
     },
   });

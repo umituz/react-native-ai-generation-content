@@ -60,8 +60,18 @@ export function useProcessingJobsPoller(
   // Use ref for stable function reference to prevent effect re-runs
   const pollJobRef = useRef<((creation: Creation) => Promise<void>) | undefined>(undefined);
 
+  // Use mounted ref to prevent operations after unmount
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   pollJobRef.current = async (creation: Creation) => {
-    if (!userId || !creation.requestId || !creation.model) return;
+    if (!isMountedRef.current || !userId || !creation.requestId || !creation.model) return;
 
     if (pollingRef.current.has(creation.id)) return;
     pollingRef.current.add(creation.id);
@@ -88,6 +98,8 @@ export function useProcessingJobsPoller(
         const urls = extractResultUrl(result);
         if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Completed:", creation.id, urls);
 
+        if (!isMountedRef.current) return;
+
         const uri = urls.videoUrl || urls.imageUrl || "";
 
         // Validate that we have a valid URI before marking as completed
@@ -109,6 +121,8 @@ export function useProcessingJobsPoller(
         });
       } else if (status.status === QUEUE_STATUS.FAILED) {
         if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Failed:", creation.id);
+
+        if (!isMountedRef.current) return;
 
         await repository.update(userId, creation.id, {
           status: CREATION_STATUS.FAILED,
