@@ -89,6 +89,19 @@ export function useProcessingJobsPoller(
         if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Completed:", creation.id, urls);
 
         const uri = urls.videoUrl || urls.imageUrl || "";
+
+        // Validate that we have a valid URI before marking as completed
+        if (!uri || uri.trim() === "") {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[ProcessingJobsPoller] No valid URI in result:", creation.id);
+          }
+          await repository.update(userId, creation.id, {
+            status: CREATION_STATUS.FAILED,
+            metadata: { error: "No valid result URL received" },
+          });
+          return;
+        }
+
         await repository.update(userId, creation.id, {
           status: CREATION_STATUS.COMPLETED,
           uri,
@@ -111,6 +124,12 @@ export function useProcessingJobsPoller(
     }
   };
 
+  // Use ref to always get latest creations
+  const creationsRef = useRef(creations);
+  useEffect(() => {
+    creationsRef.current = creations;
+  }, [creations]);
+
   useEffect(() => {
     if (!enabled || !userId || processingJobIds.length === 0) {
       if (intervalRef.current) {
@@ -120,9 +139,9 @@ export function useProcessingJobsPoller(
       return;
     }
 
-    // Get current jobs at poll time to avoid stale closures
+    // Get current jobs at poll time from ref to avoid stale closures
     const pollCurrentJobs = () => {
-      const currentJobs = creations.filter(
+      const currentJobs = creationsRef.current.filter(
         (c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model,
       );
       currentJobs.forEach((job) => pollJobRef.current?.(job));
@@ -144,7 +163,7 @@ export function useProcessingJobsPoller(
         intervalRef.current = null;
       }
     };
-  }, [enabled, userId, processingJobIds, creations]);
+  }, [enabled, userId, processingJobIds]);
 
   return {
     processingCount: processingJobs.length,

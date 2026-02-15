@@ -48,6 +48,12 @@ export function updatePhotoStep(
   stepIndex: number,
   updates: Partial<PhotoStepData>,
 ): GenerationFlowState {
+  // Validate bounds to prevent sparse arrays and undefined access
+  if (stepIndex < 0 || stepIndex >= state.photoSteps.length) {
+    console.warn(`[FlowState] Invalid stepIndex ${stepIndex}, ignoring update`);
+    return state;
+  }
+
   const newPhotoSteps = [...state.photoSteps];
   newPhotoSteps[stepIndex] = {
     ...newPhotoSteps[stepIndex],

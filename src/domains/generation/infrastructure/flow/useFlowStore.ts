@@ -3,6 +3,8 @@
  */
 
 import { createStore } from "@umituz/react-native-design-system";
+
+declare const __DEV__: boolean;
 import type {
   FlowState,
   FlowActions,
@@ -34,7 +36,13 @@ export const createFlowStore = (config: FlowStoreConfig) => {
   if (config.initialStepIndex !== undefined) {
     initialIndex = Math.max(0, Math.min(config.initialStepIndex, config.steps.length - 1));
   } else if (config.initialStepId) {
-    initialIndex = Math.max(0, config.steps.findIndex((s) => s.id === config.initialStepId));
+    const foundIndex = config.steps.findIndex((s) => s.id === config.initialStepId);
+    if (foundIndex === -1) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.warn(`[FlowStore] Step "${config.initialStepId}" not found, using first step`);
+      }
+    }
+    initialIndex = Math.max(0, foundIndex);
   }
 
   const initialStepId = config.steps[initialIndex]?.id ?? "";
@@ -86,28 +94,30 @@ export const createFlowStore = (config: FlowStoreConfig) => {
       setScenario: (scenario: unknown) => set({ selectedScenario: scenario }),
 
       setPartnerImage: (partnerId: string, image: FlowUploadedImageData | undefined) =>
-        set({ partners: { ...get().partners, [partnerId]: image } }),
+        set((state) => ({ partners: { ...state.partners, [partnerId]: image } })),
 
       setPartnerName: (partnerId: string, name: string) =>
-        set({ partnerNames: { ...get().partnerNames, [partnerId]: name } }),
+        set((state) => ({ partnerNames: { ...state.partnerNames, [partnerId]: name } })),
 
       setTextInput: (text: string) => set({ textInput: text }),
       setVisualStyle: (styleId: string) => set({ visualStyle: styleId }),
 
       setSelectedFeatures: (featureType: string, ids: readonly string[]) =>
-        set({ selectedFeatures: { ...get().selectedFeatures, [featureType]: ids } }),
+        set((state) => ({ selectedFeatures: { ...state.selectedFeatures, [featureType]: ids } })),
 
       setCustomData: (key: string, value: unknown) =>
-        set({ customData: { ...get().customData, [key]: value } }),
+        set((state) => ({ customData: { ...state.customData, [key]: value } })),
 
       startGeneration: () =>
         set({ generationStatus: "preparing", generationProgress: 0, generationError: undefined }),
 
-      updateProgress: (progress: number) =>
+      updateProgress: (progress: number) => {
+        const validProgress = Math.max(0, Math.min(100, progress));
         set({
-          generationProgress: progress,
-          generationStatus: progress >= 100 ? "completed" : progress > 0 ? "generating" : "preparing",
-        }),
+          generationProgress: validProgress,
+          generationStatus: validProgress >= 100 ? "completed" : validProgress > 0 ? "generating" : "preparing",
+        });
+      },
 
       setResult: (result: unknown) =>
         set({ generationResult: result, generationStatus: "completed", generationProgress: 100 }),

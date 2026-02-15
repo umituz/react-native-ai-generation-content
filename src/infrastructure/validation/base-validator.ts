@@ -136,6 +136,10 @@ export function validateBase64(input: unknown): ValidationResult {
     return { isValid: false, errors: ["Input must be a string"] };
   }
 
+  if (input.length === 0) {
+    return { isValid: false, errors: ["Base64 string cannot be empty"] };
+  }
+
   const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
   if (!base64Regex.test(input)) {
     return { isValid: false, errors: ["Invalid base64 format"] };

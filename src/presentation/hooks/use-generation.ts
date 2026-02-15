@@ -109,6 +109,9 @@ export function useGeneration<T = unknown>(
         if (!abortRef.current && !abortControllerRef.current?.signal.aborted) {
           setIsGenerating(false);
         }
+        if (abortControllerRef.current && !abortControllerRef.current.signal.aborted) {
+          abortControllerRef.current.abort();
+        }
         abortControllerRef.current = null;
       }
     },

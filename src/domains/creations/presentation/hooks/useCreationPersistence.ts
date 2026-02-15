@@ -71,12 +71,9 @@ export function useCreationPersistence(
 
       if (creditCost && onCreditDeduct) {
         onCreditDeduct(creditCost).catch((error) => {
-          // Log credit deduction errors for debugging
           if (typeof __DEV__ !== "undefined" && __DEV__) {
             console.error("[CreationPersistence] Credit deduction failed:", error);
           }
-          // Don't throw - credit deduction failure shouldn't block completion
-          // But we should notify user or retry in production
         });
       }
     },
