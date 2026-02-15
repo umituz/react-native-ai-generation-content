@@ -3,6 +3,8 @@
  */
 
 import { useEffect, useRef, useCallback, useState } from "react";
+
+declare const __DEV__: boolean;
 import { pollQueueStatus } from "./videoQueuePoller";
 import { DEFAULT_POLL_INTERVAL_MS } from "../../../../../infrastructure/constants/polling.constants";
 import type { GenerationUrls } from "./generation-result.utils";
@@ -50,7 +52,11 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
             imageUrl: urls.imageUrl,
             videoUrl: urls.videoUrl,
           });
-        } catch {}
+        } catch (error) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[VideoQueue] Failed to update completion status:", error);
+          }
+        }
       }
       resetRefs();
       onSuccess?.(urls);
@@ -64,7 +70,11 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       if (creationId && userId) {
         try {
           await persistence.updateToFailed(userId, creationId, errorMsg);
-        } catch {}
+        } catch (error) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[VideoQueue] Failed to update error status:", error);
+          }
+        }
       }
       resetRefs();
       onError?.(errorMsg);
@@ -107,7 +117,11 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
             prompt,
           });
           creationIdRef.current = creationId;
-        } catch {}
+        } catch (error) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[VideoQueue] Failed to save processing creation:", error);
+          }
+        }
       }
 
       const queueResult = await strategy.submitToQueue(input);
@@ -126,7 +140,11 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       if (creationId && userId && queueResult.requestId && queueResult.model) {
         try {
           await persistence.updateRequestId(userId, creationId, queueResult.requestId, queueResult.model);
-        } catch {}
+        } catch (error) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[VideoQueue] Failed to update request ID:", error);
+          }
+        }
       }
 
       pollingRef.current = setInterval(() => void pollStatus(), DEFAULT_POLL_INTERVAL_MS);

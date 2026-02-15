@@ -3,6 +3,8 @@
  */
 
 import { useCallback, useMemo } from "react";
+
+declare const __DEV__: boolean;
 import { useAuth } from "@umituz/react-native-auth";
 import { createCreationsRepository } from "../../infrastructure/adapters";
 import type { Creation } from "../../domain/entities/Creation";
@@ -68,7 +70,14 @@ export function useCreationPersistence(
       });
 
       if (creditCost && onCreditDeduct) {
-        onCreditDeduct(creditCost).catch(() => {});
+        onCreditDeduct(creditCost).catch((error) => {
+          // Log credit deduction errors for debugging
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[CreationPersistence] Credit deduction failed:", error);
+          }
+          // Don't throw - credit deduction failure shouldn't block completion
+          // But we should notify user or retry in production
+        });
       }
     },
     [userId, repository, creditCost, onCreditDeduct]

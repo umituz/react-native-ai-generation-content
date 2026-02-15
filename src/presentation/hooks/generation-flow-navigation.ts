@@ -24,7 +24,11 @@ export function createGoNextHandler(
       onComplete?.(newState);
     } else {
       setState({ ...state, currentStepIndex: nextIndex });
-      onStepChange?.(nextIndex, config.photoSteps[nextIndex]);
+      // Bounds check before accessing array
+      const nextStep = config.photoSteps[nextIndex];
+      if (nextStep) {
+        onStepChange?.(nextIndex, nextStep);
+      }
     }
   };
 }
@@ -40,8 +44,15 @@ export function createGoBackHandler(
     if (!canGoBack) return;
 
     const prevIndex = currentStepIndex - 1;
+    // Validate index is within bounds
+    if (prevIndex < 0) return;
+
     setState((prev) => ({ ...prev, currentStepIndex: prevIndex, isComplete: false }));
-    onStepChange?.(prevIndex, config.photoSteps[prevIndex]);
+    // Bounds check before accessing array
+    const prevStep = config.photoSteps[prevIndex];
+    if (prevStep) {
+      onStepChange?.(prevIndex, prevStep);
+    }
   };
 }
 

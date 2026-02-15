@@ -4,6 +4,8 @@
  */
 
 import { useState, useCallback } from "react";
+
+declare const __DEV__: boolean;
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import {
@@ -88,7 +90,10 @@ export const useResultActions = (options: UseResultActionsOptions = {}): UseResu
         onShareEnd?.(true);
       }
     } catch (error: unknown) {
-      if (__DEV__) console.log("Share cancelled or failed:", error);
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        console.log("[ResultActions] Share cancelled or failed:", errorMsg);
+      }
       onShareEnd?.(true);
     } finally {
       setIsSharing(false);

@@ -88,7 +88,7 @@ export function useGeneration<T = unknown>(
 
         const genResult = await generationOrchestrator.generate<T>(request);
 
-        if (abortRef.current || abortControllerRef.current.signal.aborted) return;
+        if (abortRef.current || abortControllerRef.current?.signal.aborted) return;
 
         setResult(genResult);
 

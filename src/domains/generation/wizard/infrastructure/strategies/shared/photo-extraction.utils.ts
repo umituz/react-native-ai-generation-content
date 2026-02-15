@@ -55,13 +55,31 @@ export async function extractPhotosAsBase64(
     return [];
   }
 
-  const photosBase64 = await Promise.all(photoUris.map((uri) => readFileAsBase64(uri)));
-  const validPhotos = photosBase64.filter(Boolean) as string[];
+  // Use Promise.allSettled to handle individual failures gracefully
+  const results = await Promise.allSettled(
+    photoUris.map(async (uri, index) => {
+      try {
+        return await readFileAsBase64(uri);
+      } catch (error) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error(`[PhotoExtraction] Failed to read photo ${index}:`, error);
+        }
+        return null;
+      }
+    })
+  );
+
+  // Extract successful results only
+  const validPhotos = results
+    .map((result) => (result.status === "fulfilled" ? result.value : null))
+    .filter((photo): photo is string => typeof photo === "string" && photo.length > 0);
 
   if (enableDebugLogs && typeof __DEV__ !== "undefined" && __DEV__) {
+    const failedCount = results.filter((r) => r.status === "rejected").length;
     console.log("[PhotoExtraction] Converted photos", {
       total: photoUris.length,
       valid: validPhotos.length,
+      failed: failedCount,
       sizes: validPhotos.map((p) => `${(p.length / 1024).toFixed(1)}KB`),
     });
   }

@@ -34,6 +34,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   const isGeneratingRef = useRef(false);
   const isMountedRef = useRef(true);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const cleanupTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
@@ -44,18 +45,31 @@ export const useGenerationOrchestrator = <TInput, TResult>(
     return () => {
       isMountedRef.current = false;
       abortControllerRef.current?.abort();
+      // Clear any pending lifecycle complete timeout
+      if (cleanupTimeoutRef.current) {
+        clearTimeout(cleanupTimeoutRef.current);
+        cleanupTimeoutRef.current = null;
+      }
     };
   }, []);
 
   const handleLifecycleComplete = useCallback(
     (status: "success" | "error", result?: TResult, error?: GenerationError) => {
       if (!lifecycle?.onComplete) return;
+
+      // Clear any existing timeout first
+      if (cleanupTimeoutRef.current) {
+        clearTimeout(cleanupTimeoutRef.current);
+        cleanupTimeoutRef.current = null;
+      }
+
       const delay = lifecycle.completeDelay ?? 500;
-      const timeoutId = setTimeout(() => {
-        if (isMountedRef.current) lifecycle.onComplete?.(status, result, error);
+      cleanupTimeoutRef.current = setTimeout(() => {
+        if (isMountedRef.current) {
+          lifecycle.onComplete?.(status, result, error);
+        }
+        cleanupTimeoutRef.current = null;
       }, delay);
-      // Store timeout ID for cleanup (if component unmounts during delay)
-      return () => clearTimeout(timeoutId);
     },
     [lifecycle],
   );
@@ -237,7 +251,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         abortControllerRef.current = null;
       }
     },
-    [offlineStore.isOnline, moderation, alertMessages, strategy, checkCredits, onCreditsExhausted, executeGeneration, showError, onError, handleLifecycleComplete],
+    [offlineStore, moderation, alertMessages, strategy, checkCredits, onCreditsExhausted, executeGeneration, showError, onError, handleLifecycleComplete],
   );
 
   const reset = useCallback(() => {

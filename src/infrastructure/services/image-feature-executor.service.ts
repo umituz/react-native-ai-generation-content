@@ -72,10 +72,15 @@ export async function executeImageFeature(
       };
     }
 
+    // Safely extract requestId with type guard
+    const requestId = typeof result === "object" && result !== null && "requestId" in result && typeof result.requestId === "string"
+      ? result.requestId
+      : undefined;
+
     return {
       success: true,
       imageUrl,
-      requestId: (result as { requestId?: string })?.requestId,
+      requestId,
     };
   } catch (error) {
     const message = extractErrorMessage(error, "Processing failed", `Image:${featureType}`);

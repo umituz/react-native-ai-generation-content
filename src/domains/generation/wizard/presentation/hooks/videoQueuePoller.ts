@@ -16,12 +16,15 @@ interface PollParams {
 export const pollQueueStatus = async (params: PollParams): Promise<void> => {
   const { requestId, model, isPollingRef, pollingRef, onComplete, onError } = params;
 
+  // Atomic check-and-set to prevent race condition
   if (isPollingRef.current) return;
+  isPollingRef.current = true;
 
   const provider = providerRegistry.getActiveProvider();
-  if (!provider) return;
-
-  isPollingRef.current = true;
+  if (!provider) {
+    isPollingRef.current = false;
+    return;
+  }
   try {
     const status = await provider.getJobStatus(model, requestId);
     if (__DEV__) console.log("[VideoQueueGeneration] Poll:", status.status);

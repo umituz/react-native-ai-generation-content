@@ -72,7 +72,8 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     if (isGeneratingStep && state.status === "IDLE" && !isAlreadyGenerating) {
       dispatch({ type: "START_PREPARATION" });
 
-      executeWizardGeneration({
+      // Execute generation and handle errors properly
+      void executeWizardGeneration({
         wizardData,
         scenario,
         isVideoMode,
@@ -81,6 +82,13 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
         onError,
         videoGenerationFn: videoGeneration.startGeneration,
         photoGenerationFn: photoGeneration.startGeneration,
+      }).catch((error) => {
+        // Catch any unhandled errors from executeWizardGeneration
+        if (isMountedRef.current) {
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          dispatch({ type: "ERROR", error: errorMsg });
+          onError?.(errorMsg);
+        }
       });
     }
 

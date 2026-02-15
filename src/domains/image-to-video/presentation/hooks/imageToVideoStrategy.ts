@@ -1,4 +1,6 @@
 import { executeImageToVideo } from "../../infrastructure/services";
+
+declare const __DEV__: boolean;
 import type { GenerationStrategy } from "../../../../presentation/hooks/generation";
 import type {
   ImageToVideoFeatureConfig,
@@ -41,7 +43,11 @@ export const createImageToVideoStrategy = (
         type: "image-to-video",
         imageUri: input.imageUrl,
         metadata: input.options as Record<string, unknown> | undefined,
-      }).catch(() => {});
+      }).catch((error) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[ImageToVideo] onGenerationStart callback failed:", error);
+        }
+      });
 
       const result = await executeImageToVideo(
         { imageUri: input.imageUrl, userId, motionPrompt: input.prompt, options: input.options },

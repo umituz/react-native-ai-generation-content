@@ -5,6 +5,8 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from "react";
+
+declare const __DEV__: boolean;
 import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
@@ -51,6 +53,15 @@ export const usePhotoUploadState = ({
   const { pickImage, isLoading } = useMedia();
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
+  // Use refs to avoid effect re-runs on callback changes
+  const onErrorRef = useRef(onError);
+  const translationsRef = useRef(translations);
+
+  useEffect(() => {
+    onErrorRef.current = onError;
+    translationsRef.current = translations;
+  }, [onError, translations]);
+
   const maxFileSizeMB = config?.maxFileSizeMB ?? MEDIA_CONSTANTS.MAX_IMAGE_SIZE_MB;
 
   useEffect(() => {
@@ -61,28 +72,31 @@ export const usePhotoUploadState = ({
   }, [stepId, initialImage]);
 
   useEffect(() => {
+    // Clear any existing timeout first
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = undefined;
+    }
+
     if (isLoading) {
       timeoutRef.current = setTimeout(() => {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.warn("[usePhotoUploadState] Image picker timeout - possible stuck state");
         }
-        onError?.({
-          title: translations.error,
+        onErrorRef.current?.({
+          title: translationsRef.current.error,
           message: "Image selection is taking too long. Please try again.",
         });
       }, 30000);
-    } else {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
     }
 
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+        timeoutRef.current = undefined;
       }
     };
-  }, [isLoading, onError, translations]);
+  }, [isLoading]);
 
   const clearImage = useCallback(() => {
     setImage(null);

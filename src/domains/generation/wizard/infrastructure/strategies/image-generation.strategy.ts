@@ -83,14 +83,17 @@ function applyStyleEnhancements(prompt: string, wizardData: Record<string, unkno
 export function createImageStrategy(options: CreateImageStrategyOptions): WizardStrategy {
   const { scenario, creditCost } = options;
 
+  // Validate model early - fail fast
+  if (!scenario.model) {
+    throw new Error("Model is required for image generation");
+  }
+
+  const model = scenario.model;
+
   return {
     execute: async (input: unknown) => {
       const imageInput = input as WizardImageInput;
-      if (!scenario.model) {
-        throw new Error("Model is required for image generation");
-      }
-
-      const result = await executeImageGeneration(imageInput, scenario.model);
+      const result = await executeImageGeneration(imageInput, model);
 
       if (!result.success || !result.imageUrl) {
         throw new Error(result.error || "Image generation failed");

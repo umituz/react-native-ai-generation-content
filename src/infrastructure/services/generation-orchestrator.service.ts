@@ -86,6 +86,11 @@ class GenerationOrchestratorService {
         throw pollResult.error ?? new Error("Polling failed");
       }
 
+      // Validate result exists before type assertion
+      if (!pollResult.data) {
+        throw new Error("Polling succeeded but no data returned");
+      }
+
       const result = pollResult.data as T;
       const duration = Date.now() - startTime;
 

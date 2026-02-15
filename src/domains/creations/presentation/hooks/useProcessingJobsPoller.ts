@@ -42,6 +42,14 @@ export function useProcessingJobsPoller(
   const pollingRef = useRef<Set<string>>(new Set());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Convert to IDs to prevent re-creating array on every render
+  const processingJobIds = useMemo(
+    () => creations
+      .filter((c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model)
+      .map((c) => c.id),
+    [creations],
+  );
+
   const processingJobs = useMemo(
     () => creations.filter(
       (c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model,
@@ -104,7 +112,7 @@ export function useProcessingJobsPoller(
   };
 
   useEffect(() => {
-    if (!enabled || !userId || processingJobs.length === 0) {
+    if (!enabled || !userId || processingJobIds.length === 0) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -112,13 +120,19 @@ export function useProcessingJobsPoller(
       return;
     }
 
+    // Get current jobs at poll time to avoid stale closures
+    const pollCurrentJobs = () => {
+      const currentJobs = creations.filter(
+        (c) => c.status === CREATION_STATUS.PROCESSING && c.requestId && c.model,
+      );
+      currentJobs.forEach((job) => pollJobRef.current?.(job));
+    };
+
     // Initial poll
-    processingJobs.forEach((job) => pollJobRef.current?.(job));
+    pollCurrentJobs();
 
     // Set up interval polling
-    intervalRef.current = setInterval(() => {
-      processingJobs.forEach((job) => pollJobRef.current?.(job));
-    }, DEFAULT_POLL_INTERVAL_MS);
+    intervalRef.current = setInterval(pollCurrentJobs, DEFAULT_POLL_INTERVAL_MS);
 
     return () => {
       // Clear polling set first to prevent new operations
@@ -130,7 +144,7 @@ export function useProcessingJobsPoller(
         intervalRef.current = null;
       }
     };
-  }, [enabled, userId, processingJobs]);
+  }, [enabled, userId, processingJobIds, creations]);
 
   return {
     processingCount: processingJobs.length,

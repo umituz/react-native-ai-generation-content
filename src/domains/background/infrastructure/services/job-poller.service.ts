@@ -77,6 +77,26 @@ export async function pollJob<T = unknown>(
     signal,
   } = options;
 
+  // Validate requestId early
+  if (!requestId || typeof requestId !== "string" || requestId.trim() === "") {
+    return {
+      success: false,
+      error: new Error("Invalid requestId provided"),
+      attempts: 0,
+      elapsedMs: 0,
+    };
+  }
+
+  // Validate model early
+  if (!model || typeof model !== "string" || model.trim() === "") {
+    return {
+      success: false,
+      error: new Error("Invalid model provided"),
+      attempts: 0,
+      elapsedMs: 0,
+    };
+  }
+
   const pollingConfig = { ...DEFAULT_POLLING_CONFIG, ...config };
   const { maxAttempts, maxTotalTimeMs, maxConsecutiveErrors } = pollingConfig;
 

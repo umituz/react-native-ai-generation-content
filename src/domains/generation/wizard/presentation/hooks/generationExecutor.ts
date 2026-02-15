@@ -44,9 +44,13 @@ export const executeWizardGeneration = async (params: ExecuteGenerationParams): 
       console.log("[WizardGeneration] GENERATING -", isVideoMode ? "VIDEO" : "PHOTO");
     }
 
-    const typedInput = input as { prompt?: string };
+    // Safely extract prompt with type guard
+    const prompt = typeof input === "object" && input !== null && "prompt" in input && typeof input.prompt === "string"
+      ? input.prompt
+      : "";
+
     const generationFn = isVideoMode ? videoGenerationFn : photoGenerationFn;
-    await generationFn(input, typedInput.prompt || "");
+    await generationFn(input, prompt);
 
     if (isMountedRef.current) {
       dispatch({ type: "COMPLETE" });

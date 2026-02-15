@@ -85,7 +85,8 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
     onSuccess: (id: string) => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old: BackgroundJob<TInput, TResult>[] | undefined) => old?.filter((job: BackgroundJob<TInput, TResult>) => job.id !== id) ?? [],
+        (old: BackgroundJob<TInput, TResult>[] | undefined) =>
+          old?.filter((job: BackgroundJob<TInput, TResult>) => job && job.id !== id) ?? [],
       );
     },
   });
@@ -95,7 +96,8 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
     onSuccess: () => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old: BackgroundJob<TInput, TResult>[] | undefined) => old?.filter((job: BackgroundJob<TInput, TResult>) => job.status !== "completed") ?? [],
+        (old: BackgroundJob<TInput, TResult>[] | undefined) =>
+          old?.filter((job: BackgroundJob<TInput, TResult>) => job && job.status !== "completed") ?? [],
       );
     },
   });
@@ -105,7 +107,8 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
     onSuccess: () => {
       queryClient.setQueryData<BackgroundJob<TInput, TResult>[]>(
         queryKey,
-        (old: BackgroundJob<TInput, TResult>[] | undefined) => old?.filter((job: BackgroundJob<TInput, TResult>) => job.status !== "failed") ?? [],
+        (old: BackgroundJob<TInput, TResult>[] | undefined) =>
+          old?.filter((job: BackgroundJob<TInput, TResult>) => job && job.status !== "failed") ?? [],
       );
     },
   });

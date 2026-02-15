@@ -1,4 +1,6 @@
 import { executeTextToVideo } from "../../infrastructure/services";
+
+declare const __DEV__: boolean;
 import type { GenerationStrategy } from "../../../../presentation/hooks/generation";
 import type {
   TextToVideoConfig,
@@ -40,7 +42,11 @@ export const createTextToVideoStrategy = (
         type: "text-to-video",
         prompt: input.prompt,
         metadata: input.options as Record<string, unknown> | undefined,
-      }).catch(() => {});
+      }).catch((error) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[TextToVideo] onGenerationStart callback failed:", error);
+        }
+      });
 
       const result = await executeTextToVideo(
         { prompt: input.prompt, userId, options: input.options },
