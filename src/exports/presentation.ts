@@ -28,20 +28,20 @@ export type {
 
 // Components
 export {
-  GenerationProgressContent, GenerationProgressBar, PendingJobCard,
-  PendingJobProgressBar, PendingJobCardActions, GenerationResultContent, ResultHeader,
+  GenerationProgressContent, PendingJobCard,
+  PendingJobCardActions, GenerationResultContent, ResultHeader,
   ResultImageCard, ResultStoryCard, ResultActions, DEFAULT_RESULT_CONFIG, PhotoStep,
   DualImagePicker, PromptInput, AIGenerationHero, ExamplePrompts, ModerationSummary,
   GenerateButton, ResultDisplay, AIGenerationResult, ErrorDisplay, FeatureHeader,
   AIGenScreenHeader, CreditBadge, PhotoUploadCard, SettingsSheet, StyleSelector,
   AspectRatioSelector, DurationSelector, GridSelector, StylePresetsGrid, AIGenerationForm,
-  AIGenerationConfig, ModelSelector, 
+  AIGenerationConfig, ModelSelector,
   createAspectRatioOptions, createDurationOptions, createStyleOptions, createStyleOptionsFromConfig,
   ASPECT_RATIO_IDS, COMMON_DURATIONS,
 } from "../presentation/components";
 export type {
-  GenerationProgressContentProps, GenerationProgressBarProps, PendingJobCardProps, StatusLabels,
-  PendingJobProgressBarProps, PendingJobCardActionsProps, GenerationResultData, GenerationResultContentProps,
+  GenerationProgressContentProps, PendingJobCardProps, StatusLabels,
+  PendingJobCardActionsProps, GenerationResultData, GenerationResultContentProps,
   ResultHeaderProps, ResultImageCardProps, ResultStoryCardProps, ResultActionsProps, ResultConfig,
   ResultHeaderConfig, ResultImageConfig, ResultStoryConfig, ResultActionsConfig, ResultLayoutConfig,
   ResultActionButton, PhotoStepProps, DualImagePickerProps, PromptInputProps, AIGenerationHeroProps,

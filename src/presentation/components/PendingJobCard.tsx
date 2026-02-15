@@ -7,7 +7,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { AtomicText, AtomicSpinner, useAppDesignTokens } from "@umituz/react-native-design-system";
 import type { BackgroundJob } from "../../domains/background/domain/entities/job.types";
-import { PendingJobProgressBar } from "./PendingJobProgressBar";
+import { ProgressBar } from "../../shared/components/common";
 import { PendingJobCardActions } from "./PendingJobCardActions";
 
 export interface StatusLabels {
@@ -110,7 +110,14 @@ export function PendingJobCard<TInput = unknown, TResult = unknown>({
           <AtomicText style={styles.statusText}>
             {statusText}
           </AtomicText>
-          {!isFailed && <PendingJobProgressBar progress={job.progress} />}
+          {!isFailed && (
+            <ProgressBar
+              progress={job.progress}
+              showPercentage={false}
+              height={4}
+              marginBottom={0}
+            />
+          )}
         </View>
         {renderActions ? (
           renderActions(job)

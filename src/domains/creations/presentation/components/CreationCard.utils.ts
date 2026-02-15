@@ -3,6 +3,7 @@
  */
 
 import { useMemo } from "react";
+import { normalizeToDate } from "../../../../shared/utils/date";
 
 /**
  * Format creation date for display
@@ -12,9 +13,7 @@ export function useCreationDateFormatter(
   formatDate?: (date: Date) => string
 ): string {
   return useMemo(() => {
-    const date = createdAt instanceof Date
-      ? createdAt
-      : new Date(createdAt);
+    const date = normalizeToDate(createdAt);
 
     if (formatDate) {
       return formatDate(date);

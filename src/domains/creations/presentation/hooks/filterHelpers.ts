@@ -7,6 +7,7 @@ import type { CreationFilter } from "../../domain/types";
 import { isTypeInCategory } from "../../domain/types";
 import type { CreationCategory, CreationTypeId } from "../../domain/types";
 import type { FilterableCreation } from "./advancedFilter.types";
+import { normalizeDateToTimestamp, compareDates } from "../../../../shared/utils/date";
 
 export function filterByType<T extends FilterableCreation>(
   creations: T[],
@@ -55,16 +56,14 @@ export function filterByDateRange<T extends FilterableCreation>(
 
   if (startDate) {
     result = result.filter((c) => {
-      const createdAt =
-        c.createdAt instanceof Date ? c.createdAt.getTime() : c.createdAt || 0;
+      const createdAt = normalizeDateToTimestamp(c.createdAt);
       return createdAt >= startDate;
     });
   }
 
   if (endDate) {
     result = result.filter((c) => {
-      const createdAt =
-        c.createdAt instanceof Date ? c.createdAt.getTime() : c.createdAt || 0;
+      const createdAt = normalizeDateToTimestamp(c.createdAt);
       return createdAt <= endDate;
     });
   }
@@ -85,13 +84,9 @@ export function sortCreations<T extends FilterableCreation>(
 
     switch (sortField) {
       case "createdAt":
-        aVal = a.createdAt;
-        bVal = b.createdAt;
-        break;
+        return compareDates(a.createdAt, b.createdAt, sortOrder);
       case "updatedAt":
-        aVal = a.updatedAt;
-        bVal = b.updatedAt;
-        break;
+        return compareDates(a.updatedAt, b.updatedAt, sortOrder);
       case "type":
         aVal = a.type;
         bVal = b.type;
@@ -104,9 +99,6 @@ export function sortCreations<T extends FilterableCreation>(
         return 0;
     }
 
-    if (aVal instanceof Date) aVal = aVal.getTime();
-    if (bVal instanceof Date) bVal = bVal.getTime();
-
     if (aVal === undefined && bVal === undefined) return 0;
     if (aVal === undefined) return 1;
     if (bVal === undefined) return -1;
@@ -115,10 +107,6 @@ export function sortCreations<T extends FilterableCreation>(
       return sortOrder === "desc"
         ? bVal.localeCompare(aVal)
         : aVal.localeCompare(bVal);
-    }
-
-    if (typeof aVal === "number" && typeof bVal === "number") {
-      return sortOrder === "desc" ? bVal - aVal : aVal - bVal;
     }
 
     return 0;

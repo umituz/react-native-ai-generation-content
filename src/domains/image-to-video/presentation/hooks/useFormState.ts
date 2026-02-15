@@ -1,15 +1,15 @@
 /**
  * Form State Hook for Image-to-Video
  * Manages form state with actions
+ * Now powered by generic form state factory
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { createFormStateHook } from "../../../../shared/hooks/factories";
 import type {
   ImageToVideoFormState,
   ImageToVideoFormActions,
   ImageToVideoFormDefaults,
-  AnimationStyleId,
-  VideoDuration,
 } from "../../domain/types";
 
 export interface UseFormStateOptions {
@@ -18,78 +18,50 @@ export interface UseFormStateOptions {
 
 export interface UseFormStateReturn {
   state: ImageToVideoFormState;
-  actions: ImageToVideoFormActions;
+  actions: ImageToVideoFormActions & {
+    addImages: (images: string[]) => void;
+    removeImage: (index: number) => void;
+  };
 }
 
-function createInitialState(defaults: ImageToVideoFormDefaults): ImageToVideoFormState {
-  return {
+// Create the form state hook using the factory
+const useImageToVideoFormStateInternal = createFormStateHook<
+  ImageToVideoFormState,
+  ImageToVideoFormDefaults
+>({
+  createInitialState: (defaults) => ({
     selectedImages: [],
     animationStyle: defaults.animationStyle ?? "none",
     duration: defaults.duration ?? 3,
     motionPrompt: "",
-  };
-}
+  }),
+});
 
+/**
+ * Image-to-Video form state hook
+ * Manages form fields with additional image array helpers
+ */
 export function useFormState(options: UseFormStateOptions): UseFormStateReturn {
-  const { defaults } = options;
+  const { state, actions: baseActions } = useImageToVideoFormStateInternal(options);
 
-  const [state, setState] = useState<ImageToVideoFormState>(() =>
-    createInitialState(defaults)
-  );
-
-  const setSelectedImages = useCallback((images: string[]) => {
-    setState((prev) => ({ ...prev, selectedImages: images }));
-  }, []);
-
+  // Add custom array helpers
   const addImages = useCallback((images: string[]) => {
-    setState((prev) => ({
-      ...prev,
-      selectedImages: [...prev.selectedImages, ...images],
-    }));
-  }, []);
+    baseActions.setSelectedImages([...state.selectedImages, ...images]);
+  }, [state.selectedImages, baseActions]);
 
   const removeImage = useCallback((index: number) => {
-    setState((prev) => ({
-      ...prev,
-      selectedImages: prev.selectedImages.filter((_, i) => i !== index),
-    }));
-  }, []);
+    baseActions.setSelectedImages(
+      state.selectedImages.filter((_, i) => i !== index)
+    );
+  }, [state.selectedImages, baseActions]);
 
-  const setAnimationStyle = useCallback((style: AnimationStyleId) => {
-    setState((prev) => ({ ...prev, animationStyle: style }));
-  }, []);
-
-  const setDuration = useCallback((duration: VideoDuration) => {
-    setState((prev) => ({ ...prev, duration }));
-  }, []);
-
-  const setMotionPrompt = useCallback((prompt: string) => {
-    setState((prev) => ({ ...prev, motionPrompt: prompt }));
-  }, []);
-
-  const reset = useCallback(() => {
-    setState(createInitialState(defaults));
-  }, [defaults]);
-
-  const actions = useMemo<ImageToVideoFormActions>(
+  const actions = useMemo(
     () => ({
-      setSelectedImages,
+      ...baseActions,
       addImages,
       removeImage,
-      setAnimationStyle,
-      setDuration,
-      setMotionPrompt,
-      reset,
     }),
-    [
-      setSelectedImages,
-      addImages,
-      removeImage,
-      setAnimationStyle,
-      setDuration,
-      setMotionPrompt,
-      reset,
-    ]
+    [baseActions, addImages, removeImage]
   );
 
   return { state, actions };

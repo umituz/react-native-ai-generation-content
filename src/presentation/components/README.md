@@ -50,17 +50,18 @@ import { GenerationProgressContent } from '@umituz/react-native-ai-generation-co
 />
 ```
 
-### GenerationProgressBar
+### ProgressBar
 
-Progress bar component:
+Progress bar component (from shared utilities):
 
 ```tsx
-import { GenerationProgressBar } from '@umituz/react-native-ai-generation-content';
+import { ProgressBar } from '@umituz/react-native-ai-generation-content';
 
-<GenerationProgressBar
+<ProgressBar
   progress={progress}
+  showPercentage={true}
   height={8}
-  color="#4CAF50"
+  progressColor="#4CAF50"
 />
 ```
 

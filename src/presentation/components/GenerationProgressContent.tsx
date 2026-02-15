@@ -11,7 +11,7 @@ import { ProgressCloseButton } from "./ProgressCloseButton";
 import { ProgressHeader } from "./ProgressHeader";
 import { ProgressHint } from "./ProgressHint";
 import { ProgressDismissButton } from "./ProgressDismissButton";
-import { GenerationProgressBar } from "./GenerationProgressBar";
+import { ProgressBar } from "../../shared/components/common";
 import { generationProgressContentStyles } from "./GenerationProgressContent.styles";
 import type { GenerationProgressContentProps } from "./GenerationProgressContent.types";
 
@@ -56,11 +56,14 @@ export const GenerationProgressContent: React.FC<
         textColor={textColor}
       />
 
-      <GenerationProgressBar
+      <ProgressBar
         progress={progress}
+        showPercentage={true}
         textColor={tokens.colors.primary}
         progressColor={progressColor}
         backgroundColor={progressBackgroundColor}
+        height={8}
+        marginBottom={16}
       />
 
       <ProgressHint

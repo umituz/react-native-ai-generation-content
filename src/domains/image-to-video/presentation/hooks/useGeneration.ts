@@ -1,9 +1,11 @@
 /**
  * Generation Hook for Image-to-Video
  * Manages generation state and execution with abort support
+ * Now powered by generic generation hook factory
  */
 
-import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useMemo } from "react";
+import { createGenerationHook } from "../../../../shared/hooks/factories";
 import type {
   ImageToVideoFormState,
   ImageToVideoGenerationState,
@@ -23,85 +25,53 @@ export interface UseGenerationReturn {
   isReady: boolean;
 }
 
-const INITIAL_GENERATION_STATE: ImageToVideoGenerationState = {
-  isGenerating: false,
-  progress: 0,
-  error: null,
-};
+// Create the generation hook using the factory
+const useImageToVideoGenerationInternal = createGenerationHook<
+  ImageToVideoFormState,
+  void
+>({
+  execute: async (_request) => {
+    // This will be called via callbacks
+    // The actual execution happens in the callbacks layer
+  },
+  validate: (request) => {
+    if (request.selectedImages.length === 0) {
+      return "No images selected";
+    }
+    return null;
+  },
+  transformError: (error) => {
+    return error instanceof Error ? error.message : String(error);
+  },
+});
 
+/**
+ * Image-to-Video generation hook
+ * Manages generation state with validation and error handling
+ */
 export function useGeneration(options: UseGenerationOptions): UseGenerationReturn {
   const { formState, callbacks } = options;
 
-  const [generationState, setGenerationState] = useState<ImageToVideoGenerationState>(
-    INITIAL_GENERATION_STATE
-  );
+  const {
+    generationState,
+    handleGenerate: baseHandleGenerate,
+    setProgress,
+    setError,
+  } = useImageToVideoGenerationInternal({
+    onError: callbacks.onError,
+  });
 
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const isMountedRef = useRef(true);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-      abortControllerRef.current?.abort();
-    };
-  }, []);
-
-  // Stabilize callbacks to prevent unnecessary re-renders
-  const onErrorRef = useRef(callbacks.onError);
-  const onGenerateRef = useRef(callbacks.onGenerate);
-
-  useEffect(() => {
-    onErrorRef.current = callbacks.onError;
-    onGenerateRef.current = callbacks.onGenerate;
-  }, [callbacks.onError, callbacks.onGenerate]);
-
-  const setProgress = useCallback((progress: number) => {
-    if (!isMountedRef.current) return;
-    setGenerationState((prev) => ({ ...prev, progress }));
-  }, []);
-
-  const setError = useCallback((error: string | null) => {
-    if (!isMountedRef.current) return;
-    setGenerationState((prev) => ({ ...prev, error, isGenerating: false }));
-  }, []);
-
-  const handleGenerate = useCallback(async () => {
-    if (formState.selectedImages.length === 0) {
-      onErrorRef.current?.("No images selected");
-      return;
-    }
-
-    // Create new AbortController for this generation
-    abortControllerRef.current = new AbortController();
-
-    setGenerationState({
-      isGenerating: true,
-      progress: 0,
-      error: null,
-    });
-
+  const handleGenerate = async () => {
+    await baseHandleGenerate(formState);
+    // Execute the actual generation via callbacks
     try {
-      await onGenerateRef.current(formState);
-
-      if (!isMountedRef.current || abortControllerRef.current.signal.aborted) return;
-
-      setGenerationState((prev) => ({ ...prev, isGenerating: false, progress: 100 }));
+      await callbacks.onGenerate(formState);
     } catch (error) {
-      if (!isMountedRef.current || abortControllerRef.current.signal.aborted) return;
-
       const errorMessage = error instanceof Error ? error.message : String(error);
-      setGenerationState({
-        isGenerating: false,
-        progress: 0,
-        error: errorMessage,
-      });
-      onErrorRef.current?.(errorMessage);
-    } finally {
-      abortControllerRef.current = null;
+      setError(errorMessage);
+      callbacks.onError?.(errorMessage);
     }
-  }, [formState]);
+  };
 
   const isReady = useMemo(
     () => formState.selectedImages.length > 0 && !generationState.isGenerating,

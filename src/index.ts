@@ -8,6 +8,9 @@ export * from "./exports/infrastructure";
 export * from "./exports/presentation";
 export * from "./exports/features";
 
+// Shared Utilities and Components
+export * from "./shared";
+
 // Creations Domain
 export * from "./domains/creations";
 

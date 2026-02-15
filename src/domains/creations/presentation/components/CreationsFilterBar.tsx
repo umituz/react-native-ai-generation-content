@@ -10,7 +10,8 @@ import {
   AtomicText,
   AtomicIcon,
 } from "@umituz/react-native-design-system";
-import type { CreationsFilterBarProps } from "./CreationsFilterBar.types";
+import { createFilterButtons } from "../../../../shared/utils/filters";
+import type { CreationsFilterBarProps, MediaFilterLabels, StatusFilterLabels, FilterButton } from "./CreationsFilterBar.types";
 
 export function CreationsFilterBar({
   filters,
@@ -133,7 +134,42 @@ export function CreationsFilterBar({
 }
 
 export type { FilterButton, CreationsFilterBarProps } from "./CreationsFilterBar.types";
-export {
-  createMediaFilterButtons,
-  createStatusFilterButtons,
-} from "./filter-bar-utils";
+
+/**
+ * Helper to create media filter buttons
+ * Uses shared generic filter factory
+ */
+export function createMediaFilterButtons(
+  activeFilter: string,
+  onSelect: (filter: string) => void,
+  labels: MediaFilterLabels
+): FilterButton[] {
+  const items = [
+    { id: "all" as const, label: labels.all, icon: "grid" },
+    { id: "image" as const, label: labels.images, icon: "image" },
+    { id: "video" as const, label: labels.videos, icon: "film" },
+    { id: "voice" as const, label: labels.voice, icon: "mic" },
+  ];
+
+  return createFilterButtons(items, activeFilter, onSelect);
+}
+
+/**
+ * Helper to create status filter buttons
+ * Uses shared generic filter factory
+ */
+export function createStatusFilterButtons(
+  activeFilter: string,
+  onSelect: (filter: string) => void,
+  labels: StatusFilterLabels
+): FilterButton[] {
+  const items = [
+    { id: "all" as const, label: labels.all, icon: "options" },
+    { id: "completed" as const, label: labels.completed, icon: "checkmark-circle" },
+    { id: "processing" as const, label: labels.processing, icon: "refresh" },
+    { id: "pending" as const, label: labels.pending, icon: "time" },
+    { id: "failed" as const, label: labels.failed, icon: "close-circle" },
+  ];
+
+  return createFilterButtons(items, activeFilter, onSelect);
+}
