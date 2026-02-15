@@ -71,7 +71,7 @@
     "@typescript-eslint/parser": "^8.54.0",
     "@umituz/react-native-design-system": "latest",
     "@umituz/react-native-firebase": "latest",
-    "@umituz/react-native-subscription": "latest",
+    "@umituz/react-native-subscription": "^2.35.3",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",

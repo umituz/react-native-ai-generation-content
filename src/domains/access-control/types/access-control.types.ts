@@ -34,8 +34,9 @@ export interface AIFeatureGateReturn {
   /**
    * Function to execute protected feature
    * Handles all access control checks (auth, premium, credits, paywall)
+   * @returns true if action was executed, false if blocked by gate
    */
-  requireFeature: (action: () => void | Promise<void>) => void;
+  requireFeature: (action: () => void | Promise<void>) => boolean;
 
   /**
    * Whether user can access this feature (all checks passed)

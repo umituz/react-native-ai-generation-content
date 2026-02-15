@@ -79,7 +79,7 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
   );
 
   const requireFeature = useCallback(
-    (action: () => void | Promise<void>): void => {
+    (action: () => void | Promise<void>): boolean => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[AIFeatureGate] requireFeature called:", {
           isOffline,
@@ -97,26 +97,28 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
           console.log("[AIFeatureGate] BLOCKED: User is offline");
         }
         onNetworkError?.();
-        return;
+        return false;
       }
 
       if (isAuthenticated && !isCreditsLoaded) {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[AIFeatureGate] BLOCKED: User authenticated but credits not loaded yet");
         }
-        return;
+        return false;
       }
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[AIFeatureGate] Calling requireFeatureFromPackage");
       }
 
-      requireFeatureFromPackage(() => {
+      const executed = requireFeatureFromPackage(() => {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[AIFeatureGate] Inside requireFeatureFromPackage callback - executing action");
         }
         handlePromiseResult(action(), onSuccess, onError);
       });
+
+      return executed;
     },
     [isOffline, isAuthenticated, isCreditsLoaded, isPremium, creditBalance, creditCost, hasCredits, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
   );
