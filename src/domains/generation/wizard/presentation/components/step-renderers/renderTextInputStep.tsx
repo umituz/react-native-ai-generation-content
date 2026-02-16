@@ -48,7 +48,7 @@ export function renderTextInputStep({
         continueButton: t("common.continue"),
         backButton: t("common.back"),
         examplesTitle: t("textInput.examplesTitle"),
-        contentNotAllowed: alertMessages?.errorTitle || alertMessages?.policyViolationTitle || t("common.error"),
+        contentNotAllowed: t("common.error"),
         contentNotAllowedMessage: alertMessages?.policyViolation || "This type of content is not supported. Please try a different prompt.",
       }}
       config={{

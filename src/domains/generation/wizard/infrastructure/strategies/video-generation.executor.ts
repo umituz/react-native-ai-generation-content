@@ -6,6 +6,7 @@
 
 import type { WizardVideoInput } from "./video-generation.types";
 import { GENERATION_TIMEOUT_MS, BASE64_IMAGE_PREFIX } from "./wizard-strategy.constants";
+import { createGenerationError, GenerationErrorType } from "../../../../../infrastructure/utils/error-factory";
 
 declare const __DEV__: boolean;
 
@@ -23,7 +24,8 @@ interface SubmissionResult {
   error?: string;
 }
 
-function formatBase64(base64: string): string {
+function formatBase64(base64: string | undefined): string | undefined {
+  if (!base64) return undefined;
   return base64.startsWith("data:") ? base64 : `${BASE64_IMAGE_PREFIX}${base64}`;
 }
 
@@ -40,7 +42,11 @@ export async function executeVideoGeneration(
 
   const provider = providerRegistry.getActiveProvider();
   if (!provider?.isInitialized()) {
-    return { success: false, error: "AI provider not initialized" };
+    const error = createGenerationError(
+      GenerationErrorType.VALIDATION,
+      "AI provider is not initialized. Please check your configuration."
+    );
+    return { success: false, error: error.message };
   }
 
   try {
@@ -60,7 +66,8 @@ export async function executeVideoGeneration(
     };
 
     // Add image for image-to-video (Sora 2, etc.)
-    if (sourceImage) {
+    // Only add if sourceImage is defined and not empty
+    if (sourceImage && sourceImage.length > 0) {
       modelInput.image_url = sourceImage;
     }
 
@@ -114,7 +121,11 @@ export async function submitVideoGenerationToQueue(
 
   const provider = providerRegistry.getActiveProvider();
   if (!provider?.isInitialized()) {
-    return { success: false, error: "AI provider not initialized" };
+    const error = createGenerationError(
+      GenerationErrorType.VALIDATION,
+      "AI provider is not initialized. Please check your configuration."
+    );
+    return { success: false, error: error.message };
   }
 
   try {
@@ -125,7 +136,8 @@ export async function submitVideoGenerationToQueue(
     };
 
     // Add image for image-to-video
-    if (sourceImage) {
+    // Only add if sourceImage is defined and not empty
+    if (sourceImage && sourceImage.length > 0) {
       modelInput.image_url = sourceImage;
     }
 
@@ -144,6 +156,22 @@ export async function submitVideoGenerationToQueue(
 
     return { success: true, requestId: submission.requestId, model };
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : "Queue submission failed" };
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.error("[VideoExecutor] Queue submission error:", error);
+    }
+
+    let errorMessage = "Failed to submit video generation to queue. Please try again.";
+
+    if (error instanceof Error) {
+      const message = error.message.toLowerCase();
+
+      if (message.includes("network") || message.includes("connection")) {
+        errorMessage = "Network error. Please check your internet connection and try again.";
+      } else {
+        errorMessage = `Queue submission failed: ${error.message}`;
+      }
+    }
+
+    return { success: false, error: errorMessage };
   }
 }
