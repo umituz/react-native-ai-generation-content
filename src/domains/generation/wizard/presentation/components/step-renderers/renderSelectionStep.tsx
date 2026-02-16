@@ -15,6 +15,8 @@ export interface SelectionStepProps {
   readonly onBack: () => void;
   readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;
   readonly t: (key: string) => string;
+  /** Calculated credit cost from parent */
+  readonly creditCost?: number;
 }
 
 declare const __DEV__: boolean;
@@ -25,6 +27,7 @@ export function renderSelectionStep({
   onBack,
   onPhotoContinue,
   t,
+  creditCost,
 }: SelectionStepProps): React.ReactElement {
   const selectionConfig = getSelectionConfig(step.config);
   const titleKey = selectionConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
@@ -76,6 +79,7 @@ export function renderSelectionStep({
         layout: selectionConfig?.layout,
       }}
       initialValue={initialValue}
+      creditCost={creditCost}
       onBack={onBack}
       onContinue={(value) => {
         onPhotoContinue(step.id, { uri: String(value), selection: value, previewUrl: "" } as UploadedImage);

@@ -1,8 +1,8 @@
 /**
  * useProcessingJobsPoller Hook
- * Polls FAL queue status for "processing" creations and updates Firestore when complete
+ * Polls queue status for "processing" creations and updates Firestore when complete
  * Enables true background generation - works even after wizard is dismissed
- * Uses provider registry internally - no need to pass FAL functions
+ * Uses provider registry internally - no need to pass provider functions
  */
 
 import { useEffect, useRef, useMemo } from "react";

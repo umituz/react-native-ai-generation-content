@@ -11,6 +11,7 @@ export interface UseVideoQueueGenerationProps {
   readonly scenario: WizardScenarioData;
   readonly persistence: CreationPersistence;
   readonly strategy: WizardStrategy;
+  readonly creditCost?: number;
   readonly onSuccess?: (result: unknown) => void;
   readonly onError?: (error: string) => void;
 }

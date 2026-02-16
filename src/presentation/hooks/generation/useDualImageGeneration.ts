@@ -1,7 +1,6 @@
 /**
  * useDualImageGeneration Hook
  * Generic hook for dual-image AI generation workflows
- * Sends image_urls array as required by FAL AI multi-image models
  */
 
 import { useState, useCallback, useMemo } from "react";

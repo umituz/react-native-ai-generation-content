@@ -13,3 +13,6 @@ export type { IAIProviderJobManager } from "../../domains/background/domain/inte
 export type { IAIProviderExecutor } from "./provider-executor.interface";
 export type { IAIProviderImageFeatures } from "./provider-image-features.interface";
 export type { IAIProviderVideoFeatures } from "./provider-video-features.interface";
+
+// Video Model Configuration
+export type { VideoModelConfig, ModelCapabilityOption } from "./video-model-config.types";

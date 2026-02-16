@@ -14,7 +14,6 @@ export type ImageResultExtractor = (result: unknown) => string | undefined;
 /**
  * Extract image URL from AI generation result
  * Uses Chain of Responsibility pattern with declarative rules
- * Supports: FAL.ai wrapper, birefnet, rembg, flux, and direct formats
  */
 export const extractImageResult: ImageResultExtractor = (result) => {
   return executeRules(result, IMAGE_EXTRACTION_RULES, "ImageExtractor");

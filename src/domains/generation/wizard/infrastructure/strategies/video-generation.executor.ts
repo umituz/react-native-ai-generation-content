@@ -1,10 +1,12 @@
 /**
  * Video Generation Executor
- * Handles the actual video generation execution
- * Uses direct provider calls for text-to-video and image-to-video generation models
+ * Handles the actual video generation execution.
+ * Model-agnostic: uses VideoModelConfig.buildInput() for model-specific parameters.
+ * Fallback: generic input builder when no modelConfig is provided.
  */
 
 import type { WizardVideoInput } from "./video-generation.types";
+import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 import { GENERATION_TIMEOUT_MS, BASE64_IMAGE_PREFIX } from "./wizard-strategy.constants";
 import { createGenerationError, GenerationErrorType } from "../../../../../infrastructure/utils/error-factory";
 
@@ -30,13 +32,37 @@ function formatBase64(base64: string | undefined): string | undefined {
 }
 
 /**
+ * Generic input builder - used when no modelConfig is provided.
+ * Sends standard parameters without model-specific logic.
+ */
+function buildGenericInput(input: WizardVideoInput): Record<string, unknown> {
+  const modelInput: Record<string, unknown> = { prompt: input.prompt };
+  const sourceImage = formatBase64(input.sourceImageBase64);
+
+  if (sourceImage && sourceImage.length > 0) {
+    modelInput.image_url = sourceImage;
+  }
+  if (input.duration) {
+    modelInput.duration = input.duration;
+  }
+  if (input.aspectRatio) {
+    modelInput.aspect_ratio = input.aspectRatio;
+  }
+  if (input.resolution) {
+    modelInput.resolution = input.resolution;
+  }
+
+  return modelInput;
+}
+
+/**
  * Execute video generation using direct provider call
- * For text-to-video and image-to-video generation models (NOT features)
  */
 export async function executeVideoGeneration(
   input: WizardVideoInput,
   model: string,
   onProgress?: (status: string) => void,
+  modelConfig?: VideoModelConfig,
 ): Promise<ExecutionResult> {
   const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
 
@@ -50,37 +76,19 @@ export async function executeVideoGeneration(
   }
 
   try {
-    const sourceImage = formatBase64(input.sourceImageBase64);
-
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[VideoExecutor] Generation starting", {
         model,
+        hasModelConfig: !!modelConfig,
         duration: input.duration,
-        aspectRatio: input.aspectRatio,
         resolution: input.resolution,
       });
     }
 
-    const modelInput: Record<string, unknown> = {
-      prompt: input.prompt,
-    };
-
-    // Add image for image-to-video (Sora 2, etc.)
-    // Only add if sourceImage is defined and not empty
-    if (sourceImage && sourceImage.length > 0) {
-      modelInput.image_url = sourceImage;
-    }
-
-    // Add optional parameters
-    if (input.duration) {
-      modelInput.duration = input.duration;
-    }
-    if (input.aspectRatio) {
-      modelInput.aspect_ratio = input.aspectRatio;
-    }
-    if (input.resolution) {
-      modelInput.resolution = input.resolution;
-    }
+    // Use modelConfig.buildInput() if available, otherwise generic fallback
+    const modelInput = modelConfig
+      ? modelConfig.buildInput(input)
+      : buildGenericInput(input);
 
     let lastStatus = "";
     const result = await provider.subscribe(model, modelInput, {
@@ -116,6 +124,7 @@ export async function executeVideoGeneration(
 export async function submitVideoGenerationToQueue(
   input: WizardVideoInput,
   model: string,
+  modelConfig?: VideoModelConfig,
 ): Promise<SubmissionResult> {
   const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
 
@@ -129,28 +138,10 @@ export async function submitVideoGenerationToQueue(
   }
 
   try {
-    const sourceImage = formatBase64(input.sourceImageBase64);
-
-    const modelInput: Record<string, unknown> = {
-      prompt: input.prompt,
-    };
-
-    // Add image for image-to-video
-    // Only add if sourceImage is defined and not empty
-    if (sourceImage && sourceImage.length > 0) {
-      modelInput.image_url = sourceImage;
-    }
-
-    // Add optional parameters
-    if (input.duration) {
-      modelInput.duration = input.duration;
-    }
-    if (input.aspectRatio) {
-      modelInput.aspect_ratio = input.aspectRatio;
-    }
-    if (input.resolution) {
-      modelInput.resolution = input.resolution;
-    }
+    // Use modelConfig.buildInput() if available, otherwise generic fallback
+    const modelInput = modelConfig
+      ? modelConfig.buildInput(input)
+      : buildGenericInput(input);
 
     const submission = await provider.submitJob(model, modelInput);
 

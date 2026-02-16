@@ -67,6 +67,7 @@ export function extractTrimmedString(value: unknown): string | undefined {
 /**
  * Extracts number from various input formats:
  * - Direct number: 5
+ * - Numeric string: "5", "6s"
  * - Object with value field: { value: 5 }
  * - Object with selection field: { selection: 5 }
  */
@@ -75,12 +76,31 @@ export function extractNumber(value: unknown): number | undefined {
     return value;
   }
 
+  // Handle numeric strings (e.g., "6", "10s")
+  if (typeof value === "string") {
+    const match = value.match(/^(\d+)s?$/);
+    if (match) {
+      const parsed = parseInt(match[1], 10);
+      if (!Number.isNaN(parsed) && parsed > 0) return parsed;
+    }
+  }
+
   if (isObject(value)) {
     if (hasProperty(value, "value") && typeof value.value === "number") {
       return value.value;
     }
-    if (hasProperty(value, "selection") && typeof value.selection === "number") {
-      return value.selection;
+    if (hasProperty(value, "selection")) {
+      // selection can be number or numeric string
+      if (typeof value.selection === "number") {
+        return value.selection;
+      }
+      if (typeof value.selection === "string") {
+        const match = value.selection.match(/^(\d+)s?$/);
+        if (match) {
+          const parsed = parseInt(match[1], 10);
+          if (!Number.isNaN(parsed) && parsed > 0) return parsed;
+        }
+      }
     }
   }
 

@@ -31,3 +31,18 @@ export {
   IMAGE_TO_VIDEO_WIZARD_CONFIG,
 } from "./domains/generation/wizard";
 export type { WizardScenarioData } from "./domains/generation/wizard";
+
+// Wizard Validators and Credit Utilities
+export {
+  validateDuration,
+  validateResolution,
+  convertCostToCredits,
+  getCreditConfig,
+} from "./domains/generation/wizard";
+export type { ValidationResult, CreditCalculatorFn } from "./domains/generation/wizard";
+
+// Video Model Config (for app-side model definitions)
+export type { VideoModelConfig, ModelCapabilityOption } from "./domain/interfaces";
+
+// Wizard Config Builder (generates wizard steps from VideoModelConfig)
+export { buildWizardConfigFromModelConfig } from "./domains/generation/wizard/utilities/build-wizard-config";

@@ -81,5 +81,15 @@ export function extractResultUrl(result: GenerationResult): GenerationUrls {
     return { imageUrl: result.image.url };
   }
 
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.error("[extractResultUrl] ❌ No URL found in result:", {
+      hasVideo: !!result.video,
+      hasOutput: !!result.output,
+      hasImages: !!result.images,
+      hasImage: !!result.image,
+      resultKeys: Object.keys(result),
+    });
+  }
+
   return {};
 }

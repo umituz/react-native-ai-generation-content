@@ -46,6 +46,7 @@ export interface PhotoUploadScreenProps {
   readonly translations: PhotoUploadScreenTranslations;
   readonly t: (key: string) => string;
   readonly config?: PhotoUploadScreenConfig;
+  readonly creditCost?: number;
   readonly onBack: () => void;
   readonly onContinue: (image: UploadedImage) => void;
   readonly existingImage?: UploadedImage | null;
@@ -58,6 +59,7 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
   translations,
   t,
   config = DEFAULT_CONFIG,
+  creditCost,
   onBack,
   onContinue,
   existingImage,
@@ -87,7 +89,23 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
   });
 
   const handleContinuePress = () => {
-    if (!canContinue || !image) return;
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[GenericPhotoUploadScreen] handleContinuePress called", {
+        canContinue,
+        hasImage: !!image,
+        imageUri: image?.uri?.substring(0, 50),
+        stepId,
+      });
+    }
+    if (!canContinue || !image) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[GenericPhotoUploadScreen] BLOCKED - canContinue:", canContinue, "image:", !!image);
+      }
+      return;
+    }
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[GenericPhotoUploadScreen] Calling onContinue with image");
+    }
     onContinue(image);
   };
 
@@ -114,6 +132,7 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
             canContinue={canContinue && !!image}
             onPress={handleContinuePress}
             label={translations.continue}
+            creditCost={creditCost}
           />
         }
       />

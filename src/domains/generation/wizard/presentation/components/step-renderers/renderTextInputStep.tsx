@@ -17,6 +17,8 @@ export interface TextInputStepProps {
   readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;
   readonly t: (key: string) => string;
   readonly alertMessages?: AlertMessages;
+  /** Calculated credit cost from parent */
+  readonly creditCost?: number;
 }
 
 export function renderTextInputStep({
@@ -26,6 +28,7 @@ export function renderTextInputStep({
   onPhotoContinue,
   t,
   alertMessages,
+  creditCost,
 }: TextInputStepProps): React.ReactElement {
   const textConfig = getTextInputConfig(step.config);
   const titleKey = textConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
@@ -48,11 +51,12 @@ export function renderTextInputStep({
         contentNotAllowedMessage: alertMessages?.policyViolation || "This type of content is not supported. Please try a different prompt.",
       }}
       config={{
-        minLength: textConfig?.minLength ?? 3,
-        maxLength: textConfig?.maxLength ?? 1000,
-        multiline: textConfig?.multiline ?? true,
+        minLength: textConfig?.minLength !== undefined ? textConfig.minLength : 3,
+        maxLength: textConfig?.maxLength !== undefined ? textConfig.maxLength : 1000,
+        multiline: textConfig?.multiline !== undefined ? textConfig.multiline : true,
       }}
       initialValue={existingText}
+      creditCost={creditCost}
       onBack={onBack}
       onContinue={(text) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

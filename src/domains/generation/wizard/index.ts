@@ -32,6 +32,22 @@ export {
   quickBuildWizard,
 } from "./infrastructure/builders/dynamic-step-builder";
 
+// Infrastructure - Generic Credit Calculator (USD to Credits conversion ONLY)
+export {
+  convertCostToCredits,
+  getCreditConfig,
+} from "./infrastructure/utils/credit-calculator";
+
+// Infrastructure - Data Validators
+export {
+  validateDuration,
+  validateResolution,
+} from "./infrastructure/utils/wizard-data-validators";
+export type { ValidationResult } from "./infrastructure/utils/wizard-data-validators";
+
+// Credit Calculator Function Type (for apps to implement)
+export type { CreditCalculatorFn } from "./domain/types/credit-calculation.types";
+
 // Presentation - Hooks
 export { usePhotoUploadState } from "./presentation/hooks/usePhotoUploadState";
 export type {

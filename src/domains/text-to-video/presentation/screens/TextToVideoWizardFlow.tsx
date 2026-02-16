@@ -24,7 +24,9 @@ export const TextToVideoWizardFlow: React.FC<TextToVideoWizardFlowProps> = (prop
     model,
     userId,
     creditCost,
+    calculateCredits,
     onNetworkError,
+    onGenerationStart: appOnGenerationStart,
     onGenerationComplete,
     onGenerationError,
     onBack,
@@ -56,11 +58,15 @@ export const TextToVideoWizardFlow: React.FC<TextToVideoWizardFlowProps> = (prop
 
   const defaultAlerts = useMemo(() => createDefaultAlerts(t), [t]);
 
-  const { handleGenerationStart, handleGenerationComplete } = useWizardFlowHandlers({
+  const { handleGenerationStart: defaultGenerationStart, handleGenerationComplete } = useWizardFlowHandlers({
     requireFeature,
     onGenerationComplete,
     onBack,
   });
+
+  // Use app's onGenerationStart if provided (handles credit deduction),
+  // otherwise use default (just requireFeature check)
+  const handleGenerationStart = appOnGenerationStart ?? defaultGenerationStart;
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
@@ -70,6 +76,7 @@ export const TextToVideoWizardFlow: React.FC<TextToVideoWizardFlowProps> = (prop
         userId={userId}
         alertMessages={alertMessages ?? defaultAlerts}
         creditCost={creditCost}
+        calculateCredits={calculateCredits}
         skipResultStep={true}
         onGenerationStart={handleGenerationStart}
         onGenerationComplete={handleGenerationComplete}

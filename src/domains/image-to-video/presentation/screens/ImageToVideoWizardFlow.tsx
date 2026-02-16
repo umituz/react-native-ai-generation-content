@@ -24,7 +24,9 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
     model,
     userId,
     creditCost,
+    calculateCredits,
     onNetworkError,
+    onGenerationStart: appOnGenerationStart,
     onGenerationComplete,
     onGenerationError,
     onBack,
@@ -56,11 +58,13 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
 
   const defaultAlerts = useMemo(() => createDefaultAlerts(t), [t]);
 
-  const { handleGenerationStart, handleGenerationComplete } = useWizardFlowHandlers({
+  const { handleGenerationStart: defaultGenerationStart, handleGenerationComplete } = useWizardFlowHandlers({
     requireFeature,
     onGenerationComplete,
     onBack,
   });
+
+  const handleGenerationStart = appOnGenerationStart ?? defaultGenerationStart;
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
@@ -70,6 +74,7 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
         userId={userId}
         alertMessages={alertMessages ?? defaultAlerts}
         creditCost={creditCost}
+        calculateCredits={calculateCredits}
         skipResultStep={true}
         onGenerationStart={handleGenerationStart}
         onGenerationComplete={handleGenerationComplete}

@@ -1,6 +1,6 @@
 /**
  * Queue Status Constants
- * FAL queue job status values - shared across all polling hooks
+ * Generic queue job status values - shared across all polling hooks
  */
 
 export const QUEUE_STATUS = {

@@ -67,7 +67,7 @@ export async function buildVideoInput(
 }
 
 export function createVideoStrategy(options: CreateVideoStrategyOptions): WizardStrategy {
-  const { scenario, creditCost } = options;
+  const { scenario, modelConfig, creditCost } = options;
 
   // Validate model early - fail fast
   if (!scenario.model) {
@@ -78,10 +78,9 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
 
   return {
     execute: async (input: unknown) => {
-      // Runtime validation with descriptive errors
       const videoInput = validateWizardVideoInput(input);
 
-      const result = await executeVideoGeneration(videoInput, model);
+      const result = await executeVideoGeneration(videoInput, model, undefined, modelConfig);
 
       if (!result.success || !result.videoUrl) {
         throw new Error(result.error || "Video generation failed");
@@ -91,10 +90,9 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
     },
 
     submitToQueue: async (input: unknown) => {
-      // Runtime validation with descriptive errors
       const videoInput = validateWizardVideoInput(input);
 
-      const result = await submitVideoGenerationToQueue(videoInput, model);
+      const result = await submitVideoGenerationToQueue(videoInput, model, modelConfig);
 
       return {
         success: result.success,

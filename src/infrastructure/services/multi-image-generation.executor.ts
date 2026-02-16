@@ -1,7 +1,6 @@
 /**
  * Multi-Image Generation Executor
- * Handles image generation with multiple input images (e.g., baby prediction)
- * Sends image_urls array as required by FAL AI nano-banana/edit model
+ * Handles image generation with multiple input images
  */
 
 import { validateProvider } from "../utils/provider-validator.util";
@@ -43,7 +42,6 @@ export interface MultiImageGenerationResult {
 
 /**
  * Execute image generation with multiple input images
- * Sends image_urls array as required by FAL AI API
  */
 export async function executeMultiImageGeneration(
   input: MultiImageGenerationInput,

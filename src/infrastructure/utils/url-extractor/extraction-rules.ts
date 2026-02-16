@@ -16,15 +16,15 @@ export interface ExtractionRule {
 
 /**
  * Image extraction rules - checked in order, first success wins
- * Supports: FAL.ai wrapper, birefnet, rembg, flux, and direct formats
+ * Supports various response wrapper formats and direct formats
  */
 export const IMAGE_EXTRACTION_RULES: readonly ExtractionRule[] = [
-  // FAL.ai data wrapper formats
+  // Data wrapper formats
   { path: ["data", "image"], description: "data.image (string)" },
   { path: ["data", "imageUrl"], description: "data.imageUrl" },
   { path: ["data", "output"], description: "data.output" },
-  { path: ["data", "image", "url"], description: "data.image.url (birefnet/rembg)" },
-  { path: ["data", "images", "0", "url"], description: "data.images[0].url (flux)" },
+  { path: ["data", "image", "url"], description: "data.image.url" },
+  { path: ["data", "images", "0", "url"], description: "data.images[0].url" },
   // Direct formats (no wrapper)
   { path: ["image"], description: "image (string)" },
   { path: ["imageUrl"], description: "imageUrl" },
@@ -35,10 +35,10 @@ export const IMAGE_EXTRACTION_RULES: readonly ExtractionRule[] = [
 
 /**
  * Video extraction rules - checked in order, first success wins
- * Supports: FAL.ai wrapper, direct formats, nested objects, arrays
+ * Supports various response wrapper formats and direct formats
  */
 export const VIDEO_EXTRACTION_RULES: readonly ExtractionRule[] = [
-  // FAL.ai data wrapper formats
+  // Data wrapper formats
   { path: ["data", "video"], description: "data.video (string)" },
   { path: ["data", "videoUrl"], description: "data.videoUrl" },
   { path: ["data", "video_url"], description: "data.video_url" },

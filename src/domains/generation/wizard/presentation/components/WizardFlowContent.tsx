@@ -16,22 +16,30 @@ import type { Creation } from "../../../../creations/domain/entities/Creation";
 import { createCreationsRepository } from "../../../../creations";
 import { useResultActions } from "../../../../result-preview/presentation/hooks/useResultActions";
 import { useWizardFlowHandlers } from "../hooks/useWizardFlowHandlers";
+import { extractDuration, extractResolution } from "../../infrastructure/utils/credit-value-extractors";
 import { WizardStepRenderer } from "./WizardStepRenderer";
 import { StarRatingPicker } from "../../../../result-preview/presentation/components/StarRatingPicker";
+import type { CreditCalculatorFn } from "../../domain/types/credit-calculation.types";
+import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 
 export interface WizardFlowContentProps {
   readonly featureConfig: WizardFeatureConfig;
   readonly scenario?: WizardScenarioData;
   readonly validatedScenario: WizardScenarioData;
+  /** Model configuration - encapsulates all model-specific behavior */
+  readonly modelConfig?: VideoModelConfig;
   readonly userId?: string;
   readonly alertMessages: AlertMessages;
   /** Credit cost for this generation - REQUIRED, determined by the app */
   readonly creditCost: number;
+  /** Calculator function provided by APP - package calls this to get dynamic cost */
+  readonly calculateCredits?: CreditCalculatorFn;
   readonly skipResultStep?: boolean;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
   readonly onGenerationStart?: (
     data: Record<string, unknown>,
     proceedToGenerating: () => void,
+    onError?: (error: string) => void,
   ) => void;
   readonly onGenerationComplete?: (result: unknown) => void;
   readonly onGenerationError?: (error: string) => void;
@@ -49,9 +57,11 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     featureConfig,
     scenario,
     validatedScenario,
+    modelConfig,
     userId,
     alertMessages,
-    creditCost,
+    creditCost, // Still needed for initial feature gate in parent
+    calculateCredits, // Calculator function from APP
     skipResultStep = false,
     onStepChange,
     onGenerationStart,
@@ -83,6 +93,13 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     [featureConfig, skipResultStep],
   );
 
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[WizardFlowContent] flowSteps built", {
+      totalSteps: flowSteps.length,
+      steps: flowSteps.map((s, i) => `${i}: ${s.id} (${s.type})`),
+    });
+  }
+
   const flow = useFlow({ steps: flowSteps, initialStepIndex: 0 });
   const {
     currentStep,
@@ -102,6 +119,40 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     imageUrl: resultImageUrl,
     videoUrl: resultVideoUrl,
   });
+
+  /**
+   * Calculate credit cost - CENTRALIZED CALCULATION
+   * React Best Practice: Calculate derived state during render (not in useEffect)
+   *
+   * Flow:
+   * 1. Extract values from customData using utility functions
+   * 2. Call app's calculator function with normalized values
+   * 3. Fallback to static creditCost if calculation incomplete
+   */
+  const calculatedCreditCost = useMemo(() => {
+    // If no calculator provided, use static creditCost
+    if (!calculateCredits) {
+      return creditCost;
+    }
+
+    const outputType = validatedScenario.outputType as "video" | "image";
+    const hasImageInput = validatedScenario.inputType !== "text";
+
+    // Extract and normalize values from customData
+    const duration = extractDuration(customData.duration);
+    const resolution = extractResolution(customData.resolution);
+
+    // Call app's calculator
+    const result = calculateCredits({
+      duration,
+      resolution,
+      outputType,
+      hasImageInput,
+    });
+
+    // If result is 0 (incomplete selections), use static initial cost
+    return result > 0 ? result : creditCost;
+  }, [customData, validatedScenario.outputType, validatedScenario.inputType, calculateCredits, creditCost]);
 
   const handlers = useWizardFlowHandlers({
     currentStepIndex,
@@ -127,11 +178,12 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
 
   useWizardGeneration({
     scenario: validatedScenario,
+    modelConfig,
     wizardData: customData,
     userId,
     isGeneratingStep: currentStep?.type === StepType.GENERATING,
     alertMessages,
-    creditCost,
+    creditCost: calculatedCreditCost,
     onSuccess: handlers.handleGenerationComplete,
     onError: handlers.handleGenerationError,
     onCreditsExhausted,
@@ -155,6 +207,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
         isSaving={isSaving}
         isSharing={isSharing}
         showRating={Boolean(userId) && !hasRated}
+        creditCost={calculatedCreditCost}
         onNext={handlers.handleNextStep}
         onBack={handlers.handleBack}
         onPhotoContinue={handlers.handlePhotoContinue}

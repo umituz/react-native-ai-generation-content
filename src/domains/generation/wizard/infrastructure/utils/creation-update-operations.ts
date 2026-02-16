@@ -52,7 +52,7 @@ export async function updateToFailed(
 }
 
 /**
- * Update creation with FAL queue requestId and model after job submission
+ * Update creation with queue requestId after job submission
  */
 export async function updateRequestId(
   repository: ICreationsRepository,

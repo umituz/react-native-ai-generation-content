@@ -5,6 +5,7 @@
 
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
 import type { ScenarioInputType, ScenarioPromptType } from "../../../../scenarios/domain/Scenario";
+import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 
 export type WizardOutputType = "image" | "video";
 
@@ -26,6 +27,8 @@ export interface WizardScenarioData {
 
 export interface UseWizardGenerationProps {
   readonly scenario: WizardScenarioData;
+  /** Model configuration - encapsulates all model-specific behavior */
+  readonly modelConfig?: VideoModelConfig;
   readonly wizardData: Record<string, unknown>;
   readonly userId?: string;
   readonly isGeneratingStep: boolean;

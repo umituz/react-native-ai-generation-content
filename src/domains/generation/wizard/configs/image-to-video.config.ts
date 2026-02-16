@@ -27,6 +27,18 @@ export const IMAGE_TO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
       maxLength: 200,
     },
     {
+      id: "resolution",
+      type: "selection",
+      titleKey: "generation.resolution.title",
+      selectionType: "resolution",
+      options: [
+        { id: "480p", label: "Standard (480p)", value: "480p" },
+        { id: "720p", label: "HD (720p)", value: "720p" },
+      ],
+      required: true,
+      defaultValue: "480p",
+    },
+    {
       id: "duration",
       type: "selection",
       titleKey: "generation.duration.title",

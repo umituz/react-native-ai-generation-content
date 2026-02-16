@@ -20,6 +20,7 @@ export interface UsePhotoBlockingGenerationProps {
   readonly scenario: WizardScenarioData;
   readonly persistence: CreationPersistence;
   readonly strategy: WizardStrategy;
+  readonly creditCost?: number;
   readonly alertMessages: AlertMessages;
   readonly onSuccess?: (result: unknown) => void;
   readonly onError?: (error: string) => void;
@@ -38,6 +39,7 @@ export function usePhotoBlockingGeneration(
     userId,
     scenario,
     persistence,
+    creditCost,
     strategy,
     alertMessages,
     onSuccess,
@@ -105,10 +107,18 @@ export function usePhotoBlockingGeneration(
       // Save to Firestore first
       if (userId && prompt) {
         try {
+          // Extract generation parameters from input (for image generation, no duration/resolution)
+          const inputData = input as Record<string, unknown>;
+          const duration = typeof inputData?.duration === "number" ? inputData.duration : undefined;
+          const resolution = typeof inputData?.resolution === "string" ? inputData.resolution : undefined;
+
           const creationId = await persistence.saveAsProcessing(userId, {
             scenarioId: scenario.id,
             scenarioTitle: scenario.title || scenario.id,
             prompt,
+            duration,
+            resolution,
+            creditCost,
           });
           creationIdRef.current = creationId;
 

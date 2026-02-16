@@ -105,9 +105,3 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
 };
 
 declare const __DEV__: boolean;
-
-export const resetFlowStore = () => {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.warn('resetFlowStore is deprecated. Each component now maintains its own flow store instance.');
-  }
-};

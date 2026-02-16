@@ -33,6 +33,9 @@ export async function saveAsProcessing(
     metadata: {
       scenarioId: data.scenarioId,
       scenarioTitle: data.scenarioTitle,
+      ...(data.duration && { duration: data.duration }),
+      ...(data.resolution && { resolution: data.resolution }),
+      ...(data.creditCost && { creditCost: data.creditCost }),
     },
   });
 

@@ -4,4 +4,4 @@
  */
 
 export { createFlowStore, type FlowStoreType } from "./useFlowStore";
-export { useFlow, resetFlowStore } from "./useFlow";
+export { useFlow } from "./useFlow";

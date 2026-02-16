@@ -12,6 +12,8 @@ export interface WizardStepRendererProps {
   readonly isSaving: boolean;
   readonly isSharing: boolean;
   readonly showRating?: boolean;
+  /** Calculated credit cost - passed from parent */
+  readonly creditCost?: number;
   readonly onNext: () => void;
   readonly onBack: () => void;
   readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;

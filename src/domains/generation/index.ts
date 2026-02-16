@@ -78,7 +78,7 @@ export {
 } from "./wizard";
 
 // Flow Infrastructure
-export { createFlowStore, useFlow, resetFlowStore } from "./infrastructure/flow";
+export { createFlowStore, useFlow } from "./infrastructure/flow";
 export type { FlowStoreType } from "./infrastructure/flow";
 
 // Flow config types from domain

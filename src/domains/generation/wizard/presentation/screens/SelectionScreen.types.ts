@@ -28,6 +28,8 @@ export interface SelectionScreenProps {
   readonly options: readonly SelectionOption[];
   readonly config?: SelectionScreenConfig;
   readonly initialValue?: string | string[];
+  /** Calculated credit cost - passed from parent */
+  readonly creditCost?: number;
   readonly onBack: () => void;
   readonly onContinue: (selectedValue: string | string[]) => void;
 }

@@ -6,6 +6,7 @@
 
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
+import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 import { createImageStrategy, buildImageInput } from "./image-generation.strategy";
 import { createVideoStrategy, buildVideoInput } from "./video-generation.strategy";
 
@@ -17,6 +18,8 @@ export type { WizardStrategy } from "./wizard-strategy.types";
 
 export interface CreateWizardStrategyOptions {
   readonly scenario: WizardScenarioData;
+  /** Model configuration - encapsulates all model-specific behavior */
+  readonly modelConfig?: VideoModelConfig;
   readonly collectionName?: string;
   /** Credit cost for this generation - REQUIRED, determined by the app */
   readonly creditCost: number;
@@ -27,14 +30,14 @@ export interface CreateWizardStrategyOptions {
 // ============================================================================
 
 export function createWizardStrategy(options: CreateWizardStrategyOptions): WizardStrategy {
-  const { scenario, collectionName, creditCost } = options;
+  const { scenario, modelConfig, collectionName, creditCost } = options;
 
   if (scenario.outputType === "image") {
     return createImageStrategy({ scenario, collectionName, creditCost });
   }
 
   // Default to video strategy for video outputType or undefined
-  return createVideoStrategy({ scenario, collectionName, creditCost });
+  return createVideoStrategy({ scenario, modelConfig, collectionName, creditCost });
 }
 
 // ============================================================================

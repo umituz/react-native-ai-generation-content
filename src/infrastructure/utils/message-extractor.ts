@@ -38,8 +38,8 @@ export function getErrorTranslationKey(error: unknown): string | null {
 }
 
 /**
- * Extract error message from FAL API and other error formats
- * Supports: Error instances, FAL API errors, generic objects
+ * Extract error message from API responses
+ * Supports: Error instances, API errors, generic objects
  * Returns translation key if available, otherwise original message
  */
 export function extractErrorMessage(
@@ -63,10 +63,10 @@ export function extractErrorMessage(
   } else if (typeof error === "object" && error !== null) {
     const errObj = error as Record<string, unknown>;
 
-    // FAL API error format: {detail: [{msg, type, loc}]}
+    // API error format: {detail: [{msg, type, loc}]}
     if (Array.isArray(errObj.detail) && errObj.detail[0]?.msg) {
       const detailType = errObj.detail[0]?.type;
-      // Check for content policy in FAL API response
+      // Check for content policy in API response
       if (detailType === "content_policy_violation") {
         return `error.generation.${GenerationErrorType.CONTENT_POLICY}`;
       }

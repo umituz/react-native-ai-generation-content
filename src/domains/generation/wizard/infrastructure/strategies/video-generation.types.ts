@@ -5,6 +5,7 @@
 
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
+import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 
 export interface WizardVideoInput {
   /** Source image (optional for text-to-video) */
@@ -26,6 +27,8 @@ export interface WizardVideoResult {
 
 export interface CreateVideoStrategyOptions {
   readonly scenario: WizardScenarioData;
+  /** Model configuration - encapsulates all model-specific behavior */
+  readonly modelConfig?: VideoModelConfig;
   readonly collectionName?: string;
   /** Credit cost for this generation - REQUIRED, determined by the app */
   readonly creditCost: number;

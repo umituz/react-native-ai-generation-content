@@ -14,7 +14,7 @@ import {
   HeroSection,
   NavigationHeader,
 } from "@umituz/react-native-design-system";
-import { ContinueButton } from "../../../../presentation/components/buttons";
+import { WizardContinueButton } from "../../../../domains/generation/wizard/presentation/components/WizardContinueButton";
 import type { ScenarioData } from "../../domain/scenario.types";
 
 export interface ScenarioPreviewTranslations {
@@ -46,7 +46,7 @@ export const ScenarioPreviewScreen: React.FC<ScenarioPreviewScreenProps> = ({
         title=""
         onBackPress={onBack}
         rightElement={
-          <ContinueButton
+          <WizardContinueButton
             label={translations.continueButton}
             canContinue={true}
             onPress={onContinue}

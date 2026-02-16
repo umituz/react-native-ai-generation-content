@@ -13,6 +13,9 @@ export interface ProcessingCreationData {
   readonly prompt: string;
   readonly requestId?: string;
   readonly model?: string;
+  readonly duration?: number;
+  readonly resolution?: string;
+  readonly creditCost?: number;
 }
 
 export interface CompletedCreationData {

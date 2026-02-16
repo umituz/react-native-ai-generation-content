@@ -34,6 +34,8 @@ export const CONTENT_POLICY_PATTERNS = [
   "content blocked",
   "blocked by",
   "flagged by a content checker",
+  " 422",
+  "422 ",
 ] as const;
 
 export const VALIDATION_ERROR_PATTERNS = [

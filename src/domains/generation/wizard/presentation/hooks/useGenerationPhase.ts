@@ -2,7 +2,7 @@
  * useGenerationPhase Hook
  * Derives generation phase from elapsed time for UX feedback
  *
- * Best Practice: Since actual API progress is unknown (FAL only returns IN_QUEUE/IN_PROGRESS),
+ * Best Practice: Since actual API progress is unknown (queue systems only return IN_QUEUE/IN_PROGRESS),
  * we use time-based phases to provide meaningful feedback to users.
  */
 

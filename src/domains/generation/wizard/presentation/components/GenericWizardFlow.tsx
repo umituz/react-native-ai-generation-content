@@ -9,6 +9,9 @@ import type { StepType } from "../../../../../domain/entities/flow-config.types"
 import type { WizardFeatureConfig } from "../../domain/entities/wizard-feature.types";
 import type { WizardScenarioData } from "../hooks/useWizardGeneration";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
+import type { GenerationErrorInfo } from "./WizardFlow.types";
+import type { CreditCalculatorFn } from "../../domain/types/credit-calculation.types";
+import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 import { validateScenario } from "../utilities/validateScenario";
 import { WizardFlowContent } from "./WizardFlowContent";
 import {
@@ -22,18 +25,23 @@ export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;
   readonly scenario?: WizardScenarioData;
   readonly scenarioId?: string;
+  /** Model configuration - encapsulates all model-specific behavior */
+  readonly modelConfig?: VideoModelConfig;
   readonly userId?: string;
   readonly alertMessages: AlertMessages;
   /** Credit cost for this generation - REQUIRED, determined by the app */
   readonly creditCost: number;
+  /** Calculator function provided by APP - package calls this to get dynamic cost */
+  readonly calculateCredits?: CreditCalculatorFn;
   readonly skipResultStep?: boolean;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
   readonly onGenerationStart?: (
     data: Record<string, unknown>,
     proceedToGenerating: () => void,
+    onError?: (error: string) => void,
   ) => void;
   readonly onGenerationComplete?: (result: unknown) => void;
-  readonly onGenerationError?: (error: string) => void;
+  readonly onGenerationError?: (error: string, errorInfo?: GenerationErrorInfo) => void;
   readonly onCreditsExhausted?: () => void;
   readonly onBack?: () => void;
   readonly onTryAgain?: () => void;
@@ -49,9 +57,11 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
     featureConfig,
     scenario: scenarioProp,
     scenarioId,
+    modelConfig,
     userId,
     alertMessages,
     creditCost,
+    calculateCredits,
     skipResultStep = false,
     onStepChange,
     onGenerationStart,
@@ -105,9 +115,11 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
       featureConfig={featureConfig}
       scenario={scenario}
       validatedScenario={validatedScenario}
+      modelConfig={modelConfig}
       userId={userId}
       alertMessages={alertMessages}
       creditCost={creditCost}
+      calculateCredits={calculateCredits}
       skipResultStep={skipResultStep}
       onStepChange={onStepChange}
       onGenerationStart={onGenerationStart}

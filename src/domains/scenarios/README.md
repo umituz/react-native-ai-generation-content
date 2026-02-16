@@ -38,7 +38,7 @@ export const APP_SCENARIOS: ScenarioData[] = [
     prompt: 'A powerful warrior in fantasy armor, epic lighting...',
     inputType: 'single',
     outputType: 'image',
-    model: 'fal-ai/flux/dev',
+    model: 'your-provider/text-to-image',
   },
   // ... more scenarios
 ];
@@ -121,7 +121,7 @@ const VIDEO_SCENARIOS: ScenarioData[] = [
     category: ScenarioCategory.SOLO_CINEMATIC,
     inputType: 'single',
     outputType: 'video',
-    model: 'fal-ai/kling-video/v1.5/pro/image-to-video',
+    model: 'your-provider/image-to-video',
     // ... data
   }
 ];
@@ -135,7 +135,7 @@ const SOLO_SCENARIOS: ScenarioData[] = [
     category: ScenarioCategory.SOLO_FANTASY,
     inputType: 'single',
     outputType: 'image',
-    model: 'fal-ai/flux/dev',
+    model: 'your-provider/text-to-image',
     // ... data
   }
 ];

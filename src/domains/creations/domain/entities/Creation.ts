@@ -35,7 +35,7 @@ export interface Creation {
   // Extended fields for job-based creations
   readonly status?: CreationStatus;
   readonly output?: CreationOutput;
-  // Background job tracking - FAL queue requestId and model
+  // Background job tracking
   readonly requestId?: string;
   readonly model?: string;
   // Soft delete - if set, the creation is considered deleted
@@ -61,7 +61,7 @@ export interface CreationDocument {
   readonly createdAt: FirebaseTimestamp | Date;
   readonly completedAt?: FirebaseTimestamp | Date | null;
   readonly deletedAt?: FirebaseTimestamp | Date | null;
-  // Background job tracking - FAL queue requestId and model
+  // Background job tracking
   readonly requestId?: string;
   readonly model?: string;
 }

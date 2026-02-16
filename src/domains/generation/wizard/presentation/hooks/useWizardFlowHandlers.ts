@@ -4,6 +4,8 @@ import { StepType, type StepDefinition } from "../../../../../domain/entities/fl
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 import type { Creation } from "../../../../creations/domain/entities/Creation";
 import { isCreation } from "./typeGuards";
+import { classifyError } from "../../../../../infrastructure/utils/error-classification";
+import type { GenerationErrorInfo } from "../components/WizardFlow.types";
 
 export interface UseWizardFlowHandlersProps {
   readonly currentStepIndex: number;
@@ -21,9 +23,9 @@ export interface UseWizardFlowHandlersProps {
   readonly setCurrentCreation: (creation: Creation | null) => void;
   readonly setHasRated: (hasRated: boolean) => void;
   readonly setShowRatingPicker: (show: boolean) => void;
-  readonly onGenerationStart?: (data: Record<string, unknown>, proceed: () => void) => void;
+  readonly onGenerationStart?: (data: Record<string, unknown>, proceed: () => void, onError?: (error: string) => void) => void;
   readonly onGenerationComplete?: (result: unknown) => void;
-  readonly onGenerationError?: (error: string) => void;
+  readonly onGenerationError?: (error: string, errorInfo?: GenerationErrorInfo) => void;
   readonly onBack?: () => void;
 }
 
@@ -66,8 +68,17 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
     (errorMessage: string) => {
       const safeErrorMessage = errorMessage?.trim() || "error.generation.unknown";
       const displayMessage = safeErrorMessage.startsWith("error.") ? t(safeErrorMessage) : safeErrorMessage;
+
+      // Classify error to determine refund eligibility
+      const errorClassification = classifyError(errorMessage);
+      const errorInfo: GenerationErrorInfo = {
+        message: safeErrorMessage,
+        shouldRefund: errorClassification.retryable ?? false,
+        errorType: errorClassification.type,
+      };
+
       alert.show(AlertType.ERROR, AlertMode.MODAL, t("common.error"), displayMessage);
-      onGenerationError?.(safeErrorMessage);
+      onGenerationError?.(safeErrorMessage, errorInfo);
       onBack?.();
     },
     [alert, t, onGenerationError, onBack],
@@ -83,21 +94,40 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
     else previousStep();
   }, [currentStepIndex, previousStep, onBack]);
 
-  const handleNextStep = useCallback(() => {
+  const handleNextStep = useCallback((additionalData?: Record<string, unknown>) => {
     const nextStepDef = flowSteps[currentStepIndex + 1];
+    // Merge additionalData to avoid stale closure issue
+    // When called from handlePhotoContinue, customData in closure may not include the just-set value
+    // Guard: Only merge plain objects (ignore SyntheticEvents from onPress handlers)
+    const isPlainObject = additionalData && typeof additionalData === "object" && !("nativeEvent" in additionalData) && !Array.isArray(additionalData);
+    const mergedData = isPlainObject ? { ...customData, ...additionalData } : customData;
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[handleNextStep] Called", {
+        currentStepIndex,
+        nextStepType: nextStepDef?.type,
+        nextStepId: nextStepDef?.id,
+        totalSteps: flowSteps.length,
+        hasOnGenerationStart: !!onGenerationStart,
+        dataKeys: Object.keys(mergedData),
+      });
+    }
     if (nextStepDef?.type === StepType.GENERATING && onGenerationStart) {
-      onGenerationStart(customData, nextStep);
+      onGenerationStart(mergedData, nextStep, handleGenerationError);
       return;
     }
     nextStep();
-  }, [currentStepIndex, flowSteps, customData, onGenerationStart, nextStep]);
+  }, [currentStepIndex, flowSteps, customData, onGenerationStart, nextStep, handleGenerationError]);
 
   const handlePhotoContinue = useCallback(
     (stepId: string, image: UploadedImage) => {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[handlePhotoContinue] Called", { stepId, hasImage: !!image, currentStepIndex });
+      }
       setCustomData(stepId, image);
-      handleNextStep();
+      // Pass the just-set data to avoid stale closure issue
+      handleNextStep({ [stepId]: image });
     },
-    [setCustomData, handleNextStep],
+    [setCustomData, handleNextStep, currentStepIndex],
   );
 
   const handleSubmitRating = useCallback(

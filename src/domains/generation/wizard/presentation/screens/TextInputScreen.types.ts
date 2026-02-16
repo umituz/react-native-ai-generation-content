@@ -25,6 +25,8 @@ export interface TextInputScreenProps {
   readonly config?: TextInputScreenConfig;
   readonly examplePrompts?: string[];
   readonly initialValue?: string;
+  /** Calculated credit cost from parent */
+  readonly creditCost?: number;
   readonly onBack: () => void;
   readonly onContinue: (text: string) => void;
 }

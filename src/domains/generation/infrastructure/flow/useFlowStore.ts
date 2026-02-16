@@ -70,7 +70,22 @@ export const createFlowStore = (config: FlowStoreConfig) => {
       nextStep: () => {
         const { stepDefinitions, currentStepIndex, completedSteps, currentStepId } = get();
         const nextIndex = currentStepIndex + 1;
-        if (nextIndex >= stepDefinitions.length) return;
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[FlowStore] nextStep called", {
+            currentStepIndex,
+            nextIndex,
+            totalSteps: stepDefinitions.length,
+            currentStepId,
+            nextStepId: stepDefinitions[nextIndex]?.id,
+            nextStepType: stepDefinitions[nextIndex]?.type,
+          });
+        }
+        if (nextIndex >= stepDefinitions.length) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[FlowStore] nextStep BLOCKED - already at last step");
+          }
+          return;
+        }
         set({
           currentStepId: stepDefinitions[nextIndex].id,
           currentStepIndex: nextIndex,

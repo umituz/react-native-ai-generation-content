@@ -31,6 +31,7 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
   options,
   config,
   initialValue,
+  creditCost,
   onBack,
   onContinue,
 }) => {
@@ -128,7 +129,7 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
         title=""
         onBackPress={onBack}
         rightElement={
-          <WizardContinueButton canContinue={canContinue} onPress={handleContinue} label={translations.continueButton} icon="arrow-forward" />
+          <WizardContinueButton canContinue={canContinue} onPress={handleContinue} label={translations.continueButton} icon="arrow-forward" creditCost={creditCost} />
         }
       />
       <ScreenLayout scrollable={true} edges={["left", "right"]} hideScrollIndicator={true} contentContainerStyle={styles.scrollContent}>

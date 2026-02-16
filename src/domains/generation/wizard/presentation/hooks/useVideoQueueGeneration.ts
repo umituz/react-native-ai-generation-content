@@ -14,7 +14,7 @@ import type {
 } from "./use-video-queue-generation.types";
 
 export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): UseVideoQueueGenerationReturn {
-  const { userId, scenario, persistence, strategy, onSuccess, onError } = props;
+  const { userId, scenario, persistence, strategy, creditCost, onSuccess, onError } = props;
 
   const creationIdRef = useRef<string | null>(null);
   const requestIdRef = useRef<string | null>(null);
@@ -57,10 +57,20 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       const creationId = creationIdRef.current;
       const uri = (urls.videoUrl || urls.imageUrl) ?? "";
 
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[VideoQueue] ✅ handleComplete called", {
+          creationId,
+          userId,
+          hasVideoUrl: !!urls.videoUrl,
+          hasImageUrl: !!urls.imageUrl,
+          hasOnSuccess: !!onSuccess
+        });
+      }
+
       // Validate non-empty URI
       if (!creationId || !userId || !uri || uri.trim() === "") {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error("[VideoQueue] Invalid completion data:", { creationId, userId, uri });
+          console.error("[VideoQueue] ❌ Invalid completion data:", { creationId, userId, uri });
         }
         return;
       }
@@ -72,14 +82,25 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
             imageUrl: urls.imageUrl,
             videoUrl: urls.videoUrl,
           });
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[VideoQueue] ✅ Updated completion status in Firestore");
+          }
         } catch (error) {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[VideoQueue] Failed to update completion status:", error);
+            console.error("[VideoQueue] ❌ Failed to update completion status:", error);
           }
         }
       }
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[VideoQueue] 🎯 Calling onSuccess callback now...");
+      }
       resetRefs();
       onSuccess?.(urls);
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[VideoQueue] ✅ onSuccess callback completed");
+      }
     },
     [userId, persistence, onSuccess, resetRefs],
   );
@@ -132,10 +153,18 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       let creationId: string | null = null;
       if (userId && prompt) {
         try {
+          // Extract generation parameters from input
+          const inputData = input as Record<string, unknown>;
+          const duration = typeof inputData?.duration === "number" ? inputData.duration : undefined;
+          const resolution = typeof inputData?.resolution === "string" ? inputData.resolution : undefined;
+
           creationId = await persistence.saveAsProcessing(userId, {
             scenarioId: scenario.id,
             scenarioTitle: scenario.title || scenario.id,
             prompt,
+            duration,
+            resolution,
+            creditCost,
           });
           creationIdRef.current = creationId;
         } catch (error) {

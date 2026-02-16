@@ -23,7 +23,9 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
     model,
     userId,
     creditCost,
+    calculateCredits,
     onNetworkError,
+    onGenerationStart: appOnGenerationStart,
     onGenerationComplete,
     onGenerationError,
     onBack,
@@ -57,11 +59,13 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
     [model, t]
   );
 
-  const { handleGenerationStart, handleGenerationComplete } = useWizardFlowHandlers({
+  const { handleGenerationStart: defaultGenerationStart, handleGenerationComplete } = useWizardFlowHandlers({
     requireFeature,
     onGenerationComplete,
     onBack,
   });
+
+  const handleGenerationStart = appOnGenerationStart ?? defaultGenerationStart;
 
   return (
     <View style={[styles.container, { backgroundColor: tokens.colors.backgroundPrimary }]}>
@@ -71,6 +75,7 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
         userId={userId}
         alertMessages={alertMessages}
         creditCost={creditCost}
+        calculateCredits={calculateCredits}
         skipResultStep={true}
         onGenerationStart={handleGenerationStart}
         onGenerationComplete={handleGenerationComplete}

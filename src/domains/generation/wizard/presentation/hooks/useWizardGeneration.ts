@@ -22,6 +22,7 @@ export type {
 export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardGenerationReturn => {
   const {
     scenario,
+    modelConfig,
     wizardData,
     userId,
     isGeneratingStep,
@@ -43,7 +44,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
   }, []);
 
   const persistence = useMemo(() => createCreationPersistence(), []);
-  const strategy = useMemo(() => createWizardStrategy({ scenario, creditCost }), [scenario, creditCost]);
+  const strategy = useMemo(() => createWizardStrategy({ scenario, modelConfig, creditCost }), [scenario, modelConfig, creditCost]);
   const isVideoMode = scenario.outputType === "video" && !!strategy.submitToQueue;
 
   const videoGeneration = useVideoQueueGeneration({
@@ -51,6 +52,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     scenario,
     persistence,
     strategy,
+    creditCost,
     onSuccess,
     onError,
   });
@@ -60,6 +62,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     scenario,
     persistence,
     strategy,
+    creditCost,
     alertMessages,
     onSuccess,
     onError,

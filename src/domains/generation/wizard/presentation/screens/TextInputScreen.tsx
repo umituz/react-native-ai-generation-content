@@ -17,7 +17,7 @@ import {
   AlertType,
   AlertMode,
 } from "@umituz/react-native-design-system";
-import { ContinueButton } from "../../../../../presentation/components/buttons";
+import { WizardContinueButton } from "../components/WizardContinueButton";
 import { contentModerationService } from "../../../../../domains/content-moderation";
 import type { TextInputScreenProps } from "./TextInputScreen.types";
 
@@ -33,6 +33,7 @@ export const TextInputScreen: React.FC<TextInputScreenProps> = ({
   config,
   examplePrompts = [],
   initialValue = "",
+  creditCost,
   onBack,
   onContinue,
 }) => {
@@ -40,8 +41,27 @@ export const TextInputScreen: React.FC<TextInputScreenProps> = ({
   const alert = useAlert();
   const [text, setText] = useState(initialValue);
 
-  const minLength = config?.minLength ?? 3;
-  const maxLength = config?.maxLength ?? 1000;
+  // Validate config - REQUIRED, NO DEFAULTS
+  if (!config) {
+    throw new Error("[TextInputScreen] Config is required but was not provided.");
+  }
+  if (typeof config.minLength !== "number" || config.minLength < 0) {
+    throw new Error(
+      `[TextInputScreen] Invalid minLength: ${config.minLength}. Must be a non-negative number.`
+    );
+  }
+  if (typeof config.maxLength !== "number" || config.maxLength <= 0) {
+    throw new Error(
+      `[TextInputScreen] Invalid maxLength: ${config.maxLength}. Must be a positive number.`
+    );
+  }
+  if (config.minLength > config.maxLength) {
+    throw new Error(
+      `[TextInputScreen] Invalid config: minLength (${config.minLength}) > maxLength (${config.maxLength}).`
+    );
+  }
+
+  const { minLength, maxLength } = config;
   const canContinue = text.trim().length >= minLength;
 
   const handleContinue = useCallback(async () => {
@@ -80,10 +100,11 @@ export const TextInputScreen: React.FC<TextInputScreenProps> = ({
         title=""
         onBackPress={onBack}
         rightElement={
-          <ContinueButton
+          <WizardContinueButton
             label={translations.continueButton}
             canContinue={canContinue}
             onPress={handleContinue}
+            creditCost={creditCost}
           />
         }
       />

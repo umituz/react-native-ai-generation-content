@@ -50,7 +50,8 @@ export function classifyError(error: unknown): AIErrorInfo {
     });
   }
 
-  if (matchesPatterns(message, CONTENT_POLICY_PATTERNS)) {
+  // 422 = Content Policy Violation
+  if (statusCode === 422 || matchesPatterns(message, CONTENT_POLICY_PATTERNS)) {
     return logClassification({
       type: AIErrorType.CONTENT_POLICY,
       messageKey: "error.contentPolicy",

@@ -15,6 +15,7 @@ export interface PhotoUploadStepProps {
   readonly onBack: () => void;
   readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;
   readonly t: (key: string) => string;
+  readonly creditCost?: number;
 }
 
 export function renderPhotoUploadStep({
@@ -23,7 +24,15 @@ export function renderPhotoUploadStep({
   onBack,
   onPhotoContinue,
   t,
+  creditCost,
 }: PhotoUploadStepProps): React.ReactElement {
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
+    console.log("[renderPhotoUploadStep] Rendering", {
+      stepId: step.id,
+      hasOnPhotoContinue: !!onPhotoContinue,
+      creditCost,
+    });
+  }
   const wizardConfig = getWizardStepConfig(step.config);
   const titleKey = wizardConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
   const subtitleKey = wizardConfig?.subtitleKey ?? `wizard.steps.${step.id}.subtitle`;
@@ -46,6 +55,7 @@ export function renderPhotoUploadStep({
         uploadFailed: t("common.errors.upload_failed"),
       }}
       t={t}
+      creditCost={creditCost}
       onBack={onBack}
       onContinue={(image) => onPhotoContinue(step.id, image)}
       existingImage={existingPhoto}

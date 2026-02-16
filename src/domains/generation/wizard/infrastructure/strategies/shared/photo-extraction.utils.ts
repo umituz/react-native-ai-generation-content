@@ -4,9 +4,56 @@
  */
 
 import { readFileAsBase64 } from "@umituz/react-native-design-system";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { Image } from "react-native";
 import { PHOTO_KEY_PREFIX } from "../wizard-strategy.constants";
 
 declare const __DEV__: boolean;
+
+const MIN_IMAGE_DIMENSION = 300;
+
+/**
+ * Get image dimensions from URI
+ */
+function getImageSize(uri: string): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    Image.getSize(uri, (width, height) => resolve({ width, height }), reject);
+  });
+}
+
+/**
+ * Ensure image meets minimum dimensions (300x300) required by AI providers.
+ * Returns the original URI if already large enough, or a resized URI.
+ */
+async function ensureMinimumSize(uri: string): Promise<string> {
+  try {
+    const { width, height } = await getImageSize(uri);
+
+    if (width >= MIN_IMAGE_DIMENSION && height >= MIN_IMAGE_DIMENSION) {
+      return uri;
+    }
+
+    const scale = Math.max(MIN_IMAGE_DIMENSION / width, MIN_IMAGE_DIMENSION / height);
+    const newWidth = Math.ceil(width * scale);
+    const newHeight = Math.ceil(height * scale);
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[PhotoExtraction] Resizing small image", {
+        from: `${width}x${height}`,
+        to: `${newWidth}x${newHeight}`,
+      });
+    }
+
+    const result = await manipulateAsync(uri, [{ resize: { width: newWidth, height: newHeight } }], {
+      format: SaveFormat.JPEG,
+      compress: 0.9,
+    });
+
+    return result.uri;
+  } catch {
+    return uri;
+  }
+}
 
 /**
  * Extracts photo URIs from wizard data
@@ -59,7 +106,8 @@ export async function extractPhotosAsBase64(
   const results = await Promise.allSettled(
     photoUris.map(async (uri, index) => {
       try {
-        return await readFileAsBase64(uri);
+        const resizedUri = await ensureMinimumSize(uri);
+        return await readFileAsBase64(resizedUri);
       } catch (error) {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.error(`[PhotoExtraction] Failed to read photo ${index}:`, error);

@@ -19,6 +19,7 @@ export interface WizardContinueButtonProps {
   readonly onPress: () => void;
   readonly label: string;
   readonly icon?: IconName;
+  readonly creditCost?: number;
 }
 
 export function WizardContinueButton({
@@ -26,6 +27,7 @@ export function WizardContinueButton({
   onPress,
   label,
   icon = "chevron-forward-outline",
+  creditCost,
 }: WizardContinueButtonProps) {
   const tokens = useAppDesignTokens();
   const { isTabletDevice, minTouchTarget } = useResponsive();
@@ -33,6 +35,12 @@ export function WizardContinueButton({
   const hitSlopValue = isTabletDevice ? 24 : 20;
   const buttonMinHeight = Math.max(minTouchTarget, 44);
   const buttonMinWidth = isTabletDevice ? 120 : 100;
+
+  // If creditCost is provided, append it to the label
+  const displayLabel =
+    creditCost !== undefined && creditCost > 0
+      ? `${label} (${creditCost} credits)`
+      : label;
 
   return (
     <TouchableOpacity
@@ -60,7 +68,7 @@ export function WizardContinueButton({
           { color: canContinue ? tokens.colors.onPrimary : tokens.colors.textSecondary },
         ]}
       >
-        {label}
+        {displayLabel}
       </AtomicText>
       <AtomicIcon
         name={icon}
