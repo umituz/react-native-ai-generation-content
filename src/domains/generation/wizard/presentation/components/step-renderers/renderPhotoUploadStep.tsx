@@ -9,6 +9,7 @@ import type { StepDefinition } from "../../../../../../domain/entities/flow-conf
 import type { UploadedImage } from "../../../../../../presentation/hooks/generation/useAIGenerateState";
 
 export interface PhotoUploadStepProps {
+  readonly key?: string;
   readonly step: StepDefinition;
   readonly customData: Record<string, unknown>;
   readonly onBack: () => void;
@@ -30,6 +31,7 @@ export function renderPhotoUploadStep({
 
   return (
     <GenericPhotoUploadScreen
+      key={step.id}
       stepId={step.id}
       translations={{
         title: t(titleKey),

@@ -46,3 +46,15 @@ export function getSelectionConfig(config: unknown): SelectionStepConfig | undef
   if (config.type === "selection") return config as unknown as SelectionStepConfig;
   return undefined;
 }
+
+export function getSelectionValue(data: unknown): string | string[] | undefined {
+  if (typeof data === "string" || Array.isArray(data)) return data as string | string[];
+  if (isRecord(data) && "selection" in data) return data.selection as string | string[];
+  return undefined;
+}
+
+export function getTextInputValue(data: unknown): string | undefined {
+  if (typeof data === "string") return data;
+  if (isRecord(data) && "text" in data) return String(data.text);
+  return undefined;
+}

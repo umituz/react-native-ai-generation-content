@@ -5,7 +5,6 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useOfflineStore, useAlert } from "@umituz/react-native-design-system";
-import { useDeductCredit } from "@umituz/react-native-subscription";
 import { createGenerationError, getAlertMessage, parseError } from "./errors";
 import { handleModeration } from "./moderation-handler";
 import type {
@@ -38,7 +37,6 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
-  const { deductCredit, checkCredits } = useDeductCredit({ userId, onCreditsExhausted });
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -81,23 +79,6 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         console.log("[Orchestrator] executeGeneration() called");
       }
 
-      const creditCost = strategy.getCreditCost();
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] Deducting credits:", creditCost);
-      }
-
-      const creditDeducted = await deductCredit(creditCost);
-      if (!creditDeducted) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] ERROR: Credit deduction failed");
-        }
-        throw createGenerationError("credits", alertMessages.creditFailed);
-      }
-
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[Orchestrator] Credits deducted successfully");
-      }
-
       setState((prev) => ({ ...prev, status: "generating" }));
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] State: generating - calling strategy.execute()");
@@ -137,7 +118,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       handleLifecycleComplete("success", result);
       return result;
     },
-    [strategy, userId, alertMessages, deductCredit, showSuccess, onSuccess, handleLifecycleComplete],
+    [strategy, userId, alertMessages, showSuccess, onSuccess, handleLifecycleComplete],
   );
 
   const generate = useCallback(
@@ -176,33 +157,6 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[Orchestrator] Online check passed");
-        }
-
-        // Check if aborted
-        if (abortControllerRef.current.signal.aborted) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ERROR: Generation aborted (1)");
-          }
-          throw new Error("Generation aborted");
-        }
-
-        // Pre-validate credits before generation to catch concurrent consumption
-        const creditCost = strategy.getCreditCost();
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] Checking credits - cost:", creditCost);
-        }
-
-        const hasEnoughCredits = await checkCredits(creditCost);
-        if (!hasEnoughCredits) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[Orchestrator] ERROR: Pre-validation failed - insufficient credits");
-          }
-          onCreditsExhausted?.();
-          throw createGenerationError("credits", alertMessages.creditFailed);
-        }
-
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[Orchestrator] Credit check passed");
         }
 
         // Check if aborted before moderation

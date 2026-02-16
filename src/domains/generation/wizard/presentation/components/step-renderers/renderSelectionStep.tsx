@@ -4,11 +4,12 @@
 
 import React from "react";
 import { SelectionScreen } from "../../screens/SelectionScreen";
-import { getSelectionConfig } from "../WizardStepRenderer.utils";
+import { getSelectionConfig, getSelectionValue } from "../WizardStepRenderer.utils";
 import type { StepDefinition } from "../../../../../../domain/entities/flow-config.types";
 import type { UploadedImage } from "../../../../../../presentation/hooks/generation/useAIGenerateState";
 
 export interface SelectionStepProps {
+  readonly key?: string;
   readonly step: StepDefinition;
   readonly customData: Record<string, unknown>;
   readonly onBack: () => void;
@@ -32,14 +33,7 @@ export function renderSelectionStep({
   const isRequired = step.required ?? true;
 
   // Priority: existing value > config default > auto-select single option
-  const existingData = customData[step.id];
-  const existingValue =
-    typeof existingData === "string" || Array.isArray(existingData)
-      ? (existingData as string | string[])
-      : typeof existingData === "object" && existingData !== null && "selection" in existingData
-        ? (existingData as { selection: string | string[] }).selection
-        : undefined;
-
+  const existingValue = getSelectionValue(customData[step.id]);
   const configDefault = selectionConfig?.defaultValue;
   const autoSelectValue = isRequired && options.length === 1 ? options[0].id : undefined;
   const initialValue = existingValue ?? configDefault ?? autoSelectValue;
@@ -62,6 +56,7 @@ export function renderSelectionStep({
 
   return (
     <SelectionScreen
+      key={step.id}
       stepId={step.id}
       translations={{
         title: t(titleKey),

@@ -4,12 +4,13 @@
 
 import React from "react";
 import { TextInputScreen } from "../../screens/TextInputScreen";
-import { getTextInputConfig } from "../WizardStepRenderer.utils";
+import { getTextInputConfig, getTextInputValue } from "../WizardStepRenderer.utils";
 import type { StepDefinition } from "../../../../../../domain/entities/flow-config.types";
 import type { UploadedImage } from "../../../../../../presentation/hooks/generation/useAIGenerateState";
 import type { AlertMessages } from "../../../../../../presentation/hooks/generation/types";
 
 export interface TextInputStepProps {
+  readonly key?: string;
   readonly step: StepDefinition;
   readonly customData: Record<string, unknown>;
   readonly onBack: () => void;
@@ -30,16 +31,11 @@ export function renderTextInputStep({
   const titleKey = textConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
   const subtitleKey = textConfig?.subtitleKey ?? `wizard.steps.${step.id}.subtitle`;
   const placeholderKey = textConfig?.placeholderKey ?? `wizard.steps.${step.id}.placeholder`;
-  const existingData = customData[step.id];
-  const existingText =
-    typeof existingData === "string"
-      ? existingData
-      : typeof existingData === "object" && existingData !== null && "text" in existingData
-        ? String((existingData as { text: string }).text)
-        : "";
+  const existingText = getTextInputValue(customData[step.id]) ?? "";
 
   return (
     <TextInputScreen
+      key={step.id}
       stepId={step.id}
       translations={{
         title: t(titleKey),

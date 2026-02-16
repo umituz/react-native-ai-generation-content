@@ -89,13 +89,13 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
     }
 
     case StepType.PARTNER_UPLOAD:
-      return renderPhotoUploadStep({ step, customData, onBack, onPhotoContinue, t });
+      return renderPhotoUploadStep({ key: step.id, step, customData, onBack, onPhotoContinue, t });
 
     case StepType.TEXT_INPUT:
-      return renderTextInputStep({ step, customData, onBack, onPhotoContinue, t, alertMessages });
+      return renderTextInputStep({ key: step.id, step, customData, onBack, onPhotoContinue, t, alertMessages });
 
     case StepType.FEATURE_SELECTION:
-      return renderSelectionStep({ step, customData, onBack, onPhotoContinue, t });
+      return renderSelectionStep({ key: step.id, step, customData, onBack, onPhotoContinue, t });
 
     default:
       if (typeof __DEV__ !== "undefined" && __DEV__) {
