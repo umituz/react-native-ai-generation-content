@@ -22,11 +22,14 @@ function isValidRegexPattern(pattern: string): boolean {
   }
 
   // Check for dangerous patterns that could cause ReDoS
+  // Note: These checks are conservative to prevent catastrophic backtracking
   const dangerousPatterns = [
-    /\([^)]*\+\([^)]*\+\)/, // Nested repeated groups
-    /\([^)]*\*[^)]*\*\)/, // Multiple nested stars
-    /\.\*\.*/, // Multiple wildcards
-    /\.\+\.+/, // Multiple repeated wildcards
+    /\([^)]*\+\([^)]*\+\)/, // Nested repeated groups like (x+(y+))
+    /\([^)]*\*[^)]*\*\)/, // Multiple nested stars in groups like (x*(y*))
+    /\.\*\.\*\.\*/, // Three or more consecutive .* wildcards
+    /\.\+\.\+\.\+/, // Three or more consecutive .+ wildcards
+    /\(\.\*\)\+/, // Repeated wildcard groups like (.*)+
+    /\(\.\+\)\+/, // Repeated wildcard groups like (.+)+
   ];
 
   for (const dangerous of dangerousPatterns) {

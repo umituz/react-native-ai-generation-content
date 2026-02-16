@@ -34,6 +34,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
   onTryAgain,
   onDismissGenerating,
   t,
+  alertMessages,
   renderPreview,
   renderGenerating,
   renderResult,
@@ -91,7 +92,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
       return renderPhotoUploadStep({ step, customData, onBack, onPhotoContinue, t });
 
     case StepType.TEXT_INPUT:
-      return renderTextInputStep({ step, customData, onBack, onPhotoContinue, t });
+      return renderTextInputStep({ step, customData, onBack, onPhotoContinue, t, alertMessages });
 
     case StepType.FEATURE_SELECTION:
       return renderSelectionStep({ step, customData, onBack, onPhotoContinue, t });

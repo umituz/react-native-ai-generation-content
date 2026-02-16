@@ -164,6 +164,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
         onTryAgain={onTryAgain}
         onDismissGenerating={handlers.handleDismissGenerating}
         t={t}
+        alertMessages={alertMessages}
         renderPreview={renderPreview}
         renderGenerating={renderGenerating}
         renderResult={renderResult}

@@ -1,0 +1,149 @@
+/**
+ * Video Generation Executor
+ * Handles the actual video generation execution
+ * Uses direct provider calls for text-to-video and image-to-video generation models
+ */
+
+import type { WizardVideoInput } from "./video-generation.types";
+import { GENERATION_TIMEOUT_MS, BASE64_IMAGE_PREFIX } from "./wizard-strategy.constants";
+
+declare const __DEV__: boolean;
+
+interface ExecutionResult {
+  success: boolean;
+  videoUrl?: string;
+  requestId?: string;
+  error?: string;
+}
+
+interface SubmissionResult {
+  success: boolean;
+  requestId?: string;
+  model?: string;
+  error?: string;
+}
+
+function formatBase64(base64: string): string {
+  return base64.startsWith("data:") ? base64 : `${BASE64_IMAGE_PREFIX}${base64}`;
+}
+
+/**
+ * Execute video generation using direct provider call
+ * For text-to-video and image-to-video generation models (NOT features)
+ */
+export async function executeVideoGeneration(
+  input: WizardVideoInput,
+  model: string,
+  onProgress?: (status: string) => void,
+): Promise<ExecutionResult> {
+  const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
+
+  const provider = providerRegistry.getActiveProvider();
+  if (!provider?.isInitialized()) {
+    return { success: false, error: "AI provider not initialized" };
+  }
+
+  try {
+    const sourceImage = formatBase64(input.sourceImageBase64);
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[VideoExecutor] Generation starting", {
+        model,
+        duration: input.duration,
+        aspectRatio: input.aspectRatio,
+        resolution: input.resolution,
+      });
+    }
+
+    const modelInput: Record<string, unknown> = {
+      prompt: input.prompt,
+    };
+
+    // Add image for image-to-video (Sora 2, etc.)
+    if (sourceImage) {
+      modelInput.image_url = sourceImage;
+    }
+
+    // Add optional parameters
+    if (input.duration) {
+      modelInput.duration = input.duration;
+    }
+    if (input.aspectRatio) {
+      modelInput.aspect_ratio = input.aspectRatio;
+    }
+    if (input.resolution) {
+      modelInput.resolution = input.resolution;
+    }
+
+    let lastStatus = "";
+    const result = await provider.subscribe(model, modelInput, {
+      timeoutMs: GENERATION_TIMEOUT_MS,
+      onQueueUpdate: (status) => {
+        if (status.status !== lastStatus) {
+          lastStatus = status.status;
+          onProgress?.(status.status);
+        }
+      },
+    });
+
+    const rawResult = result as Record<string, unknown>;
+    const data = (rawResult?.data ?? rawResult) as { video?: { url: string }; video_url?: string };
+    const videoUrl = data?.video?.url ?? data?.video_url;
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[VideoExecutor] Generation completed", { success: !!videoUrl });
+    }
+
+    return videoUrl
+      ? { success: true, videoUrl, requestId: (rawResult as { requestId?: string })?.requestId }
+      : { success: false, error: "No video generated" };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Generation failed" };
+  }
+}
+
+/**
+ * Submit video generation to queue
+ * For background processing of video generation
+ */
+export async function submitVideoGenerationToQueue(
+  input: WizardVideoInput,
+  model: string,
+): Promise<SubmissionResult> {
+  const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
+
+  const provider = providerRegistry.getActiveProvider();
+  if (!provider?.isInitialized()) {
+    return { success: false, error: "AI provider not initialized" };
+  }
+
+  try {
+    const sourceImage = formatBase64(input.sourceImageBase64);
+
+    const modelInput: Record<string, unknown> = {
+      prompt: input.prompt,
+    };
+
+    // Add image for image-to-video
+    if (sourceImage) {
+      modelInput.image_url = sourceImage;
+    }
+
+    // Add optional parameters
+    if (input.duration) {
+      modelInput.duration = input.duration;
+    }
+    if (input.aspectRatio) {
+      modelInput.aspect_ratio = input.aspectRatio;
+    }
+    if (input.resolution) {
+      modelInput.resolution = input.resolution;
+    }
+
+    const submission = await provider.submitJob(model, modelInput);
+
+    return { success: true, requestId: submission.requestId, model };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Queue submission failed" };
+  }
+}

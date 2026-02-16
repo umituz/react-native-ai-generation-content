@@ -7,6 +7,7 @@ import { TextInputScreen } from "../../screens/TextInputScreen";
 import { getTextInputConfig } from "../WizardStepRenderer.utils";
 import type { StepDefinition } from "../../../../../../domain/entities/flow-config.types";
 import type { UploadedImage } from "../../../../../../presentation/hooks/generation/useAIGenerateState";
+import type { AlertMessages } from "../../../../../../presentation/hooks/generation/types";
 
 export interface TextInputStepProps {
   readonly step: StepDefinition;
@@ -14,6 +15,7 @@ export interface TextInputStepProps {
   readonly onBack: () => void;
   readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;
   readonly t: (key: string) => string;
+  readonly alertMessages?: AlertMessages;
 }
 
 export function renderTextInputStep({
@@ -22,6 +24,7 @@ export function renderTextInputStep({
   onBack,
   onPhotoContinue,
   t,
+  alertMessages,
 }: TextInputStepProps): React.ReactElement {
   const textConfig = getTextInputConfig(step.config);
   const titleKey = textConfig?.titleKey ?? `wizard.steps.${step.id}.title`;
@@ -45,6 +48,8 @@ export function renderTextInputStep({
         continueButton: t("common.continue"),
         backButton: t("common.back"),
         examplesTitle: t("textInput.examplesTitle"),
+        contentNotAllowed: alertMessages?.errorTitle || alertMessages?.policyViolationTitle || t("common.error"),
+        contentNotAllowedMessage: alertMessages?.policyViolation || "This type of content is not supported. Please try a different prompt.",
       }}
       config={{
         minLength: textConfig?.minLength ?? 3,

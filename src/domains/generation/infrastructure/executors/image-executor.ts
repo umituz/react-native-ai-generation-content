@@ -109,6 +109,11 @@ export class ImageExecutor
   private buildModelInput(input: ImageGenerationInput) {
     const { imageUrls, prompt, aspectRatio, outputFormat } = input;
 
+    // Validate required prompt field
+    if (!prompt || prompt.trim() === "") {
+      throw new Error("Prompt is required for image generation");
+    }
+
     const formattedUrls = imageUrls?.map((url) =>
       url.startsWith("data:") ? url : `data:image/jpeg;base64,${url}`,
     );
@@ -117,7 +122,7 @@ export class ImageExecutor
       ...(formattedUrls && formattedUrls.length > 0
         ? { image_urls: formattedUrls }
         : {}),
-      prompt,
+      prompt: prompt.trim(),
       aspect_ratio: aspectRatio ?? "4:3",
       output_format: outputFormat ?? "jpeg",
       num_images: 1,

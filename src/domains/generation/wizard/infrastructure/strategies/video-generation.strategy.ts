@@ -1,21 +1,17 @@
 /**
  * Video Generation Strategy
  * Handles video-specific generation logic (execution only)
- * Uses clean prompts for Sora 2 - no complex identity preservation text
+ * Uses direct provider calls for generation models (text-to-video, image-to-video)
  */
 
-import {
-  executeVideoFeature,
-  submitVideoFeatureToQueue,
-} from "../../../../../infrastructure/services/video-feature-executor.service";
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { VIDEO_PROCESSING_PROMPTS } from "./wizard-strategy.constants";
 import { extractPrompt, extractDuration, extractAspectRatio, extractResolution } from "../utils";
 import { extractPhotosAsBase64 } from "./shared/photo-extraction.utils";
-import { getVideoFeatureType } from "./video-generation.utils";
 import type { WizardVideoInput, CreateVideoStrategyOptions } from "./video-generation.types";
 import { validatePhotoCount, validateWizardVideoInput } from "./video-generation.types";
+import { executeVideoGeneration, submitVideoGenerationToQueue } from "./video-generation.executor";
 
 declare const __DEV__: boolean;
 
@@ -51,10 +47,10 @@ export async function buildVideoInput(
     }
   }
 
-  // For video generation with Sora 2, use clean prompt directly
-  // No need for complex identity preservation text - Sora 2 handles this natively
+  // For video generation, use clean prompt directly
+  // Modern models handle context natively
   if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[VideoStrategy] Using clean prompt for Sora 2", {
+    console.log("[VideoStrategy] Using clean prompt for video generation", {
       promptLength: finalPrompt.length,
       photoCount: photos.length,
     });
@@ -72,23 +68,20 @@ export async function buildVideoInput(
 
 export function createVideoStrategy(options: CreateVideoStrategyOptions): WizardStrategy {
   const { scenario, creditCost } = options;
-  const videoFeatureType = getVideoFeatureType(scenario);
+
+  // Validate model early - fail fast
+  if (!scenario.model) {
+    throw new Error("Model is required for video generation");
+  }
+
+  const model = scenario.model;
 
   return {
     execute: async (input: unknown) => {
       // Runtime validation with descriptive errors
       const videoInput = validateWizardVideoInput(input);
 
-      const result = await executeVideoFeature(videoFeatureType, {
-        sourceImageBase64: videoInput.sourceImageBase64,
-        targetImageBase64: videoInput.targetImageBase64,
-        prompt: videoInput.prompt,
-        options: {
-          duration: videoInput.duration,
-          aspect_ratio: videoInput.aspectRatio,
-          resolution: videoInput.resolution,
-        },
-      });
+      const result = await executeVideoGeneration(videoInput, model);
 
       if (!result.success || !result.videoUrl) {
         throw new Error(result.error || "Video generation failed");
@@ -101,16 +94,7 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
       // Runtime validation with descriptive errors
       const videoInput = validateWizardVideoInput(input);
 
-      const result = await submitVideoFeatureToQueue(videoFeatureType, {
-        sourceImageBase64: videoInput.sourceImageBase64,
-        targetImageBase64: videoInput.targetImageBase64,
-        prompt: videoInput.prompt,
-        options: {
-          duration: videoInput.duration,
-          aspect_ratio: videoInput.aspectRatio,
-          resolution: videoInput.resolution,
-        },
-      });
+      const result = await submitVideoGenerationToQueue(videoInput, model);
 
       return {
         success: result.success,

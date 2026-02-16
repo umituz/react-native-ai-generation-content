@@ -1,6 +1,7 @@
 import type { StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import type { WizardScenarioData } from "../hooks/useWizardGeneration";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
+import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
 
 export interface WizardStepRendererProps {
   readonly step: StepDefinition | undefined;
@@ -21,6 +22,7 @@ export interface WizardStepRendererProps {
   /** Called when user dismisses generating screen - generation continues in background */
   readonly onDismissGenerating?: () => void;
   readonly t: (key: string) => string;
+  readonly alertMessages?: AlertMessages;
   readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
   readonly renderGenerating?: (progress: number) => React.ReactElement | null;
   readonly renderResult?: (result: unknown) => React.ReactElement | null;
