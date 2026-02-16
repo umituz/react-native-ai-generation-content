@@ -22,6 +22,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isGeneratingRef = useRef(false);
   const isPollingRef = useRef(false);
+  const consecutiveErrorsRef = useRef(0);
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       // Reset all refs on unmount
       isGeneratingRef.current = false;
       isPollingRef.current = false;
+      consecutiveErrorsRef.current = 0;
       creationIdRef.current = null;
       requestIdRef.current = null;
       modelRef.current = null;
@@ -46,6 +48,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
     modelRef.current = null;
     isGeneratingRef.current = false;
     isPollingRef.current = false;
+    consecutiveErrorsRef.current = 0;
     setIsGenerating(false);
   }, []);
 
@@ -109,6 +112,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
       model,
       isPollingRef,
       pollingRef,
+      consecutiveErrorsRef,
       onComplete: handleComplete,
       onError: handleError,
     });

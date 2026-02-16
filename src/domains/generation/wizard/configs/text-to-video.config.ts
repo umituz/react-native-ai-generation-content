@@ -26,11 +26,11 @@ export const TEXT_TO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
       titleKey: "generation.resolution.title",
       selectionType: "resolution",
       options: [
-        { id: "720p", label: "720p", value: "720p" },
-        { id: "default", label: "Default", value: "default" },
+        { id: "480p", label: "Standard (480p)", value: "480p" },
+        { id: "720p", label: "HD (720p)", value: "720p" },
       ],
       required: true,
-      defaultValue: "720p",
+      defaultValue: "480p",
     },
     {
       id: "aspect_ratio",

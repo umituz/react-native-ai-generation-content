@@ -4,22 +4,23 @@ import { QUEUE_STATUS } from "../../../../../domain/constants/queue-status.const
 
 declare const __DEV__: boolean;
 
+/** Max consecutive transient errors before aborting */
+const MAX_CONSECUTIVE_ERRORS = 5;
+
 interface PollParams {
   requestId: string;
   model: string;
   isPollingRef: React.MutableRefObject<boolean>;
   pollingRef: React.MutableRefObject<ReturnType<typeof setInterval> | null>;
+  consecutiveErrorsRef: React.MutableRefObject<number>;
   onComplete: (urls: GenerationUrls) => Promise<void>;
   onError: (error: string) => Promise<void>;
 }
 
 export const pollQueueStatus = async (params: PollParams): Promise<void> => {
-  const { requestId, model, isPollingRef, pollingRef, onComplete, onError } = params;
+  const { requestId, model, isPollingRef, pollingRef, consecutiveErrorsRef, onComplete, onError } = params;
 
-  // Check-and-set - while not truly atomic in JS, this is best we can do
-  // The ref prevents most race conditions in practice
   if (isPollingRef.current) {
-    if (__DEV__) console.log("[VideoQueuePoller] Already polling, skipping");
     return;
   }
   isPollingRef.current = true;
@@ -29,9 +30,13 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
     isPollingRef.current = false;
     return;
   }
+
   try {
     const status = await provider.getJobStatus(model, requestId);
     if (__DEV__) console.log("[VideoQueueGeneration] Poll:", status.status);
+
+    // Reset consecutive errors on successful poll
+    consecutiveErrorsRef.current = 0;
 
     if (status.status === QUEUE_STATUS.COMPLETED || status.status === QUEUE_STATUS.FAILED) {
       if (pollingRef.current) {
@@ -53,13 +58,26 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
       }
     }
   } catch (err) {
-    if (pollingRef.current) {
-      clearInterval(pollingRef.current);
-      pollingRef.current = null;
-    }
+    consecutiveErrorsRef.current += 1;
     const errorMessage = err instanceof Error ? err.message : "Generation failed";
-    if (__DEV__) console.error("[VideoQueueGeneration] Poll error:", errorMessage);
-    await onError(errorMessage);
+
+    if (consecutiveErrorsRef.current >= MAX_CONSECUTIVE_ERRORS) {
+      // Too many consecutive errors - abort
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+      if (__DEV__) console.error("[VideoQueueGeneration] Max consecutive errors reached, aborting:", errorMessage);
+      await onError(errorMessage);
+    } else {
+      // Transient error - continue polling
+      if (__DEV__) {
+        console.warn(
+          `[VideoQueueGeneration] Transient poll error (${consecutiveErrorsRef.current}/${MAX_CONSECUTIVE_ERRORS}):`,
+          errorMessage,
+        );
+      }
+    }
   } finally {
     isPollingRef.current = false;
   }
