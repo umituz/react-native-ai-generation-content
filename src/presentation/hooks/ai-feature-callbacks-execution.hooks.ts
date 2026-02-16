@@ -14,7 +14,6 @@ export interface UseExecutionCallbackParams<TRequest, TResult> {
     imageUrl?: string;
     imageUrls?: string[];
   }>;
-  deductCredits?: (amount: number) => Promise<void>;
   creditCostPerUnit: number;
   onSuccess?: (result: TResult) => void;
   onError?: (error: string) => void;
@@ -30,16 +29,12 @@ export interface ExecutionCallbacks<TRequest> {
 export function useExecutionCallback<TRequest = unknown, TResult = unknown>(
   params: UseExecutionCallbackParams<TRequest, TResult>,
 ): ExecutionCallbacks<TRequest> {
-  const { executor, deductCredits, creditCostPerUnit, onSuccess, onError } = params;
+  const { executor, creditCostPerUnit, onSuccess, onError } = params;
 
   const executeGeneration = useCallback(
     async (request: TRequest): Promise<AIFeatureGenerationResult> => {
       try {
         const result = await executor(request);
-
-        if (result.success && deductCredits) {
-          await deductCredits(creditCostPerUnit);
-        }
 
         if (result.success && result.data) {
           onSuccess?.(result.data);
@@ -57,7 +52,7 @@ export function useExecutionCallback<TRequest = unknown, TResult = unknown>(
         return { success: false, error: message };
       }
     },
-    [executor, deductCredits, creditCostPerUnit, onSuccess, onError],
+    [executor, creditCostPerUnit, onSuccess, onError],
   );
 
   return {

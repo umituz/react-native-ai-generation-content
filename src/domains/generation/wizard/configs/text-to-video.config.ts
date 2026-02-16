@@ -49,7 +49,12 @@ export const TEXT_TO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
       type: "selection",
       titleKey: "generation.duration.title",
       selectionType: "duration",
-      options: [{ id: "4s", label: "4 seconds", value: 4 }],
+      layout: "list",
+      options: [
+        { id: "4s", label: "4 seconds", value: 4 },
+        { id: "5s", label: "5 seconds", value: 5 },
+        { id: "6s", label: "6 seconds", value: 6 },
+      ],
       required: true,
       defaultValue: "4s",
     },

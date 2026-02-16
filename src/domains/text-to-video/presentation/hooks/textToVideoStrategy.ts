@@ -65,7 +65,6 @@ export const createTextToVideoStrategy = (
         thumbnailUrl: result.thumbnailUrl,
       };
     },
-    getCreditCost: () => config.creditCost,
     save: async (result) => {
       if (result.success && result.videoUrl && creationIdRef.current) {
         await callbacks.onCreationSave?.({

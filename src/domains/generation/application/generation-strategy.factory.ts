@@ -61,10 +61,6 @@ export function createGenerationStrategy(
       return result.data;
     },
 
-    getCreditCost: () => {
-      return featureConfig.creditCost;
-    },
-
     save: async (result: unknown, uid: string) => {
       if (!repository) {
         if (typeof __DEV__ !== "undefined" && __DEV__) {

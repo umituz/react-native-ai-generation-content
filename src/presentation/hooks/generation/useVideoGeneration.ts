@@ -82,7 +82,6 @@ export const useVideoGeneration = <TResult>(
 
         return processResult(result.videoUrl, input);
       },
-      getCreditCost: () => creditCost,
       save: buildCreation
         ? async (result, uid) => {
             const creation = buildCreation(result, lastInputRef.current ?? {} as DualImageVideoInput);
@@ -105,7 +104,6 @@ export const useVideoGeneration = <TResult>(
   return useGenerationOrchestrator(strategy, {
     userId,
     alertMessages,
-    onCreditsExhausted,
     onSuccess: onSuccess as (result: unknown) => void,
     onError: handleError,
   });

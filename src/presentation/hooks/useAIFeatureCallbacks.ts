@@ -42,7 +42,6 @@ export function useAIFeatureCallbacks<TRequest = unknown, TResult = unknown>(
     executor,
     showAuthModal,
     openPaywall,
-    deductCredits,
     onSuccess,
     onError,
   } = config;
@@ -64,7 +63,6 @@ export function useAIFeatureCallbacks<TRequest = unknown, TResult = unknown>(
   // Execution callback
   const executionCallbacks = useExecutionCallback({
     executor,
-    deductCredits,
     creditCostPerUnit,
     onSuccess,
     onError,

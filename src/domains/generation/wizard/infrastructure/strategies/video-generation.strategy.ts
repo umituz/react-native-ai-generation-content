@@ -103,7 +103,5 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
         error: result.error,
       };
     },
-
-    getCreditCost: () => creditCost,
   };
 }

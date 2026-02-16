@@ -65,7 +65,6 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
         }
         return result.imageUrls;
       },
-      getCreditCost: () => totalCost,
     }),
     [callbacks, totalCost],
   );
@@ -74,7 +73,6 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
   const { generate, isGenerating, error } = useGenerationOrchestrator(strategy, {
     userId: userId ?? undefined,
     alertMessages: DEFAULT_ALERT_MESSAGES,
-    onCreditsExhausted: () => callbacks.onCreditsRequired?.(totalCost),
     onSuccess: (result) => {
       const imageUrls = result as string[];
       if (typeof __DEV__ !== "undefined" && __DEV__) {

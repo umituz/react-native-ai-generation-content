@@ -72,7 +72,6 @@ export const useImageGeneration = <TInput extends ImageGenerationInput, TResult>
 
         return processResult(result.imageUrl, input);
       },
-      getCreditCost: () => creditCost,
       save: buildCreation
         ? async (result, uid) => {
             const creation = buildCreation(result, lastInputRef.current ?? ({} as TInput));
@@ -90,7 +89,6 @@ export const useImageGeneration = <TInput extends ImageGenerationInput, TResult>
   return useGenerationOrchestrator(strategy, {
     userId,
     alertMessages,
-    onCreditsExhausted,
     onSuccess: onSuccess as (result: unknown) => void,
     onError: handleError,
   });

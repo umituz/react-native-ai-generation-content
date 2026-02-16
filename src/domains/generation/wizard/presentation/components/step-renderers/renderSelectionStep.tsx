@@ -73,6 +73,7 @@ export function renderSelectionStep({
       config={{
         multiSelect: selectionConfig?.multiSelect ?? false,
         required: isRequired,
+        layout: selectionConfig?.layout,
       }}
       initialValue={initialValue}
       onBack={onBack}

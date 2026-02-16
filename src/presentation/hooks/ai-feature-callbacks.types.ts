@@ -28,7 +28,6 @@ export interface AIFeatureCallbacksConfig<TRequest = unknown, TResult = unknown>
   // Actions from app - showAuthModal accepts callback for post-auth resume
   showAuthModal: (callback?: () => void) => void;
   openPaywall: () => void;
-  deductCredits?: (amount: number) => Promise<void>;
 
   // Optional callbacks
   onSuccess?: (result: TResult) => void;

@@ -134,7 +134,7 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
       <ScreenLayout scrollable={true} edges={["left", "right"]} hideScrollIndicator={true} contentContainerStyle={styles.scrollContent}>
         <AtomicText type="headlineMedium" color="textPrimary" style={styles.title}>{translations.title}</AtomicText>
         {translations.subtitle ? <AtomicText type="bodyMedium" color="textSecondary" style={styles.subtitle}>{translations.subtitle}</AtomicText> : null}
-        <View style={styles.optionsGrid}>{options.map(renderOption)}</View>
+        <View style={[styles.optionsGrid, config?.layout === "grid" && { flexDirection: "row", flexWrap: "wrap" }]}>{options.map(renderOption)}</View>
       </ScreenLayout>
     </View>
   );
@@ -145,19 +145,19 @@ const createStyles = (tokens: DesignTokens) =>
     scrollContent: { paddingHorizontal: tokens.spacing.lg, paddingBottom: 40 },
     title: { marginBottom: tokens.spacing.sm },
     subtitle: { marginBottom: tokens.spacing.lg },
-    optionsGrid: { flexDirection: "row", flexWrap: "wrap", gap: tokens.spacing.sm },
+    optionsGrid: { gap: tokens.spacing.sm },
     optionCard: {
       flex: 1,
-      minWidth: "45%",
+      width: "100%",
       padding: tokens.spacing.md,
       borderWidth: 2,
       borderRadius: tokens.borders.radius.md,
+      flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
-      gap: tokens.spacing.xs,
+      gap: tokens.spacing.md,
       position: "relative",
     },
-    optionLabel: { textAlign: "center" },
+    optionLabel: { flex: 1, textAlign: "left" },
     checkmark: {
       position: "absolute",
       top: tokens.spacing.xs,

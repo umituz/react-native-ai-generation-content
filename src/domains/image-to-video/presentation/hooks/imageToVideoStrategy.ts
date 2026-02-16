@@ -66,7 +66,6 @@ export const createImageToVideoStrategy = (
         thumbnailUrl: result.thumbnailUrl,
       };
     },
-    getCreditCost: () => config.creditCost ?? 0,
     save: async (result) => {
       if (result.success && result.videoUrl && creationIdRef.current) {
         await callbacks?.onCreationSave?.({

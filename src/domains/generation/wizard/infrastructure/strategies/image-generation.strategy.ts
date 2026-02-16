@@ -101,7 +101,5 @@ export function createImageStrategy(options: CreateImageStrategyOptions): Wizard
 
       return { imageUrl: result.imageUrl };
     },
-
-    getCreditCost: () => creditCost,
   };
 }

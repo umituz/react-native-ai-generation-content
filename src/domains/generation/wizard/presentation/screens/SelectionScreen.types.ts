@@ -19,6 +19,7 @@ export interface SelectionScreenTranslations {
 export interface SelectionScreenConfig {
   readonly multiSelect?: boolean;
   readonly required?: boolean;
+  readonly layout?: "grid" | "list";
 }
 
 export interface SelectionScreenProps {

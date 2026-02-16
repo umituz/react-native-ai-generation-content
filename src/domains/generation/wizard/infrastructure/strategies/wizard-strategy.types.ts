@@ -15,6 +15,4 @@ export interface WizardStrategy {
   execute: (input: unknown) => Promise<{ imageUrl?: string; videoUrl?: string }>;
   /** Submit to queue for background processing - returns immediately with requestId */
   submitToQueue?: (input: unknown) => Promise<QueueSubmissionResult>;
-  /** Get credit cost for this generation */
-  getCreditCost: () => number;
 }

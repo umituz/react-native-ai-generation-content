@@ -64,7 +64,6 @@ export const useDualImageGeneration = (
 
         return result.imageUrl;
       },
-      getCreditCost: () => creditCost,
     }),
     [model, getPrompt, creditCost],
   );
@@ -73,7 +72,6 @@ export const useDualImageGeneration = (
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages,
-    onCreditsExhausted,
     onSuccess: (result) => onSuccess?.(result as string),
     onError: (error) => onError?.(error.message),
   });

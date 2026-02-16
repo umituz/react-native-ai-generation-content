@@ -53,6 +53,7 @@ export interface SelectionStepConfig extends BaseStepConfig {
     readonly value: unknown;
   }[];
   readonly multiSelect?: boolean;
+  readonly layout?: "grid" | "list";
   readonly defaultValue?: string | string[];
 }
 
