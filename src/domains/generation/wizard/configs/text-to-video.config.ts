@@ -42,7 +42,7 @@ export const TEXT_TO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
         { id: "9:16", label: "9:16", value: "9:16" },
       ],
       required: true,
-      defaultValue: "16:9",
+      defaultValue: "9:16",
     },
     {
       id: "duration",
