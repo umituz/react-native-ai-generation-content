@@ -36,17 +36,18 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
 }) => {
   const tokens = useAppDesignTokens();
   const [selected, setSelected] = useState<string | string[]>(() => {
-    const initialState = initialValue ? initialValue : (config?.multiSelect ? [] : "");
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[SelectionScreen] Initial state:", {
-        stepId,
-        initialValue,
-        initialState,
-        hasInitialValue: !!initialValue,
-        multiSelect: config?.multiSelect,
-      });
+    const isMulti = config?.multiSelect ?? false;
+    const optionIds = options.map((opt) => opt.id);
+
+    if (isMulti) {
+      const initialArr = initialValue && Array.isArray(initialValue) ? initialValue : [];
+      // Filter out invalid IDs
+      return initialArr.filter((id) => optionIds.includes(id));
     }
-    return initialState;
+
+    const initialStr = typeof initialValue === "string" ? initialValue : "";
+    // Ensure the initial string is a valid option ID
+    return optionIds.includes(initialStr) ? initialStr : "";
   });
 
   const isMultiSelect = config?.multiSelect ?? false;
@@ -112,7 +113,11 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
           <View style={[styles.checkmark, { backgroundColor: tokens.colors.primary }]}>
             <AtomicIcon name="checkmark" size="xs" color="onPrimary" />
           </View>
-        ) : null}
+        ) : (
+          !isMultiSelect && (
+            <View style={[styles.radioOutline, { borderColor: tokens.colors.border }]} />
+          )
+        )}
       </TouchableOpacity>
     );
   };
@@ -162,5 +167,14 @@ const createStyles = (tokens: DesignTokens) =>
       borderRadius: 10,
       alignItems: "center",
       justifyContent: "center",
+    },
+    radioOutline: {
+      position: "absolute",
+      top: tokens.spacing.xs,
+      right: tokens.spacing.xs,
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      borderWidth: 1,
     },
   });

@@ -32,7 +32,14 @@ export function renderSelectionStep({
   const isRequired = step.required ?? true;
 
   // Priority: existing value > config default > auto-select single option
-  const existingValue = customData[step.id] as string | string[] | undefined;
+  const existingData = customData[step.id];
+  const existingValue =
+    typeof existingData === "string" || Array.isArray(existingData)
+      ? (existingData as string | string[])
+      : typeof existingData === "object" && existingData !== null && "selection" in existingData
+        ? (existingData as { selection: string | string[] }).selection
+        : undefined;
+
   const configDefault = selectionConfig?.defaultValue;
   const autoSelectValue = isRequired && options.length === 1 ? options[0].id : undefined;
   const initialValue = existingValue ?? configDefault ?? autoSelectValue;
