@@ -205,7 +205,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         abortControllerRef.current = null;
       }
     },
-    [offlineStore, moderation, alertMessages, strategy, checkCredits, onCreditsExhausted, executeGeneration, showError, onError, handleLifecycleComplete],
+    [offlineStore, moderation, alertMessages, strategy, executeGeneration, showError, onError, handleLifecycleComplete],
   );
 
   const reset = useCallback(() => {
