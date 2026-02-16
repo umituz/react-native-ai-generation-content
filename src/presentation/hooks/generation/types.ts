@@ -14,7 +14,6 @@ export type OrchestratorStatus =
 
 export interface GenerationStrategy<TInput, TResult> {
   execute: (input: TInput) => Promise<TResult>;
-  getCreditCost: () => number;
   save?: (result: TResult, userId: string) => Promise<void>;
 }
 
@@ -55,7 +54,6 @@ export interface LifecycleConfig {
 export interface GenerationConfig {
   readonly userId: string | undefined;
   readonly alertMessages: AlertMessages;
-  readonly onCreditsExhausted?: () => void;
   readonly onSuccess?: (result: unknown) => void;
   readonly onError?: (error: GenerationError) => void;
   readonly moderation?: ModerationCallbacks;
