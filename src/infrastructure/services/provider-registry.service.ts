@@ -49,13 +49,6 @@ class ProviderRegistry {
   }
 
   getActiveProvider(): IAIProvider | null {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[ProviderRegistry] getActiveProvider() called", {
-        activeProviderId: this.activeProviderId,
-        registeredProviders: Array.from(this.providers.keys()),
-      });
-    }
-
     if (!this.activeProviderId) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.warn("[ProviderRegistry] No active provider set!");
@@ -63,16 +56,7 @@ class ProviderRegistry {
       return null;
     }
 
-    const provider = this.providers.get(this.activeProviderId) ?? null;
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[ProviderRegistry] getActiveProvider() returning", {
-        providerId: provider?.providerId,
-        isInitialized: provider?.isInitialized(),
-      });
-    }
-
-    return provider;
+    return this.providers.get(this.activeProviderId) ?? null;
   }
 
   getProvider(providerId: string): IAIProvider | null {

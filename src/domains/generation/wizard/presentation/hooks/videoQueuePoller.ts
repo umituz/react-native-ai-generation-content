@@ -66,7 +66,6 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
 
   try {
     const status = await provider.getJobStatus(model, requestId);
-    if (__DEV__) console.log("[VideoQueueGeneration] Poll:", status.status);
 
     // Reset consecutive errors on successful poll
     consecutiveErrorsRef.current = 0;

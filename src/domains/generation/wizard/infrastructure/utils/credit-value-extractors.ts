@@ -63,3 +63,30 @@ export function extractResolution(value: unknown): string | undefined {
   }
   return undefined;
 }
+
+/**
+ * Extract default duration from wizard feature config
+ * Finds the duration selection step and resolves its default option value
+ */
+export function getConfigDefaultDuration(steps: readonly Record<string, unknown>[]): number | undefined {
+  const step = steps.find((s) => s.selectionType === "duration");
+  if (!step?.defaultValue || !step.options || !Array.isArray(step.options)) return undefined;
+
+  const defaultId = typeof step.defaultValue === "string" ? step.defaultValue : String(step.defaultValue);
+  const options = step.options as readonly { id: string; value: unknown }[];
+  const option = options.find((o) => o.id === defaultId);
+  if (option) {
+    return typeof option.value === "number" ? option.value : extractDuration(option.value);
+  }
+  return extractDuration(defaultId);
+}
+
+/**
+ * Extract default resolution from wizard feature config
+ * Finds the resolution selection step and returns its default value
+ */
+export function getConfigDefaultResolution(steps: readonly Record<string, unknown>[]): string | undefined {
+  const step = steps.find((s) => s.selectionType === "resolution");
+  if (!step?.defaultValue) return undefined;
+  return typeof step.defaultValue === "string" ? step.defaultValue : undefined;
+}

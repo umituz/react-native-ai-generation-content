@@ -16,7 +16,7 @@ import type { Creation } from "../../../../creations/domain/entities/Creation";
 import { createCreationsRepository } from "../../../../creations";
 import { useResultActions } from "../../../../result-preview/presentation/hooks/useResultActions";
 import { useWizardFlowHandlers } from "../hooks/useWizardFlowHandlers";
-import { extractDuration, extractResolution } from "../../infrastructure/utils/credit-value-extractors";
+import { extractDuration, extractResolution, getConfigDefaultDuration, getConfigDefaultResolution } from "../../infrastructure/utils/credit-value-extractors";
 import { WizardStepRenderer } from "./WizardStepRenderer";
 import { StarRatingPicker } from "../../../../result-preview/presentation/components/StarRatingPicker";
 import type { CreditCalculatorFn } from "../../domain/types/credit-calculation.types";
@@ -83,22 +83,22 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
   const prevStepIdRef = useRef<string | undefined>(undefined);
   const repository = useMemo(() => createCreationsRepository("creations"), []);
 
-  const flowSteps = useMemo<StepDefinition[]>(
-    () =>
-      buildFlowStepsFromWizard(featureConfig, {
-        includePreview: true,
-        includeGenerating: true,
-        includeResult: !skipResultStep,
-      }),
-    [featureConfig, skipResultStep],
-  );
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[WizardFlowContent] flowSteps built", {
-      totalSteps: flowSteps.length,
-      steps: flowSteps.map((s, i) => `${i}: ${s.id} (${s.type})`),
+  const flowSteps = useMemo<StepDefinition[]>(() => {
+    const steps = buildFlowStepsFromWizard(featureConfig, {
+      includePreview: true,
+      includeGenerating: true,
+      includeResult: !skipResultStep,
     });
-  }
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[WizardFlowContent] flowSteps built", {
+        totalSteps: steps.length,
+        steps: steps.map((s, i) => `${i}: ${s.id} (${s.type})`),
+      });
+    }
+
+    return steps;
+  }, [featureConfig, skipResultStep]);
 
   const flow = useFlow({ steps: flowSteps, initialStepIndex: 0 });
   const {
@@ -138,9 +138,10 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     const outputType = validatedScenario.outputType as "video" | "image";
     const hasImageInput = validatedScenario.inputType !== "text";
 
-    // Extract and normalize values from customData
-    const duration = extractDuration(customData.duration);
-    const resolution = extractResolution(customData.resolution);
+    // Extract from customData, fall back to step defaults from wizard config
+    // This ensures accurate credit display even before user confirms a selection
+    const duration = extractDuration(customData.duration) ?? getConfigDefaultDuration(featureConfig.steps as unknown as Record<string, unknown>[]);
+    const resolution = extractResolution(customData.resolution) ?? getConfigDefaultResolution(featureConfig.steps as unknown as Record<string, unknown>[]);
 
     // Call app's calculator
     const result = calculateCredits({
@@ -152,7 +153,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
 
     // If result is 0 (incomplete selections), use static initial cost
     return result > 0 ? result : creditCost;
-  }, [customData, validatedScenario.outputType, validatedScenario.inputType, calculateCredits, creditCost]);
+  }, [customData, featureConfig.steps, validatedScenario.outputType, validatedScenario.inputType, calculateCredits, creditCost]);
 
   const handlers = useWizardFlowHandlers({
     currentStepIndex,
