@@ -23,7 +23,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   strategy: GenerationStrategy<TInput, TResult>,
   config: GenerationConfig,
 ): UseGenerationOrchestratorReturn<TInput, TResult> => {
-  const { userId, alertMessages, onCreditsExhausted, onSuccess, onError, moderation, lifecycle } = config;
+  const { userId, alertMessages, onSuccess, onError, moderation, lifecycle } = config;
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[Orchestrator] Hook initialized:", { userId });

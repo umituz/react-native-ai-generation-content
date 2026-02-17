@@ -27,7 +27,6 @@ export const useDualImageGeneration = (
     creditCost,
     alertMessages,
     imageAspect = [1, 1],
-    onCreditsExhausted,
     onSuccess,
     onError,
   } = config;

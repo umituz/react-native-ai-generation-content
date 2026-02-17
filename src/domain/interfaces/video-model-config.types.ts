@@ -11,7 +11,7 @@ export interface ModelCapabilityOption {
 }
 
 export interface VideoModelConfig {
-  /** Fal.ai model endpoint (e.g., "fal-ai/ltx-video-13b-distilled/image-to-video") */
+  /** Provider model endpoint ID */
   readonly modelId: string;
 
   /** Human-readable display name */
@@ -29,10 +29,7 @@ export interface VideoModelConfig {
     };
   };
 
-  /**
-   * Maps generic WizardVideoInput to model-specific API parameters.
-   * This is the core adapter function - eliminates all model-specific if/else checks.
-   */
+  /** Maps generic wizard input to model-specific API parameters */
   readonly buildInput: (input: {
     readonly prompt: string;
     readonly sourceImageBase64?: string;
@@ -42,10 +39,7 @@ export interface VideoModelConfig {
     readonly resolution?: string;
   }) => Record<string, unknown>;
 
-  /**
-   * Pricing data for credit calculation.
-   * Keys are resolution IDs matching capabilities.resolutions[].id
-   */
+  /** Pricing data for credit calculation (keys = resolution IDs) */
   readonly pricing: {
     readonly costPerSecond: Record<string, number>;
   };

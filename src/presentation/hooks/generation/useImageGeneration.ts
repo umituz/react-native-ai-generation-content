@@ -47,7 +47,6 @@ export const useImageGeneration = <TInput extends ImageGenerationInput, TResult>
     buildCreation,
     creditCost,
     alertMessages,
-    onCreditsExhausted,
     onSuccess,
     onError,
   } = config;

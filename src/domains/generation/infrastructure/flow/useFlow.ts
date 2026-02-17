@@ -103,5 +103,3 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
     getPartnerName,
   };
 };
-
-declare const __DEV__: boolean;

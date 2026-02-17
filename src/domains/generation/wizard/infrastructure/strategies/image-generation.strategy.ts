@@ -81,7 +81,7 @@ function applyStyleEnhancements(prompt: string, wizardData: Record<string, unkno
 // ============================================================================
 
 export function createImageStrategy(options: CreateImageStrategyOptions): WizardStrategy {
-  const { scenario, creditCost } = options;
+  const { scenario } = options;
 
   // Validate model early - fail fast
   if (!scenario.model) {

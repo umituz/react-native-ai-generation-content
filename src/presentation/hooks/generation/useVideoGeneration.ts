@@ -50,7 +50,6 @@ export const useVideoGeneration = <TResult>(
     buildCreation,
     creditCost = 1,
     alertMessages,
-    onCreditsExhausted,
     onSuccess,
     onError,
   } = config;

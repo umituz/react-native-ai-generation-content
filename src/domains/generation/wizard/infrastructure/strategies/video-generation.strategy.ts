@@ -67,7 +67,7 @@ export async function buildVideoInput(
 }
 
 export function createVideoStrategy(options: CreateVideoStrategyOptions): WizardStrategy {
-  const { scenario, modelConfig, creditCost } = options;
+  const { scenario, modelConfig } = options;
 
   // Validate model early - fail fast
   if (!scenario.model) {
