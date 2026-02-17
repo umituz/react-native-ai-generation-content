@@ -151,8 +151,11 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
       hasImageInput,
     });
 
-    // If result is 0 (incomplete selections), use static initial cost
-    return result > 0 ? result : creditCost;
+    // Validate: must be a positive finite integer
+    if (!Number.isFinite(result) || result <= 0) {
+      return creditCost;
+    }
+    return Math.ceil(result);
   }, [customData, featureConfig.steps, validatedScenario.outputType, validatedScenario.inputType, calculateCredits, creditCost]);
 
   const handlers = useWizardFlowHandlers({

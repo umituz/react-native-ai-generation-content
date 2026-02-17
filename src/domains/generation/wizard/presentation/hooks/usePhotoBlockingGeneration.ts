@@ -44,7 +44,6 @@ export function usePhotoBlockingGeneration(
     alertMessages,
     onSuccess,
     onError,
-    onCreditsExhausted,
   } = props;
 
   const creationIdRef = useRef<string | null>(null);
@@ -97,7 +96,6 @@ export function usePhotoBlockingGeneration(
   const { generate, isGenerating } = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages,
-    onCreditsExhausted,
     onSuccess: handleSuccess,
     onError: handleError,
   });

@@ -1,5 +1,5 @@
 import { providerRegistry } from "../../../../../infrastructure/services/provider-registry.service";
-import { extractResultUrl, type GenerationUrls } from "./generation-result.utils";
+import { extractResultUrl, type GenerationUrls, type GenerationResult } from "./generation-result.utils";
 import { QUEUE_STATUS } from "../../../../../domain/constants/queue-status.constants";
 
 declare const __DEV__: boolean;
@@ -80,9 +80,9 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
         try {
           const result = await provider.getJobResult(model, requestId);
           if (__DEV__) {
-            console.log("[VideoQueuePoller] 📦 Raw result from provider:", JSON.stringify(result, null, 2));
+            console.log("[VideoQueuePoller] Raw result from provider:", JSON.stringify(result, null, 2));
           }
-          const urls = extractResultUrl(result);
+          const urls = extractResultUrl(result as GenerationResult);
           if (__DEV__) {
             console.log("[VideoQueuePoller] 🎬 Extracted URLs:", urls);
           }

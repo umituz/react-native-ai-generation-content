@@ -41,7 +41,6 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages: DEFAULT_ALERT_MESSAGES,
-    onCreditsExhausted: () => callbacks?.onShowPaywall?.(config.creditCost ?? 0),
     onSuccess: (result: unknown) => {
       const typedResult = result as { success: boolean; videoUrl?: string; thumbnailUrl?: string };
       if (typedResult.success && typedResult.videoUrl) {

@@ -70,7 +70,6 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages: DEFAULT_ALERT_MESSAGES,
-    onCreditsExhausted: () => callbacks.onShowPaywall?.(config.creditCost),
     onSuccess: (result) => callbacks.onGenerate?.(result as TextToVideoResult),
     onError: (err) => callbacks.onError?.(err.message),
   });

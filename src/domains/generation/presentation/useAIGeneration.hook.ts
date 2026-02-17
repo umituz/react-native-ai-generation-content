@@ -61,7 +61,6 @@ export function useAIGeneration(
     alertMessages,
     onSuccess,
     onError,
-    onCreditsExhausted,
     repository,
   } = props;
 
@@ -86,7 +85,6 @@ export function useAIGeneration(
     alertMessages: alertMessages || DEFAULT_ALERT_MESSAGES,
     onSuccess,
     onError: onError ? (error) => onError(error.message) : undefined,
-    onCreditsExhausted,
   });
 
   return {

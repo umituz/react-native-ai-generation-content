@@ -120,8 +120,8 @@ export class GenerationOrchestrator {
       try {
         const actualUserId = this.requireAuthenticatedUser();
         await this.config.creditService.add(actualUserId, amount);
-      } catch {
-        // Silently fail refund - non-critical operation
+      } catch (refundError) {
+        console.error("[GenerationOrchestrator] REFUND FAILED - user may have lost credits. Amount:", amount, "Error:", refundError);
       }
     }
   }

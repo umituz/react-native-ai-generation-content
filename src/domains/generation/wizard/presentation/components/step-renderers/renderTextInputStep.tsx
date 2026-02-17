@@ -59,8 +59,7 @@ export function renderTextInputStep({
       creditCost={creditCost}
       onBack={onBack}
       onContinue={(text) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onPhotoContinue(step.id, { uri: text, text, previewUrl: "" } as unknown as any);
+        onPhotoContinue(step.id, { uri: text, previewUrl: "" } as UploadedImage);
       }}
     />
   );
