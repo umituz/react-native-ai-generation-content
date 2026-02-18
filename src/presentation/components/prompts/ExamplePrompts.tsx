@@ -48,9 +48,9 @@ export const ExamplePrompts: React.FC<ExamplePromptsProps> = ({
         contentContainerStyle={styles.scrollContent}
         style={styles.scrollView}
       >
-        {prompts.map((prompt, index) => (
+        {prompts.map((prompt) => (
           <TouchableOpacity
-            key={`prompt-${index}`}
+            key={prompt}
             style={[
               styles.card,
               {

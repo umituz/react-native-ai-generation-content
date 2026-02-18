@@ -9,7 +9,6 @@ import type {
   FeatureRegistration,
 } from "../domain/feature-config.types";
 
-declare const __DEV__: boolean;
 
 class FeatureRegistryImpl implements FeatureRegistration {
   private features = new Map<string, FeatureConfig>();

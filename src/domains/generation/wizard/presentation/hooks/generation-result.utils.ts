@@ -3,6 +3,8 @@
  * Provider-agnostic utilities for extracting generation results
  */
 
+import { extractThumbnailUrl } from "../../../../../infrastructure/utils/url-extractor/thumbnail-extractor";
+
 export interface GenerationErrorDetail {
   msg?: string;
   type?: string;
@@ -22,6 +24,7 @@ export interface GenerationResult {
 export interface GenerationUrls {
   imageUrl?: string;
   videoUrl?: string;
+  thumbnailUrl?: string;
 }
 
 /**
@@ -59,8 +62,10 @@ function checkForErrors(result: GenerationResult): void {
 export function extractResultUrl(result: GenerationResult): GenerationUrls {
   checkForErrors(result);
 
+  const thumbnailUrl = extractThumbnailUrl(result);
+
   if (result.video?.url && typeof result.video.url === "string") {
-    return { videoUrl: result.video.url };
+    return { videoUrl: result.video.url, thumbnailUrl };
   }
 
   if (typeof result.output === "string" && result.output.length > 0 && result.output.startsWith("http")) {

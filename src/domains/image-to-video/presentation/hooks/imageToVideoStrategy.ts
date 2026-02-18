@@ -1,6 +1,5 @@
 import { executeImageToVideo } from "../../infrastructure/services";
 
-declare const __DEV__: boolean;
 import type { GenerationStrategy } from "../../../../presentation/hooks/generation";
 import type {
   ImageToVideoFeatureConfig,

@@ -84,15 +84,3 @@ export interface UseGenerationOrchestratorReturn<TInput, TResult> {
   readonly error: GenerationError | null;
 }
 
-export interface GenerationErrorConfig {
-  readonly showCreditInfo?: boolean;
-  readonly iconName?: string;
-  readonly iconSize?: number;
-}
-
-export interface GenerationErrorTranslations {
-  readonly title: string;
-  readonly tryAgain: string;
-  readonly chooseAnother: string;
-  readonly noCreditCharged: string;
-}

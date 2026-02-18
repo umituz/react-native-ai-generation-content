@@ -16,7 +16,7 @@ import {
 import type { FaceValidationState } from "../../domain/entities/FaceDetection";
 import { isValidFace } from "../../infrastructure/validators/faceValidator";
 
-export interface FaceValidationLabels {
+interface FaceValidationLabels {
   analyzing: string;
   error: string;
   success: string;

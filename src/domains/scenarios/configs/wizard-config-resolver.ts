@@ -9,7 +9,6 @@ import { WizardInputType, type WizardConfigOptions } from "./wizard-input.types"
 import { detectWizardInputType, SCENARIO_TO_WIZARD_INPUT_MAP } from "./wizard-input-detector";
 import { getConfigFactory } from "./wizard-step-factories";
 
-declare const __DEV__: boolean;
 
 const scenarioWizardConfigs: Record<string, WizardFeatureConfig> = {};
 

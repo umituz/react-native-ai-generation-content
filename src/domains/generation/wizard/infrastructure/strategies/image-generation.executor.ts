@@ -12,7 +12,6 @@ import {
   MODEL_INPUT_DEFAULTS,
 } from "./wizard-strategy.constants";
 
-declare const __DEV__: boolean;
 
 interface ExecutionResult {
   success: boolean;

@@ -81,8 +81,13 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
       activeJobsRef.current.delete(id);
       jobInputsRef.current.delete(id);
       removeJob(id);
+
+      // Trigger onAllComplete if no more active jobs after cancel
+      if (activeJobsRef.current.size === 0) {
+        onAllComplete?.();
+      }
     },
-    [removeJob],
+    [removeJob, onAllComplete],
   );
 
   // Calculate active jobs from TanStack Query state (not ref) for reactivity

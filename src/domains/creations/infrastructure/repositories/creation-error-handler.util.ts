@@ -3,7 +3,6 @@
  * Single Responsibility: Centralized error logging
  */
 
-declare const __DEV__: boolean;
 
 export function logOperationError(
   operation: string,

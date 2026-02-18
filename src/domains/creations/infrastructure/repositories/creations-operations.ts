@@ -4,7 +4,7 @@
  */
 
 export { createCreation } from "./creation-create.operations";
-export { updateCreation, UPDATABLE_FIELDS } from "./creation-update.operations";
+export { updateCreation } from "./creation-update.operations";
 export {
   deleteCreation,
   hardDeleteCreation,

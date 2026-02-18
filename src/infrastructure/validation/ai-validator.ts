@@ -61,31 +61,3 @@ export function validateImageData(input: unknown): ValidationResult {
   };
 }
 
-/**
- * Validates video URL
- */
-export function validateVideoUrl(input: unknown): ValidationResult {
-  if (typeof input !== "string") {
-    return { isValid: false, errors: ["Video URL must be a string"] };
-  }
-
-  const urlResult = validateURL(input);
-  if (!urlResult.isValid) {
-    return urlResult;
-  }
-
-  const url = new URL(input);
-  const validExtensions = [".mp4", ".mov", ".webm", ".gif"];
-  const hasValidExtension = validExtensions.some((ext) =>
-    url.pathname.toLowerCase().endsWith(ext)
-  );
-
-  if (!hasValidExtension) {
-    return {
-      isValid: false,
-      errors: ["Video URL must have a valid video extension"],
-    };
-  }
-
-  return { isValid: true, errors: [] };
-}

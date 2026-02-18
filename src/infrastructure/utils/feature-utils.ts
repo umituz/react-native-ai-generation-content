@@ -7,7 +7,6 @@ import { readFileAsBase64 } from "@umituz/react-native-design-system";
 import { getAuthService, getCreditService, getPaywallService, isAppServicesConfigured } from "../config/app-services.config";
 import { env } from "../config/env.config";
 
-declare const __DEV__: boolean;
 
 export type ImageSelector = () => Promise<string | null>;
 export type VideoSaver = (uri: string) => Promise<void>;

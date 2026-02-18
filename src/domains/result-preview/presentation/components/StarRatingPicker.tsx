@@ -12,7 +12,7 @@ import {
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 
-export interface StarRatingPickerProps {
+interface StarRatingPickerProps {
   visible: boolean;
   onClose: () => void;
   onRate: (rating: number, description: string) => void;

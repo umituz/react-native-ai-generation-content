@@ -21,7 +21,6 @@ import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsGalleryScreenProps } from "./creations-gallery.types";
 import { creationsGalleryStyles as styles } from "./creations-gallery.styles";
 
-export type { CreationsGalleryScreenProps } from "./creations-gallery.types";
 
 export function CreationsGalleryScreen({
   userId,

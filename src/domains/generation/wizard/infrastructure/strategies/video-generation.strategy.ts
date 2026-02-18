@@ -13,9 +13,7 @@ import type { WizardVideoInput, CreateVideoStrategyOptions } from "./video-gener
 import { validatePhotoCount, validateWizardVideoInput } from "./video-generation.types";
 import { executeVideoGeneration, submitVideoGenerationToQueue } from "./video-generation.executor";
 
-declare const __DEV__: boolean;
 
-export type { WizardVideoInput, WizardVideoResult, CreateVideoStrategyOptions } from "./video-generation.types";
 
 export async function buildVideoInput(
   wizardData: Record<string, unknown>,

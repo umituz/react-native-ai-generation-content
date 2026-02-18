@@ -13,7 +13,6 @@ import type { GenerationResult } from "../../../../domain/entities/generation.ty
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { env } from "../../../../infrastructure/config/env.config";
 
-declare const __DEV__: boolean;
 
 export class ImageExecutor
   implements GenerationExecutor<ImageGenerationInput, ImageGenerationOutput>

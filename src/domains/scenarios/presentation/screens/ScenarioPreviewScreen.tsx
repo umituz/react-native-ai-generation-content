@@ -17,12 +17,12 @@ import {
 import { WizardContinueButton } from "../../../../domains/generation/wizard/presentation/components/WizardContinueButton";
 import type { ScenarioData } from "../../domain/scenario.types";
 
-export interface ScenarioPreviewTranslations {
+interface ScenarioPreviewTranslations {
   readonly continueButton: string;
   readonly whatToExpect: string;
 }
 
-export interface ScenarioPreviewScreenProps {
+interface ScenarioPreviewScreenProps {
   readonly scenario: ScenarioData;
   readonly translations: ScenarioPreviewTranslations;
   readonly onBack: () => void;

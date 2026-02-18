@@ -10,7 +10,6 @@ import { checkStatusForErrors, isJobComplete } from "../utils/status-checker.uti
 import { validateResult } from "../utils/result-validator.util";
 import type { PollJobOptions, PollJobResult } from "./job-poller.types";
 
-declare const __DEV__: boolean;
 
 /**
  * Wraps a promise with abort signal support
@@ -39,7 +38,7 @@ function withAbortSignal<T>(
     signal?.addEventListener("abort", abortHandler, { once: true });
 
     // Handle timeout
-    let timeoutId: NodeJS.Timeout | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     if (timeoutMs) {
       timeoutId = setTimeout(() => {
         reject(new Error(`Operation timeout after ${timeoutMs}ms`));
@@ -222,4 +221,3 @@ export async function pollJob<T = unknown>(
   };
 }
 
-export type { PollJobOptions, PollJobResult } from "./job-poller.types";

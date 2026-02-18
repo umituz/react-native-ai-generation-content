@@ -13,7 +13,6 @@ import {
 } from "./error-patterns.constants";
 import { matchesPatterns, getStatusCode, logClassification } from "./classifier-helpers";
 
-declare const __DEV__: boolean;
 
 export function classifyError(error: unknown): AIErrorInfo {
   const message = error instanceof Error ? error.message : String(error);
@@ -113,7 +112,7 @@ export function classifyError(error: unknown): AIErrorInfo {
   });
 }
 
-export function isTransientError(error: unknown): boolean {
+function isTransientError(error: unknown): boolean {
   const info = classifyError(error);
   return info.retryable ?? false;
 }

@@ -6,7 +6,6 @@
 import type { ICreationsRepository } from "../../../../creations/domain/repositories";
 import type { ProcessingCreationData } from "./creation-persistence.types";
 
-declare const __DEV__: boolean;
 
 /**
  * Save creation with status="processing" when generation starts
@@ -16,8 +15,10 @@ export async function saveAsProcessing(
   repository: ICreationsRepository,
   userId: string,
   data: ProcessingCreationData
-): Promise<string> {
+): Promise<{ creationId: string; startedAt: Date }> {
   const creationId = `${data.scenarioId}_${Date.now()}`;
+
+  const startedAt = new Date();
 
   await repository.create(userId, {
     id: creationId,
@@ -26,6 +27,7 @@ export async function saveAsProcessing(
     prompt: data.prompt,
     status: "processing" as const,
     createdAt: new Date(),
+    startedAt,
     isShared: false,
     isFavorite: false,
     requestId: data.requestId,
@@ -36,6 +38,9 @@ export async function saveAsProcessing(
       ...(data.duration && { duration: data.duration }),
       ...(data.resolution && { resolution: data.resolution }),
       ...(data.creditCost && { creditCost: data.creditCost }),
+      ...(data.aspectRatio && { aspectRatio: data.aspectRatio }),
+      ...(data.provider && { provider: data.provider }),
+      ...(data.outputType && { outputType: data.outputType }),
     },
   });
 
@@ -47,5 +52,5 @@ export async function saveAsProcessing(
     });
   }
 
-  return creationId;
+  return { creationId, startedAt };
 }

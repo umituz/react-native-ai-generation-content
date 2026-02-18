@@ -1,11 +1,8 @@
 import { providerRegistry } from "../../../../../infrastructure/services/provider-registry.service";
 import { extractResultUrl, type GenerationUrls, type GenerationResult } from "./generation-result.utils";
 import { QUEUE_STATUS } from "../../../../../domain/constants/queue-status.constants";
+import { DEFAULT_MAX_CONSECUTIVE_ERRORS } from "../../../../../infrastructure/constants/polling.constants";
 
-declare const __DEV__: boolean;
-
-/** Max consecutive transient errors before aborting */
-const MAX_CONSECUTIVE_ERRORS = 5;
 
 /**
  * Extract meaningful error message from various error formats.
@@ -14,12 +11,8 @@ const MAX_CONSECUTIVE_ERRORS = 5;
 function extractErrorMessage(err: unknown): string {
   if (!err) return "Generation failed";
 
-  // Standard Error with message
-  if (err instanceof Error && err.message && err.message.length > 0) {
-    return err.message;
-  }
-
-  // Fal AI ValidationError - has .body.detail array
+  // Fal AI ValidationError - has .body.detail array (check before instanceof Error
+  // because ValidationError may extend Error with empty .message)
   const errObj = err as Record<string, unknown>;
   if (errObj.body && typeof errObj.body === "object") {
     const body = errObj.body as Record<string, unknown>;
@@ -33,6 +26,11 @@ function extractErrorMessage(err: unknown): string {
   if (Array.isArray(errObj.detail) && errObj.detail.length > 0) {
     const first = errObj.detail[0] as { msg?: string } | undefined;
     if (first?.msg) return first.msg;
+  }
+
+  // Standard Error with message
+  if (err instanceof Error && err.message && err.message.length > 0) {
+    return err.message;
   }
 
   // Fallback to string conversion
@@ -96,15 +94,21 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
           await onError(errorMessage);
         }
       } else {
-        await onError("Generation failed");
+        // Try to extract error from FAL job logs (error-level log takes priority)
+        const logs = status.logs ?? [];
+        const errorLog = logs.findLast?.((l) => l.level === "error") ?? logs[logs.length - 1];
+        const failMessage =
+          errorLog?.message && errorLog.message !== "[object Object]"
+            ? errorLog.message
+            : "Generation failed";
+        await onError(failMessage);
       }
     }
   } catch (err) {
     consecutiveErrorsRef.current += 1;
-    const errorMessage = err instanceof Error ? err.message : "Generation failed";
+    const errorMessage = extractErrorMessage(err);
 
-    if (consecutiveErrorsRef.current >= MAX_CONSECUTIVE_ERRORS) {
-      // Too many consecutive errors - abort
+    if (consecutiveErrorsRef.current >= DEFAULT_MAX_CONSECUTIVE_ERRORS) {
       if (pollingRef.current) {
         clearInterval(pollingRef.current);
         pollingRef.current = null;
@@ -112,10 +116,9 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
       if (__DEV__) console.error("[VideoQueueGeneration] Max consecutive errors reached, aborting:", errorMessage);
       await onError(errorMessage);
     } else {
-      // Transient error - continue polling
       if (__DEV__) {
         console.warn(
-          `[VideoQueueGeneration] Transient poll error (${consecutiveErrorsRef.current}/${MAX_CONSECUTIVE_ERRORS}):`,
+          `[VideoQueueGeneration] Transient poll error (${consecutiveErrorsRef.current}/${DEFAULT_MAX_CONSECUTIVE_ERRORS}):`,
           errorMessage,
         );
       }

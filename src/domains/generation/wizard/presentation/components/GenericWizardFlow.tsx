@@ -19,7 +19,6 @@ import {
   getDefaultOutputType,
 } from "../../../../scenarios/infrastructure/scenario-registry";
 
-declare const __DEV__: boolean;
 
 export interface GenericWizardFlowProps {
   readonly featureConfig: WizardFeatureConfig;

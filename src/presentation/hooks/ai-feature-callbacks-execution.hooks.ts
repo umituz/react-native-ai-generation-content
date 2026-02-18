@@ -6,7 +6,7 @@
 import { useCallback } from "react";
 import type { AIFeatureGenerationResult } from "./ai-feature-callbacks.types";
 
-export interface UseExecutionCallbackParams<TRequest, TResult> {
+interface UseExecutionCallbackParams<TRequest, TResult> {
   executor: (request: TRequest) => Promise<{
     success: boolean;
     data?: TResult;
@@ -19,7 +19,7 @@ export interface UseExecutionCallbackParams<TRequest, TResult> {
   onError?: (error: string) => void;
 }
 
-export interface ExecutionCallbacks<TRequest> {
+interface ExecutionCallbacks<TRequest> {
   executeGeneration: (request: TRequest) => Promise<AIFeatureGenerationResult>;
 }
 

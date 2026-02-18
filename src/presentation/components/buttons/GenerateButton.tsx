@@ -27,7 +27,6 @@ export interface GenerateButtonProps {
   readonly style?: ViewStyle;
 }
 
-declare const __DEV__: boolean;
 
 export const GenerateButton: React.FC<GenerateButtonProps> = ({
   isDisabled = false,

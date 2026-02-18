@@ -1,6 +1,6 @@
-export type GenerationStatus = "IDLE" | "PREPARING" | "GENERATING" | "ERROR" | "COMPLETED";
+type GenerationStatus = "IDLE" | "PREPARING" | "GENERATING" | "ERROR" | "COMPLETED";
 
-export interface GenerationState {
+interface GenerationState {
   status: GenerationStatus;
   error?: string;
 }

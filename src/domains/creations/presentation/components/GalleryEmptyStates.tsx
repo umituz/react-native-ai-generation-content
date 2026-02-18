@@ -45,9 +45,9 @@ function CreationCardSkeleton({ tokens }: { tokens: DesignTokens }) {
                 </View>
                 {/* Action buttons skeleton */}
                 <View style={styles.actions}>
-                    {[1, 2, 3, 4].map((i) => (
+                    {[1, 2, 3, 4].map((id) => (
                         <AtomicSkeleton
-                            key={i}
+                            key={id}
                             pattern="custom"
                             custom={[{ width: 36, height: 36, borderRadius: 18 }]}
                         />
@@ -76,8 +76,8 @@ export function GalleryEmptyStates({
     if (isLoading && (!creations || creations?.length === 0)) {
         return (
             <View style={styles.skeletonContainer}>
-                {[1, 2, 3].map((i: number) => (
-                    <CreationCardSkeleton key={i} tokens={tokens} />
+                {[1, 2, 3].map((id: number) => (
+                    <CreationCardSkeleton key={id} tokens={tokens} />
                 ))}
             </View>
         );

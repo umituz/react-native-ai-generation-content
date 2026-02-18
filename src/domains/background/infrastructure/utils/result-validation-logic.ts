@@ -6,7 +6,6 @@
 import type { ResultValidation, ValidateResultOptions } from "./result-validator.types";
 import { DEFAULT_OUTPUT_FIELDS } from "./result-validator-constants";
 
-declare const __DEV__: boolean;
 
 /**
  * Validate job result and detect errors

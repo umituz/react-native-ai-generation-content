@@ -12,8 +12,6 @@ import { extractPhotosAsBase64 } from "./shared/photo-extraction.utils";
 import { executeImageGeneration } from "./image-generation.executor";
 import type { WizardImageInput, CreateImageStrategyOptions } from "./image-generation.types";
 
-// Re-export types for external use
-export type { WizardImageInput, WizardImageResult, CreateImageStrategyOptions } from "./image-generation.types";
 
 // ============================================================================
 // Input Builder

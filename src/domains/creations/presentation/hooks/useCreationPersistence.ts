@@ -4,7 +4,6 @@
 
 import { useCallback, useMemo } from "react";
 
-declare const __DEV__: boolean;
 import { useAuth } from "@umituz/react-native-auth";
 import { createCreationsRepository } from "../../infrastructure/adapters";
 import type { Creation } from "../../domain/entities/Creation";

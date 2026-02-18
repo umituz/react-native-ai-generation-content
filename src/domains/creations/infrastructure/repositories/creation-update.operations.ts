@@ -5,27 +5,8 @@
 import { updateDoc } from "firebase/firestore";
 import type { IPathResolver } from "@umituz/react-native-firebase";
 import type { Creation } from "../../domain/entities/Creation";
-import { CREATION_FIELDS, type CreationFieldName } from "../../domain/constants";
+import { UPDATABLE_FIELDS } from "../../domain/constants";
 
-declare const __DEV__: boolean;
-
-export const UPDATABLE_FIELDS: ReadonlyArray<CreationFieldName> = [
-  CREATION_FIELDS.URI,
-  CREATION_FIELDS.STATUS,
-  CREATION_FIELDS.OUTPUT,
-  CREATION_FIELDS.IMAGE_URL,
-  CREATION_FIELDS.VIDEO_URL,
-  CREATION_FIELDS.METADATA,
-  CREATION_FIELDS.IS_SHARED,
-  CREATION_FIELDS.IS_FAVORITE,
-  CREATION_FIELDS.RATING,
-  CREATION_FIELDS.RATED_AT,
-  CREATION_FIELDS.DELETED_AT,
-  CREATION_FIELDS.REQUEST_ID,
-  CREATION_FIELDS.MODEL,
-  CREATION_FIELDS.PROMPT,
-  "type" as CreationFieldName,
-] as const;
 
 export async function updateCreation(
   pathResolver: IPathResolver,

@@ -29,5 +29,3 @@ export const createDurationOptions = (
  * Common duration values (seconds)
  */
 export const COMMON_DURATIONS = [4, 8, 12, 16] as const;
-
-export type CommonDuration = (typeof COMMON_DURATIONS)[number];

@@ -16,14 +16,7 @@ import {
 import type { SelectionScreenProps, SelectionOption } from "./SelectionScreen.types";
 import { WizardContinueButton } from "../components/WizardContinueButton";
 
-export type {
-  SelectionOption,
-  SelectionScreenTranslations,
-  SelectionScreenConfig,
-  SelectionScreenProps,
-} from "./SelectionScreen.types";
 
-declare const __DEV__: boolean;
 
 export const SelectionScreen: React.FC<SelectionScreenProps> = ({
   stepId,

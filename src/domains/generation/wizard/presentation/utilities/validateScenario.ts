@@ -6,13 +6,6 @@
 
 import type { WizardScenarioData } from "../hooks/useWizardGeneration";
 
-declare const __DEV__: boolean;
-
-export interface ScenarioValidationResult {
-  isValid: boolean;
-  error?: string;
-  scenario?: WizardScenarioData;
-}
 
 /**
  * Validates scenario data for wizard generation

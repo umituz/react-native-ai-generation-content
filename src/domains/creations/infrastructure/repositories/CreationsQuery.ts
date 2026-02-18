@@ -10,7 +10,6 @@ import type { DocumentMapper } from "../../domain/value-objects/CreationsConfig"
 import type { Creation, CreationDocument } from "../../domain/entities/Creation";
 import { CREATION_FIELDS } from "../../domain/constants";
 
-declare const __DEV__: boolean;
 
 export class CreationsQuery {
     constructor(

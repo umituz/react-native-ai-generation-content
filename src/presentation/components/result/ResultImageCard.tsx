@@ -14,6 +14,34 @@ import {
 import type { ResultImageConfig } from "../../types/result-config.types";
 import { DEFAULT_RESULT_CONFIG } from "../../types/result-config.types";
 
+interface ImageBadgeProps {
+  badgeIcon: string;
+  badgeStyle?: string;
+  badgeText: string;
+  style: object;
+  textStyle: object;
+  primaryColor: string;
+  inverseColor: string;
+}
+
+const ImageBadge: React.FC<ImageBadgeProps> = ({
+  badgeIcon,
+  badgeStyle,
+  badgeText,
+  style,
+  textStyle,
+  primaryColor,
+  inverseColor,
+}) => {
+  const iconColor = badgeStyle === "light" ? primaryColor : inverseColor;
+  return (
+    <View style={style}>
+      <AtomicIcon name={badgeIcon} size="xs" customColor={iconColor} />
+      <AtomicText style={textStyle}>{badgeText}</AtomicText>
+    </View>
+  );
+};
+
 export interface ResultImageCardProps {
   imageUrl: string;
   badgeText: string;
@@ -92,26 +120,6 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
     [tokens, cfg, badgePosition, badgeBackground],
   );
 
-  const renderBadge = () => {
-    if (!cfg.showBadge) return null;
-
-    const iconColor =
-      cfg.badgeStyle === "light"
-        ? tokens.colors.primary
-        : tokens.colors.textInverse;
-
-    return (
-      <View style={styles.badge}>
-        <AtomicIcon
-          name={cfg.badgeIcon ?? "sparkles"}
-          size="xs"
-          customColor={iconColor}
-        />
-        <AtomicText style={styles.badgeText}>{badgeText}</AtomicText>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.frame}>
@@ -120,7 +128,17 @@ export const ResultImageCard: React.FC<ResultImageCardProps> = ({
           style={styles.image}
           resizeMode="cover"
         />
-        {renderBadge()}
+        {cfg.showBadge && (
+          <ImageBadge
+            badgeIcon={cfg.badgeIcon ?? "sparkles"}
+            badgeStyle={cfg.badgeStyle}
+            badgeText={badgeText}
+            style={styles.badge}
+            textStyle={styles.badgeText}
+            primaryColor={tokens.colors.primary}
+            inverseColor={tokens.colors.textInverse}
+          />
+        )}
       </View>
     </View>
   );

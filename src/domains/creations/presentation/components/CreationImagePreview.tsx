@@ -15,7 +15,7 @@ import {
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { isInProgress, getTypeIcon } from "../../domain/utils";
 
-export interface CreationImagePreviewProps {
+interface CreationImagePreviewProps {
   /** Preview image URL */
   readonly uri?: string | null;
   /** Creation status */

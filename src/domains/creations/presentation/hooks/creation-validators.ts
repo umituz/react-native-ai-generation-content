@@ -15,7 +15,7 @@ import {
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 
 
-export interface ValidationResult {
+interface ValidationResult {
   isValid: boolean;
   error?: string;
 }
@@ -23,7 +23,7 @@ export interface ValidationResult {
 /**
  * Validates that at least one URL is present
  */
-export function validateHasUrl(
+function validateHasUrl(
   imageUrl?: string,
   videoUrl?: string
 ): ValidationResult {
@@ -39,7 +39,7 @@ export function validateHasUrl(
 /**
  * Validates URI protocol
  */
-export function validateUriProtocol(uri: string): ValidationResult {
+function validateUriProtocol(uri: string): ValidationResult {
   const hasValidProtocol = CREATION_VALIDATION.VALID_URI_PROTOCOLS.some(
     (protocol) => uri.startsWith(protocol)
   );
@@ -57,7 +57,7 @@ export function validateUriProtocol(uri: string): ValidationResult {
 /**
  * Validates URI length
  */
-export function validateUriLength(uri: string): ValidationResult {
+function validateUriLength(uri: string): ValidationResult {
   if (uri.length > CREATION_VALIDATION.MAX_URI_LENGTH) {
     return {
       isValid: false,

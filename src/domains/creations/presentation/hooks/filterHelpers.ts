@@ -9,7 +9,7 @@ import type { CreationCategory, CreationTypeId } from "../../domain/types";
 import type { FilterableCreation } from "./advancedFilter.types";
 import { normalizeDateToTimestamp, compareDates } from "../../../../shared/utils/date";
 
-export function filterByType<T extends FilterableCreation>(
+function filterByType<T extends FilterableCreation>(
   creations: T[],
   filterType: string | undefined,
 ): T[] {
@@ -25,7 +25,7 @@ export function filterByType<T extends FilterableCreation>(
   return creations.filter((c) => c.type === filterType);
 }
 
-export function filterByStatus<T extends FilterableCreation>(
+function filterByStatus<T extends FilterableCreation>(
   creations: T[],
   status: string | undefined,
 ): T[] {
@@ -33,7 +33,7 @@ export function filterByStatus<T extends FilterableCreation>(
   return creations.filter((c) => c.status === status);
 }
 
-export function filterBySearch<T extends FilterableCreation>(
+function filterBySearch<T extends FilterableCreation>(
   creations: T[],
   searchQuery: string | undefined,
 ): T[] {
@@ -47,7 +47,7 @@ export function filterBySearch<T extends FilterableCreation>(
   });
 }
 
-export function filterByDateRange<T extends FilterableCreation>(
+function filterByDateRange<T extends FilterableCreation>(
   creations: T[],
   startDate: number | undefined,
   endDate: number | undefined,
@@ -71,7 +71,7 @@ export function filterByDateRange<T extends FilterableCreation>(
   return result;
 }
 
-export function sortCreations<T extends FilterableCreation>(
+function sortCreations<T extends FilterableCreation>(
   creations: T[],
   sortField: CreationFilter["sortField"],
   sortOrder: CreationFilter["sortOrder"],

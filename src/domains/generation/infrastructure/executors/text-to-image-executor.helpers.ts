@@ -32,7 +32,7 @@ export function buildModelInput(input: TextToImageInput): Record<string, unknown
   };
 }
 
-export function extractImagesFromObject(obj: Record<string, unknown>): string[] {
+function extractImagesFromObject(obj: Record<string, unknown>): string[] {
   if (!Array.isArray(obj.images)) {
     return [];
   }

@@ -13,7 +13,7 @@ import {
   useResponsive,
 } from "@umituz/react-native-design-system";
 
-export interface ScenarioContinueButtonProps {
+interface ScenarioContinueButtonProps {
   readonly canContinue: boolean;
   readonly onPress: () => void;
   readonly label: string;

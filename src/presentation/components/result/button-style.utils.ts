@@ -5,7 +5,7 @@
 
 import type { DesignTokens } from "@umituz/react-native-design-system";
 
-export interface ButtonStyle {
+interface ButtonStyle {
   backgroundColor: string;
   color: string;
   textColor: string;

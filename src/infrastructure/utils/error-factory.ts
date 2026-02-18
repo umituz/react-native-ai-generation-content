@@ -11,9 +11,9 @@ export const GenerationErrorType = {
   UNKNOWN: "unknown",
 } as const;
 
-export type GenerationErrorTypeValue = typeof GenerationErrorType[keyof typeof GenerationErrorType];
+type GenerationErrorTypeValue = typeof GenerationErrorType[keyof typeof GenerationErrorType];
 
-export interface GenerationError extends Error {
+interface GenerationError extends Error {
   errorType: GenerationErrorTypeValue;
   translationKey: string;
 }

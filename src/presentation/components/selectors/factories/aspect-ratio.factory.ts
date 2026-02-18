@@ -52,5 +52,3 @@ export const createAspectRatioOptions = (
  * Default aspect ratio IDs (no translation needed)
  */
 export const ASPECT_RATIO_IDS = ["16:9", "9:16", "1:1"] as const;
-
-export type AspectRatioId = (typeof ASPECT_RATIO_IDS)[number];

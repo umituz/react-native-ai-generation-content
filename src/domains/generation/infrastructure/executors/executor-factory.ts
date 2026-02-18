@@ -8,7 +8,6 @@ import { ImageExecutor } from "./image-executor";
 import { VideoExecutor } from "./video-executor";
 import { TextToImageExecutor } from "./text-to-image-executor";
 
-declare const __DEV__: boolean;
 
 export type GenerationType = "image" | "video" | "text-to-image" | "text-to-video" | "image-to-video" | "meme";
 

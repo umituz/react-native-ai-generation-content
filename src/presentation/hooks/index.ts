@@ -22,8 +22,6 @@ export type {
   GenerationErrorType,
   AlertMessages,
   UseGenerationOrchestratorReturn,
-  GenerationErrorConfig,
-  GenerationErrorTranslations,
   SingleImageInput,
   DualImageInput,
   ImageGenerationInput,
@@ -72,5 +70,3 @@ export type {
 export { useAIGenerateState, AIGenerateStep } from "./generation/useAIGenerateState";
 export type { UploadedImage } from "./generation/useAIGenerateState";
 
-export { useProgressDismiss } from "./useProgressDismiss";
-export type { UseProgressDismissResult } from "./useProgressDismiss";

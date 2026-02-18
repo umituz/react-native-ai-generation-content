@@ -13,6 +13,34 @@ import {
 import type { ResultStoryConfig } from "../../types/result-config.types";
 import { DEFAULT_RESULT_CONFIG } from "../../types/result-config.types";
 
+interface StoryContentProps {
+  story: string;
+  showQuotes?: boolean;
+  quoteIconStyle: object;
+  quoteEndStyle: object;
+  quoteIconEndStyle: object;
+  textStyle: object;
+}
+
+const StoryContent: React.FC<StoryContentProps> = ({
+  story,
+  showQuotes,
+  quoteIconStyle,
+  quoteEndStyle,
+  quoteIconEndStyle,
+  textStyle,
+}) => (
+  <>
+    {showQuotes && <AtomicText style={quoteIconStyle}>&quot;</AtomicText>}
+    <AtomicText style={textStyle}>{story}</AtomicText>
+    {showQuotes && (
+      <View style={quoteEndStyle}>
+        <AtomicText style={[quoteIconStyle, quoteIconEndStyle]}>&quot;</AtomicText>
+      </View>
+    )}
+  </>
+);
+
 export interface ResultStoryCardProps {
   story: string;
   config?: ResultStoryConfig;
@@ -90,23 +118,18 @@ export const ResultStoryCard: React.FC<ResultStoryCardProps> = ({
     [tokens, cfg, containerStyle],
   );
 
-  const renderContent = () => (
-    <>
-      {cfg.showQuotes && <AtomicText style={styles.quoteIcon}>&quot;</AtomicText>}
-      <AtomicText style={styles.text}>{story}</AtomicText>
-      {cfg.showQuotes && (
-        <View style={styles.quoteEnd}>
-          <AtomicText style={[styles.quoteIcon, styles.quoteIconEnd]}>
-            &quot;
-          </AtomicText>
-        </View>
-      )}
-    </>
-  );
-
   return (
     <View style={styles.outer}>
-      <View style={styles.container}>{renderContent()}</View>
+      <View style={styles.container}>
+        <StoryContent
+          story={story}
+          showQuotes={cfg.showQuotes}
+          quoteIconStyle={styles.quoteIcon}
+          quoteEndStyle={styles.quoteEnd}
+          quoteIconEndStyle={styles.quoteIconEnd}
+          textStyle={styles.text}
+        />
+      </View>
     </View>
   );
 };

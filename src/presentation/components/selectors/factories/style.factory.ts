@@ -5,7 +5,7 @@
 
 import type { StyleOption } from "../types";
 
-export interface StyleTranslation {
+interface StyleTranslation {
   name: string;
   description?: string;
 }

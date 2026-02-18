@@ -28,6 +28,10 @@ export type {
 } from "../domain/entities";
 export { DEFAULT_POLLING_CONFIG, DEFAULT_QUEUE_CONFIG } from "../domain/entities";
 
+// Queue & Creation Status — canonical values used across all apps
+export { QUEUE_STATUS, CREATION_STATUS } from "../domain/constants/queue-status.constants";
+export type { QueueStatus } from "../domain/constants/queue-status.constants";
+
 // Processing Modes
 export type { ImageProcessingMode, ModeConfig, ModeCatalog } from "../domain/entities/processing-modes.types";
 export {

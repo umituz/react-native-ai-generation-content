@@ -8,7 +8,7 @@ import { getWizardStepConfig, getUploadedImage } from "../WizardStepRenderer.uti
 import type { StepDefinition } from "../../../../../../domain/entities/flow-config.types";
 import type { UploadedImage } from "../../../../../../presentation/hooks/generation/useAIGenerateState";
 
-export interface PhotoUploadStepProps {
+interface PhotoUploadStepProps {
   readonly key?: string;
   readonly step: StepDefinition;
   readonly customData: Record<string, unknown>;

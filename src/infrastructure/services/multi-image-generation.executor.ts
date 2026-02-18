@@ -8,7 +8,6 @@ import { formatBase64 } from "../utils/base64.util";
 import { validateURL } from "../validation/base-validator";
 import { env } from "../config/env.config";
 
-declare const __DEV__: boolean;
 
 /** Generation timeout in milliseconds */
 const GENERATION_TIMEOUT_MS = env.generationMultiImageTimeoutMs;

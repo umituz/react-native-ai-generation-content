@@ -6,7 +6,7 @@
 
 import { useEffect, useRef } from "react";
 
-export interface AutoSkipPreviewProps {
+interface AutoSkipPreviewProps {
   readonly onContinue: () => void;
 }
 

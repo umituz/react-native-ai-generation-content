@@ -8,7 +8,7 @@
 import { createMultiPersonPrompt } from "../../../../../prompts/domain/entities/MultiPersonPromptStructure";
 import { createPhotorealisticPrompt } from "../../../../../prompts/domain/base/creators";
 
-export interface BuildPromptOptions {
+interface BuildPromptOptions {
   /** Base scenario prompt (aiPrompt from scenario config) */
   readonly basePrompt: string;
   /** Number of photos/people in generation */

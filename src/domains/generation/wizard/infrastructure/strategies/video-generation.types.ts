@@ -21,10 +21,6 @@ export interface WizardVideoInput {
   readonly resolution?: string;
 }
 
-export interface WizardVideoResult {
-  readonly videoUrl: string;
-}
-
 export interface CreateVideoStrategyOptions {
   readonly scenario: WizardScenarioData;
   /** Model configuration - encapsulates all model-specific behavior */
@@ -34,7 +30,7 @@ export interface CreateVideoStrategyOptions {
   readonly creditCost: number;
 }
 
-export interface PhotoValidationResult {
+interface PhotoValidationResult {
   isValid: boolean;
   errorKey?: string;
 }
@@ -67,7 +63,7 @@ export function validatePhotoCount(
  * Type guard for WizardVideoInput
  * Validates runtime input and provides type safety
  */
-export function isWizardVideoInput(input: unknown): input is WizardVideoInput {
+function isWizardVideoInput(input: unknown): input is WizardVideoInput {
   if (!input || typeof input !== "object") {
     return false;
   }

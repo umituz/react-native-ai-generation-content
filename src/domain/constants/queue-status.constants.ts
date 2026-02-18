@@ -18,5 +18,3 @@ export const CREATION_STATUS = {
   COMPLETED: "completed",
   FAILED: "failed",
 } as const;
-
-export type CreationStatus = (typeof CREATION_STATUS)[keyof typeof CREATION_STATUS];

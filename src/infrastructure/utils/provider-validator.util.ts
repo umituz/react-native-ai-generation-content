@@ -7,9 +7,8 @@ import { providerRegistry } from "../services/provider-registry.service";
 import { cleanBase64 } from "./index";
 import type { IAIProvider, VideoFeatureInputData, ImageFeatureInputData } from "../../domain/interfaces";
 
-declare const __DEV__: boolean;
 
-export type ProviderValidationResult =
+type ProviderValidationResult =
   | { success: true; provider: IAIProvider }
   | { success: false; error: string };
 

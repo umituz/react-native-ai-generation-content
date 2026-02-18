@@ -38,8 +38,16 @@ export interface Creation {
   // Background job tracking
   readonly requestId?: string;
   readonly model?: string;
+  // Timestamps
+  readonly startedAt?: Date;    // When generation was submitted to the queue
+  readonly completedAt?: Date;  // When generation finished (success or failure)
+  readonly durationMs?: number; // Elapsed ms from startedAt to completedAt
   // Soft delete - if set, the creation is considered deleted
   readonly deletedAt?: Date;
+}
+
+interface FirebaseTimestamp {
+  toDate: () => Date;
 }
 
 export interface CreationDocument {
@@ -59,29 +67,30 @@ export interface CreationDocument {
   readonly rating?: number;
   readonly ratedAt?: FirebaseTimestamp | Date | null;
   readonly createdAt: FirebaseTimestamp | Date;
+  readonly startedAt?: FirebaseTimestamp | Date | null;
   readonly completedAt?: FirebaseTimestamp | Date | null;
   readonly deletedAt?: FirebaseTimestamp | Date | null;
+  readonly updatedAt?: FirebaseTimestamp | Date | null;
+  readonly durationMs?: number;
   // Background job tracking
   readonly requestId?: string;
   readonly model?: string;
 }
 
-interface FirebaseTimestamp {
-  toDate: () => Date;
+function toDate(value: FirebaseTimestamp | Date | null | undefined): Date | undefined {
+  if (!value) return undefined;
+  if (value instanceof Date) return value;
+  if (typeof value === "object" && "toDate" in value && typeof (value as FirebaseTimestamp).toDate === "function") {
+    return (value as FirebaseTimestamp).toDate();
+  }
+  return undefined;
 }
 
 export function mapDocumentToCreation(
   id: string,
   data: CreationDocument,
 ): Creation {
-  let creationDate: Date;
-  if (data.createdAt instanceof Date) {
-    creationDate = data.createdAt;
-  } else if (data.createdAt && typeof data.createdAt === "object" && "toDate" in data.createdAt && typeof data.createdAt.toDate === "function") {
-    creationDate = data.createdAt.toDate();
-  } else {
-    creationDate = new Date();
-  }
+  const creationDate = toDate(data.createdAt) ?? new Date();
 
   // Get URI from output or direct fields
   const uri = data.output?.imageUrl ||
@@ -90,20 +99,6 @@ export function mapDocumentToCreation(
               data.transformedImage ||
               data.uri ||
               "";
-
-  let ratedAtDate: Date | undefined;
-  if (data.ratedAt instanceof Date) {
-    ratedAtDate = data.ratedAt;
-  } else if (data.ratedAt && typeof data.ratedAt === "object" && "toDate" in data.ratedAt && typeof data.ratedAt.toDate === "function") {
-    ratedAtDate = data.ratedAt.toDate();
-  }
-
-  let deletedAtDate: Date | undefined;
-  if (data.deletedAt instanceof Date) {
-    deletedAtDate = data.deletedAt;
-  } else if (data.deletedAt && typeof data.deletedAt === "object" && "toDate" in data.deletedAt && typeof data.deletedAt.toDate === "function") {
-    deletedAtDate = data.deletedAt.toDate();
-  }
 
   return {
     id,
@@ -116,11 +111,14 @@ export function mapDocumentToCreation(
     isShared: data.isShared ?? false,
     isFavorite: data.isFavorite ?? false,
     rating: data.rating,
-    ratedAt: ratedAtDate,
+    ratedAt: toDate(data.ratedAt),
     status: data.status as CreationStatus | undefined,
     output: data.output ?? undefined,
     requestId: data.requestId,
     model: data.model,
-    deletedAt: deletedAtDate,
+    startedAt: toDate(data.startedAt),
+    completedAt: toDate(data.completedAt),
+    durationMs: data.durationMs,
+    deletedAt: toDate(data.deletedAt),
   };
 }

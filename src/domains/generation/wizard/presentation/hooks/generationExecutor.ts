@@ -2,7 +2,6 @@ import { buildWizardInput } from "../../infrastructure/strategies";
 import type { WizardScenarioData } from "./wizard-generation.types";
 import type { GenerationAction } from "./generationStateMachine";
 
-declare const __DEV__: boolean;
 
 interface ExecuteGenerationParams {
   wizardData: Record<string, unknown>;
@@ -53,7 +52,12 @@ export const executeWizardGeneration = async (params: ExecuteGenerationParams): 
     await generationFn(input, prompt);
 
     if (isMountedRef.current) {
-      dispatch({ type: "COMPLETE" });
+      // For video queue mode, don't dispatch COMPLETE — the queue polling handles
+      // completion separately via onSuccess. The function above just submitted to queue.
+      // For photo (blocking) mode, the generation is truly done here.
+      if (!isVideoMode) {
+        dispatch({ type: "COMPLETE" });
+      }
     }
   } catch (error: unknown) {
     if (!isMountedRef.current) return;

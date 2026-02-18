@@ -8,13 +8,13 @@
 import { useState, useCallback, useMemo } from "react";
 import type { FilterOption } from "../../domain/types/creation-filter";
 
-export interface UseFilterProps {
+interface UseFilterProps {
   readonly options: FilterOption[];
   readonly t: (key: string) => string;
   readonly defaultId?: string;
 }
 
-export interface UseFilterReturn {
+interface UseFilterReturn {
   readonly selectedId: string;
   readonly filterOptions: FilterOption[];
   readonly hasActiveFilter: boolean;

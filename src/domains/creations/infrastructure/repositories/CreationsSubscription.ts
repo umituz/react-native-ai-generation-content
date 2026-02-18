@@ -11,7 +11,6 @@ import type { CreationDocument } from "../../domain/entities/Creation";
 import type { CreationsSubscriptionCallback, UnsubscribeFunction } from "../../domain/repositories/ICreationsRepository";
 import { CREATION_FIELDS } from "../../domain/constants";
 
-declare const __DEV__: boolean;
 
 export class CreationsSubscription {
     constructor(

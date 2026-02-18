@@ -11,7 +11,6 @@ import { DEFAULT_MAX_TEXT_LENGTH } from "../../constants/moderation.constants";
 import { containsMaliciousPatterns } from "../../utils/content-security.util";
 import { containsPromptInjection } from "../../utils/prompt-injection.util";
 
-declare const __DEV__: boolean;
 
 class TextModerator extends BaseModerator {
   private maxLength = DEFAULT_MAX_TEXT_LENGTH;

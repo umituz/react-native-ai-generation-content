@@ -54,7 +54,7 @@ export interface BaseDualImageHookReturn {
  * Base interface for all layout props
  * Contains common properties shared across all feature layouts
  */
-export interface BaseFeatureLayoutProps {
+interface BaseFeatureLayoutProps {
   /** UI translations */
   translations: BaseLayoutTranslations & Partial<PhotoUploadTranslations>;
   /** Progress screen translations */

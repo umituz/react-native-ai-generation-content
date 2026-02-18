@@ -23,7 +23,7 @@ export function createDefaultAlerts(t: (key: string) => string): AlertMessages {
 /**
  * Configuration for wizard flow utilities
  */
-export interface WizardFlowConfig {
+interface WizardFlowConfig {
   readonly id: string;
   readonly outputType: "image" | "video";
   readonly inputType: "text" | "single" | "dual";
@@ -50,7 +50,7 @@ export function createScenarioData(
 /**
  * Hook for wizard flow handlers
  */
-export interface UseWizardFlowHandlersOptions {
+interface UseWizardFlowHandlersOptions {
   readonly requireFeature: (proceed: () => void) => void;
   readonly onGenerationComplete?: () => void;
   readonly onBack: () => void;

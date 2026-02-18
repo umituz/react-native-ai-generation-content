@@ -59,9 +59,9 @@ export const ModerationSummary: React.FC<ModerationSummaryProps> = ({
       )}
       {contentWarnings && contentWarnings.length > 0 && (
         <View style={styles.warningsContainer}>
-          {contentWarnings.map((warning, index) => (
+          {contentWarnings.map((warning) => (
             <AtomicText
-              key={`${warning}-${index}`}
+              key={warning}
               type="labelSmall"
               style={[styles.warningText, { color: tokens.colors.textSecondary }]}
             >

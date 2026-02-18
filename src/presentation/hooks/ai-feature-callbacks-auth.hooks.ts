@@ -5,13 +5,13 @@
 
 import { useCallback } from "react";
 
-export interface UseAuthCallbacksParams {
+interface UseAuthCallbacksParams {
   isAuth: boolean;
   userId: string | null;
   showAuthModal: (callback?: () => void) => void;
 }
 
-export interface AuthCallbacks {
+interface AuthCallbacks {
   isAuthenticated: () => boolean;
   onAuthRequired: () => void;
   onAuthCheck: () => boolean;

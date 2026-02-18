@@ -14,11 +14,13 @@ export interface AIGenerationConfigProps extends Omit<AIGenerationFormProps, "is
   readonly progress?: number;
 }
 
+const EMPTY_IMAGES: { uri: string; previewUrl?: string }[] = [];
+
 export const AIGenerationConfig: React.FC<AIGenerationConfigProps> = ({
   heroTitle,
   heroSubtitle,
   heroIcon = "sparkles-outline",
-  images = [],
+  images = EMPTY_IMAGES,
   isGenerating = false,
   progress = 0,
   ...formProps

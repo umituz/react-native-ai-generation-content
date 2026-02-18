@@ -4,7 +4,6 @@
 
 import { createStore } from "@umituz/react-native-design-system";
 
-declare const __DEV__: boolean;
 import type {
   FlowState,
   FlowActions,

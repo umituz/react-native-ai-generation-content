@@ -8,7 +8,6 @@ import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { Image } from "react-native";
 import { PHOTO_KEY_PREFIX } from "../wizard-strategy.constants";
 
-declare const __DEV__: boolean;
 
 const MIN_IMAGE_DIMENSION = 300;
 

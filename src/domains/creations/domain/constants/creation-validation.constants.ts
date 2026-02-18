@@ -44,17 +44,5 @@ export const CREATION_VALIDATION = {
   ] as const,
 } as const;
 
-/** Union type of valid URI protocols */
-export type ValidUriProtocol =
-  typeof CREATION_VALIDATION.VALID_URI_PROTOCOLS[number];
-
-/** Union type of valid image MIME types */
-export type ValidImageMime =
-  typeof CREATION_VALIDATION.VALID_IMAGE_MIMES[number];
-
-/** Union type of valid video MIME types */
-export type ValidVideoMime =
-  typeof CREATION_VALIDATION.VALID_VIDEO_MIMES[number];
-
 // Freeze to prevent mutations
 Object.freeze(CREATION_VALIDATION);

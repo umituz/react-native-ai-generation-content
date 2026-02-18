@@ -5,7 +5,6 @@
 
 import { useState, useCallback } from "react";
 
-declare const __DEV__: boolean;
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import {

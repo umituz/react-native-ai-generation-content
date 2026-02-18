@@ -22,7 +22,7 @@ import type { UploadedImage } from "../../../../../presentation/hooks/generation
 import { usePhotoUploadState, type PhotoUploadError } from "../hooks/usePhotoUploadState";
 import { WizardContinueButton } from "../components/WizardContinueButton";
 
-export interface PhotoUploadScreenTranslations {
+interface PhotoUploadScreenTranslations {
   readonly title: string;
   readonly subtitle: string;
   readonly continue: string;
@@ -37,12 +37,12 @@ export interface PhotoUploadScreenTranslations {
   readonly aiDisclosure?: string;
 }
 
-export interface PhotoUploadScreenConfig {
+interface PhotoUploadScreenConfig {
   readonly showPhotoTips?: boolean;
   readonly maxFileSizeMB?: number;
 }
 
-export interface PhotoUploadScreenProps {
+interface PhotoUploadScreenProps {
   readonly translations: PhotoUploadScreenTranslations;
   readonly t: (key: string) => string;
   readonly config?: PhotoUploadScreenConfig;

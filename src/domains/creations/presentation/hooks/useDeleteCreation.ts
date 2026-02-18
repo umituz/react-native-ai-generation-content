@@ -7,7 +7,6 @@
 import { useState, useCallback } from "react";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 
-declare const __DEV__: boolean;
 
 interface UseDeleteCreationProps {
   readonly userId: string | null;

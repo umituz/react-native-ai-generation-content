@@ -104,6 +104,13 @@ export const executeQueuedJob = async <TInput, TResult>(
       await executor.onError?.(failedJob, error instanceof Error ? error : new Error(errorMsg));
       onJobError?.(failedJob);
     }
+
+    // Remove failed job from cache to prevent accumulation
+    try {
+      await removeJobAsync(jobId);
+    } catch {
+      // Best effort cleanup
+    }
   } finally {
     // Use atomic Set operation to prevent race conditions
     activeJobsRef.current.delete(jobId);

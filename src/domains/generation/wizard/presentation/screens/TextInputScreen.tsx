@@ -27,11 +27,13 @@ export type {
   TextInputScreenProps,
 } from "./TextInputScreen.types";
 
+const EMPTY_EXAMPLE_PROMPTS: string[] = [];
+
 export const TextInputScreen: React.FC<TextInputScreenProps> = ({
   stepId: _stepId,
   translations,
   config,
-  examplePrompts = [],
+  examplePrompts = EMPTY_EXAMPLE_PROMPTS,
   initialValue = "",
   creditCost,
   onBack,
@@ -146,9 +148,9 @@ export const TextInputScreen: React.FC<TextInputScreenProps> = ({
             <AtomicText type="labelLarge" color="textSecondary" style={styles.examplesTitle}>
               {translations.examplesTitle}
             </AtomicText>
-            {examplePrompts.slice(0, 4).map((example, index) => (
+            {examplePrompts.slice(0, 4).map((example) => (
               <AtomicButton
-                key={`${example}-${index}`}
+                key={example}
                 variant="outline"
                 size="sm"
                 onPress={() => handleExampleSelect(example)}

@@ -10,14 +10,14 @@
 /**
  * Check if value is a non-null object
  */
-export function isObject(value: unknown): value is Record<string, unknown> {
+function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /**
  * Check if object has a specific property
  */
-export function hasProperty<K extends string>(
+function hasProperty<K extends string>(
   obj: Record<string, unknown>,
   key: K,
 ): obj is Record<K, unknown> {
@@ -34,7 +34,7 @@ export function hasProperty<K extends string>(
  * - Object with text field: { text: "my text" }
  * - Object with uri field (fallback): { uri: "my text" }
  */
-export function extractString(value: unknown): string | undefined {
+function extractString(value: unknown): string | undefined {
   if (typeof value === "string") {
     return value;
   }

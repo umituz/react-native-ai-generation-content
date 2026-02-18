@@ -8,6 +8,5 @@
  */
 
 export type { StatusCheckResult } from "./status-checker.types";
-export { hasProperty, safeString } from "./status-extraction-helpers";
 export { checkStatusForErrors } from "./status-error-detector";
 export { isJobComplete, isJobProcessing, isJobFailed } from "./status-predicates";

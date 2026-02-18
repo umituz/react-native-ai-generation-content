@@ -133,7 +133,6 @@ export function CreationsFilterBar({
   );
 }
 
-export type { FilterButton, CreationsFilterBarProps } from "./CreationsFilterBar.types";
 
 /**
  * Helper to create media filter buttons

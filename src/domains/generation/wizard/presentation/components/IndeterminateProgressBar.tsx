@@ -7,7 +7,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 
-export interface IndeterminateProgressBarProps {
+interface IndeterminateProgressBarProps {
   readonly backgroundColor: string;
   readonly fillColor: string;
 }

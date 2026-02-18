@@ -17,7 +17,7 @@ export interface FlowCallbacks {
 }
 
 /** Flow Data Provider - App provides data */
-export interface FlowDataProvider {
+interface FlowDataProvider {
   readonly categories?: readonly unknown[];
   readonly scenarios?: readonly unknown[];
   readonly visualStyles?: readonly FlowVisualStyleData[];
@@ -35,10 +35,3 @@ export interface FlowConfiguration {
   readonly userId?: string;
 }
 
-/** Flow Features */
-export interface FlowFeatures {
-  readonly categorySelection: boolean;
-  readonly partnerCount: 0 | 1 | 2;
-  readonly textInput: boolean;
-  readonly scenarioSelection: boolean;
-}

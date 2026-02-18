@@ -10,7 +10,6 @@ import type {
 } from "../../domain/types";
 import { INITIAL_FORM_STATE } from "../../domain/types";
 
-declare const __DEV__: boolean;
 
 export interface UseTextToVideoFormProps {
   initialValues?: Partial<TextToVideoFormState>;

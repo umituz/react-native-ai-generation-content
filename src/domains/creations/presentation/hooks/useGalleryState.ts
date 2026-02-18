@@ -7,12 +7,12 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import type { Creation } from "../../domain/entities/Creation";
 import { getPreviewUrl } from "../../domain/utils";
 
-export interface GalleryStateOptions {
+interface GalleryStateOptions {
   initialCreationId?: string;
   creations: Creation[] | undefined;
 }
 
-export interface GalleryStateReturn {
+interface GalleryStateReturn {
   selectedCreation: Creation | null;
   showRatingPicker: boolean;
   selectedImageUrl: string | undefined;

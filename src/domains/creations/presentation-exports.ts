@@ -29,9 +29,11 @@ export {
 } from "./presentation/components/CreationActions";
 export {
   CreationCard,
-  type CreationCardData,
-  type CreationCardCallbacks,
 } from "./presentation/components/CreationCard";
+export type {
+  CreationCardData,
+  CreationCardCallbacks,
+} from "./presentation/components/CreationCard.types";
 export { CreationThumbnail } from "./presentation/components/CreationThumbnail";
 
 // Filter Components
@@ -40,8 +42,8 @@ export {
   CreationsFilterBar,
   createMediaFilterButtons,
   createStatusFilterButtons,
-  type FilterButton,
 } from "./presentation/components/CreationsFilterBar";
+export type { FilterButton } from "./presentation/components/CreationsFilterBar.types";
 
 // Gallery Components
 export { CreationsHomeCard } from "./presentation/components/CreationsHomeCard";

@@ -21,7 +21,7 @@ import type { SubCategory } from "../../domain/category.types";
 import { useHierarchicalScenarios } from "../hooks/useHierarchicalScenarios";
 import { ScenarioContinueButton } from "../components/ScenarioContinueButton";
 
-export interface HierarchicalScenarioListScreenProps {
+interface HierarchicalScenarioListScreenProps {
   readonly subCategoryId: string;
   readonly subCategories: readonly SubCategory[];
   readonly scenarios: readonly ScenarioData[];

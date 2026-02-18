@@ -8,7 +8,7 @@ import { getSelectionConfig, getSelectionValue } from "../WizardStepRenderer.uti
 import type { StepDefinition } from "../../../../../../domain/entities/flow-config.types";
 import type { UploadedImage } from "../../../../../../presentation/hooks/generation/useAIGenerateState";
 
-export interface SelectionStepProps {
+interface SelectionStepProps {
   readonly key?: string;
   readonly step: StepDefinition;
   readonly customData: Record<string, unknown>;
@@ -19,7 +19,6 @@ export interface SelectionStepProps {
   readonly creditCost?: number;
 }
 
-declare const __DEV__: boolean;
 
 export function renderSelectionStep({
   step,

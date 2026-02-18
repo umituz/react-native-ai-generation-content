@@ -17,7 +17,6 @@ import type {
   AIFeatureGateReturn,
 } from "../types/access-control.types";
 
-declare const __DEV__: boolean;
 
 const handlePromiseResult = (
   result: void | Promise<void>,

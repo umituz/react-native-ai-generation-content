@@ -19,10 +19,6 @@ export interface WizardImageInput {
   readonly promptType?: ScenarioPromptType;
 }
 
-export interface WizardImageResult {
-  readonly imageUrl: string;
-}
-
 export interface CreateImageStrategyOptions {
   readonly scenario: WizardScenarioData;
   readonly collectionName?: string;

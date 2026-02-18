@@ -10,5 +10,4 @@ export {
 } from "./AIGenerationResult";
 export {
   EmptyState as ErrorDisplay,
-  EmptyState as ExceptionEmptyState,
 } from "@umituz/react-native-design-system";

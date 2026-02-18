@@ -101,7 +101,7 @@ function createDualImageFaceConfig(scenarioId: string): WizardFeatureConfig {
 /**
  * Registry of config factories by input type
  */
-export const CONFIG_FACTORIES: Record<WizardInputType, WizardConfigFactory> = {
+const CONFIG_FACTORIES: Record<WizardInputType, WizardConfigFactory> = {
   [WizardInputType.DUAL_IMAGE]: createDualImageConfig,
   [WizardInputType.SINGLE_IMAGE]: createSingleImageConfig,
   [WizardInputType.TEXT_INPUT]: createTextInputConfig,

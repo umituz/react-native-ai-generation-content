@@ -11,7 +11,7 @@ import { useAppDesignTokens, AtomicText, ScreenLayout } from "@umituz/react-nati
 import { useGenerationPhase } from "../hooks/useGenerationPhase";
 import { IndeterminateProgressBar } from "../components/IndeterminateProgressBar";
 
-export interface GeneratingScreenProps {
+interface GeneratingScreenProps {
   readonly progress: number;
   readonly scenario?: {
     readonly id: string;

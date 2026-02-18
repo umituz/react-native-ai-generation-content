@@ -13,7 +13,6 @@ import { classifyError } from "../utils/error-classification";
 import { pollJob } from "../../domains/background/infrastructure/services/job-poller.service";
 import { ProviderValidator } from "./provider-validator";
 
-declare const __DEV__: boolean;
 
 export interface OrchestratorConfig {
   polling?: Partial<PollingConfig>;

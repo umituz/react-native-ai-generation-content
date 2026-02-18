@@ -12,7 +12,6 @@ import type {
 import { ExecutorFactory } from "../infrastructure/executors/executor-factory";
 import { featureRegistry } from "./feature-registry";
 
-declare const __DEV__: boolean;
 
 interface CreationRepository {
   create(userId: string, creation: unknown): Promise<void>;

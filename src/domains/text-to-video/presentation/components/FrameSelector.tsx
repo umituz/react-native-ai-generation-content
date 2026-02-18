@@ -12,6 +12,83 @@ import {
 } from "@umituz/react-native-design-system";
 import type { FrameSelectorProps } from "../../domain/types";
 
+interface FrameContentProps {
+  frame: { url: string; order: number } | undefined;
+  imageStyle: object;
+}
+
+const FrameContent: React.FC<FrameContentProps> = ({ frame, imageStyle }) =>
+  frame ? (
+    <Image
+      source={{ uri: frame.url }}
+      style={imageStyle}
+      resizeMode="cover"
+    />
+  ) : (
+    <View style={placeholderStyle.container}>
+      <AtomicIcon name="image-outline" size="xl" color="secondary" />
+    </View>
+  );
+
+const placeholderStyle = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
+
+interface FrameActionsProps {
+  index: number;
+  onFrameChange: (index: number) => void;
+  onFrameDelete: (index: number) => void;
+  changeLabel: string;
+  deleteLabel: string;
+  gap: number;
+  buttonGap: number;
+}
+
+const FrameActions: React.FC<FrameActionsProps> = ({
+  index,
+  onFrameChange,
+  onFrameDelete,
+  changeLabel,
+  deleteLabel,
+  gap,
+  buttonGap,
+}) => (
+  <View style={[frameActionStyles.actions, { gap }]}>
+    <TouchableOpacity
+      style={[frameActionStyles.actionButton, { gap: buttonGap }]}
+      onPress={() => onFrameChange(index)}
+    >
+      <AtomicIcon name="pencil-outline" size="xs" color="primary" />
+      <AtomicText type="labelSmall" color="primary">
+        {changeLabel}
+      </AtomicText>
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={[frameActionStyles.actionButton, { gap: buttonGap }]}
+      onPress={() => onFrameDelete(index)}
+    >
+      <AtomicIcon name="trash-outline" size="xs" color="primary" />
+      <AtomicText type="labelSmall" color="primary">
+        {deleteLabel}
+      </AtomicText>
+    </TouchableOpacity>
+  </View>
+);
+
+const frameActionStyles = StyleSheet.create({
+  actions: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  actionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+});
+
 export const FrameSelector: React.FC<FrameSelectorProps> = ({
   frames,
   onFrameChange,
@@ -27,42 +104,6 @@ export const FrameSelector: React.FC<FrameSelectorProps> = ({
   const startFrame = frames.find((f) => f.order === 0);
   const endFrame = frames.find((f) => f.order === 1);
 
-  const renderFrameContent = (frame: typeof startFrame) =>
-    frame ? (
-      <Image
-        source={{ uri: frame.url }}
-        style={styles.image}
-        resizeMode="cover"
-      />
-    ) : (
-      <View style={styles.placeholder}>
-        <AtomicIcon name="image-outline" size="xl" color="secondary" />
-      </View>
-    );
-
-  const renderActions = (index: number) => (
-    <View style={[styles.actions, { gap: tokens.spacing.md }]}>
-      <TouchableOpacity
-        style={[styles.actionButton, { gap: tokens.spacing.xs }]}
-        onPress={() => onFrameChange(index)}
-      >
-        <AtomicIcon name="pencil-outline" size="xs" color="primary" />
-        <AtomicText type="labelSmall" color="primary">
-          {changeLabel}
-        </AtomicText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.actionButton, { gap: tokens.spacing.xs }]}
-        onPress={() => onFrameDelete(index)}
-      >
-        <AtomicIcon name="trash-outline" size="xs" color="primary" />
-        <AtomicText type="labelSmall" color="primary">
-          {deleteLabel}
-        </AtomicText>
-      </TouchableOpacity>
-    </View>
-  );
-
   return (
     <View style={[styles.container, { gap: tokens.spacing.md }, style]}>
       <View style={[styles.frameContainer, { gap: tokens.spacing.sm }]}>
@@ -75,9 +116,17 @@ export const FrameSelector: React.FC<FrameSelectorProps> = ({
             { backgroundColor: tokens.colors.surface },
           ]}
         >
-          {renderFrameContent(startFrame)}
+          <FrameContent frame={startFrame} imageStyle={styles.image} />
         </View>
-        {renderActions(0)}
+        <FrameActions
+          index={0}
+          onFrameChange={onFrameChange}
+          onFrameDelete={onFrameDelete}
+          changeLabel={changeLabel}
+          deleteLabel={deleteLabel}
+          gap={tokens.spacing.md}
+          buttonGap={tokens.spacing.xs}
+        />
       </View>
 
       <View style={styles.separatorContainer}>
@@ -98,9 +147,17 @@ export const FrameSelector: React.FC<FrameSelectorProps> = ({
             { backgroundColor: tokens.colors.surface },
           ]}
         >
-          {renderFrameContent(endFrame)}
+          <FrameContent frame={endFrame} imageStyle={styles.image} />
         </View>
-        {renderActions(1)}
+        <FrameActions
+          index={1}
+          onFrameChange={onFrameChange}
+          onFrameDelete={onFrameDelete}
+          changeLabel={changeLabel}
+          deleteLabel={deleteLabel}
+          gap={tokens.spacing.md}
+          buttonGap={tokens.spacing.xs}
+        />
       </View>
     </View>
   );
@@ -126,18 +183,6 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-  },
-  placeholder: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
   },
   separatorContainer: {
     justifyContent: "center",

@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-export type GenerationPhase = "queued" | "processing" | "finalizing";
+type GenerationPhase = "queued" | "processing" | "finalizing";
 
 interface UseGenerationPhaseOptions {
   /** Time in ms before transitioning from "queued" to "processing" (default: 5000) */

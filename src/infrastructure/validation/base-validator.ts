@@ -102,7 +102,7 @@ export function validateURL(input: unknown): ValidationResult {
   }
 
   try {
-    const url = new URL(input);
+    const url = new URL(input) as URL & { protocol: string };
     if (!["http:", "https:"].includes(url.protocol)) {
       return { isValid: false, errors: ["Only HTTP and HTTPS protocols are allowed"] };
     }

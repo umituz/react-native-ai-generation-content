@@ -16,10 +16,16 @@ export interface ProcessingCreationData {
   readonly duration?: number;
   readonly resolution?: string;
   readonly creditCost?: number;
+  readonly aspectRatio?: string;
+  readonly provider?: string;
+  readonly outputType?: string;
 }
 
 export interface CompletedCreationData {
   readonly uri: string;
   readonly imageUrl?: string;
   readonly videoUrl?: string;
+  readonly thumbnailUrl?: string;
+  /** Unix timestamp (ms) when generation was submitted; used to compute durationMs */
+  readonly generationStartedAt?: number;
 }

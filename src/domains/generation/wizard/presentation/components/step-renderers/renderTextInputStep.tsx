@@ -9,7 +9,7 @@ import type { StepDefinition } from "../../../../../../domain/entities/flow-conf
 import type { UploadedImage } from "../../../../../../presentation/hooks/generation/useAIGenerateState";
 import type { AlertMessages } from "../../../../../../presentation/hooks/generation/types";
 
-export interface TextInputStepProps {
+interface TextInputStepProps {
   readonly key?: string;
   readonly step: StepDefinition;
   readonly customData: Record<string, unknown>;

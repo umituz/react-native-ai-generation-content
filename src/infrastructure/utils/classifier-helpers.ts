@@ -4,7 +4,6 @@
 
 import type { AIErrorInfo } from "../../domain/entities";
 
-declare const __DEV__: boolean;
 
 export function matchesPatterns(message: string, patterns: readonly string[]): boolean {
   const lowerMessage = message.toLowerCase();

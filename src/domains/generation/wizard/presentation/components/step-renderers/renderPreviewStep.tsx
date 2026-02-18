@@ -7,7 +7,7 @@ import { ScenarioPreviewScreen } from "../../../../../scenarios/presentation/scr
 import type { ScenarioData } from "../../../../../scenarios/domain/scenario.types";
 import type { StepDefinition } from "../../../../../../domain/entities/flow-config.types";
 
-export interface PreviewStepProps {
+interface PreviewStepProps {
   readonly step: StepDefinition;
   readonly scenario: ScenarioData | undefined;
   readonly onNext: () => void;

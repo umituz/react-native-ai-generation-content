@@ -15,7 +15,6 @@ import type {
   UseGenerationOrchestratorReturn,
 } from "./types";
 
-declare const __DEV__: boolean;
 
 const INITIAL_STATE = { status: "idle" as const, isGenerating: false, result: null, error: null };
 
@@ -24,10 +23,6 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   config: GenerationConfig,
 ): UseGenerationOrchestratorReturn<TInput, TResult> => {
   const { userId, alertMessages, onSuccess, onError, moderation, lifecycle } = config;
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[Orchestrator] Hook initialized:", { userId });
-  }
 
   const [state, setState] = useState<GenerationState<TResult>>(INITIAL_STATE);
   const isGeneratingRef = useRef(false);
@@ -140,6 +135,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       // Create new AbortController for this generation
       abortControllerRef.current = new AbortController();
       isGeneratingRef.current = true;
+      let moderationPending = false;
       setState({ ...INITIAL_STATE, status: "checking", isGenerating: true });
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -171,7 +167,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
           console.log("[Orchestrator] Starting moderation check");
         }
 
-        return await handleModeration({
+        const result = await handleModeration({
           input,
           moderation,
           alertMessages,
@@ -184,6 +180,14 @@ export const useGenerationOrchestrator = <TInput, TResult>(
           onError,
           handleLifecycleComplete,
         });
+
+        // If handleModeration returned undefined, the warning dialog was shown.
+        // The dialog's proceed/cancel callbacks now own isGeneratingRef — don't reset in finally.
+        if (result === undefined && moderation) {
+          moderationPending = true;
+        }
+
+        return result;
       } catch (err) {
         // Don't show error if aborted
         if (abortControllerRef.current?.signal.aborted) {
@@ -201,7 +205,10 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         handleLifecycleComplete("error", undefined, error);
         throw error;
       } finally {
-        isGeneratingRef.current = false;
+        // Only reset if moderation dialog did not take ownership
+        if (!moderationPending) {
+          isGeneratingRef.current = false;
+        }
         abortControllerRef.current = null;
       }
     },

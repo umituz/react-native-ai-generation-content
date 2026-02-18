@@ -14,9 +14,7 @@ import { createVideoStrategy, buildVideoInput } from "./video-generation.strateg
 // Types
 // ============================================================================
 
-export type { WizardStrategy } from "./wizard-strategy.types";
-
-export interface CreateWizardStrategyOptions {
+interface CreateWizardStrategyOptions {
   readonly scenario: WizardScenarioData;
   /** Model configuration - encapsulates all model-specific behavior */
   readonly modelConfig?: VideoModelConfig;

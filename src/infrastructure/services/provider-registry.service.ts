@@ -5,8 +5,6 @@
 
 import type { IAIProvider } from "../../domain/interfaces";
 
-declare const __DEV__: boolean | undefined;
-
 class ProviderRegistry {
   private providers: Map<string, IAIProvider> = new Map();
   private activeProviderId: string | null = null;

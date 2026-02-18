@@ -3,7 +3,7 @@
  * Creates filter buttons for the gallery screen
  */
 
-export interface FilterButton {
+interface FilterButton {
   readonly id: string;
   readonly label: string;
   readonly icon: string;
@@ -11,7 +11,7 @@ export interface FilterButton {
   readonly onPress: () => void;
 }
 
-export interface FilterButtonsConfig {
+interface FilterButtonsConfig {
   readonly showStatusFilter: boolean;
   readonly showMediaFilter: boolean;
   readonly statusFilterActive: boolean;

@@ -6,7 +6,6 @@
 
 import type { ExtractionRule } from "./extraction-rules";
 
-declare const __DEV__: boolean;
 
 /**
  * Get value from object by path array

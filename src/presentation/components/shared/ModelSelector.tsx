@@ -47,13 +47,15 @@ export interface ModelSelectorProps {
  * ModelSelector - Orchestrates trigger and modal components
  * Following SOLID principles: Single Responsibility
  */
+const EMPTY_TRANSLATIONS: ModelSelectorProps["translations"] = {};
+
 export const ModelSelector: React.FC<ModelSelectorProps> = ({
   models,
   selectedModel,
   onSelectModel,
   label,
   isLoading = false,
-  translations = {},
+  translations = EMPTY_TRANSLATIONS,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 

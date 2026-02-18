@@ -22,7 +22,7 @@ import { StarRatingPicker } from "../../../../result-preview/presentation/compon
 import type { CreditCalculatorFn } from "../../domain/types/credit-calculation.types";
 import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 
-export interface WizardFlowContentProps {
+interface WizardFlowContentProps {
   readonly featureConfig: WizardFeatureConfig;
   readonly scenario?: WizardScenarioData;
   readonly validatedScenario: WizardScenarioData;

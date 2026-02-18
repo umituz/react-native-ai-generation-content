@@ -9,7 +9,6 @@ import type { AlertMessages } from "../../../presentation/hooks/generation/types
 import { DEFAULT_ALERT_MESSAGES } from "../../../presentation/constants/alert-messages";
 import { createGenerationStrategy } from "../application/generation-strategy.factory";
 
-declare const __DEV__: boolean;
 
 // ============================================================================
 // Types

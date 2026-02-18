@@ -6,7 +6,7 @@
 import { createGenerationError, parseError, getAlertMessage } from "./errors";
 import type { GenerationError, ModerationCallbacks, AlertMessages } from "./types";
 
-export interface ModerationHandlerParams<TInput, TResult> {
+interface ModerationHandlerParams<TInput, TResult> {
   readonly input: TInput;
   readonly moderation: ModerationCallbacks | undefined;
   readonly alertMessages: AlertMessages;

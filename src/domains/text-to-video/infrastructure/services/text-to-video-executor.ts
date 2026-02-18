@@ -17,7 +17,6 @@ import type {
   TextToVideoResultExtractor,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
 
 /**
  * Options for text-to-video execution

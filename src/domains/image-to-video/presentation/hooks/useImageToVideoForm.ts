@@ -5,7 +5,6 @@
 
 import { useMemo, useCallback } from "react";
 
-declare const __DEV__: boolean;
 import { useFormState, type UseFormStateOptions } from "./useFormState";
 import { useGeneration } from "./useGeneration";
 import type {

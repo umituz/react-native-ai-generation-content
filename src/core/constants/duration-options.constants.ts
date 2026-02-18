@@ -1,5 +1,6 @@
 /**
  * Duration Options Constants
+ * Generic video duration choices — reusable across all apps
  */
 
 export interface DurationOption {

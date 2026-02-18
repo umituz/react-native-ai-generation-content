@@ -7,7 +7,7 @@
 /**
  * Metadata types for credit cost calculation
  */
-export interface CreditCostMetadata {
+interface CreditCostMetadata {
   readonly model?: string;
   readonly duration?: number;
   readonly resolution?: string;
@@ -105,7 +105,7 @@ export interface IAuthService {
 /**
  * Analytics event data
  */
-export interface AnalyticsEventData {
+interface AnalyticsEventData {
   readonly [key: string]: string | number | boolean | null | undefined;
 }
 

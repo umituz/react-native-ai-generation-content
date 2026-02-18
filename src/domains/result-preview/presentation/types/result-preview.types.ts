@@ -4,11 +4,6 @@
  */
 
 export type {
-  ResultData,
-  ResultActionsCallbacks,
-  ResultDisplayState,
-} from "./result-data.types";
-export type {
   ResultImageCardProps,
   ResultActionBarProps,
 } from "./result-components.types";

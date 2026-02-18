@@ -4,12 +4,10 @@
 
 import { GenerationErrorType, isGenerationError } from "./error-factory";
 
-declare const __DEV__: boolean;
-
 /**
  * Get translation key from error (returns key if GenerationError, null otherwise)
  */
-export function getErrorTranslationKey(error: unknown): string | null {
+function getErrorTranslationKey(error: unknown): string | null {
   if (isGenerationError(error)) {
     return error.translationKey;
   }

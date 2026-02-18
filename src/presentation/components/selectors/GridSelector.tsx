@@ -48,11 +48,11 @@ export function GridSelector<T>({
         </AtomicText>
       )}
       <View style={styles.grid}>
-        {options.map((option, index) => {
+        {options.map((option) => {
           const isSelected = selectedValue === option.value;
           return (
             <TouchableOpacity
-              key={`${option.label}-${index}`}
+              key={String(option.value)}
               style={[
                 styles.card,
                 {

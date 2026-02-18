@@ -1,7 +1,6 @@
 import type {
   WizardStepConfig,
   TextInputStepConfig,
-  PhotoUploadStepConfig,
   SelectionStepConfig,
 } from "../../domain/entities/wizard-step.types";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
@@ -27,12 +26,6 @@ export function getWizardStepConfig(config: unknown): WizardStepConfig | undefin
 export function getTextInputConfig(config: unknown): TextInputStepConfig | undefined {
   if (!isRecord(config)) return undefined;
   if (config.type === "text_input") return config as unknown as TextInputStepConfig;
-  return undefined;
-}
-
-export function getPhotoUploadConfig(config: unknown): PhotoUploadStepConfig | undefined {
-  if (!isRecord(config)) return undefined;
-  if (config.type === "photo_upload") return config as unknown as PhotoUploadStepConfig;
   return undefined;
 }
 

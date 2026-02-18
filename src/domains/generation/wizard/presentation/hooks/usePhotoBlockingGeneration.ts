@@ -13,9 +13,8 @@ import type { WizardStrategy } from "../../infrastructure/strategies/wizard-stra
 import type { WizardScenarioData } from "./wizard-generation.types";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
 
-declare const __DEV__: boolean;
 
-export interface UsePhotoBlockingGenerationProps {
+interface UsePhotoBlockingGenerationProps {
   readonly userId?: string;
   readonly scenario: WizardScenarioData;
   readonly persistence: CreationPersistence;
@@ -27,7 +26,7 @@ export interface UsePhotoBlockingGenerationProps {
   readonly onCreditsExhausted?: () => void;
 }
 
-export interface UsePhotoBlockingGenerationReturn {
+interface UsePhotoBlockingGenerationReturn {
   readonly isGenerating: boolean;
   readonly startGeneration: (input: unknown, prompt: string) => Promise<void>;
 }
@@ -110,18 +109,23 @@ export function usePhotoBlockingGeneration(
           const duration = typeof inputData?.duration === "number" ? inputData.duration : undefined;
           const resolution = typeof inputData?.resolution === "string" ? inputData.resolution : undefined;
 
-          const creationId = await persistence.saveAsProcessing(userId, {
+          const aspectRatio = typeof inputData?.aspectRatio === "string" ? inputData.aspectRatio : undefined;
+
+          const result = await persistence.saveAsProcessing(userId, {
             scenarioId: scenario.id,
             scenarioTitle: scenario.title || scenario.id,
             prompt,
             duration,
             resolution,
             creditCost,
+            aspectRatio,
+            provider: "fal",
+            outputType: scenario.outputType,
           });
-          creationIdRef.current = creationId;
+          creationIdRef.current = result.creationId;
 
           if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[PhotoBlockingGeneration] Saved as processing:", creationId);
+            console.log("[PhotoBlockingGeneration] Saved as processing:", result.creationId);
           }
         } catch (err) {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -133,7 +137,7 @@ export function usePhotoBlockingGeneration(
       // Start blocking generation
       await generate(input);
     },
-    [userId, scenario, persistence, generate],
+    [userId, scenario, persistence, creditCost, generate],
   );
 
   return { isGenerating, startGeneration };

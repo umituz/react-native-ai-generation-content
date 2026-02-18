@@ -19,9 +19,11 @@ import type { CreationCardProps } from "./CreationCard.types";
 import type { CreationTypeId } from "../../domain/types";
 import { getPreviewUrl, getCreationTitle } from "../../domain/utils";
 
+const EMPTY_CALLBACKS: CreationCardProps["callbacks"] = {};
+
 export function CreationCard({
   creation,
-  callbacks = {},
+  callbacks = EMPTY_CALLBACKS,
   showBadges = true,
   showActions = true,
   statusText,
@@ -156,5 +158,3 @@ export function CreationCard({
     </TouchableOpacity>
   );
 }
-
-export type { CreationCardProps, CreationCardData, CreationCardCallbacks } from "./CreationCard.types";

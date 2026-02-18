@@ -47,10 +47,6 @@ export type {
   HeroSectionProps,
   HintCarouselProps,
   HintItem,
-  StyleSelectorProps,
-  AspectRatioSelectorProps,
-  DurationSelectorProps,
-  GenerateButtonProps,
   ExamplePromptsProps,
   ExamplePrompt,
 } from "./component.types";

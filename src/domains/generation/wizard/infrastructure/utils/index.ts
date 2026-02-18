@@ -1,7 +1,4 @@
 export {
-  extractString,
-  extractTrimmedString,
-  extractNumber,
   extractSelection,
 } from "./primitive-extractors";
 

@@ -10,7 +10,6 @@ import type { VideoModelConfig } from "../../../../../domain/interfaces/video-mo
 import { GENERATION_TIMEOUT_MS, BASE64_IMAGE_PREFIX } from "./wizard-strategy.constants";
 import { createGenerationError, GenerationErrorType } from "../../../../../infrastructure/utils/error-factory";
 
-declare const __DEV__: boolean;
 
 interface ExecutionResult {
   success: boolean;

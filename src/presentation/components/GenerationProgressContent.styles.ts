@@ -64,5 +64,3 @@ export const generationProgressContentStyles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-
-export type GenerationProgressContentStyles = typeof generationProgressContentStyles;

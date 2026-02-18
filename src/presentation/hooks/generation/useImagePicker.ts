@@ -7,7 +7,6 @@ import { useState, useCallback } from "react";
 import { MediaPickerService, MediaQuality } from "@umituz/react-native-design-system";
 import { prepareImage } from "../../../infrastructure/utils/feature-utils";
 
-declare const __DEV__: boolean;
 
 export interface ImagePickerState {
   readonly uri: string | null;

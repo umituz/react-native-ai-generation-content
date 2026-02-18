@@ -16,15 +16,6 @@ export interface CreditGateConfig {
   readonly onCreditsAvailable?: () => void;
 }
 
-/** Partner Configuration */
-export interface PartnerConfig {
-  readonly partnerId: "A" | "B" | "single";
-  readonly showNameInput?: boolean;
-  readonly showFaceDetection?: boolean;
-  readonly showPhotoTips?: boolean;
-  readonly maxNameLength?: number;
-}
-
 /** Visual Style Option */
 export interface FlowVisualStyleData {
   readonly id: string;

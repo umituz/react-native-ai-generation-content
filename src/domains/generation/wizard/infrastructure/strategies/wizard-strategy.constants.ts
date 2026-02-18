@@ -3,7 +3,6 @@
  * Centralized configuration values for wizard-based generation
  */
 
-import type { VideoFeatureType } from "../../../../../domain/interfaces";
 import { env } from "../../../../../infrastructure/config/env.config";
 
 /** Generation timeout in milliseconds */
@@ -25,12 +24,6 @@ export const MODEL_INPUT_DEFAULTS = {
   numImages: 1,
   enableSafetyChecker: false,
 } as const;
-
-/** Video feature type patterns for scenario detection */
-export const VIDEO_FEATURE_PATTERNS: Record<string, VideoFeatureType> = {
-  "text-to-video": "text-to-video",
-  "image-to-video": "image-to-video",
-};
 
 /** Default prompts for image processing features (no user input needed) */
 export const IMAGE_PROCESSING_PROMPTS: Record<string, string> = {

@@ -5,7 +5,6 @@
 
 import type { IAppServices, PartialAppServices } from "../../domain/interfaces/app-services.interface";
 
-declare const __DEV__: boolean;
 
 let appServices: IAppServices | null = null;
 

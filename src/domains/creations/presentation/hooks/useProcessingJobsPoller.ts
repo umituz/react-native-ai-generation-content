@@ -8,7 +8,7 @@
 import { useEffect, useRef, useMemo } from "react";
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { QUEUE_STATUS, CREATION_STATUS } from "../../../../domain/constants/queue-status.constants";
-import { DEFAULT_POLL_INTERVAL_MS } from "../../../../infrastructure/constants/polling.constants";
+import { DEFAULT_POLL_INTERVAL_MS, DEFAULT_MAX_POLL_TIME_MS } from "../../../../infrastructure/constants/polling.constants";
 import {
   extractResultUrl,
   type GenerationResult,
@@ -16,7 +16,6 @@ import {
 import type { Creation } from "../../domain/entities/Creation";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 
-declare const __DEV__: boolean;
 
 export interface UseProcessingJobsPollerConfig {
   readonly userId?: string | null;
@@ -57,6 +56,14 @@ export function useProcessingJobsPoller(
     [creations],
   );
 
+  // Orphan jobs: processing but no requestId/model (e.g. blocking image jobs that got stuck)
+  const orphanJobs = useMemo(
+    () => creations.filter(
+      (c) => c.status === CREATION_STATUS.PROCESSING && !c.requestId && !c.model,
+    ),
+    [creations],
+  );
+
   // Use ref for stable function reference to prevent effect re-runs
   const pollJobRef = useRef<((creation: Creation) => Promise<void>) | undefined>(undefined);
 
@@ -75,6 +82,27 @@ export function useProcessingJobsPoller(
 
     if (pollingRef.current.has(creation.id)) return;
     pollingRef.current.add(creation.id);
+
+    // Stale detection: if creation is older than max poll time, mark as failed
+    const ageMs = Date.now() - creation.createdAt.getTime();
+    if (ageMs > DEFAULT_MAX_POLL_TIME_MS) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[ProcessingJobsPoller] Stale job detected, marking as failed:", creation.id, { ageMs });
+      }
+      try {
+        await repository.update(userId, creation.id, {
+          status: CREATION_STATUS.FAILED,
+          metadata: { ...creation.metadata, error: "Generation timed out" },
+          completedAt: new Date(),
+        });
+      } catch (e) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[ProcessingJobsPoller] Failed to mark stale job:", e);
+        }
+      }
+      pollingRef.current.delete(creation.id);
+      return;
+    }
 
     const provider = providerRegistry.getActiveProvider();
     if (!provider || !provider.isInitialized()) {
@@ -109,15 +137,22 @@ export function useProcessingJobsPoller(
           }
           await repository.update(userId, creation.id, {
             status: CREATION_STATUS.FAILED,
-            metadata: { error: "No valid result URL received" },
+            metadata: { ...creation.metadata, error: "No valid result URL received" },
+            completedAt: new Date(),
           });
           return;
         }
 
+        const output: Record<string, string | undefined> = {};
+        if (urls.imageUrl) output.imageUrl = urls.imageUrl;
+        if (urls.videoUrl) output.videoUrl = urls.videoUrl;
+        if (urls.thumbnailUrl) output.thumbnailUrl = urls.thumbnailUrl;
+
         await repository.update(userId, creation.id, {
           status: CREATION_STATUS.COMPLETED,
           uri,
-          output: urls,
+          output,
+          completedAt: new Date(),
         });
       } else if (status.status === QUEUE_STATUS.FAILED) {
         if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[ProcessingJobsPoller] Failed:", creation.id);
@@ -126,7 +161,8 @@ export function useProcessingJobsPoller(
 
         await repository.update(userId, creation.id, {
           status: CREATION_STATUS.FAILED,
-          metadata: { error: "Generation failed" },
+          metadata: { ...creation.metadata, error: "Generation failed" },
+          completedAt: new Date(),
         });
       }
     } catch (error) {
@@ -137,6 +173,31 @@ export function useProcessingJobsPoller(
       pollingRef.current.delete(creation.id);
     }
   };
+
+  // Clean up orphan processing creations (no requestId/model) older than max poll time
+  useEffect(() => {
+    if (!enabled || !userId || orphanJobs.length === 0) return;
+
+    orphanJobs.forEach(async (creation) => {
+      const ageMs = Date.now() - creation.createdAt.getTime();
+      if (ageMs < DEFAULT_MAX_POLL_TIME_MS) return;
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[ProcessingJobsPoller] Orphan job timed out, marking as failed:", creation.id, { ageMs });
+      }
+      try {
+        await repository.update(userId, creation.id, {
+          status: CREATION_STATUS.FAILED,
+          metadata: { ...creation.metadata, error: "Generation timed out" },
+          completedAt: new Date(),
+        });
+      } catch (e) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[ProcessingJobsPoller] Failed to mark orphan job:", e);
+        }
+      }
+    });
+  }, [enabled, userId, orphanJobs, repository]);
 
   // Use ref to always get latest creations
   const creationsRef = useRef(creations);

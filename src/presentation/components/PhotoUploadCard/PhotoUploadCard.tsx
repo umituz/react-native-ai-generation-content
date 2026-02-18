@@ -82,4 +82,3 @@ export const PhotoUploadCard: React.FC<PhotoUploadCardProps> = ({
 };
 
 export type { PhotoUploadCardProps, PhotoUploadCardConfig } from "./PhotoUploadCard.types";
-export { DEFAULT_CONFIG } from "./PhotoUploadCard.types";

@@ -14,8 +14,6 @@ import { renderTextInputStep } from "./step-renderers/renderTextInputStep";
 import { renderSelectionStep } from "./step-renderers/renderSelectionStep";
 import type { WizardStepRendererProps } from "./WizardStepRenderer.types";
 
-export type { WizardStepRendererProps } from "./WizardStepRenderer.types";
-
 export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
   step,
   scenario,

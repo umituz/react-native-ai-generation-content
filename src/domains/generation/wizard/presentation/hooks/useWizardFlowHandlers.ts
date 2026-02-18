@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { AlertType, AlertMode, useAlert } from "@umituz/react-native-design-system";
 import { StepType, type StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
@@ -7,7 +7,7 @@ import { isCreation } from "./typeGuards";
 import { classifyError } from "../../../../../infrastructure/utils/error-classification";
 import type { GenerationErrorInfo } from "../components/WizardFlow.types";
 
-export interface UseWizardFlowHandlersProps {
+interface UseWizardFlowHandlersProps {
   readonly currentStepIndex: number;
   readonly flowSteps: StepDefinition[];
   readonly customData: Record<string, unknown>;
@@ -53,9 +53,12 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
   } = props;
 
   const alert = useAlert();
+  // Guard: prevent multiple onGenerationStart calls from auto-advancing steps
+  const generationStartedRef = useRef(false);
 
   const handleGenerationComplete = useCallback(
     (result: unknown) => {
+      generationStartedRef.current = false;
       setResult(result);
       setCurrentCreation(isCreation(result) ? result : null);
       onGenerationComplete?.(result);
@@ -66,6 +69,7 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
 
   const handleGenerationError = useCallback(
     (errorMessage: string) => {
+      generationStartedRef.current = false;
       const safeErrorMessage = errorMessage?.trim() || "error.generation.unknown";
       const displayMessage = safeErrorMessage.startsWith("error.") ? t(safeErrorMessage) : safeErrorMessage;
 
@@ -112,6 +116,8 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
       });
     }
     if (nextStepDef?.type === StepType.GENERATING && onGenerationStart) {
+      if (generationStartedRef.current) return;
+      generationStartedRef.current = true;
       onGenerationStart(mergedData, nextStep, handleGenerationError);
       return;
     }

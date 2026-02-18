@@ -14,7 +14,7 @@ import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { isInProgress } from "../../domain/utils";
 import { shouldShowThumbnail } from "../../domain/utils/preview-helpers";
 
-export interface CreationVideoPreviewProps {
+interface CreationVideoPreviewProps {
   /** Thumbnail image URL (optional) */
   readonly thumbnailUrl?: string | null;
   /** Video URL (for display purposes only) */

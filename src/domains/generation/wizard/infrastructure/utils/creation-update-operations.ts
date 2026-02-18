@@ -6,7 +6,6 @@
 import type { ICreationsRepository } from "../../../../creations/domain/repositories";
 import type { CompletedCreationData } from "./creation-persistence.types";
 
-declare const __DEV__: boolean;
 
 /**
  * Update creation to status="completed" when generation finishes
@@ -17,15 +16,24 @@ export async function updateToCompleted(
   creationId: string,
   data: CompletedCreationData
 ): Promise<void> {
-  const output: { imageUrl?: string; videoUrl?: string } = {};
+  const output: { imageUrl?: string; videoUrl?: string; thumbnailUrl?: string } = {};
   if (data.imageUrl) output.imageUrl = data.imageUrl;
   if (data.videoUrl) output.videoUrl = data.videoUrl;
+  if (data.thumbnailUrl) output.thumbnailUrl = data.thumbnailUrl;
+
+  const completedAt = new Date();
+  const durationMs =
+    data.generationStartedAt !== undefined
+      ? completedAt.getTime() - data.generationStartedAt
+      : undefined;
 
   await repository.update(userId, creationId, {
     uri: data.uri,
     status: "completed" as const,
     output,
-  });
+    completedAt,
+    ...(durationMs !== undefined && { durationMs }),
+  } as Partial<import("../../../../creations/domain/entities/Creation").Creation>);
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[CreationPersistence] Updated to completed", { creationId });
@@ -44,7 +52,8 @@ export async function updateToFailed(
   await repository.update(userId, creationId, {
     status: "failed" as const,
     metadata: { error },
-  });
+    completedAt: new Date(),
+  } as Partial<import("../../../../creations/domain/entities/Creation").Creation>);
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[CreationPersistence] Updated to failed", { creationId, error });

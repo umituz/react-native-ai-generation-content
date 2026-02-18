@@ -32,9 +32,14 @@ export const CREATION_FIELDS = {
 
   // Timestamps
   CREATED_AT: "createdAt" as const,
+  STARTED_AT: "startedAt" as const,
   UPDATED_AT: "updatedAt" as const,
   DELETED_AT: "deletedAt" as const,
   RATED_AT: "ratedAt" as const,
+  COMPLETED_AT: "completedAt" as const,
+
+  // Duration (ms elapsed from startedAt to completedAt)
+  DURATION_MS: "durationMs" as const,
 
   // User interactions
   IS_FAVORITE: "isFavorite" as const,
@@ -47,7 +52,7 @@ export const CREATION_FIELDS = {
 } as const;
 
 /** Union type of all field names */
-export type CreationFieldName =
+type CreationFieldName =
   typeof CREATION_FIELDS[keyof typeof CREATION_FIELDS];
 
 /**
@@ -69,16 +74,10 @@ export const UPDATABLE_FIELDS: ReadonlyArray<CreationFieldName> = [
   CREATION_FIELDS.REQUEST_ID,
   CREATION_FIELDS.MODEL,
   CREATION_FIELDS.PROMPT,
+  CREATION_FIELDS.COMPLETED_AT,
+  CREATION_FIELDS.STARTED_AT,
+  CREATION_FIELDS.DURATION_MS,
 ] as const;
-
-/**
- * Type guard for updatable fields
- */
-export function isUpdatableField(
-  field: string
-): field is CreationFieldName {
-  return UPDATABLE_FIELDS.includes(field as CreationFieldName);
-}
 
 // Freeze to prevent mutations
 Object.freeze(CREATION_FIELDS);

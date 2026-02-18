@@ -7,7 +7,6 @@ import { failure, success, type Result } from "../../domain/types/result.types";
 import type { IAIProvider } from "../../domain/interfaces";
 import type { BaseExecutorOptions } from "./base-executor.types";
 
-declare const __DEV__: boolean;
 
 export abstract class BaseExecutor<TRequest, TResult, TOutput> {
   protected readonly logPrefix: string;

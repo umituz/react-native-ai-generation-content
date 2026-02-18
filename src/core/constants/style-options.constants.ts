@@ -1,5 +1,6 @@
 /**
  * Style Options Constants
+ * Generic UI style choices — reusable across all apps
  */
 
 export interface StyleOption {

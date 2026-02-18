@@ -1,5 +1,6 @@
 /**
  * Preset Styles Constants
+ * Generic video content presets — reusable across all apps
  */
 
 export interface PresetStyle {

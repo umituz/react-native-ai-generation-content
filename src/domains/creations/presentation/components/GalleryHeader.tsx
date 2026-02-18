@@ -1,4 +1,3 @@
-declare const __DEV__: boolean;
 
 import React from "react";
 import { View, TouchableOpacity, StyleSheet, type ViewStyle } from "react-native";
@@ -21,11 +20,13 @@ interface GalleryHeaderProps {
   readonly style?: ViewStyle;
 }
 
+const EMPTY_FILTER_BUTTONS: FilterButtonConfig[] = [];
+
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   title,
   count,
   countLabel,
-  filterButtons = [],
+  filterButtons = EMPTY_FILTER_BUTTONS,
   showFilter = true,
   style,
 }: GalleryHeaderProps) => {

@@ -6,7 +6,6 @@
 
 import type { Scenario, ScenarioOutputType } from "../domain/Scenario";
 
-declare const __DEV__: boolean;
 
 /** Configured scenario with required outputType */
 export interface ConfiguredScenario extends Scenario {
@@ -89,13 +88,4 @@ export const isScenariosConfigured = (): boolean => {
  */
 export const getAllConfiguredScenarios = (): readonly ConfiguredScenario[] => {
   return Array.from(state.scenarios.values());
-};
-
-/**
- * Reset registry (for testing)
- */
-export const resetScenarioRegistry = (): void => {
-  state.scenarios.clear();
-  state.defaultOutputType = "video";
-  state.isConfigured = false;
 };

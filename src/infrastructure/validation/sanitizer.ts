@@ -37,20 +37,3 @@ export function sanitizeString(input: unknown): string {
   return sanitized.slice(0, 10000);
 }
 
-/**
- * Sanitizes object by removing dangerous properties
- */
-export function sanitizeObject<T extends Record<string, unknown>>(input: T): T {
-  if (!input || typeof input !== "object") {
-    return input;
-  }
-
-  const sanitized = { ...input } as T;
-  const dangerousKeys = ["__proto__", "constructor", "prototype"];
-
-  for (const key of dangerousKeys) {
-    delete (sanitized as Record<string, unknown>)[key];
-  }
-
-  return sanitized;
-}

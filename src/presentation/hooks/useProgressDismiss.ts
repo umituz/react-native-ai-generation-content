@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-export interface UseProgressDismissResult {
+interface UseProgressDismissResult {
   /** Whether the progress overlay has been dismissed by user */
   isProgressDismissed: boolean;
   /** Dismisses the progress overlay */

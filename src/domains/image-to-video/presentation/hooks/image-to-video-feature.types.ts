@@ -11,7 +11,6 @@ import type {
   ImageToVideoGenerateParams,
 } from "../../domain/types";
 export { DEFAULT_ALERT_MESSAGES } from "../../../../presentation/constants/alert-messages";
-export { generateCreationId } from "../../../../infrastructure/utils/id-generator.util";
 
 export const INITIAL_STATE: ImageToVideoFeatureState = {
   imageUri: null,
@@ -39,11 +38,4 @@ export interface UseImageToVideoFeatureReturn {
   canGenerate: boolean;
 }
 
-export interface VideoGenerationInput {
-  imageUri: string;
-  imageBase64: string;
-  motionPrompt: string;
-  options?: Omit<ImageToVideoGenerateParams, "imageUri" | "motionPrompt">;
-  creationId: string;
-}
 

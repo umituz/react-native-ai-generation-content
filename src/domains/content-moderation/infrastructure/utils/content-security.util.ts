@@ -7,7 +7,7 @@
  * HTML entity encoding detection
  * More reliable than regex for detecting encoded malicious content
  */
-export function containsHTMLEntities(content: string): boolean {
+function containsHTMLEntities(content: string): boolean {
   const htmlEntities = [
     /&lt;/gi, /&gt;/gi, /&quot;/gi, /&amp;/gi, /&apos;/gi,
     /&#\d+;/gi, /&#x[0-9a-fA-F]+;/gi,

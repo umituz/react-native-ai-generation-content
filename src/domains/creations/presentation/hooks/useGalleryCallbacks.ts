@@ -3,7 +3,6 @@
  * Extracts callback handlers from CreationsGalleryScreen
  */
 
-declare const __DEV__: boolean;
 
 import { useCallback } from "react";
 import { useAlert, AlertType, AlertMode, useSharing } from "@umituz/react-native-design-system";
@@ -11,7 +10,7 @@ import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 
-export interface UseGalleryCallbacksProps {
+interface UseGalleryCallbacksProps {
   readonly userId: string | null;
   readonly repository: ICreationsRepository;
   readonly config: CreationsConfig;

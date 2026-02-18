@@ -5,13 +5,13 @@
 
 import { useCallback } from "react";
 
-export interface UseCostCallbacksParams {
+interface UseCostCallbacksParams {
   creditBalance: number;
   creditCostPerUnit: number;
   openPaywall: () => void;
 }
 
-export interface CostCallbacks {
+interface CostCallbacks {
   canAfford: (cost: number) => boolean;
   calculateCost: (multiplier?: number, _model?: string | null) => number;
   onCreditsRequired: (cost?: number) => void;

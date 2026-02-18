@@ -27,6 +27,7 @@ export async function createCreation(
     ...(creation.prompt !== undefined && { prompt: creation.prompt }),
     ...(creation.requestId !== undefined && { requestId: creation.requestId }),
     ...(creation.model !== undefined && { model: creation.model }),
+    ...(creation.startedAt !== undefined && { startedAt: creation.startedAt }),
   };
 
   try {

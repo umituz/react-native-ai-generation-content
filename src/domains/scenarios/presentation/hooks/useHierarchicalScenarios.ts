@@ -7,13 +7,13 @@ import { useMemo, useEffect } from "react";
 import type { ScenarioData } from "../../domain/scenario.types";
 import type { SubCategory } from "../../domain/category.types";
 
-export interface UseHierarchicalScenariosProps {
+interface UseHierarchicalScenariosProps {
   readonly subCategoryId: string;
   readonly subCategories: readonly SubCategory[];
   readonly scenarios: readonly ScenarioData[];
 }
 
-export interface UseHierarchicalScenariosResult {
+interface UseHierarchicalScenariosResult {
   readonly subCategory: SubCategory | undefined;
   readonly filteredScenarios: readonly ScenarioData[];
 }

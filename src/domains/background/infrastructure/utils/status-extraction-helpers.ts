@@ -6,7 +6,7 @@
 /**
  * Type guard to check if object has a property
  */
-export function hasProperty<K extends PropertyKey>(
+function hasProperty<K extends PropertyKey>(
   obj: unknown,
   prop: K
 ): obj is Record<K, unknown> {

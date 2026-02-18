@@ -12,7 +12,6 @@ import { providerRegistry } from "../../../../infrastructure/services/provider-r
 import type { TextToImageInput, TextToImageOutput } from "./text-to-image-executor.types";
 import { buildModelInput, extractResult } from "./text-to-image-executor.helpers";
 
-declare const __DEV__: boolean;
 
 export class TextToImageExecutor
   implements GenerationExecutor<TextToImageInput, TextToImageOutput>

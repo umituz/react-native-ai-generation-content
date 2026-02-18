@@ -16,7 +16,6 @@ import type {
   TextToImageGenerationRequest,
 } from "../../domain/types";
 
-declare const __DEV__: boolean;
 
 export interface UseGenerationOptions {
   formState: TextToImageFormState;

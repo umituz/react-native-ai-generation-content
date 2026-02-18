@@ -13,7 +13,7 @@ export interface AIGenerationResultAction {
   icon?: string;
 }
 
-export interface AIGenerationResultTranslations {
+interface AIGenerationResultTranslations {
   successText?: string;
 }
 
@@ -36,11 +36,13 @@ export interface AIGenerationResultProps extends PropsWithChildren {
  * Standardized AI Generation Result View
  * Handles success message, content display (children), and action buttons.
  */
+const EMPTY_EXTRA_ACTIONS: AIGenerationResultAction[] = [];
+
 export const AIGenerationResult: React.FC<AIGenerationResultProps> = ({
   successText,
   primaryAction,
   secondaryAction,
-  extraActions = [],
+  extraActions = EMPTY_EXTRA_ACTIONS,
   translations,
   contentStyle,
   children,
@@ -85,9 +87,9 @@ export const AIGenerationResult: React.FC<AIGenerationResultProps> = ({
           />
         )}
 
-        {extraActions.map((action, index) => (
+        {extraActions.map((action) => (
           <AtomicButton
-            key={`extra-action-${index}`}
+            key={action.label}
             title={action.label}
             onPress={action.onPress}
             variant={action.variant || "outline"}

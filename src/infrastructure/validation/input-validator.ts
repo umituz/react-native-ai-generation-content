@@ -16,7 +16,7 @@ export {
 } from "./base-validator";
 
 // Sanitizers
-export { sanitizeString, sanitizeObject } from "./sanitizer";
+export { sanitizeString } from "./sanitizer";
 
 // Advanced validators
 export {
@@ -27,13 +27,10 @@ export {
 } from "./advanced-validator";
 
 // AI validators
-export { validateAIPrompt, validateImageData, validateVideoUrl } from "./ai-validator";
+export { validateAIPrompt, validateImageData } from "./ai-validator";
 
 // Entity validators
 export {
   validateUserId,
   validateCreationId,
-  validateScenarioId,
-  validateModelName,
-  validateProviderName,
 } from "./entity-validator";

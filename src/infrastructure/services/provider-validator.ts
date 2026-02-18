@@ -6,7 +6,6 @@
 import type { IAIProvider } from "../../domain/interfaces";
 import { providerRegistry } from "./provider-registry.service";
 
-declare const __DEV__: boolean;
 
 export class ProviderValidator {
   getProvider(): IAIProvider {

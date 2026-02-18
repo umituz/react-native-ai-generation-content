@@ -6,7 +6,6 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 
-declare const __DEV__: boolean;
 import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
@@ -51,7 +50,7 @@ export const usePhotoUploadState = ({
 }: UsePhotoUploadStateProps): UsePhotoUploadStateReturn => {
   const [image, setImage] = useState<UploadedImage | null>(initialImage || null);
   const { pickImage, isLoading } = useMedia();
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Use refs to avoid effect re-runs on callback changes
   const onErrorRef = useRef(onError);
@@ -121,14 +120,14 @@ export const usePhotoUploadState = ({
         }
 
         if (result.error === MediaValidationError.FILE_TOO_LARGE) {
-          onError?.({
-            title: translations.fileTooLarge,
-            message: translations.maxFileSize.replace("{size}", maxFileSizeMB.toString()),
+          onErrorRef.current?.({
+            title: translationsRef.current.fileTooLarge,
+            message: translationsRef.current.maxFileSize.replace("{size}", maxFileSizeMB.toString()),
           });
         } else if (result.error === MediaValidationError.PERMISSION_DENIED) {
-          onError?.({
-            title: translations.error,
-            message: translations.permissionDenied ?? "Permission to access media library is required",
+          onErrorRef.current?.({
+            title: translationsRef.current.error,
+            message: translationsRef.current.permissionDenied ?? "Permission to access media library is required",
           });
         }
         return;
@@ -168,12 +167,12 @@ export const usePhotoUploadState = ({
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.error("[usePhotoUploadState] Error picking image", error);
       }
-      onError?.({
-        title: translations.error,
-        message: translations.uploadFailed,
+      onErrorRef.current?.({
+        title: translationsRef.current.error,
+        message: translationsRef.current.uploadFailed,
       });
     }
-  }, [pickImage, maxFileSizeMB, translations, onError]);
+  }, [pickImage, maxFileSizeMB]);
 
   const canContinue = image !== null && !isLoading;
 

@@ -11,7 +11,7 @@ export type VideoAlertFunction = (title: string, message: string) => void;
 /**
  * Navigation function type for success actions
  */
-export type VideoNavigationFunction = () => void;
+type VideoNavigationFunction = () => void;
 
 /**
  * Default no-op alert function

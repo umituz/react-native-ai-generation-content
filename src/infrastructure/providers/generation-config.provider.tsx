@@ -6,7 +6,6 @@
 
 import React, { createContext, useContext, useCallback, useMemo, type ReactNode } from "react";
 
-declare const __DEV__: boolean;
 
 export interface GenerationModels {
   readonly imageMultiRef?: string;

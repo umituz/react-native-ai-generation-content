@@ -12,7 +12,7 @@ import {
 } from "@umituz/react-native-design-system";
 import { generationProgressContentStyles } from "./GenerationProgressContent.styles";
 
-export interface ProgressHeaderProps {
+interface ProgressHeaderProps {
   icon?: string;
   title?: string;
   message?: string;

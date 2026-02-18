@@ -8,7 +8,6 @@ import { useState, useEffect, useCallback } from "react";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 import type { Creation } from "../../domain/entities/Creation";
 
-declare const __DEV__: boolean;
 
 interface UseCreationsProps {
   readonly userId: string | null;
