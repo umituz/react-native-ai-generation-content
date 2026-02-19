@@ -24,7 +24,6 @@ const EMPTY_FILTER_BUTTONS: FilterButtonConfig[] = [];
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   title,
-  count,
   countLabel,
   filterButtons = EMPTY_FILTER_BUTTONS,
   showFilter = true,
