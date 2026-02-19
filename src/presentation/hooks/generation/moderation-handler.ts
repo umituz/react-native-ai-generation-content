@@ -16,7 +16,7 @@ interface ModerationHandlerParams<TInput, TResult> {
   readonly resetState: () => void;
   readonly executeGeneration: (input: TInput) => Promise<TResult>;
   readonly showError: (title: string, message: string) => void;
-  readonly onError?: (error: GenerationError) => void;
+  readonly onError?: (error: GenerationError) => void | Promise<void>;
   readonly handleLifecycleComplete: (status: "success" | "error", result?: TResult, error?: GenerationError) => void;
 }
 
@@ -54,13 +54,13 @@ export async function handleModeration<TInput, TResult>(
         },
         () => {
           // Return the promise to allow proper error handling chain
-          return executeGeneration(input).catch((err) => {
+          return executeGeneration(input).catch(async (err) => {
             const error = parseError(err);
             if (isMountedRef.current) {
               setState({ status: "error", isGenerating: false, result: null, error });
             }
             showError("Error", getAlertMessage(error, alertMessages));
-            onError?.(error);
+            await onError?.(error);
             handleLifecycleComplete("error", undefined, error);
             throw error; // Re-throw to allow caller to handle
           }).finally(() => {

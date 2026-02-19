@@ -76,7 +76,7 @@ export function useCreations({
       }
       unsubscribe();
     };
-  }, [userId, repository, enabled, onDataCallback, onErrorCallback]);
+  }, [userId, repository, enabled]); // onDataCallback/onErrorCallback intentionally omitted - stable memoized refs
 
   return { data, isLoading, error, refetch };
 }

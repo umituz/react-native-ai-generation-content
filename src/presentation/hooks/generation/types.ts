@@ -54,8 +54,8 @@ export interface LifecycleConfig {
 export interface GenerationConfig {
   readonly userId: string | undefined;
   readonly alertMessages: AlertMessages;
-  readonly onSuccess?: (result: unknown) => void;
-  readonly onError?: (error: GenerationError) => void;
+  readonly onSuccess?: (result: unknown) => void | Promise<void>;
+  readonly onError?: (error: GenerationError) => void | Promise<void>;
   readonly moderation?: ModerationCallbacks;
   readonly lifecycle?: LifecycleConfig;
 }

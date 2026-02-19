@@ -15,11 +15,11 @@ import { CreationActions } from "./CreationActions";
 import { CreationCardMeta } from "./CreationCardMeta";
 import { useCreationCardActions } from "./useCreationCardActions";
 import { useCreationDateFormatter } from "./CreationCard.utils";
-import type { CreationCardProps } from "./CreationCard.types";
+import type { CreationCardProps, CreationCardCallbacks } from "./CreationCard.types";
 import type { CreationTypeId } from "../../domain/types";
 import { getPreviewUrl, getCreationTitle } from "../../domain/utils";
 
-const EMPTY_CALLBACKS: CreationCardProps["callbacks"] = {};
+const EMPTY_CALLBACKS: CreationCardCallbacks = {};
 
 export function CreationCard({
   creation,
@@ -40,8 +40,8 @@ export function CreationCard({
   if (__DEV__) {
     console.log("[CreationCard] RENDER", {
       creationId: creation.id,
-      hasOnPress: !!callbacks.onPress,
-      callbacksKeys: Object.keys(callbacks),
+      hasOnPress: !!callbacks?.onPress,
+      callbacksKeys: callbacks ? Object.keys(callbacks) : [],
       status: creation.status,
       type: creation.type,
       output: creation.output,
@@ -54,7 +54,7 @@ export function CreationCard({
   const title = titleText || getCreationTitle(creation.prompt, creation.type as CreationTypeId);
   const formattedDate = useCreationDateFormatter(creation.createdAt, formatDate);
   const actions = useCreationCardActions({
-    callbacks,
+    callbacks: callbacks ?? EMPTY_CALLBACKS,
     creation,
     isSharing,
     isDownloadAvailable,
@@ -65,10 +65,10 @@ export function CreationCard({
     if (__DEV__) {
       console.log("[CreationCard] handlePress TRIGGERED", {
         creationId: creation.id,
-        hasOnPress: !!callbacks.onPress,
+        hasOnPress: !!callbacks?.onPress,
       });
     }
-    callbacks.onPress?.(creation);
+    callbacks?.onPress?.(creation);
   }, [callbacks, creation]);
 
   const styles = useMemo(
@@ -109,7 +109,7 @@ export function CreationCard({
     }
   }, [creation.id]);
 
-  const isDisabled = !callbacks.onPress;
+  const isDisabled = !callbacks?.onPress;
 
   if (__DEV__ && isDisabled) {
     console.log("[CreationCard] WARNING: Card is DISABLED - onPress is falsy");
@@ -120,7 +120,7 @@ export function CreationCard({
       style={styles.card}
       onPress={handlePress}
       onPressIn={handlePressIn}
-      activeOpacity={callbacks.onPress ? 0.7 : 1}
+      activeOpacity={callbacks?.onPress ? 0.7 : 1}
       disabled={isDisabled}
     >
       <View style={styles.previewContainer} pointerEvents="box-none">

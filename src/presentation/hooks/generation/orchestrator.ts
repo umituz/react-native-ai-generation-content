@@ -109,7 +109,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       }
 
       if (alertMessages.success) showSuccess("Success", alertMessages.success);
-      onSuccess?.(result);
+      await onSuccess?.(result);
       handleLifecycleComplete("success", result);
       return result;
     },
@@ -201,7 +201,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[Orchestrator] Error:", error);
         if (isMountedRef.current) setState({ status: "error", isGenerating: false, result: null, error });
         showError("Error", getAlertMessage(error, alertMessages));
-        onError?.(error);
+        await onError?.(error);
         handleLifecycleComplete("error", undefined, error);
         throw error;
       } finally {

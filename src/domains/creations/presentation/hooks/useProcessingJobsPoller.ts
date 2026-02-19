@@ -178,23 +178,32 @@ export function useProcessingJobsPoller(
   useEffect(() => {
     if (!enabled || !userId || orphanJobs.length === 0) return;
 
-    orphanJobs.forEach(async (creation) => {
-      const ageMs = Date.now() - creation.createdAt.getTime();
-      if (ageMs < DEFAULT_MAX_POLL_TIME_MS) return;
+    const cleanupOrphans = async () => {
+      const staleOrphans = orphanJobs.filter((creation) => {
+        const ageMs = Date.now() - creation.createdAt.getTime();
+        return ageMs >= DEFAULT_MAX_POLL_TIME_MS;
+      });
 
+      if (staleOrphans.length === 0) return;
+
+      await Promise.allSettled(
+        staleOrphans.map(async (creation) => {
+          if (!isMountedRef.current) return;
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[ProcessingJobsPoller] Orphan job timed out, marking as failed:", creation.id);
+          }
+          await repository.update(userId, creation.id, {
+            status: CREATION_STATUS.FAILED,
+            metadata: { ...creation.metadata, error: "Generation timed out" },
+            completedAt: new Date(),
+          });
+        }),
+      );
+    };
+
+    void cleanupOrphans().catch((e) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[ProcessingJobsPoller] Orphan job timed out, marking as failed:", creation.id, { ageMs });
-      }
-      try {
-        await repository.update(userId, creation.id, {
-          status: CREATION_STATUS.FAILED,
-          metadata: { ...creation.metadata, error: "Generation timed out" },
-          completedAt: new Date(),
-        });
-      } catch (e) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error("[ProcessingJobsPoller] Failed to mark orphan job:", e);
-        }
+        console.error("[ProcessingJobsPoller] Failed to clean up orphan jobs:", e);
       }
     });
   }, [enabled, userId, orphanJobs, repository]);

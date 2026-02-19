@@ -75,20 +75,19 @@ export function useGalleryCallbacks(props: UseGalleryCallbacksProps) {
   const handleFavorite = useCallback(
     (c: Creation) => {
       void (async () => {
-        if (__DEV__) {
-          console.log("[handleFavorite] Called", { id: c.id, currentFavorite: c.isFavorite, userId });
+        try {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[handleFavorite] Called", { id: c.id, currentFavorite: c.isFavorite, userId });
+          }
+          if (!userId) return;
+          const newFavoriteStatus = !c.isFavorite;
+          const success = await repository.updateFavorite(userId, c.id, newFavoriteStatus);
+          if (success) void refetch();
+        } catch (e) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[handleFavorite] Error:", e);
+          }
         }
-        if (!userId) return;
-        // Toggle the favorite status
-        const newFavoriteStatus = !c.isFavorite;
-        if (__DEV__) {
-          console.log("[handleFavorite] Toggling", { newFavoriteStatus });
-        }
-        const success = await repository.updateFavorite(userId, c.id, newFavoriteStatus);
-        if (__DEV__) {
-          console.log("[handleFavorite] Update result", { success });
-        }
-        if (success) void refetch();
       })();
     },
     [userId, repository, refetch],
@@ -118,11 +117,17 @@ export function useGalleryCallbacks(props: UseGalleryCallbacksProps) {
     (rating: number, description: string) => {
       if (!userId || !selectedCreation) return;
       void (async () => {
-        const success = await repository.rate(userId, selectedCreation.id, rating, description);
-        if (success) {
-          setSelectedCreation({ ...selectedCreation, rating, ratedAt: new Date() });
-          alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("result.rateSuccessTitle"), t("result.rateSuccessMessage"));
-          void refetch();
+        try {
+          const success = await repository.rate(userId, selectedCreation.id, rating, description);
+          if (success) {
+            setSelectedCreation({ ...selectedCreation, rating, ratedAt: new Date() });
+            alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("result.rateSuccessTitle"), t("result.rateSuccessMessage"));
+            void refetch();
+          }
+        } catch (e) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[handleSubmitRating] Error:", e);
+          }
         }
       })();
     },

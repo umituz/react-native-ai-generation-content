@@ -4,7 +4,7 @@
  * Single Responsibility: Firestore query operations
  */
 
-import { getDocs, getDoc, query, orderBy, where } from "firebase/firestore";
+import { getDocs, getDoc, query, orderBy } from "firebase/firestore";
 import type { IPathResolver } from "@umituz/react-native-firebase";
 import type { DocumentMapper } from "../../domain/value-objects/CreationsConfig";
 import type { Creation, CreationDocument } from "../../domain/entities/Creation";
@@ -28,20 +28,20 @@ export class CreationsQuery {
         try {
             const q = query(
                 userCollection,
-                where(CREATION_FIELDS.DELETED_AT, "==", null),
                 orderBy(CREATION_FIELDS.CREATED_AT, "desc")
             );
             const snapshot = await getDocs(q);
 
-            const creations = snapshot.docs.map((docSnap) => {
-                const data = docSnap.data() as CreationDocument;
-                return this.documentMapper(docSnap.id, data);
-            });
+            const creations = snapshot.docs
+                .map((docSnap) => {
+                    const data = docSnap.data() as CreationDocument;
+                    return this.documentMapper(docSnap.id, data);
+                })
+                .filter((c) => c.deletedAt == null);
 
             if (__DEV__) {
                 console.log("[CreationsQuery] Fetched creations:", {
                     count: creations.length,
-                    hasDeletedFilter: true,
                 });
             }
 

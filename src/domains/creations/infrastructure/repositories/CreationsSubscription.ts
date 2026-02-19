@@ -4,7 +4,7 @@
  * Single Responsibility: Firestore realtime listeners
  */
 
-import { query, orderBy, onSnapshot, where } from "firebase/firestore";
+import { query, orderBy, onSnapshot } from "firebase/firestore";
 import type { IPathResolver } from "@umituz/react-native-firebase";
 import type { DocumentMapper } from "../../domain/value-objects/CreationsConfig";
 import type { CreationDocument } from "../../domain/entities/Creation";
@@ -35,7 +35,6 @@ export class CreationsSubscription {
 
         const q = query(
             userCollection,
-            where(CREATION_FIELDS.DELETED_AT, "==", null),
             orderBy(CREATION_FIELDS.CREATED_AT, "desc")
         );
 
@@ -43,10 +42,12 @@ export class CreationsSubscription {
             q,
             { includeMetadataChanges: false },
             (snapshot) => {
-                const creations = snapshot.docs.map((docSnap) => {
-                    const data = docSnap.data() as CreationDocument;
-                    return this.documentMapper(docSnap.id, data);
-                });
+                const creations = snapshot.docs
+                    .map((docSnap) => {
+                        const data = docSnap.data() as CreationDocument;
+                        return this.documentMapper(docSnap.id, data);
+                    })
+                    .filter((c) => c.deletedAt == null);
 
                 if (__DEV__) {
                     console.log("[CreationsSubscription] Sync:", creations.length, "items");
