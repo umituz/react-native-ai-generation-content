@@ -25,8 +25,8 @@ export const CREATION_VALIDATION = {
   MIN_PROMPT_LENGTH: 1,
   MAX_PROMPT_LENGTH: 500,
 
-  /** Valid URI protocols */
-  VALID_URI_PROTOCOLS: ["http:", "https:", "data:"] as const,
+  /** Valid URI protocols — only HTTPS CDN URLs should be persisted, never base64 data URIs */
+  VALID_URI_PROTOCOLS: ["http:", "https:"] as const,
 
   /** Valid image MIME types */
   VALID_IMAGE_MIMES: [
