@@ -18,10 +18,15 @@ export const GalleryScreenHeader: React.FC<GalleryScreenHeaderProps> = ({ title,
 
   return (
     <View style={styles.screenHeader}>
-      <TouchableOpacity onPress={onBack} style={styles.backButton}>
+      <TouchableOpacity
+        onPress={onBack}
+        style={styles.backButton}
+        activeOpacity={0.6}
+        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+      >
         <AtomicIcon
-          name="chevron-left"
-          customSize={28}
+          name="chevron-back"
+          customSize={24}
           customColor={tokens.colors.textPrimary}
         />
       </TouchableOpacity>
@@ -46,9 +51,12 @@ const createStyles = (tokens: DesignTokens) =>
       gap: tokens.spacing.md,
     },
     backButton: {
-      padding: tokens.spacing.xs,
+      width: 40,
+      height: 40,
+      justifyContent: "center",
+      alignItems: "center",
     },
     placeholder: {
-      width: 36,
+      width: 40,
     },
   });

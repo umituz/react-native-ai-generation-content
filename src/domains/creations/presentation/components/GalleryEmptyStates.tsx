@@ -27,29 +27,23 @@ function CreationCardSkeleton({ tokens }: { tokens: DesignTokens }) {
     const styles = createSkeletonStyles(tokens);
     return (
         <View style={styles.card}>
-            {/* Thumbnail skeleton */}
+            {/* Full-width image skeleton */}
             <AtomicSkeleton
                 pattern="custom"
-                custom={[{ width: 100, height: 100, borderRadius: 0 }]}
+                custom={[{ width: "100%" as unknown as number, height: 200, borderRadius: 0 }]}
             />
-            {/* Content skeleton */}
-            <View style={styles.content}>
-                <View style={styles.textArea}>
-                    <AtomicSkeleton
-                        pattern="custom"
-                        custom={[
-                            { width: 120, height: 18, borderRadius: 4, marginBottom: 8 },
-                            { width: 100, height: 14, borderRadius: 4 },
-                        ]}
-                    />
-                </View>
-                {/* Action buttons skeleton */}
+            {/* Bottom bar skeleton */}
+            <View style={styles.bottomBar}>
+                <AtomicSkeleton
+                    pattern="custom"
+                    custom={[{ width: 140, height: 16, borderRadius: 4 }]}
+                />
                 <View style={styles.actions}>
-                    {[1, 2, 3, 4].map((id) => (
+                    {[1, 2, 3].map((id) => (
                         <AtomicSkeleton
                             key={id}
                             pattern="custom"
-                            custom={[{ width: 36, height: 36, borderRadius: 18 }]}
+                            custom={[{ width: 32, height: 32, borderRadius: 16 }]}
                         />
                     ))}
                 </View>
@@ -131,19 +125,16 @@ const createStyles = (tokens: DesignTokens) => StyleSheet.create({
 
 const createSkeletonStyles = (tokens: DesignTokens) => StyleSheet.create({
     card: {
-        flexDirection: 'row',
         backgroundColor: tokens.colors.surface,
         borderRadius: tokens.spacing.md,
         overflow: 'hidden',
         marginBottom: tokens.spacing.md,
     },
-    content: {
-        flex: 1,
-        padding: tokens.spacing.md,
+    bottomBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between',
-    },
-    textArea: {
-        gap: tokens.spacing.xs,
+        padding: tokens.spacing.md,
     },
     actions: {
         flexDirection: 'row',

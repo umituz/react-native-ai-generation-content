@@ -36,11 +36,13 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   return (
     <View style={[styles.headerArea, style]}>
       <View>
-        <View style={styles.titleRow}>
-          <AtomicText style={styles.title}>{title}</AtomicText>
-        </View>
+        {title ? (
+          <View style={styles.titleRow}>
+            <AtomicText style={styles.title}>{title}</AtomicText>
+          </View>
+        ) : null}
         <AtomicText style={styles.subtitle}>
-          {count} {countLabel}
+          {countLabel}
         </AtomicText>
       </View>
       {showFilter && filterButtons.length > 0 && (

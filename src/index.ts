@@ -72,3 +72,10 @@ export {
   DURATION_OPTIONS,
 } from "./core/constants/duration-options.constants";
 export * from "./core/constants/script-durations.constants";
+
+// Result Preview Domain
+export { useResultActions } from "./domains/result-preview/presentation/hooks/useResultActions";
+export type {
+  UseResultActionsOptions,
+  UseResultActionsReturn,
+} from "./domains/result-preview/presentation/types/result-hooks.types";

@@ -70,7 +70,22 @@ export function useCreations({
 
     const unsubscribe = repository.subscribeToAll(userId, onDataCallback, onErrorCallback);
 
+    // Fallback timeout: if Firestore doesn't respond in 10s, stop loading
+    const timeoutId = setTimeout(() => {
+      setIsLoading((prev) => {
+        if (prev) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.warn("[useCreations] Loading timeout - setting empty state");
+          }
+          setData((currentData) => currentData ?? []);
+          return false;
+        }
+        return prev;
+      });
+    }, 10000);
+
     return () => {
+      clearTimeout(timeoutId);
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[useCreations] Cleaning up realtime listener");
       }

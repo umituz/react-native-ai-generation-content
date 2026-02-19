@@ -34,6 +34,7 @@ export function CreationsGalleryScreen({
   onBack,
   onTryAgain,
   getCreationTitle,
+  onCreationPress,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
 
@@ -96,28 +97,31 @@ export function CreationsGalleryScreen({
       creation={item}
       titleText={getItemTitle(item)}
       callbacks={{
-        onPress: () => callbacks.handleCardPress(item),
+        onPress: () => onCreationPress ? onCreationPress(item) : callbacks.handleCardPress(item),
         onShare: async () => callbacks.handleShareCard(item),
         onDelete: () => callbacks.handleDelete(item),
         onFavorite: () => callbacks.handleFavorite(item),
       }}
     />
-  ), [callbacks, getItemTitle]);
+  ), [callbacks, getItemTitle, onCreationPress]);
+
+  const hasScreenHeader = Boolean(onBack);
 
   const renderHeader = useMemo(() => {
     if (!creations?.length && !isLoading) return null;
+    if (isLoading) return null;
     return (
       <View style={[styles.header, { backgroundColor: tokens.colors.surface, borderBottomColor: tokens.colors.border }]}>
         <GalleryHeader
-          title={t(config.translations.title)}
+          title={hasScreenHeader ? "" : t(config.translations.title)}
           count={filters.filtered.length}
-          countLabel={t(config.translations.photoCount)}
+          countLabel={`${filters.filtered.length} ${t(config.translations.photoCount)}`}
           showFilter={showFilter}
           filterButtons={filterButtons}
         />
       </View>
     );
-  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, tokens]);
+  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, tokens, hasScreenHeader]);
 
   const renderEmpty = useMemo(() => (
     <GalleryEmptyStates
