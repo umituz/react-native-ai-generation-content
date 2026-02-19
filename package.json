@@ -39,7 +39,7 @@
     "url": "git+https://github.com/umituz/react-native-ai-generation-content.git"
   },
   "dependencies": {
-    "@umituz/react-native-auth": "^4.3.0"
+    "@umituz/react-native-auth": "*"
   },
   "peerDependencies": {
     "@react-navigation/native": ">=6.0.0",
