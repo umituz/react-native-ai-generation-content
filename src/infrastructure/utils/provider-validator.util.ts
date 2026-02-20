@@ -4,7 +4,7 @@
  */
 
 import { providerRegistry } from "../services/provider-registry.service";
-import { cleanBase64 } from "./index";
+import { cleanBase64 } from "./photo-generation/photo-preparation.util";
 import type { IAIProvider, VideoFeatureInputData, ImageFeatureInputData } from "../../domain/interfaces";
 
 

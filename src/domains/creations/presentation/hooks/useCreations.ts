@@ -65,6 +65,7 @@ export function useCreations({
       console.log("[useCreations] Setting up realtime listener", { userId });
     }
 
+    let isMounted = true;
     setIsLoading(true);
     setError(null);
 
@@ -72,19 +73,16 @@ export function useCreations({
 
     // Fallback timeout: if Firestore doesn't respond in 10s, stop loading
     const timeoutId = setTimeout(() => {
-      setIsLoading((prev) => {
-        if (prev) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.warn("[useCreations] Loading timeout - setting empty state");
-          }
-          setData((currentData) => currentData ?? []);
-          return false;
-        }
-        return prev;
-      });
+      if (!isMounted) return;
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.warn("[useCreations] Loading timeout - setting empty state");
+      }
+      setData((currentData) => currentData ?? []);
+      setIsLoading(false);
     }, 10000);
 
     return () => {
+      isMounted = false;
       clearTimeout(timeoutId);
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[useCreations] Cleaning up realtime listener");

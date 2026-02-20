@@ -26,7 +26,7 @@ export const GalleryScreenHeader: React.FC<GalleryScreenHeaderProps> = ({ title,
       >
         <AtomicIcon
           name="chevron-back"
-          customSize={24}
+          customSize={32}
           customColor={tokens.colors.textPrimary}
         />
       </TouchableOpacity>

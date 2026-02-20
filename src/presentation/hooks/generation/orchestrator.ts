@@ -30,6 +30,15 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   const abortControllerRef = useRef<AbortController | null>(null);
   const cleanupTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Stable refs for callbacks — prevents useCallback deps from thrashing when
+  // callers pass inline functions (which create new references every render).
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+    onErrorRef.current = onError;
+  });
+
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();
 
@@ -109,11 +118,11 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       }
 
       if (alertMessages.success) showSuccess("Success", alertMessages.success);
-      await onSuccess?.(result);
+      await onSuccessRef.current?.(result);
       handleLifecycleComplete("success", result);
       return result;
     },
-    [strategy, userId, alertMessages, showSuccess, onSuccess, handleLifecycleComplete],
+    [strategy, userId, alertMessages, showSuccess, handleLifecycleComplete],
   );
 
   const generate = useCallback(
@@ -201,7 +210,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         if (typeof __DEV__ !== "undefined" && __DEV__) console.log("[Orchestrator] Error:", error);
         if (isMountedRef.current) setState({ status: "error", isGenerating: false, result: null, error });
         showError("Error", getAlertMessage(error, alertMessages));
-        await onError?.(error);
+        await onErrorRef.current?.(error);
         handleLifecycleComplete("error", undefined, error);
         throw error;
       } finally {
@@ -212,7 +221,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         abortControllerRef.current = null;
       }
     },
-    [offlineStore, moderation, alertMessages, strategy, executeGeneration, showError, onError, handleLifecycleComplete],
+    [offlineStore, moderation, alertMessages, strategy, executeGeneration, showError, handleLifecycleComplete],
   );
 
   const reset = useCallback(() => {
