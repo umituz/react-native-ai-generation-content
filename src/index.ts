@@ -73,13 +73,6 @@ export {
 } from "./core/constants/duration-options.constants";
 export * from "./core/constants/script-durations.constants";
 
-// Access Control
-export { useAIFeatureGate } from "./domains/access-control";
-export type {
-  AIFeatureGateOptions,
-  AIFeatureGateReturn,
-  AIFeatureGateHook,
-} from "./domains/access-control";
 
 // Result Preview Domain
 export { useResultActions } from "./domains/result-preview/presentation/hooks/useResultActions";
