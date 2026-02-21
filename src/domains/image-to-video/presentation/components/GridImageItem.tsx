@@ -19,12 +19,12 @@ interface GridImageItemProps {
   onRemove: () => void;
 }
 
-export function GridImageItem({
+export const GridImageItem: React.FC<GridImageItemProps> = ({
   styles,
   uri,
   index,
   onRemove,
-}: GridImageItemProps) {
+}) => {
   const tokens = useAppDesignTokens();
 
   return (

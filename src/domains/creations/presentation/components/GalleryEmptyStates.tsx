@@ -23,7 +23,7 @@ interface GalleryEmptyStatesProps {
 }
 
 /** Skeleton card matching CreationCard layout */
-function CreationCardSkeleton({ tokens }: { tokens: DesignTokens }) {
+const CreationCardSkeleton: React.FC<{ tokens: DesignTokens }> = ({ tokens }) => {
     const styles = createSkeletonStyles(tokens);
     return (
         <View style={styles.card}>
@@ -52,7 +52,7 @@ function CreationCardSkeleton({ tokens }: { tokens: DesignTokens }) {
     );
 }
 
-export function GalleryEmptyStates({
+export const GalleryEmptyStates: React.FC<GalleryEmptyStatesProps> = ({
     isLoading,
     creations,
     isFiltered,
@@ -63,7 +63,7 @@ export function GalleryEmptyStates({
     emptyActionLabel,
     onEmptyAction,
     onClearFilters,
-}: GalleryEmptyStatesProps) {
+}) => {
     const styles = createStyles(tokens);
 
     // 1. Loading State - Show skeleton cards

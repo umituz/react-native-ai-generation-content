@@ -40,6 +40,9 @@ export const ScenarioPreviewScreen: React.FC<ScenarioPreviewScreenProps> = ({
   const tokens = useAppDesignTokens();
   const styles = useMemo(() => createStyles(tokens), [tokens]);
 
+  const rawImage = scenario.previewImageUrl || scenario.imageUrl;
+  const isNetworkUrl = typeof rawImage === "string";
+
   return (
     <View style={{ flex: 1, backgroundColor: tokens.colors.backgroundPrimary }}>
       <NavigationHeader
@@ -61,7 +64,8 @@ export const ScenarioPreviewScreen: React.FC<ScenarioPreviewScreenProps> = ({
       >
         <HeroSection
           icon={scenario.icon}
-          imageUrl={scenario.imageUrl ?? scenario.previewImageUrl}
+          imageUrl={isNetworkUrl ? rawImage : undefined}
+          imageSource={!isNetworkUrl && rawImage ? rawImage : undefined}
         />
 
         <View style={styles.contentSection}>
@@ -75,7 +79,7 @@ export const ScenarioPreviewScreen: React.FC<ScenarioPreviewScreenProps> = ({
 
           <View style={styles.infoCard}>
             <View style={styles.infoHeader}>
-              <AtomicIcon name="information-circle" size="sm" color="primary" />
+              <AtomicIcon name="info" size="sm" color="primary" />
               <AtomicText style={styles.infoTitle}>
                 {translations.whatToExpect}
               </AtomicText>

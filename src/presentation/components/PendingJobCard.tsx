@@ -40,7 +40,7 @@ const DEFAULT_STATUS_LABELS: StatusLabels = {
   failed: "Failed",
 };
 
-export function PendingJobCard<TInput = unknown, TResult = unknown>({
+export const PendingJobCard: React.FC<PendingJobCardProps<any, any>> = ({
   job,
   onCancel,
   onRetry,
@@ -48,7 +48,7 @@ export function PendingJobCard<TInput = unknown, TResult = unknown>({
   statusLabels = DEFAULT_STATUS_LABELS,
   renderThumbnail,
   renderActions,
-}: PendingJobCardProps<TInput, TResult>): React.ReactElement {
+}) => {
   const tokens = useAppDesignTokens();
   const isFailed = job.status === "failed";
 

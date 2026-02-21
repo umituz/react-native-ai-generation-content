@@ -92,7 +92,7 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
-    paddingTop: 60,
+    paddingTop: 16,
     width: "100%",
     marginBottom: 24,
   },

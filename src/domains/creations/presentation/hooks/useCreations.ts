@@ -69,10 +69,22 @@ export function useCreations({
     setIsLoading(true);
     setError(null);
 
-    const unsubscribe = repository.subscribeToAll(userId, onDataCallback, onErrorCallback);
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const handleData = (creations: Creation[]) => {
+      clearTimeout(timeoutId);
+      onDataCallback(creations);
+    };
+
+    const handleError = (err: Error) => {
+      clearTimeout(timeoutId);
+      onErrorCallback(err);
+    };
+
+    const unsubscribe = repository.subscribeToAll(userId, handleData, handleError);
 
     // Fallback timeout: if Firestore doesn't respond in 10s, stop loading
-    const timeoutId = setTimeout(() => {
+    timeoutId = setTimeout(() => {
       if (!isMounted) return;
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.warn("[useCreations] Loading timeout - setting empty state");

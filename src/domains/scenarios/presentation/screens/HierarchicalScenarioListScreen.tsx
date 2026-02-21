@@ -9,7 +9,6 @@ import {
   AtomicText,
   AtomicCard,
   useAppDesignTokens,
-  useResponsive,
   ScreenLayout,
   NavigationHeader,
   AtomicSpinner,
@@ -28,7 +27,6 @@ interface HierarchicalScenarioListScreenProps {
   readonly onSelectScenario: (scenarioId: string) => void;
   readonly onBack: () => void;
   readonly t: (key: string) => string;
-  readonly numColumns?: number;
   readonly isLoading?: boolean;
 }
 
@@ -39,12 +37,10 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   onSelectScenario,
   onBack,
   t,
-  numColumns = 2,
   isLoading = false,
 }) => {
   const tokens = useAppDesignTokens();
   const insets = useSafeAreaInsets();
-  const { width } = useResponsive();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const { subCategory, filteredScenarios } = useHierarchicalScenarios({
@@ -56,14 +52,9 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   const horizontalPadding = tokens.spacing.md;
   const cardSpacing = tokens.spacing.md;
 
-  const cardWidth = useMemo(() => {
-    const availableWidth = width - horizontalPadding * 2 - cardSpacing;
-    return availableWidth / numColumns;
-  }, [width, horizontalPadding, cardSpacing, numColumns]);
-
   const styles = useMemo(
-    () => createStyles(tokens, cardSpacing, horizontalPadding),
-    [tokens, cardSpacing, horizontalPadding]
+    () => createStyles(tokens, cardSpacing),
+    [tokens, cardSpacing]
   );
 
   const handleContinue = useCallback(() => {
@@ -82,12 +73,12 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
         subtitle={t(`scenario.${item.id}.description`)}
         imageAspectRatio={1.25}
         selected={selectedId === item.id}
-        style={{ width: cardWidth }}
+        style={{ width: "100%" }}
         onPress={() => handleCardPress(item.id)}
         testID={`scenario-card-${item.id}`}
       />
     ),
-    [cardWidth, selectedId, t, handleCardPress]
+    [selectedId, t, handleCardPress]
   );
 
   const ListEmptyComponent = useMemo(
@@ -131,13 +122,14 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
       <ScreenLayout scrollable={false} edges={["left", "right"]} backgroundColor={tokens.colors.backgroundPrimary}>
         <FlatList
           data={filteredScenarios}
-          numColumns={numColumns}
           showsVerticalScrollIndicator={false}
-          columnWrapperStyle={styles.row}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           ListEmptyComponent={isLoading ? LoadingComponent : (filteredScenarios.length === 0 ? ListEmptyComponent : null)}
-          contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 100 }]}
+          contentContainerStyle={[
+            styles.listContent,
+            { paddingHorizontal: horizontalPadding, paddingBottom: insets.bottom + 100 }
+          ]}
           removeClippedSubviews
           maxToRenderPerBatch={10}
           updateCellsBatchingPeriod={50}
@@ -149,11 +141,10 @@ export const HierarchicalScenarioListScreen: React.FC<HierarchicalScenarioListSc
   );
 };
 
-const createStyles = (tokens: DesignTokens, cardSpacing: number, horizontalPadding: number) =>
+const createStyles = (tokens: DesignTokens, cardSpacing: number) =>
   StyleSheet.create({
     container: { flex: 1 },
-    listContent: { paddingTop: tokens.spacing.sm, flexGrow: 1 },
-    row: { gap: cardSpacing, marginBottom: cardSpacing, paddingHorizontal: horizontalPadding },
+    listContent: { paddingTop: tokens.spacing.sm, gap: cardSpacing, flexGrow: 1 },
     emptyState: { flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: tokens.spacing.xl },
     loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: tokens.spacing.xl },
   });

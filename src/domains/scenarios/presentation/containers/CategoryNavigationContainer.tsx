@@ -24,7 +24,6 @@ export interface CategoryNavigationContainerProps {
   readonly t: (key: string) => string;
   readonly headerTitle?: string;
   readonly headerDescription?: string;
-  readonly numColumns?: number;
   readonly isLoading?: boolean;
 }
 
@@ -41,7 +40,6 @@ export const CategoryNavigationContainer: React.FC<
   t,
   headerTitle,
   headerDescription,
-  numColumns = 2,
   isLoading = false,
 }) => {
   const [currentStep, setCurrentStep] = useState<NavigationStep>("main_category");
@@ -107,7 +105,6 @@ export const CategoryNavigationContainer: React.FC<
         onSelectScenario={onSelectScenario}
         onBack={handleBackFromScenarioList}
         t={t}
-        numColumns={numColumns}
         isLoading={isLoading}
       />
     );
