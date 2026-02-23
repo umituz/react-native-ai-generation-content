@@ -52,18 +52,16 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
   const { creditCost, onNetworkError, onSuccess, onError } = options;
 
   const { isOffline } = useOffline();
-  const { isAuthenticated: rawIsAuth, isAnonymous } = useAuth();
+  const { hasFirebaseUser } = useAuth();
   const { showAuthModal } = useAuthModalStore();
   const { isPremium } = usePremium();
   const { credits, isCreditsLoaded, isLoading: isCreditsLoading } = useCredits();
   const { openPaywall } = usePaywallVisibility();
-
-  const isAuthenticated = rawIsAuth && !isAnonymous;
   const creditBalance = credits?.credits ?? 0;
   const hasCredits = creditBalance >= creditCost;
 
   const { requireFeature: requireFeatureFromPackage } = useFeatureGate({
-    isAuthenticated,
+    isAuthenticated: hasFirebaseUser,
     onShowAuthModal: (cb?: () => void) => showAuthModal(cb),
     hasSubscription: isPremium,
     creditBalance,
@@ -73,8 +71,8 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
   });
 
   const canAccess = useMemo(
-    () => !isOffline && isAuthenticated && (isPremium || hasCredits),
-    [isOffline, isAuthenticated, isPremium, hasCredits],
+    () => !isOffline && hasFirebaseUser && (isPremium || hasCredits),
+    [isOffline, hasFirebaseUser, isPremium, hasCredits],
   );
 
   const requireFeature = useCallback(
@@ -82,7 +80,7 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[AIFeatureGate] requireFeature called:", {
           isOffline,
-          isAuthenticated,
+          hasFirebaseUser,
           isCreditsLoaded,
           isPremium,
           creditBalance,
@@ -99,9 +97,9 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
         return false;
       }
 
-      if (isAuthenticated && !isCreditsLoaded) {
+      if (hasFirebaseUser && !isCreditsLoaded && isCreditsLoading) {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[AIFeatureGate] BLOCKED: User authenticated but credits not loaded yet");
+          console.log("[AIFeatureGate] WAITING: Credits still loading");
         }
         return false;
       }
@@ -119,7 +117,7 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
 
       return executed;
     },
-    [isOffline, isAuthenticated, isCreditsLoaded, isPremium, creditBalance, creditCost, hasCredits, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
+    [isOffline, hasFirebaseUser, isCreditsLoaded, isPremium, creditBalance, creditCost, hasCredits, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
   );
 
   return {
@@ -127,7 +125,7 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
     canAccess,
     isCheckingAccess: isCreditsLoading,
     hasCredits,
-    isAuthenticated,
+    isAuthenticated: hasFirebaseUser,
     isPremium,
     creditBalance,
     isOffline,
