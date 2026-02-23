@@ -12,6 +12,7 @@ export interface UseVideoQueueGenerationProps {
   readonly persistence: CreationPersistence;
   readonly strategy: WizardStrategy;
   readonly creditCost?: number;
+  readonly deductCredits?: (cost: number) => Promise<boolean>;
   readonly onSuccess?: (result: unknown) => void;
   readonly onError?: (error: string) => void;
 }

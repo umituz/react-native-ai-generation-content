@@ -40,7 +40,7 @@ const DEFAULT_STATUS_LABELS: StatusLabels = {
   failed: "Failed",
 };
 
-export const PendingJobCard: React.FC<PendingJobCardProps<any, any>> = ({
+export const PendingJobCard: React.FC<PendingJobCardProps> = ({
   job,
   onCancel,
   onRetry,

@@ -3,10 +3,6 @@
  * Domain: Value objects for creation persistence
  */
 
-export interface CreationPersistenceConfig {
-  readonly collectionName?: string;
-}
-
 export interface ProcessingCreationData {
   readonly scenarioId: string;
   readonly scenarioTitle: string;

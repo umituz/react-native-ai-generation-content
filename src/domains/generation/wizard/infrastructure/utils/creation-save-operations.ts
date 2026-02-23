@@ -25,6 +25,7 @@ export async function saveAsProcessing(
     uri: "",
     type: data.scenarioId,
     prompt: data.prompt,
+    provider: data.provider,
     status: "processing" as const,
     createdAt: new Date(),
     startedAt,
@@ -39,7 +40,6 @@ export async function saveAsProcessing(
       ...(data.resolution && { resolution: data.resolution }),
       ...(data.creditCost && { creditCost: data.creditCost }),
       ...(data.aspectRatio && { aspectRatio: data.aspectRatio }),
-      ...(data.provider && { provider: data.provider }),
       ...(data.outputType && { outputType: data.outputType }),
     },
   });

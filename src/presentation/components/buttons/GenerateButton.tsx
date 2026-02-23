@@ -4,7 +4,7 @@
  * Props-driven for 100+ apps compatibility
  */
 
-import React, { useEffect } from "react";
+import React from "react";
 import { View, StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
 import {
   AtomicText,
@@ -41,25 +41,12 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
   onAccessoryRightPress,
   style,
 }) => {
-  if (__DEV__) {
-    console.log("[GenerateButton] RENDERING NOW");
-  }
-
   const tokens = useAppDesignTokens();
   const disabled = isDisabled || isProcessing;
   const displayText = isProcessing && processingText ? processingText : text;
   const finalDisplayText = costLabel ? `${displayText} (${costLabel})` : displayText;
 
-  useEffect(() => {
-    if (__DEV__) {
-      console.log("[GenerateButton] MOUNTED/UPDATED - isDisabled:", isDisabled, "isProcessing:", isProcessing, "disabled:", disabled, "text:", text);
-    }
-  }, [isDisabled, isProcessing, disabled, text]);
-
   const handlePress = () => {
-    if (__DEV__) {
-      console.log("[GenerateButton] PRESSED - disabled:", disabled, "isDisabled:", isDisabled, "isProcessing:", isProcessing);
-    }
     if (!disabled) {
       onPress();
     }

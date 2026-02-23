@@ -1,19 +1,17 @@
 /**
  * Creation Persistence Factory
- * Infrastructure: Creates persistence handler instance
+ * Creates a persistence handler bound to the creations repository
  */
 
 import { createCreationsRepository } from "../../../../creations/infrastructure/adapters";
-import type { CreationPersistenceConfig, ProcessingCreationData, CompletedCreationData } from "./creation-persistence.types";
+import type { ProcessingCreationData, CompletedCreationData } from "./creation-persistence.types";
 import { saveAsProcessing } from "./creation-save-operations";
 import { updateToCompleted, updateToFailed, updateRequestId } from "./creation-update-operations";
 
-/**
- * Creates a creation persistence handler for a wizard flow
- */
-export function createCreationPersistence(config: CreationPersistenceConfig = {}) {
-  const { collectionName = "creations" } = config;
-  const repository = createCreationsRepository(collectionName);
+const COLLECTION_NAME = "creations";
+
+export function createCreationPersistence() {
+  const repository = createCreationsRepository(COLLECTION_NAME);
 
   return {
     saveAsProcessing: (userId: string, data: ProcessingCreationData) =>

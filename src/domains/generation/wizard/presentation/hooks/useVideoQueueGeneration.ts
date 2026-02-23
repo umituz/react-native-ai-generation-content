@@ -16,7 +16,7 @@ import type {
 } from "./use-video-queue-generation.types";
 
 export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): UseVideoQueueGenerationReturn {
-  const { userId, scenario, persistence, strategy, creditCost, onSuccess, onError } = props;
+  const { userId, scenario, persistence, strategy, creditCost, deductCredits, onSuccess, onError } = props;
 
   const creationIdRef = useRef<string | null>(null);
   const requestIdRef = useRef<string | null>(null);
@@ -111,6 +111,15 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
 
       resetRefs();
 
+      // Deduct credits after successful generation
+      if (deductCredits && creditCost) {
+        await deductCredits(creditCost).catch((err) => {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[VideoQueue] deductCredits error:", err);
+          }
+        });
+      }
+
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[VideoQueue] 🎯 Calling onSuccess callback now...", { persistenceSucceeded });
       }
@@ -120,7 +129,7 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
         console.log("[VideoQueue] ✅ onSuccess callback completed");
       }
     },
-    [userId, persistence, onSuccess, onError, resetRefs, clearPolling],
+    [userId, persistence, deductCredits, creditCost, onSuccess, onError, resetRefs, clearPolling],
   );
 
   const handleError = useCallback(
@@ -235,7 +244,11 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
         if (creationId && userId) {
           try {
             await persistence.updateToFailed(userId, creationId, error instanceof Error ? error.message : "Queue submission failed");
-          } catch { /* best effort */ }
+          } catch (persistError) {
+            if (typeof __DEV__ !== "undefined" && __DEV__) {
+              console.error("[VideoQueue] Failed to persist submission error:", persistError);
+            }
+          }
         }
         isGeneratingRef.current = false;
         setIsGenerating(false);
@@ -247,7 +260,11 @@ export function useVideoQueueGeneration(props: UseVideoQueueGenerationProps): Us
         if (creationId && userId) {
           try {
             await persistence.updateToFailed(userId, creationId, queueResult.error || "Queue submission failed");
-          } catch { /* best effort */ }
+          } catch (persistError) {
+            if (typeof __DEV__ !== "undefined" && __DEV__) {
+              console.error("[VideoQueue] Failed to persist queue failure:", persistError);
+            }
+          }
         }
         isGeneratingRef.current = false;
         setIsGenerating(false);

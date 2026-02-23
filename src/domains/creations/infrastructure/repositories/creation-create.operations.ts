@@ -25,6 +25,7 @@ export async function createCreation(
     ...(creation.status !== undefined && { status: creation.status }),
     ...(creation.output !== undefined && { output: creation.output }),
     ...(creation.prompt !== undefined && { prompt: creation.prompt }),
+    ...(creation.provider !== undefined && { provider: creation.provider }),
     ...(creation.requestId !== undefined && { requestId: creation.requestId }),
     ...(creation.model !== undefined && { model: creation.model }),
     ...(creation.startedAt !== undefined && { startedAt: creation.startedAt }),

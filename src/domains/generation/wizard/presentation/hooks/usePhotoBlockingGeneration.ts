@@ -20,6 +20,7 @@ interface UsePhotoBlockingGenerationProps {
   readonly persistence: CreationPersistence;
   readonly strategy: WizardStrategy;
   readonly creditCost?: number;
+  readonly deductCredits?: (cost: number) => Promise<boolean>;
   readonly alertMessages: AlertMessages;
   readonly onSuccess?: (result: unknown) => void;
   readonly onError?: (error: string) => void;
@@ -39,6 +40,7 @@ export function usePhotoBlockingGeneration(
     scenario,
     persistence,
     creditCost,
+    deductCredits,
     strategy,
     alertMessages,
     onSuccess,
@@ -67,9 +69,19 @@ export function usePhotoBlockingGeneration(
       }
 
       creationIdRef.current = null;
+
+      // Deduct credits after successful generation
+      if (deductCredits && creditCost) {
+        await deductCredits(creditCost).catch((err) => {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[PhotoBlockingGeneration] deductCredits error:", err);
+          }
+        });
+      }
+
       onSuccess?.(result);
     },
-    [userId, persistence, onSuccess],
+    [userId, persistence, deductCredits, creditCost, onSuccess],
   );
 
   const handleError = useCallback(

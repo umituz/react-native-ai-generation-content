@@ -120,7 +120,8 @@ export class VideoExecutor
     const rawResult = result as Record<string, unknown>;
     const data = (rawResult?.data ?? rawResult) as {
       video?: { url: string };
+      video_url?: string;
     };
-    return data?.video?.url;
+    return data?.video?.url ?? data?.video_url;
   }
 }

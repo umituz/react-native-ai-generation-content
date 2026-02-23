@@ -17,6 +17,9 @@ export const PHOTO_KEY_PREFIX = "photo_";
 /** Default style value (no custom style applied) */
 export const DEFAULT_STYLE_VALUE = "original";
 
+/** Debounce interval to prevent rapid double-tap on generation start (ms) */
+export const GENERATION_DEBOUNCE_MS = 500;
+
 /** Model input defaults */
 export const MODEL_INPUT_DEFAULTS = {
   aspectRatio: "1:1",

@@ -36,6 +36,8 @@ export interface UseWizardGenerationProps {
   readonly alertMessages: AlertMessages;
   /** Credit cost for this generation - REQUIRED, determined by the app */
   readonly creditCost: number;
+  /** Called after successful generation to deduct credits — provided by the app */
+  readonly deductCredits?: (cost: number) => Promise<boolean>;
   readonly onSuccess?: (result: unknown) => void;
   readonly onError?: (error: string) => void;
   readonly onCreditsExhausted?: () => void;

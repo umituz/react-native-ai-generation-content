@@ -49,6 +49,7 @@ export const CREATION_FIELDS = {
   // AI provider metadata
   REQUEST_ID: "requestId" as const,
   MODEL: "model" as const,
+  PROVIDER: "provider" as const,
 } as const;
 
 /** Union type of all field names */

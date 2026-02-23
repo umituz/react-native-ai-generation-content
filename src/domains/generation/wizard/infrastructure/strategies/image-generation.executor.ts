@@ -75,7 +75,7 @@ export async function executeImageGeneration(
       enable_safety_checker: MODEL_INPUT_DEFAULTS.enableSafetyChecker,
     };
 
-    // Add image_urls array for multi-person generation
+    // nano-banana/edit uses image_urls (array) for both single and multi-image
     if (imageUrls.length > 0) {
       modelInput.image_urls = imageUrls;
     }

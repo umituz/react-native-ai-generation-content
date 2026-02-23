@@ -4,6 +4,7 @@
  */
 
 import type { ICreationsRepository } from "../../../../creations/domain/repositories";
+import type { Creation, CreationOutput } from "../../../../creations/domain/entities/Creation";
 import type { CompletedCreationData } from "./creation-persistence.types";
 
 
@@ -16,10 +17,11 @@ export async function updateToCompleted(
   creationId: string,
   data: CompletedCreationData
 ): Promise<void> {
-  const output: { imageUrl?: string; videoUrl?: string; thumbnailUrl?: string } = {};
-  if (data.imageUrl) output.imageUrl = data.imageUrl;
-  if (data.videoUrl) output.videoUrl = data.videoUrl;
-  if (data.thumbnailUrl) output.thumbnailUrl = data.thumbnailUrl;
+  const output: CreationOutput = {
+    ...(data.imageUrl && { imageUrl: data.imageUrl }),
+    ...(data.videoUrl && { videoUrl: data.videoUrl }),
+    ...(data.thumbnailUrl && { thumbnailUrl: data.thumbnailUrl }),
+  };
 
   const completedAt = new Date();
   const durationMs =
@@ -33,7 +35,7 @@ export async function updateToCompleted(
     output,
     completedAt,
     ...(durationMs !== undefined && { durationMs }),
-  } as Partial<import("../../../../creations/domain/entities/Creation").Creation>);
+  } as Partial<Creation>);
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[CreationPersistence] Updated to completed", { creationId });
@@ -53,7 +55,7 @@ export async function updateToFailed(
     status: "failed" as const,
     metadata: { error },
     completedAt: new Date(),
-  } as Partial<import("../../../../creations/domain/entities/Creation").Creation>);
+  } as Partial<Creation>);
 
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[CreationPersistence] Updated to failed", { creationId, error });

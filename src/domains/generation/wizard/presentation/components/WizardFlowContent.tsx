@@ -34,6 +34,8 @@ interface WizardFlowContentProps {
   readonly creditCost: number;
   /** Calculator function provided by APP - package calls this to get dynamic cost */
   readonly calculateCredits?: CreditCalculatorFn;
+  /** Called after successful generation to deduct credits — provided by the app */
+  readonly deductCredits?: (cost: number) => Promise<boolean>;
   readonly skipResultStep?: boolean;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
   readonly onGenerationStart?: (
@@ -60,8 +62,9 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     modelConfig,
     userId,
     alertMessages,
-    creditCost, // Still needed for initial feature gate in parent
-    calculateCredits, // Calculator function from APP
+    creditCost,
+    calculateCredits,
+    deductCredits,
     skipResultStep = false,
     onStepChange,
     onGenerationStart,
@@ -188,6 +191,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     isGeneratingStep: currentStep?.type === StepType.GENERATING,
     alertMessages,
     creditCost: calculatedCreditCost,
+    deductCredits,
     onSuccess: handlers.handleGenerationComplete,
     onError: handlers.handleGenerationError,
     onCreditsExhausted,

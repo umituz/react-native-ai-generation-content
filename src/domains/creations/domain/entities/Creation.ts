@@ -25,8 +25,8 @@ export interface Creation {
   readonly uri: string;
   readonly type: string;
   readonly prompt?: string;
+  readonly provider?: string;
   readonly metadata?: Record<string, unknown>;
-  readonly originalUri?: string;
   readonly createdAt: Date;
   readonly isShared: boolean;
   readonly isFavorite: boolean;
@@ -53,12 +53,8 @@ interface FirebaseTimestamp {
 export interface CreationDocument {
   readonly uri?: string;
   readonly prompt?: string;
+  readonly provider?: string;
   readonly metadata?: Record<string, unknown>;
-  readonly originalImage?: string;
-  readonly originalImageUrl?: string;
-  readonly transformedImage?: string;
-  readonly transformedImageUrl?: string;
-  readonly transformationType?: string;
   readonly type?: string;
   readonly status?: string;
   readonly output?: CreationOutput | null;
@@ -92,21 +88,15 @@ export function mapDocumentToCreation(
 ): Creation {
   const creationDate = toDate(data.createdAt) ?? new Date();
 
-  // Get URI from output or direct fields
-  const uri = data.output?.imageUrl ||
-              data.output?.videoUrl ||
-              data.transformedImageUrl ||
-              data.transformedImage ||
-              data.uri ||
-              "";
+  const uri = data.output?.imageUrl || data.output?.videoUrl || data.uri || "";
 
   return {
     id,
     uri,
-    type: data.transformationType || data.type || "unknown",
+    type: data.type || "unknown",
     prompt: data.prompt,
+    provider: data.provider,
     metadata: data.metadata,
-    originalUri: data.originalImageUrl || data.originalImage,
     createdAt: creationDate,
     isShared: data.isShared ?? false,
     isFavorite: data.isFavorite ?? false,

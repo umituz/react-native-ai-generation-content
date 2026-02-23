@@ -28,6 +28,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     isGeneratingStep,
     alertMessages,
     creditCost,
+    deductCredits,
     onSuccess,
     onError,
     onCreditsExhausted,
@@ -53,6 +54,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     persistence,
     strategy,
     creditCost,
+    deductCredits,
     onSuccess,
     onError,
   });
@@ -63,6 +65,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     persistence,
     strategy,
     creditCost,
+    deductCredits,
     alertMessages,
     onSuccess,
     onError,

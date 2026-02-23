@@ -1,161 +1,69 @@
-import { useCallback, useRef } from "react";
-import { AlertType, AlertMode, useAlert } from "@umituz/react-native-design-system";
-import { StepType, type StepDefinition } from "../../../../../domain/entities/flow-config.types";
-import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
-import type { Creation } from "../../../../creations/domain/entities/Creation";
-import { isCreation } from "./typeGuards";
-import { classifyError } from "../../../../../infrastructure/utils/error-classification";
-import type { GenerationErrorInfo } from "../components/WizardFlow.types";
+/**
+ * Wizard Flow Handlers - Composition Hook
+ * Combines generation, navigation, and rating handlers
+ */
 
-interface UseWizardFlowHandlersProps {
-  readonly currentStepIndex: number;
-  readonly flowSteps: StepDefinition[];
-  readonly customData: Record<string, unknown>;
-  readonly skipResultStep: boolean;
-  readonly userId?: string;
-  readonly currentCreation: Creation | null;
-  readonly repository: { rate: (uid: string, id: string, rating: number, desc: string) => Promise<boolean> };
-  readonly t: (key: string) => string;
-  readonly nextStep: () => void;
-  readonly previousStep: () => void;
-  readonly setResult: (result: unknown) => void;
-  readonly setCustomData: (stepId: string, data: unknown) => void;
-  readonly setCurrentCreation: (creation: Creation | null) => void;
-  readonly setHasRated: (hasRated: boolean) => void;
-  readonly setShowRatingPicker: (show: boolean) => void;
-  readonly onGenerationStart?: (data: Record<string, unknown>, proceed: () => void, onError?: (error: string) => void) => void;
-  readonly onGenerationComplete?: (result: unknown) => void;
-  readonly onGenerationError?: (error: string, errorInfo?: GenerationErrorInfo) => void;
-  readonly onBack?: () => void;
-}
+import { useCallback } from "react";
+import { AlertType, AlertMode, useAlert } from "@umituz/react-native-design-system";
+import type { UseWizardFlowHandlersProps } from "./wizard-flow-handlers.types";
+import { useGenerationHandlers } from "./useGenerationHandlers";
+import { useNavigationHandlers } from "./useNavigationHandlers";
 
 export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
   const {
-    currentStepIndex,
-    flowSteps,
-    customData,
-    skipResultStep,
-    userId,
-    currentCreation,
-    repository,
-    t,
-    nextStep,
-    previousStep,
-    setResult,
-    setCustomData,
-    setCurrentCreation,
-    setHasRated,
-    setShowRatingPicker,
-    onGenerationStart,
-    onGenerationComplete,
-    onGenerationError,
-    onBack,
+    currentStepIndex, flowSteps, customData, userId, currentCreation,
+    repository, t, nextStep, previousStep, setCustomData,
+    onGenerationStart, onBack,
   } = props;
 
   const alert = useAlert();
-  // Guard: prevent multiple onGenerationStart calls from auto-advancing steps
-  const generationStartedRef = useRef(false);
 
-  const handleGenerationComplete = useCallback(
-    (result: unknown) => {
-      generationStartedRef.current = false;
-      setResult(result);
-      setCurrentCreation(isCreation(result) ? result : null);
-      onGenerationComplete?.(result);
-      if (!skipResultStep) nextStep();
-    },
-    [setResult, setCurrentCreation, nextStep, onGenerationComplete, skipResultStep],
-  );
+  const generation = useGenerationHandlers({
+    skipResultStep: props.skipResultStep,
+    t,
+    nextStep,
+    setResult: props.setResult,
+    setCurrentCreation: props.setCurrentCreation,
+    onGenerationComplete: props.onGenerationComplete,
+    onGenerationError: props.onGenerationError,
+    onBack,
+  });
 
-  const handleGenerationError = useCallback(
-    (errorMessage: string) => {
-      generationStartedRef.current = false;
-      const safeErrorMessage = errorMessage?.trim() || "error.generation.unknown";
-      const displayMessage = safeErrorMessage.startsWith("error.") ? t(safeErrorMessage) : safeErrorMessage;
-
-      // Classify error to determine refund eligibility
-      const errorClassification = classifyError(errorMessage);
-      const errorInfo: GenerationErrorInfo = {
-        message: safeErrorMessage,
-        shouldRefund: errorClassification.retryable ?? false,
-        errorType: errorClassification.type,
-      };
-
-      alert.show(AlertType.ERROR, AlertMode.MODAL, t("common.error"), displayMessage);
-      onGenerationError?.(safeErrorMessage, errorInfo);
-      onBack?.();
-    },
-    [alert, t, onGenerationError, onBack],
-  );
-
-  const handleDismissGenerating = useCallback(() => {
-    alert.show(AlertType.INFO, AlertMode.TOAST, t("generator.backgroundTitle"), t("generator.backgroundMessage"));
-    onBack?.();
-  }, [alert, t, onBack]);
-
-  const handleBack = useCallback(() => {
-    if (currentStepIndex === 0) onBack?.();
-    else previousStep();
-  }, [currentStepIndex, previousStep, onBack]);
-
-  const handleNextStep = useCallback((additionalData?: Record<string, unknown>) => {
-    const nextStepDef = flowSteps[currentStepIndex + 1];
-    // Merge additionalData to avoid stale closure issue
-    // When called from handlePhotoContinue, customData in closure may not include the just-set value
-    // Guard: Only merge plain objects (ignore SyntheticEvents from onPress handlers)
-    const isPlainObject = additionalData && typeof additionalData === "object" && !("nativeEvent" in additionalData) && !Array.isArray(additionalData);
-    const mergedData = isPlainObject ? { ...customData, ...additionalData } : customData;
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[handleNextStep] Called", {
-        currentStepIndex,
-        nextStepType: nextStepDef?.type,
-        nextStepId: nextStepDef?.id,
-        totalSteps: flowSteps.length,
-        hasOnGenerationStart: !!onGenerationStart,
-        dataKeys: Object.keys(mergedData),
-      });
-    }
-    if (nextStepDef?.type === StepType.GENERATING && onGenerationStart) {
-      if (generationStartedRef.current) return;
-      generationStartedRef.current = true;
-      onGenerationStart(mergedData, nextStep, handleGenerationError);
-      return;
-    }
-    nextStep();
-  }, [currentStepIndex, flowSteps, customData, onGenerationStart, nextStep, handleGenerationError]);
-
-  const handlePhotoContinue = useCallback(
-    (stepId: string, image: UploadedImage) => {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[handlePhotoContinue] Called", { stepId, hasImage: !!image, currentStepIndex });
-      }
-      setCustomData(stepId, image);
-      // Pass the just-set data to avoid stale closure issue
-      handleNextStep({ [stepId]: image });
-    },
-    [setCustomData, handleNextStep, currentStepIndex],
-  );
+  const navigation = useNavigationHandlers({
+    currentStepIndex,
+    flowSteps,
+    customData,
+    nextStep,
+    previousStep,
+    setCustomData,
+    onGenerationStart,
+    handleGenerationError: generation.handleGenerationError,
+    onBack,
+  });
 
   const handleSubmitRating = useCallback(
     async (rating: number, description: string) => {
       if (!currentCreation?.id || !userId) return;
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[handleSubmitRating] Called", { creationId: currentCreation.id, rating });
+      }
       const success = await repository.rate(userId, currentCreation.id, rating, description);
       if (success) {
-        setHasRated(true);
+        props.setHasRated(true);
         alert.show(AlertType.SUCCESS, AlertMode.TOAST, t("result.rateSuccessTitle"), t("result.rateSuccessMessage"));
       }
-      setShowRatingPicker(false);
+      props.setShowRatingPicker(false);
     },
-    [currentCreation, userId, repository, alert, t, setHasRated, setShowRatingPicker],
+    [currentCreation, userId, repository, alert, t, props.setHasRated, props.setShowRatingPicker],
   );
 
   return {
-    handleGenerationComplete,
-    handleGenerationError,
-    handleDismissGenerating,
-    handleBack,
-    handleNextStep,
-    handlePhotoContinue,
+    handleGenerationComplete: generation.handleGenerationComplete,
+    handleGenerationError: generation.handleGenerationError,
+    handleDismissGenerating: generation.handleDismissGenerating,
+    handleBack: navigation.handleBack,
+    handleNextStep: navigation.handleNextStep,
+    handlePhotoContinue: navigation.handlePhotoContinue,
     handleSubmitRating,
   };
 }

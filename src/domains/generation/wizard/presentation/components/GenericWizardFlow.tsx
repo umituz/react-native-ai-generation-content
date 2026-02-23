@@ -32,6 +32,8 @@ export interface GenericWizardFlowProps {
   readonly creditCost: number;
   /** Calculator function provided by APP - package calls this to get dynamic cost */
   readonly calculateCredits?: CreditCalculatorFn;
+  /** Called after successful generation to deduct credits — provided by the app */
+  readonly deductCredits?: (cost: number) => Promise<boolean>;
   readonly skipResultStep?: boolean;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
   readonly onGenerationStart?: (
@@ -61,6 +63,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
     alertMessages,
     creditCost,
     calculateCredits,
+    deductCredits,
     skipResultStep = false,
     onStepChange,
     onGenerationStart,
@@ -119,6 +122,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
       alertMessages={alertMessages}
       creditCost={creditCost}
       calculateCredits={calculateCredits}
+      deductCredits={deductCredits}
       skipResultStep={skipResultStep}
       onStepChange={onStepChange}
       onGenerationStart={onGenerationStart}
