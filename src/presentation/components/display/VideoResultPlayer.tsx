@@ -19,7 +19,8 @@ interface VideoResultPlayerProps {
 }
 
 export const VideoResultPlayer: React.FC<VideoResultPlayerProps> = ({ uri }) => {
-  const player = useVideoPlayer(uri, (player) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const player = useVideoPlayer(uri, (player: any) => {
     player.loop = true;
     player.play();
   });
