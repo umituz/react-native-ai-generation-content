@@ -36,6 +36,8 @@ export interface GenericWizardFlowProps {
   readonly deductCredits?: (cost: number) => Promise<boolean>;
   readonly skipResultStep?: boolean;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
+  /** When true, the GENERATING step is visible but generation waits (e.g. for prompt enhancement) */
+  readonly isPreparing?: boolean;
   readonly onGenerationStart?: (
     data: Record<string, unknown>,
     proceedToGenerating: () => void,
@@ -66,6 +68,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
     deductCredits,
     skipResultStep = false,
     onStepChange,
+    isPreparing = false,
     onGenerationStart,
     onGenerationComplete,
     onGenerationError,
@@ -124,6 +127,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
       calculateCredits={calculateCredits}
       deductCredits={deductCredits}
       skipResultStep={skipResultStep}
+      isPreparing={isPreparing}
       onStepChange={onStepChange}
       onGenerationStart={onGenerationStart}
       onGenerationComplete={onGenerationComplete}

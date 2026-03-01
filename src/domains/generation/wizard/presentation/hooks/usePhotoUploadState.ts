@@ -80,12 +80,10 @@ export const usePhotoUploadState = ({
     if (isLoading) {
       timeoutRef.current = setTimeout(() => {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.warn("[usePhotoUploadState] Image picker timeout - possible stuck state");
+          console.warn("[usePhotoUploadState] Image picker timeout - possible stuck state (DEV warning only)");
         }
-        onErrorRef.current?.({
-          title: translationsRef.current.error,
-          message: "Image selection is taking too long. Please try again.",
-        });
+        // NOTE: Do NOT call onError here — the picker may still complete successfully.
+        // Showing a modal alert while the picker is open blocks the UI.
       }, 30000);
     }
 

@@ -37,6 +37,8 @@ interface WizardFlowContentProps {
   /** Called after successful generation to deduct credits — provided by the app */
   readonly deductCredits?: (cost: number) => Promise<boolean>;
   readonly skipResultStep?: boolean;
+  /** When true, the GENERATING step is visible but generation waits (e.g. for prompt enhancement) */
+  readonly isPreparing?: boolean;
   readonly onStepChange?: (stepId: string, stepType: StepType | string) => void;
   readonly onGenerationStart?: (
     data: Record<string, unknown>,
@@ -66,6 +68,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     calculateCredits,
     deductCredits,
     skipResultStep = false,
+    isPreparing = false,
     onStepChange,
     onGenerationStart,
     onGenerationComplete,
@@ -189,6 +192,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     wizardData: customData,
     userId,
     isGeneratingStep: currentStep?.type === StepType.GENERATING,
+    isPreparing,
     alertMessages,
     creditCost: calculatedCreditCost,
     deductCredits,

@@ -26,6 +26,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     wizardData,
     userId,
     isGeneratingStep,
+    isPreparing = false,
     alertMessages,
     creditCost,
     deductCredits,
@@ -84,7 +85,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
   useEffect(() => {
     const isAlreadyGenerating = videoGeneration.isGenerating || photoGeneration.isGenerating;
 
-    if (isGeneratingStep && state.status === "IDLE" && !isAlreadyGenerating) {
+    if (isGeneratingStep && state.status === "IDLE" && !isAlreadyGenerating && !isPreparing) {
       dispatch({ type: "START_PREPARATION" });
 
       // Execute generation and handle errors properly
@@ -112,6 +113,7 @@ export const useWizardGeneration = (props: UseWizardGenerationProps): UseWizardG
     }
   }, [
     isGeneratingStep,
+    isPreparing,
     state.status,
     scenario,
     wizardData,

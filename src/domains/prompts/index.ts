@@ -54,6 +54,7 @@ export type { CreatePromptOptions } from './domain/base/types';
 
 export {
   MULTI_PERSON_PRESERVATION_RULES,
+  createMultiPersonBlock,
   createMultiPersonPrompt,
 } from './domain/entities/MultiPersonPromptStructure';
 export type { MultiPersonPreservationRules } from './domain/entities/MultiPersonPromptStructure';

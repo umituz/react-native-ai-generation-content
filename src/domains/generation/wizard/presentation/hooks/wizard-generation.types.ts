@@ -32,6 +32,8 @@ export interface UseWizardGenerationProps {
   readonly wizardData: Record<string, unknown>;
   readonly userId?: string;
   readonly isGeneratingStep: boolean;
+  /** When true, generation waits even if on GENERATING step (e.g. prompt enhancement in progress) */
+  readonly isPreparing?: boolean;
   /** Required - alert messages for error states */
   readonly alertMessages: AlertMessages;
   /** Credit cost for this generation - REQUIRED, determined by the app */

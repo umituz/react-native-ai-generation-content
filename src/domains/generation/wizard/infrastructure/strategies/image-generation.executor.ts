@@ -65,6 +65,7 @@ export async function executeImageGeneration(
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       const mode = imageUrls.length > 0 ? "Photo-based" : "Text-to-image";
       console.log(`[ImageExecutor] ${mode} generation`, { personCount: imageUrls.length });
+      console.log(`[ImageExecutor] Final prompt (${finalPrompt.length} chars):\n${finalPrompt.substring(0, 800)}${finalPrompt.length > 800 ? "\n...[truncated]" : ""}`);
     }
 
     const modelInput: Record<string, unknown> = {
