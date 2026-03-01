@@ -1,5 +1,18 @@
 import React from "react";
-import { useVideoPlayer, VideoView } from "expo-video";
+
+// expo-video is optional — module-level lazy require with null stubs
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let useVideoPlayer: (...args: any[]) => any = () => null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let VideoView: React.ComponentType<any> = () => null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const expoVideo = require("expo-video");
+  useVideoPlayer = expoVideo.useVideoPlayer;
+  VideoView = expoVideo.VideoView;
+} catch {
+  // expo-video not installed in consuming app
+}
 
 interface VideoResultPlayerProps {
   uri: string;

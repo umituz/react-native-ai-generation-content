@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-ai-generation-content",
-  "version": "1.83.70",
+  "version": "1.83.71",
   "description": "Provider-agnostic AI generation orchestration for React Native with result preview components",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -52,7 +52,6 @@
     "@umituz/react-native-subscription": "*",
     "@umituz/react-native-video-editor": "*",
     "expo": ">=54.0.0",
-    "expo-video": ">=1.0.0",
     "firebase": ">=10.0.0",
     "react": ">=19.0.0",
     "react-native": "*",
