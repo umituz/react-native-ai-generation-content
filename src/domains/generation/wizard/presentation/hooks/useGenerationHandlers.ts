@@ -3,7 +3,7 @@
  */
 
 import { useCallback } from "react";
-import { AlertType, AlertMode, useAlert } from "@umituz/react-native-design-system";
+import { AlertType, AlertMode, useAlert } from "@umituz/react-native-design-system/molecules";
 import type { Creation } from "../../../../creations/domain/entities/Creation";
 import { isCreation } from "./typeGuards";
 import { classifyError } from "../../../../../infrastructure/utils/error-classification";

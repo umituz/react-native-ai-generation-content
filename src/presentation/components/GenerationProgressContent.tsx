@@ -6,7 +6,7 @@
 
 import React from "react";
 import { View } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { ProgressCloseButton } from "./ProgressCloseButton";
 import { ProgressHeader } from "./ProgressHeader";
 import { ProgressHint } from "./ProgressHint";

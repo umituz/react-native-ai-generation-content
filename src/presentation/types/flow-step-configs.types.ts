@@ -2,7 +2,7 @@
  * Flow Step Configuration Types
  */
 
-import type { StepHeaderConfig } from "@umituz/react-native-design-system";
+import type { StepHeaderConfig } from "@umituz/react-native-design-system/molecules";
 import type { PhotoUploadCardConfig } from "../components/PhotoUploadCard";
 
 /**

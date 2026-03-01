@@ -5,7 +5,8 @@
 
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { AtomicImage, useAppDesignTokens } from "@umituz/react-native-design-system";
+import { AtomicImage } from "@umituz/react-native-design-system/image";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { ResultImageCardProps } from "../types/result-preview.types";
 
 export const ResultImageCard: React.FC<ResultImageCardProps> = ({

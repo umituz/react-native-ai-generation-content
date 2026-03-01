@@ -3,7 +3,7 @@
  * Shared photo extraction logic for wizard strategies
  */
 
-import { readFileAsBase64 } from "@umituz/react-native-design-system";
+import { readFileAsBase64 } from "@umituz/react-native-design-system/filesystem";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { Image } from "react-native";
 import { PHOTO_KEY_PREFIX } from "../wizard-strategy.constants";

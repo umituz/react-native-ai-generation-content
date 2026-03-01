@@ -12,12 +12,9 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicText,
-  AtomicIcon,
-  useSafeAreaInsets,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useSafeAreaInsets } from "@umituz/react-native-design-system/safe-area";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { ModelOptionItem } from "./ModelOptionItem";
 import type { ModelOption } from "./ModelSelector";
 

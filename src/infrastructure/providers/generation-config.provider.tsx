@@ -35,13 +35,6 @@ export interface GenerationConfigProviderProps {
 export const GenerationConfigProvider: React.FC<
   GenerationConfigProviderProps
 > = ({ children, models }) => {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    const configuredModels = Object.entries(models)
-      .filter(([, value]) => !!value)
-      .map(([key]) => key);
-    console.log("[GenerationConfigProvider] Models:", configuredModels);
-  }
-
   const getModel = useCallback((featureType: keyof GenerationModels): string => {
     const model = models[featureType];
     if (!model) {

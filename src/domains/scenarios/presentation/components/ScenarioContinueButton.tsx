@@ -6,12 +6,9 @@
 
 import React from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  useAppDesignTokens,
-  useResponsive,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useResponsive } from "@umituz/react-native-design-system/responsive";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 interface ScenarioContinueButtonProps {
   readonly canContinue: boolean;

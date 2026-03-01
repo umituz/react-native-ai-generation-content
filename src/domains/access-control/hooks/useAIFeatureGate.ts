@@ -1,10 +1,14 @@
 /**
  * AI Feature Gate Hook
- * Handles: Auth → Credits → Paywall → Execute
+ * Handles: Offline → Auth → Credits → Paywall → Execute
+ *
+ * Uses `hasFirebaseUser` for auth check — anonymous users (autoAnonymousSignIn)
+ * pass the gate and go straight to credit/subscription checks.
+ * Auth modal is only shown if there is NO Firebase user at all.
  */
 
 import { useCallback, useMemo } from "react";
-import { useOffline } from "@umituz/react-native-design-system";
+import { useOffline } from "@umituz/react-native-design-system/offline";
 import { useAuth, useAuthModalStore } from "@umituz/react-native-auth";
 import {
   usePremium,
@@ -17,33 +21,18 @@ import type {
   AIFeatureGateReturn,
 } from "../types/access-control.types";
 
-
 const handlePromiseResult = (
   result: void | Promise<void>,
   onSuccess?: () => void,
   onError?: (error: Error) => void,
 ): void => {
-  if (typeof __DEV__ !== "undefined" && __DEV__) {
-    console.log("[AIFeatureGate] handlePromiseResult - isPromise:", result instanceof Promise);
-  }
   if (result instanceof Promise) {
     result
-      .then(() => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[AIFeatureGate] Promise resolved, calling onSuccess");
-        }
-        onSuccess?.();
-      })
+      .then(() => onSuccess?.())
       .catch((err) => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[AIFeatureGate] Promise rejected:", err);
-        }
         onError?.(err instanceof Error ? err : new Error(String(err)));
       });
   } else {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[AIFeatureGate] Sync result, calling onSuccess");
-    }
     onSuccess?.();
   }
 };
@@ -77,47 +66,22 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
 
   const requireFeature = useCallback(
     (action: () => void | Promise<void>): boolean => {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[AIFeatureGate] requireFeature called:", {
-          isOffline,
-          hasFirebaseUser,
-          isCreditsLoaded,
-          isPremium,
-          creditBalance,
-          creditCost,
-          hasCredits,
-        });
-      }
-
       if (isOffline) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[AIFeatureGate] BLOCKED: User is offline");
-        }
         onNetworkError?.();
         return false;
       }
 
       if (hasFirebaseUser && !isCreditsLoaded && isCreditsLoading) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[AIFeatureGate] WAITING: Credits still loading");
-        }
         return false;
       }
 
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[AIFeatureGate] Calling requireFeatureFromPackage");
-      }
-
       const executed = requireFeatureFromPackage(() => {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.log("[AIFeatureGate] Inside requireFeatureFromPackage callback - executing action");
-        }
         handlePromiseResult(action(), onSuccess, onError);
       });
 
       return executed;
     },
-    [isOffline, hasFirebaseUser, isCreditsLoaded, isPremium, creditBalance, creditCost, hasCredits, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
+    [isOffline, hasFirebaseUser, isCreditsLoaded, isCreditsLoading, isPremium, creditBalance, creditCost, hasCredits, onNetworkError, requireFeatureFromPackage, onSuccess, onError],
   );
 
   return {
@@ -125,7 +89,7 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
     canAccess,
     isCheckingAccess: isCreditsLoading,
     hasCredits,
-    isAuthenticated: hasFirebaseUser,
+    hasFirebaseUser,
     isPremium,
     creditBalance,
     isOffline,

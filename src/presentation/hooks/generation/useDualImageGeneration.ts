@@ -4,7 +4,8 @@
  */
 
 import { useState, useCallback, useMemo } from "react";
-import { useAlert, saveImageToGallery } from "@umituz/react-native-design-system";
+import { saveImageToGallery } from "@umituz/react-native-design-system/media";
+import { useAlert } from "@umituz/react-native-design-system/molecules";
 import { useGenerationOrchestrator } from "./orchestrator";
 import { useImagePicker } from "./useImagePicker";
 import { executeMultiImageGeneration } from "../../../infrastructure/services/multi-image-generation.executor";

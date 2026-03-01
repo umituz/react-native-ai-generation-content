@@ -5,7 +5,7 @@
 
 import React from "react";
 import { TouchableOpacity } from "react-native";
-import { AtomicIcon } from "@umituz/react-native-design-system";
+import { AtomicIcon } from "@umituz/react-native-design-system/atoms";
 import { generationProgressContentStyles } from "./GenerationProgressContent.styles";
 
 interface ProgressCloseButtonProps {

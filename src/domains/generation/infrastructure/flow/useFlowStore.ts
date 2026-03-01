@@ -2,7 +2,7 @@
  * Flow Store - Zustand store for multi-step flow state management
  */
 
-import { createStore } from "@umituz/react-native-design-system";
+import { createStore } from "@umituz/react-native-design-system/storage";
 
 import type {
   FlowState,

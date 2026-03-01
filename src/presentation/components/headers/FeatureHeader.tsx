@@ -7,10 +7,8 @@
 import React from "react";
 import { View, StyleSheet, ImageBackground } from "react-native";
 import type { ImageSourcePropType } from "react-native";
-import {
-  AtomicText,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 export interface FeatureHeaderProps {
   readonly imageSource: ImageSourcePropType;

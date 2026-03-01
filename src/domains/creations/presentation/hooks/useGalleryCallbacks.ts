@@ -5,7 +5,8 @@
 
 
 import { useCallback } from "react";
-import { useAlert, AlertType, AlertMode, useSharing } from "@umituz/react-native-design-system";
+import { useAlert, AlertType, AlertMode } from "@umituz/react-native-design-system/molecules";
+import { useSharing } from "@umituz/react-native-design-system/utilities";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";

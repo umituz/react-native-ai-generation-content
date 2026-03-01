@@ -7,13 +7,7 @@ import { useState, useCallback } from "react";
 
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
-import {
-  isBase64DataUrl,
-  toDataUrl,
-  saveBase64ToFile,
-  isVideoUrl,
-  downloadMediaToFile,
-} from "@umituz/react-native-design-system";
+import { isVideoUrl, isBase64DataUrl, toDataUrl, saveBase64ToFile, downloadMediaToFile } from "@umituz/react-native-design-system/media";
 import type { UseResultActionsOptions, UseResultActionsReturn } from "../types/result-preview.types";
 
 export const useResultActions = (options: UseResultActionsOptions = {}): UseResultActionsReturn => {

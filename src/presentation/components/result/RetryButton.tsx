@@ -5,10 +5,7 @@
 
 import * as React from "react";
 import { TouchableOpacity } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
 import type { ResultActionsStyles } from "./ResultActions.styles";
 
 interface RetryButtonProps {

@@ -3,9 +3,9 @@
  * Main wizard content with generation logic
  */
 
-import React, { useMemo, useEffect, useRef, useState } from "react";
+import React, { useMemo, useEffect, useRef, useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { useFlow } from "../../../infrastructure/flow/useFlow";
 import { StepType, type StepDefinition } from "../../../../../domain/entities/flow-config.types";
 import type { WizardFeatureConfig } from "../../domain/entities/wizard-feature.types";
@@ -197,6 +197,21 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     onCreditsExhausted,
   });
 
+  // Live credit calculator: computes credits for a selection value without store round-trip
+  const handleCalculateCreditForSelection = useCallback(
+    (stepId: string, value: string | string[]) => {
+      if (!calculateCredits) return creditCost;
+      const previewData = { ...customData, [stepId]: { selection: value } };
+      const outputType = validatedScenario.outputType as "video" | "image";
+      const hasImageInput = validatedScenario.inputType !== "text";
+      const duration = extractDuration(previewData.duration) ?? getConfigDefaultDuration(featureConfig.steps as unknown as Record<string, unknown>[]);
+      const resolution = extractResolution(previewData.resolution) ?? getConfigDefaultResolution(featureConfig.steps as unknown as Record<string, unknown>[]);
+      const result = calculateCredits({ duration, resolution, outputType, hasImageInput });
+      return Number.isFinite(result) && result > 0 ? Math.ceil(result) : creditCost;
+    },
+    [customData, featureConfig.steps, calculateCredits, creditCost, validatedScenario.outputType, validatedScenario.inputType],
+  );
+
   useEffect(() => {
     if (currentStep && onStepChange && prevStepIdRef.current !== currentStep.id) {
       prevStepIdRef.current = currentStep.id;
@@ -219,6 +234,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
         onNext={handlers.handleNextStep}
         onBack={handlers.handleBack}
         onPhotoContinue={handlers.handlePhotoContinue}
+        calculateCreditForSelection={calculateCredits ? handleCalculateCreditForSelection : undefined}
         onDownload={handleDownload}
         onShare={handleShare}
         onRate={() => setShowRatingPicker(true)}

@@ -1,10 +1,7 @@
 import React, { ReactNode } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 export type NavigationButtonType = "back" | "close";
 

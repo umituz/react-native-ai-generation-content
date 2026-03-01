@@ -5,7 +5,8 @@
 
 import React, { useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet, ScrollView, type ViewStyle } from "react-native";
-import { AtomicText, useAppDesignTokens } from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { CreationType } from "../../domain/value-objects/CreationsConfig";
 
 interface FilterChipsProps {

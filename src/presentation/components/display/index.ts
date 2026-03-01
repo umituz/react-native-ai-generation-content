@@ -10,4 +10,4 @@ export {
 } from "./AIGenerationResult";
 export {
   EmptyState as ErrorDisplay,
-} from "@umituz/react-native-design-system";
+} from "@umituz/react-native-design-system/atoms";

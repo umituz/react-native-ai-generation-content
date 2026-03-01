@@ -17,6 +17,8 @@ export interface WizardStepRendererProps {
   readonly onNext: () => void;
   readonly onBack: () => void;
   readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;
+  /** Computes credit cost for a given selection value (local, no store round-trip) */
+  readonly calculateCreditForSelection?: (stepId: string, value: string | string[]) => number;
   readonly onDownload: () => void;
   readonly onShare: () => void;
   readonly onRate?: () => void;

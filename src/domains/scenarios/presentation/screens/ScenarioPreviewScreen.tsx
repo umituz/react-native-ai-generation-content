@@ -5,15 +5,11 @@
 
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  useAppDesignTokens,
-  ScreenLayout,
-  type DesignTokens,
-  HeroSection,
-  NavigationHeader,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { NavigationHeader } from "@umituz/react-native-design-system/molecules";
+import { HeroSection } from "@umituz/react-native-design-system/molecules";
+import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
+import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
 import { WizardContinueButton } from "../../../../domains/generation/wizard/presentation/components/WizardContinueButton";
 import type { ScenarioData } from "../../domain/scenario.types";
 

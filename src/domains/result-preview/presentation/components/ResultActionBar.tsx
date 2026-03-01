@@ -5,12 +5,9 @@
 
 import React, { useMemo } from "react";
 import { StyleSheet, View, TouchableOpacity, ActivityIndicator } from "react-native";
-import {
-  AtomicIcon,
-  AtomicText,
-  useAppDesignTokens,
-  useResponsive,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon, AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useResponsive } from "@umituz/react-native-design-system/responsive";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { ResultActionBarProps } from "../types/result-preview.types";
 
 export const ResultActionBar: React.FC<ResultActionBarProps> = ({

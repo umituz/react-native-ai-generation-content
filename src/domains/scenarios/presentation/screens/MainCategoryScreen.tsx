@@ -9,12 +9,9 @@ import {
   StyleSheet,
   type ListRenderItemInfo,
 } from "react-native";
-import {
-  AtomicCard,
-  useAppDesignTokens,
-  ScreenLayout,
-  type DesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicCard } from "@umituz/react-native-design-system/atoms";
+import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
+import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AIGenScreenHeader } from "../../../../presentation/components";
 import type { MainCategory } from "../../domain/category.types";

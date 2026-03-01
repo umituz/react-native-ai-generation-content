@@ -5,10 +5,8 @@
 
 import React, { useMemo } from "react";
 import { View, ScrollView } from "react-native";
-import {
-  AtomicText,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { EmptyGridState } from "./EmptyGridState";
 import { GridImageItem } from "./GridImageItem";
 import { AddMoreCard } from "./AddMoreCard";

@@ -5,11 +5,8 @@
 
 import React, { useMemo, useCallback } from "react";
 import { View, TouchableOpacity, FlatList, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { Creation } from "../../domain/entities/Creation";
 import { CreationThumbnail } from "./CreationThumbnail";
 

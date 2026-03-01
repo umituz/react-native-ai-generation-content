@@ -1,7 +1,8 @@
 
 import React from "react";
 import { View, TouchableOpacity, StyleSheet, type ViewStyle } from "react-native";
-import { AtomicText, AtomicIcon, useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
 
 interface FilterButtonConfig {
   readonly id: string;

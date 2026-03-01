@@ -5,10 +5,7 @@
 
 import React from "react";
 import { View } from "react-native";
-import {
-  AtomicText,
-  AtomicSpinner,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
 import type { PhotoUploadCardStyles } from "./PhotoUploadCard.styles";
 
 interface ValidatingContentProps {

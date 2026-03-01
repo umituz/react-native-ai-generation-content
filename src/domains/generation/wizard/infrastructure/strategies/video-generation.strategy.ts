@@ -55,8 +55,8 @@ export async function buildVideoInput(
   }
 
   return {
-    sourceImageBase64: photos[0],
-    targetImageBase64: photos[1] || photos[0],
+    sourceImageBase64: photos[0] || undefined,
+    targetImageBase64: photos[1] || photos[0] || undefined,
     prompt: finalPrompt,
     duration: extractDuration(wizardData),
     aspectRatio: extractAspectRatio(wizardData),

@@ -6,11 +6,8 @@
 import * as React from "react";
 import { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { ResultHeaderConfig } from "../../types/result-config.types";
 import { DEFAULT_RESULT_CONFIG } from "../../types/result-config.types";
 

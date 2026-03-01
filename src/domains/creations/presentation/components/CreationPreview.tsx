@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { isVideoUrl } from "@umituz/react-native-design-system";
+import { isVideoUrl } from "@umituz/react-native-design-system/media";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { CreationImagePreview } from "./CreationImagePreview";
 import { CreationVideoPreview } from "./CreationVideoPreview";

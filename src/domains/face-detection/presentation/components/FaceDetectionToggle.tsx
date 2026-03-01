@@ -6,11 +6,8 @@
 
 import React from "react";
 import { View, StyleSheet, Switch } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 interface FaceDetectionToggleProps {
   isEnabled: boolean;

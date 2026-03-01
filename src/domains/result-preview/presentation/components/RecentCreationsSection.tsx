@@ -5,12 +5,9 @@
 
 import React, { useMemo, useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity, FlatList } from "react-native";
-import {
-  AtomicText,
-  AtomicImage,
-  AtomicIcon,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { AtomicImage } from "@umituz/react-native-design-system/image";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { RecentCreation } from "../types/result-preview.types";
 
 interface RecentCreationsSectionProps {

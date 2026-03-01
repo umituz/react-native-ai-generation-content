@@ -7,12 +7,8 @@
 
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  AtomicSpinner,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { FaceValidationState } from "../../domain/entities/FaceDetection";
 import { isValidFace } from "../../infrastructure/validators/faceValidator";
 

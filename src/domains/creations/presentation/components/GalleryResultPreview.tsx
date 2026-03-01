@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { useAlert, AlertType, AlertMode } from "@umituz/react-native-design-system";
+import { useAlert, AlertType, AlertMode } from "@umituz/react-native-design-system/molecules";
 import { ResultPreviewScreen } from "../../../result-preview/presentation/components/ResultPreviewScreen";
 import { StarRatingPicker } from "../../../result-preview/presentation/components/StarRatingPicker";
 import { useResultActions } from "../../../result-preview/presentation/hooks/useResultActions";

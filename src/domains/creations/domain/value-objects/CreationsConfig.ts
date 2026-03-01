@@ -4,7 +4,7 @@
  */
 
 import type { Creation, CreationDocument } from "../entities/Creation";
-import type { FilterCategory } from "@umituz/react-native-design-system";
+import type { FilterCategory } from "@umituz/react-native-design-system/molecules";
 import type { FilterOption } from "../types/creation-filter";
 
 export interface CreationType {

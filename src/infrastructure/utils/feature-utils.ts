@@ -3,7 +3,7 @@
  * Uses ONLY configured app services - no alternatives
  */
 
-import { readFileAsBase64 } from "@umituz/react-native-design-system";
+import { readFileAsBase64 } from "@umituz/react-native-design-system/filesystem";
 import { getAuthService, getCreditService, getPaywallService, isAppServicesConfigured } from "../config/app-services.config";
 import { env } from "../config/env.config";
 

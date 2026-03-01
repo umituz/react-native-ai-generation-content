@@ -11,10 +11,8 @@ import {
   Image,
   StyleSheet,
 } from "react-native";
-import {
-  AtomicIcon,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { HintCarouselProps } from "../../domain/types";
 
 export const HintCarousel: React.FC<HintCarouselProps> = ({

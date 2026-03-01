@@ -3,7 +3,7 @@
  * Generic pending job management with TanStack Query
  */
 
-import { useQuery, useMutation, useQueryClient } from "@umituz/react-native-design-system";
+import { useQuery, useMutation, useQueryClient } from "@umituz/react-native-design-system/tanstack";
 import type {
   BackgroundJob,
   AddJobInput,

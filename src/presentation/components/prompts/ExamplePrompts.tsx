@@ -6,10 +6,8 @@
 
 import React from "react";
 import { View, ScrollView, TouchableOpacity, StyleSheet, type ViewStyle } from "react-native";
-import {
-  AtomicText,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 export interface ExamplePromptsProps {
   readonly prompts: readonly string[];

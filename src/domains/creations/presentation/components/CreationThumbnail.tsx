@@ -5,10 +5,8 @@
 
 import React, { useMemo, useState } from "react";
 import { Image, TouchableOpacity, StyleSheet, View } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicIcon,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 interface CreationThumbnailProps {
   readonly uri: string;

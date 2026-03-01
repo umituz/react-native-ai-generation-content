@@ -5,7 +5,7 @@
 
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { GenericWizardFlow } from "../../../../domains/generation/wizard/presentation/components";
 import { TEXT_TO_VIDEO_WIZARD_CONFIG } from "../../../../domains/generation/wizard/configs";
 import { useAIFeatureGate } from "../../../../domains/access-control";

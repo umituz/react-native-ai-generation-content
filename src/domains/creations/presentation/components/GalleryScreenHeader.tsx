@@ -5,7 +5,8 @@
 
 import React, { useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { useAppDesignTokens, AtomicIcon, AtomicText, type DesignTokens } from "@umituz/react-native-design-system";
+import { AtomicIcon, AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
 
 interface GalleryScreenHeaderProps {
   readonly title: string;

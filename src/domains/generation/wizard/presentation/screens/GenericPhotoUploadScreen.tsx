@@ -5,18 +5,11 @@
 
 import React, { useMemo, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  useAppDesignTokens,
-  useAlert,
-  AlertType,
-  AlertMode,
-  ScreenLayout,
-  AtomicText,
-  NavigationHeader,
-  InfoGrid,
-  type DesignTokens,
-  type InfoGridItem,
-} from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
+import { useAlert, AlertType, AlertMode, NavigationHeader, InfoGrid } from "@umituz/react-native-design-system/molecules";
+import type { InfoGridItem } from "@umituz/react-native-design-system/molecules";
+import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
 import { PhotoUploadCard } from "../../../../../presentation/components";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 import { usePhotoUploadState, type PhotoUploadError } from "../hooks/usePhotoUploadState";

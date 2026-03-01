@@ -6,7 +6,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 
-import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system";
+import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system/media";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
 export interface PhotoUploadConfig {

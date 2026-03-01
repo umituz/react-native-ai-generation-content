@@ -10,11 +10,6 @@ export interface AIFeatureGateOptions {
   creditCost: number;
 
   /**
-   * Optional feature name for analytics tracking
-   */
-  featureName?: string;
-
-  /**
    * Callback fired when network is unavailable
    */
   onNetworkError?: () => void;
@@ -54,9 +49,9 @@ export interface AIFeatureGateReturn {
   hasCredits: boolean;
 
   /**
-   * Whether user is authenticated (not anonymous)
+   * Whether user has a Firebase account (including anonymous users via autoAnonymousSignIn)
    */
-  isAuthenticated: boolean;
+  hasFirebaseUser: boolean;
 
   /**
    * Whether user has premium subscription

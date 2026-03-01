@@ -5,11 +5,8 @@
 
 import React from "react";
 import { View, TouchableOpacity, Image } from "react-native";
-import {
-  AtomicIcon,
-  AtomicText,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon, AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { ImageSelectionGridStyles } from "./ImageSelectionGrid.styles";
 
 interface GridImageItemProps {

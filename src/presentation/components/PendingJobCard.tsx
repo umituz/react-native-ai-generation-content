@@ -5,7 +5,8 @@
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { AtomicText, AtomicSpinner, useAppDesignTokens } from "@umituz/react-native-design-system";
+import { AtomicText, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { BackgroundJob } from "../../domains/background/domain/entities/job.types";
 import { ProgressBar } from "../../shared/components/common";
 import { PendingJobCardActions } from "./PendingJobCardActions";

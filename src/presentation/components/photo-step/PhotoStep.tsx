@@ -7,7 +7,7 @@
 
 import React, { useMemo } from "react";
 import { View, StyleSheet, type ViewStyle, type StyleProp } from "react-native";
-import { StepHeader } from "@umituz/react-native-design-system";
+import { StepHeader } from "@umituz/react-native-design-system/molecules";
 import { PhotoUploadCard } from "../PhotoUploadCard";
 import type { PhotoStepConfig } from "../../types/flow-config.types";
 

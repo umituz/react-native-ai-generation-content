@@ -3,7 +3,7 @@
  * Filters scenarios by sub-category with memoized calculations
  */
 
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import type { ScenarioData } from "../../domain/scenario.types";
 import type { SubCategory } from "../../domain/category.types";
 
@@ -30,42 +30,14 @@ export function useHierarchicalScenarios({
 
   const filteredScenarios = useMemo(() => {
     if (!subCategory) {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[useHierarchicalScenarios] No subCategory found", {
-          subCategoryId,
-          subCategoriesCount: subCategories.length,
-        });
-      }
       return [];
     }
 
-    const filtered = scenarios.filter((scenario) => {
+    return scenarios.filter((scenario) => {
       if (!scenario.category) return false;
       return subCategory.scenarioCategories?.includes(scenario.category) ?? false;
     });
-
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[useHierarchicalScenarios] Filtered scenarios", {
-        subCategoryId: subCategory.id,
-        scenarioCategories: subCategory.scenarioCategories,
-        totalScenarios: scenarios.length,
-        filteredCount: filtered.length,
-        sampleScenarioCategories: scenarios.slice(0, 5).map((s) => s.category),
-      });
-    }
-
-    return filtered;
-  }, [scenarios, subCategory, subCategoryId, subCategories]);
-
-  useEffect(() => {
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[useHierarchicalScenarios] State changed", {
-        subCategoryId,
-        hasSubCategory: !!subCategory,
-        filteredScenariosCount: filteredScenarios.length,
-      });
-    }
-  }, [subCategoryId, subCategory, filteredScenarios]);
+  }, [scenarios, subCategory]);
 
   return { subCategory, filteredScenarios };
 }

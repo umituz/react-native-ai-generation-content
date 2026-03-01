@@ -4,7 +4,7 @@
  */
 
 import { useCallback } from "react";
-import { AlertType, AlertMode, useAlert } from "@umituz/react-native-design-system";
+import { AlertType, AlertMode, useAlert } from "@umituz/react-native-design-system/molecules";
 import type { UseWizardFlowHandlersProps } from "./wizard-flow-handlers.types";
 import { useGenerationHandlers } from "./useGenerationHandlers";
 import { useNavigationHandlers } from "./useNavigationHandlers";

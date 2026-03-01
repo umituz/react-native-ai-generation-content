@@ -5,11 +5,8 @@
 
 import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
-import {
-  AtomicIcon,
-  AtomicText,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon, AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { PhotoUploadCardStyles } from "./PhotoUploadCard.styles";
 
 interface ImageContentProps {

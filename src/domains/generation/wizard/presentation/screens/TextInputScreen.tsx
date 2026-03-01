@@ -6,17 +6,10 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicButton,
-  useAppDesignTokens,
-  ScreenLayout,
-  NavigationHeader,
-  type DesignTokens,
-  useAlert,
-  AlertType,
-  AlertMode,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicButton } from "@umituz/react-native-design-system/atoms";
+import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
+import { useAlert, AlertType, AlertMode, NavigationHeader } from "@umituz/react-native-design-system/molecules";
+import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
 import { WizardContinueButton } from "../components/WizardContinueButton";
 import { contentModerationService } from "../../../../../domains/content-moderation";
 import type { TextInputScreenProps } from "./TextInputScreen.types";

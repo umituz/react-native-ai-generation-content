@@ -14,6 +14,8 @@ interface SelectionStepProps {
   readonly customData: Record<string, unknown>;
   readonly onBack: () => void;
   readonly onPhotoContinue: (stepId: string, image: UploadedImage) => void;
+  /** Computes credit cost for a given selection value (local, no store round-trip) */
+  readonly calculateCreditForSelection?: (stepId: string, value: string | string[]) => number;
   readonly t: (key: string) => string;
   /** Calculated credit cost from parent */
   readonly creditCost?: number;
@@ -25,6 +27,7 @@ export function renderSelectionStep({
   customData,
   onBack,
   onPhotoContinue,
+  calculateCreditForSelection,
   t,
   creditCost,
 }: SelectionStepProps): React.ReactElement {
@@ -79,6 +82,7 @@ export function renderSelectionStep({
       }}
       initialValue={initialValue}
       creditCost={creditCost}
+      calculateCreditForSelection={calculateCreditForSelection ? (value) => calculateCreditForSelection(step.id, value) : undefined}
       onBack={onBack}
       onContinue={(value) => {
         onPhotoContinue(step.id, { uri: String(value), selection: value, previewUrl: "" } as UploadedImage);

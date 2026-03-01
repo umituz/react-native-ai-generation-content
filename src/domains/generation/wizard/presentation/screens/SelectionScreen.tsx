@@ -5,14 +5,10 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  useAppDesignTokens,
-  ScreenLayout,
-  NavigationHeader,
-  type DesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { NavigationHeader } from "@umituz/react-native-design-system/molecules";
+import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
+import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
 import type { SelectionScreenProps, SelectionOption } from "./SelectionScreen.types";
 import { WizardContinueButton } from "../components/WizardContinueButton";
 
@@ -25,6 +21,7 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
   config,
   initialValue,
   creditCost,
+  calculateCreditForSelection,
   onBack,
   onContinue,
 }) => {
@@ -60,6 +57,12 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
       optionIds: options.map(o => o.id),
     });
   }
+
+  // Live credit cost based on current selection
+  const displayCreditCost = useMemo(() => {
+    if (!calculateCreditForSelection) return creditCost;
+    return calculateCreditForSelection(selected);
+  }, [calculateCreditForSelection, selected, creditCost]);
 
   const handleSelect = useCallback((optionId: string) => {
     if (isMultiSelect) {
@@ -122,7 +125,7 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
         title=""
         onBackPress={onBack}
         rightElement={
-          <WizardContinueButton canContinue={canContinue} onPress={handleContinue} label={translations.continueButton} icon="arrow-forward" creditCost={creditCost} />
+          <WizardContinueButton canContinue={canContinue} onPress={handleContinue} label={translations.continueButton} icon="arrow-forward" creditCost={displayCreditCost} />
         }
       />
       <ScreenLayout scrollable={true} edges={["left", "right"]} hideScrollIndicator={true} contentContainerStyle={styles.scrollContent}>

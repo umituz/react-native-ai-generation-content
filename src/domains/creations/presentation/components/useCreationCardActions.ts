@@ -4,7 +4,7 @@
  */
 
 import { useMemo } from "react";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { CreationCardData, CreationCardCallbacks } from "./CreationCard.types";
 import type { CreationAction } from "./CreationActions";
 

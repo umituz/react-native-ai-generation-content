@@ -4,7 +4,7 @@
  */
 
 import { useMemo } from "react";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 interface UseBorderColorParams {
   isValidating: boolean;

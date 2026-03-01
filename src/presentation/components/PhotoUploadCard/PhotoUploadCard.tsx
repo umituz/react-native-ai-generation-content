@@ -7,7 +7,7 @@
 
 import React, { useMemo } from "react";
 import { View, Pressable } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { ValidatingContent } from "./ValidatingContent";
 import { ImageContent } from "./ImageContent";
 import { PlaceholderContent } from "./PlaceholderContent";

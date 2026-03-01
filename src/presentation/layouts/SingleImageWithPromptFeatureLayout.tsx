@@ -8,11 +8,9 @@
 
 import React, { useCallback } from "react";
 import { View, ScrollView } from "react-native";
-import {
-  useAppDesignTokens,
-  useResponsive,
-  AtomicText,
-} from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useResponsive } from "@umituz/react-native-design-system/responsive";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { AIGenerationForm } from "../components/AIGenerationForm";
 import { AIGenerationResult } from "../components/display/AIGenerationResult";
 import { GenerationProgressContent } from "../components/GenerationProgressContent";

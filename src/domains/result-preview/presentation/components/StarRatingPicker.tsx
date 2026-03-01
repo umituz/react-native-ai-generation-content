@@ -5,12 +5,8 @@
 
 import React, { useState, useMemo } from "react";
 import { StyleSheet, View, TouchableOpacity, Modal, TextInput } from "react-native";
-import {
-  AtomicIcon,
-  AtomicText,
-  AtomicButton,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon, AtomicText, AtomicButton } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 interface StarRatingPickerProps {
   visible: boolean;

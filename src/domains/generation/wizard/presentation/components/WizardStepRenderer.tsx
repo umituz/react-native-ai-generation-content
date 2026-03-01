@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { extractMediaUrl, getMediaTypeFromUrl } from "@umituz/react-native-design-system";
+import { extractMediaUrl, getMediaTypeFromUrl } from "@umituz/react-native-design-system/media";
 import { StepType } from "../../../../../domain/entities/flow-config.types";
 import { GeneratingScreen } from "../screens/GeneratingScreen";
 import { ResultPreviewScreen } from "../../../../result-preview/presentation/components/ResultPreviewScreen";
@@ -27,6 +27,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
   onNext,
   onBack,
   onPhotoContinue,
+  calculateCreditForSelection,
   onDownload,
   onShare,
   onRate,
@@ -94,7 +95,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
       return renderTextInputStep({ key: step.id, step, customData, onBack, onPhotoContinue, t, alertMessages, creditCost });
 
     case StepType.FEATURE_SELECTION:
-      return renderSelectionStep({ key: step.id, step, customData, onBack, onPhotoContinue, t, creditCost });
+      return renderSelectionStep({ key: step.id, step, customData, onBack, onPhotoContinue, calculateCreditForSelection, t, creditCost });
 
     default:
       if (typeof __DEV__ !== "undefined" && __DEV__) {

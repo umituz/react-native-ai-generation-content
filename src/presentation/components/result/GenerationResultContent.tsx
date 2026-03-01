@@ -14,9 +14,7 @@ import {
   type StyleProp,
   type DimensionValue,
 } from "react-native";
-import {
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { ResultHeader } from "./ResultHeader";
 import { ResultImageCard } from "./ResultImageCard";
 import { ResultStoryCard } from "./ResultStoryCard";

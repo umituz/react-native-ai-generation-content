@@ -5,15 +5,10 @@
 
 import React, { useMemo, useCallback, useState } from "react";
 import { View, FlatList, StyleSheet, type ListRenderItemInfo } from "react-native";
-import {
-  AtomicText,
-  AtomicCard,
-  useAppDesignTokens,
-  ScreenLayout,
-  NavigationHeader,
-  AtomicSpinner,
-  type DesignTokens,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicCard, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
+import { NavigationHeader } from "@umituz/react-native-design-system/molecules";
+import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
+import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ScenarioData } from "../../domain/scenario.types";
 import type { SubCategory } from "../../domain/category.types";

@@ -5,11 +5,8 @@
 
 import React, { useMemo } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicIcon,
-  AtomicSpinner,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { isInProgress } from "../../domain/utils";
 import { shouldShowThumbnail } from "../../domain/utils/preview-helpers";

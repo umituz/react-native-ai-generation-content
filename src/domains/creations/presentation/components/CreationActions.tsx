@@ -10,11 +10,8 @@ import {
   TouchableOpacity,
   type GestureResponderEvent,
 } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicIcon,
-  AtomicSpinner,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 export interface CreationAction {
   /** Unique action identifier */

@@ -6,12 +6,8 @@
 
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
-import {
-  AtomicText,
-  useAppDesignTokens,
-  AtomicIcon,
-  AtomicSpinner,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 export interface GenerateButtonProps {
   readonly isDisabled?: boolean;

@@ -5,12 +5,8 @@
 
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  useAppDesignTokens,
-  AtomicIcon,
-  AtomicText,
-  withAlpha,
-} from "@umituz/react-native-design-system";
+import { AtomicIcon, AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens, withAlpha } from "@umituz/react-native-design-system/theme";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { getStatusColorKey, getStatusText, getTypeIcon, getTypeText } from "../../domain/utils";
 

@@ -5,7 +5,8 @@
 
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { AtomicText, useAppDesignTokens } from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 export interface PendingJobCardActionsProps {
     id: string;

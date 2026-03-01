@@ -6,7 +6,7 @@
 import * as React from "react";
 import { useMemo } from "react";
 import { View } from "react-native";
-import { useAppDesignTokens } from "@umituz/react-native-design-system";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { RetryButton } from "./RetryButton";
 import { ActionButton } from "./ActionButton";
 import { createResultActionsStyles } from "./ResultActions.styles";

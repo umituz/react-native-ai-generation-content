@@ -5,7 +5,8 @@
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { AtomicSkeleton, type DesignTokens } from "@umituz/react-native-design-system";
+import { AtomicSkeleton } from "@umituz/react-native-design-system/atoms";
+import { type DesignTokens } from "@umituz/react-native-design-system/theme";
 import { EmptyState } from "./EmptyState";
 import type { Creation } from "../../domain/entities/Creation";
 

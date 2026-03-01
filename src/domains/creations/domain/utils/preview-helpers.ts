@@ -3,7 +3,7 @@
  * Utility functions for creation preview/thumbnail extraction
  */
 
-import { isImageUrl } from "@umituz/react-native-design-system";
+import { isImageUrl } from "@umituz/react-native-design-system/media";
 import type { CreationOutput } from "../entities/Creation";
 
 // Re-export for convenience

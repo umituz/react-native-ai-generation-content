@@ -4,7 +4,8 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useOfflineStore, useAlert } from "@umituz/react-native-design-system";
+import { useAlert } from "@umituz/react-native-design-system/molecules";
+import { useOfflineStore } from "@umituz/react-native-design-system/offline";
 import { createGenerationError, getAlertMessage, parseError } from "./errors";
 import { handleModeration } from "./moderation-handler";
 import type {
@@ -34,10 +35,9 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   // callers pass inline functions (which create new references every render).
   const onSuccessRef = useRef(onSuccess);
   const onErrorRef = useRef(onError);
-  useEffect(() => {
-    onSuccessRef.current = onSuccess;
-    onErrorRef.current = onError;
-  });
+  // Update refs in render body (not useEffect) so they're always in sync — no 1-frame delay
+  onSuccessRef.current = onSuccess;
+  onErrorRef.current = onError;
 
   const offlineStore = useOfflineStore();
   const { showError, showSuccess } = useAlert();

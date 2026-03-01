@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from "react";
-import { MediaPickerService, MediaQuality } from "@umituz/react-native-design-system";
+import { MediaPickerService, MediaQuality } from "@umituz/react-native-design-system/media";
 import { prepareImage } from "../../../infrastructure/utils/feature-utils";
 
 

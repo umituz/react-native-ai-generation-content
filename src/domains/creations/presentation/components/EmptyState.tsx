@@ -5,7 +5,8 @@
 
 import React, { useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { AtomicText, AtomicIcon, useAppDesignTokens } from "@umituz/react-native-design-system";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 interface EmptyStateProps {
   readonly title: string;

@@ -6,12 +6,8 @@
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  AtomicText,
-  AtomicButton,
-  useAppDesignTokens,
-  AtomicIcon,
-} from "@umituz/react-native-design-system";
+import { AtomicText, AtomicButton, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
 export interface ResultDisplayAction {
   readonly id: string;

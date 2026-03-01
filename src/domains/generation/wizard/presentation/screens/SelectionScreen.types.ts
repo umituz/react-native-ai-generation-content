@@ -28,8 +28,10 @@ export interface SelectionScreenProps {
   readonly options: readonly SelectionOption[];
   readonly config?: SelectionScreenConfig;
   readonly initialValue?: string | string[];
-  /** Calculated credit cost - passed from parent */
+  /** Static credit cost - used when no calculator provided */
   readonly creditCost?: number;
+  /** Live credit calculator - returns credit cost for given selection value */
+  readonly calculateCreditForSelection?: (value: string | string[]) => number;
   readonly onBack: () => void;
   readonly onContinue: (selectedValue: string | string[]) => void;
 }

@@ -66,12 +66,7 @@ export type {
 
 // Orchestration
 export type {
-  CreditService, PaywallService, NetworkService, AuthService,
-  GenerationMetadata as OrchestratorGenerationMetadata, GenerationCapability as OrchestratorGenerationCapability,
-  OrchestratorConfig as GenerationOrchestratorConfig,
-} from "../infrastructure/orchestration";
-export {
-  GenerationOrchestrator, NetworkUnavailableError, InsufficientCreditsError, AuthenticationRequiredError,
+  GenerationCapability as OrchestratorGenerationCapability,
 } from "../infrastructure/orchestration";
 
 // Providers

@@ -1,11 +1,9 @@
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  AtomicText,
-  useAppDesignTokens,
-  ScreenLayout,
-  NavigationHeader,
-} from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { NavigationHeader } from "@umituz/react-native-design-system/molecules";
+import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { ResultImageCard } from "./ResultImageCard";
 import { ResultActionBar } from "./ResultActionBar";
 import { RecentCreationsSection } from "./RecentCreationsSection";

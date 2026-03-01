@@ -7,7 +7,9 @@
 
 import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
-import { useAppDesignTokens, AtomicText, ScreenLayout } from "@umituz/react-native-design-system";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { useGenerationPhase } from "../hooks/useGenerationPhase";
 import { IndeterminateProgressBar } from "../components/IndeterminateProgressBar";
 
