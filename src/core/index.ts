@@ -52,6 +52,8 @@ export type {
   VideoFeatureInputData,
   // Main Provider Interface
   IAIProvider,
+  // Logging
+  ProviderLogEntry,
 } from "../domain/interfaces/ai-provider.interface";
 
 // Generation Constants

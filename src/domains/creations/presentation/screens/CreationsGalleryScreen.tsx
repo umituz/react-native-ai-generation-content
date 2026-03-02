@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { View, FlatList, RefreshControl } from "react-native";
+import { View } from "react-native";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
 import { FilterSheet, useAppFocusEffect } from "@umituz/react-native-design-system/molecules";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
@@ -159,17 +159,21 @@ export function CreationsGalleryScreen({
   }
 
   return (
-    <ScreenLayout scrollable={false} header={screenHeader}>
-      <FlatList
-        data={filters.filtered}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={renderHeader}
-        ListEmptyComponent={renderEmpty}
-        contentContainerStyle={[styles.listContent, (!filters.filtered?.length) && styles.emptyContent]}
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => void refetch()} tintColor={tokens.colors.primary} />}
-      />
+    <ScreenLayout header={screenHeader}>
+      {renderHeader}
+      {filters.filtered.length === 0 ? (
+        <View style={[styles.listContent, styles.emptyContent]}>
+          {renderEmpty}
+        </View>
+      ) : (
+        <View style={styles.listContent}>
+          {filters.filtered.map((item) => (
+            <React.Fragment key={item.id}>
+              {renderItem({ item })}
+            </React.Fragment>
+          ))}
+        </View>
+      )}
       <FilterSheet visible={filters.statusFilterVisible} onClose={filters.closeStatusFilter} options={filters.statusFilter.filterOptions} selectedIds={[filters.statusFilter.selectedId]} onFilterPress={filters.statusFilter.selectFilter} onClearFilters={filters.statusFilter.clearFilter} title={t(config.translations.statusFilterTitle ?? "creations.filter.status")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
       <FilterSheet visible={filters.mediaFilterVisible} onClose={filters.closeMediaFilter} options={filters.mediaFilter.filterOptions} selectedIds={[filters.mediaFilter.selectedId]} onFilterPress={filters.mediaFilter.selectFilter} onClearFilters={filters.mediaFilter.clearFilter} title={t(config.translations.mediaFilterTitle ?? "creations.filter.media")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
     </ScreenLayout>

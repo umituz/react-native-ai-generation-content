@@ -94,10 +94,12 @@ export function createImageStrategy(options: CreateImageStrategyOptions): Wizard
       const result = await executeImageGeneration(imageInput, model);
 
       if (!result.success || !result.imageUrl) {
-        throw new Error(result.error || "Image generation failed");
+        const error = new Error(result.error || "Image generation failed");
+        (error as Error & { logSessionId?: string }).logSessionId = result.logSessionId;
+        throw error;
       }
 
-      return { imageUrl: result.imageUrl };
+      return { imageUrl: result.imageUrl, logSessionId: result.logSessionId };
     },
   };
 }

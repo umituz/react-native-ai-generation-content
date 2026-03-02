@@ -11,12 +11,14 @@ import {
   DEFAULT_STYLE_VALUE,
   MODEL_INPUT_DEFAULTS,
 } from "./wizard-strategy.constants";
+import { addGenerationLogs, addGenerationLog, startGenerationLogSession } from "../../../../../infrastructure/services/generation-log-store";
 
 
 interface ExecutionResult {
   success: boolean;
   imageUrl?: string;
   error?: string;
+  logSessionId?: string;
 }
 
 function formatBase64(base64: string): string {
@@ -51,22 +53,31 @@ export async function executeImageGeneration(
   model: string,
   onProgress?: (progress: number) => void,
 ): Promise<ExecutionResult> {
+  const TAG = 'ImageExecutor';
+  const startTime = Date.now();
+  const sid = startGenerationLogSession();
   const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
 
   const provider = providerRegistry.getActiveProvider();
   if (!provider?.isInitialized()) {
-    return { success: false, error: "AI provider not initialized" };
+    addGenerationLog(sid, TAG, 'Provider not initialized!', 'error');
+    return { success: false, error: "AI provider not initialized", logSessionId: sid };
   }
 
   try {
     const imageUrls = input.photos.map(formatBase64);
     const finalPrompt = buildFinalPrompt(input, imageUrls);
+    const mode = imageUrls.length > 0 ? "Photo-based" : "Text-to-image";
+    const totalImageSize = imageUrls.reduce((sum, url) => sum + url.length, 0);
 
-    if (typeof __DEV__ !== "undefined" && __DEV__) {
-      const mode = imageUrls.length > 0 ? "Photo-based" : "Text-to-image";
-      console.log(`[ImageExecutor] ${mode} generation`, { personCount: imageUrls.length });
-      console.log(`[ImageExecutor] Final prompt (${finalPrompt.length} chars):\n${finalPrompt.substring(0, 800)}${finalPrompt.length > 800 ? "\n...[truncated]" : ""}`);
-    }
+    addGenerationLog(sid, TAG, `${mode} generation starting`, 'info', {
+      model,
+      photoCount: imageUrls.length,
+      totalImageSizeKB: Math.round(totalImageSize / 1024),
+      promptLength: finalPrompt.length,
+      timeout: GENERATION_TIMEOUT_MS,
+    });
+    addGenerationLog(sid, TAG, `Prompt: ${finalPrompt.substring(0, 300)}${finalPrompt.length > 300 ? "..." : ""}`);
 
     const modelInput: Record<string, unknown> = {
       prompt: finalPrompt,
@@ -82,21 +93,46 @@ export async function executeImageGeneration(
     }
 
     let lastStatus = "";
+    addGenerationLog(sid, TAG, 'Calling provider.subscribe()...');
     const result = await provider.subscribe(model, modelInput, {
       timeoutMs: GENERATION_TIMEOUT_MS,
       onQueueUpdate: (status) => {
-        if (status.status !== lastStatus) lastStatus = status.status;
+        if (status.status !== lastStatus) {
+          lastStatus = status.status;
+        }
       },
     });
+
+    // Collect provider logs — use providerSessionId for concurrent safety
+    const providerSessionId = (result as { __providerSessionId?: string })?.__providerSessionId;
+    const providerLogs = provider.endLogSession?.(providerSessionId) ?? provider.getSessionLogs?.(providerSessionId) ?? [];
+    addGenerationLogs(sid, providerLogs);
 
     const rawResult = result as Record<string, unknown>;
     const data = (rawResult?.data ?? rawResult) as { images?: Array<{ url: string }> };
     const imageUrl = data?.images?.[0]?.url;
 
+    const elapsed = Date.now() - startTime;
     onProgress?.(100);
 
-    return imageUrl ? { success: true, imageUrl } : { success: false, error: "No image generated" };
+    if (imageUrl) {
+      addGenerationLog(sid, TAG, `Generation SUCCESS in ${elapsed}ms`, 'info', { imageUrl, elapsed });
+      return { success: true, imageUrl, logSessionId: sid };
+    }
+
+    addGenerationLog(sid, TAG, `No image in response after ${elapsed}ms`, 'error', {
+      responseKeys: Object.keys(data || {}),
+      elapsed,
+    });
+    return { success: false, error: "No image generated", logSessionId: sid };
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : "Generation failed" };
+    // Collect provider logs even on failure — no providerSessionId available in catch
+    const providerLogs = provider.endLogSession?.() ?? [];
+    addGenerationLogs(sid, providerLogs);
+
+    const elapsed = Date.now() - startTime;
+    const errorMsg = error instanceof Error ? error.message : "Generation failed";
+    addGenerationLog(sid, TAG, `Generation FAILED after ${elapsed}ms: ${errorMsg}`, 'error', { elapsed });
+    return { success: false, error: errorMsg, logSessionId: sid };
   }
 }

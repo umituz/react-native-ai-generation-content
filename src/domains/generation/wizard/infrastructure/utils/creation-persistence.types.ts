@@ -24,4 +24,6 @@ export interface CompletedCreationData {
   readonly thumbnailUrl?: string;
   /** Unix timestamp (ms) when generation was submitted; used to compute durationMs */
   readonly generationStartedAt?: number;
+  /** Log session ID for flushing session-scoped generation logs */
+  readonly logSessionId?: string;
 }

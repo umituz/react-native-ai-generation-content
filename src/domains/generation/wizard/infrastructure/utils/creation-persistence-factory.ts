@@ -20,8 +20,8 @@ export function createCreationPersistence() {
     updateToCompleted: (userId: string, creationId: string, data: CompletedCreationData) =>
       updateToCompleted(repository, userId, creationId, data),
 
-    updateToFailed: (userId: string, creationId: string, error: string) =>
-      updateToFailed(repository, userId, creationId, error),
+    updateToFailed: (userId: string, creationId: string, error: string, logSessionId?: string) =>
+      updateToFailed(repository, userId, creationId, error, logSessionId),
 
     updateRequestId: (userId: string, creationId: string, requestId: string, model: string) =>
       updateRequestId(repository, userId, creationId, requestId, model),

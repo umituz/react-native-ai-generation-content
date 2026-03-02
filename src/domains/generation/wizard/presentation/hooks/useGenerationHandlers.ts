@@ -45,7 +45,7 @@ export function useGenerationHandlers(props: UseGenerationHandlersProps) {
       const errorClassification = classifyError(errorMessage);
       const errorInfo: GenerationErrorInfo = {
         message: safeErrorMessage,
-        shouldRefund: errorClassification.retryable ?? false,
+        shouldRefund: true, // Always refund on failed generation — user should never lose credits for failed work
         errorType: errorClassification.type,
       };
 

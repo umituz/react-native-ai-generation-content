@@ -1,6 +1,11 @@
 /**
  * Photo Extraction Utilities
  * Shared photo extraction logic for wizard strategies
+ *
+ * Resize strategy:
+ * - Small images (<300px):  scale UP to 300px minimum (AI provider requirement)
+ * - Large images (>1536px): scale DOWN to 1536px maximum (reduces upload size ~10x)
+ * - Normal images:          pass through unchanged
  */
 
 import { readFileAsBase64 } from "@umituz/react-native-design-system/filesystem";
@@ -10,6 +15,7 @@ import { PHOTO_KEY_PREFIX } from "../wizard-strategy.constants";
 
 
 const MIN_IMAGE_DIMENSION = 300;
+const MAX_IMAGE_DIMENSION = 1536;
 
 /**
  * Get image dimensions from URI
@@ -21,23 +27,39 @@ function getImageSize(uri: string): Promise<{ width: number; height: number }> {
 }
 
 /**
- * Ensure image meets minimum dimensions (300x300) required by AI providers.
- * Returns the original URI if already large enough, or a resized URI.
+ * Ensure image is within optimal dimensions for AI generation.
+ * - Too small (<300px): scale up (AI providers require minimum dimensions)
+ * - Too large (>1536px): scale down (reduces upload size, prevents timeouts)
+ * - Within range: return as-is
  */
-async function ensureMinimumSize(uri: string): Promise<string> {
+async function ensureOptimalSize(uri: string): Promise<string> {
   try {
     const { width, height } = await getImageSize(uri);
+    const maxDim = Math.max(width, height);
 
-    if (width >= MIN_IMAGE_DIMENSION && height >= MIN_IMAGE_DIMENSION) {
+    // Already within optimal range
+    if (width >= MIN_IMAGE_DIMENSION && height >= MIN_IMAGE_DIMENSION && maxDim <= MAX_IMAGE_DIMENSION) {
       return uri;
     }
 
-    const scale = Math.max(MIN_IMAGE_DIMENSION / width, MIN_IMAGE_DIMENSION / height);
-    const newWidth = Math.ceil(width * scale);
-    const newHeight = Math.ceil(height * scale);
+    let newWidth: number;
+    let newHeight: number;
+
+    if (maxDim > MAX_IMAGE_DIMENSION) {
+      // Scale DOWN — largest dimension becomes MAX_IMAGE_DIMENSION
+      const scale = MAX_IMAGE_DIMENSION / maxDim;
+      newWidth = Math.round(width * scale);
+      newHeight = Math.round(height * scale);
+    } else {
+      // Scale UP — smallest dimension becomes MIN_IMAGE_DIMENSION
+      const scale = Math.max(MIN_IMAGE_DIMENSION / width, MIN_IMAGE_DIMENSION / height);
+      newWidth = Math.ceil(width * scale);
+      newHeight = Math.ceil(height * scale);
+    }
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.log("[PhotoExtraction] Resizing small image", {
+      const direction = maxDim > MAX_IMAGE_DIMENSION ? "down" : "up";
+      console.log(`[PhotoExtraction] Resizing ${direction}`, {
         from: `${width}x${height}`,
         to: `${newWidth}x${newHeight}`,
       });
@@ -45,7 +67,7 @@ async function ensureMinimumSize(uri: string): Promise<string> {
 
     const result = await manipulateAsync(uri, [{ resize: { width: newWidth, height: newHeight } }], {
       format: SaveFormat.JPEG,
-      compress: 0.9,
+      compress: maxDim > MAX_IMAGE_DIMENSION ? 0.8 : 0.9,
     });
 
     return result.uri;
@@ -105,8 +127,8 @@ export async function extractPhotosAsBase64(
   const results = await Promise.allSettled(
     photoUris.map(async (uri, index) => {
       try {
-        const resizedUri = await ensureMinimumSize(uri);
-        return await readFileAsBase64(resizedUri);
+        const optimizedUri = await ensureOptimalSize(uri);
+        return await readFileAsBase64(optimizedUri);
       } catch (error) {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.error(`[PhotoExtraction] Failed to read photo ${index}:`, error);

@@ -111,6 +111,7 @@ export const GenericPhotoUploadScreen: React.FC<PhotoUploadScreenProps> = ({
       { key: "photoUpload.tips.goodLighting", icon: "sunny-outline" },
       { key: "photoUpload.tips.recentPhoto", icon: "time-outline" },
       { key: "photoUpload.tips.noFilters", icon: "image-outline" },
+      { key: "photoUpload.tips.useWifi", icon: "wifi-outline" },
     ];
     return tipKeys.map(({ key, icon }) => ({ text: t(key), icon }));
   }, [t]);

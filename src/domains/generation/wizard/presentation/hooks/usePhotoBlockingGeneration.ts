@@ -48,10 +48,11 @@ export function usePhotoBlockingGeneration(
   } = props;
 
   const creationIdRef = useRef<string | null>(null);
+  const logSessionIdRef = useRef<string | undefined>(undefined);
 
   const handleSuccess = useCallback(
     async (result: unknown) => {
-      const typedResult = result as { imageUrl?: string; videoUrl?: string };
+      const typedResult = result as { imageUrl?: string; videoUrl?: string; logSessionId?: string };
       const creationId = creationIdRef.current;
 
       if (creationId && userId) {
@@ -60,6 +61,7 @@ export function usePhotoBlockingGeneration(
             uri: typedResult.imageUrl || typedResult.videoUrl || "",
             imageUrl: typedResult.imageUrl,
             videoUrl: typedResult.videoUrl,
+            logSessionId: typedResult.logSessionId,
           });
         } catch (err) {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -85,12 +87,13 @@ export function usePhotoBlockingGeneration(
   );
 
   const handleError = useCallback(
-    async (err: { message: string }) => {
+    async (err: { message: string; originalError?: Error & { logSessionId?: string } }) => {
       const creationId = creationIdRef.current;
+      const logSessionId = err.originalError?.logSessionId;
 
       if (creationId && userId) {
         try {
-          await persistence.updateToFailed(userId, creationId, err.message);
+          await persistence.updateToFailed(userId, creationId, err.message, logSessionId);
         } catch (updateErr) {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
             console.error("[PhotoBlockingGeneration] updateToFailed error:", updateErr);

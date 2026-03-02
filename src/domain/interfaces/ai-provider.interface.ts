@@ -42,6 +42,9 @@ export type {
   VideoFeatureInputData,
 } from "./ai-provider-input.types";
 
+// Lifecycle & Logging
+export type { ProviderLogEntry } from "./provider-lifecycle.interface";
+
 // Main Interface Composition (Interface Segregation Principle)
 import type { IAIProviderLifecycle } from "./provider-lifecycle.interface";
 import type { IAIProviderCapabilities } from "./provider-capabilities.interface";

@@ -12,6 +12,7 @@ import type {
 import type { GenerationResult } from "../../../../domain/entities/generation.types";
 import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { env } from "../../../../infrastructure/config/env.config";
+import { addGenerationLogs, addGenerationLog, startGenerationLogSession } from "../../../../infrastructure/services/generation-log-store";
 
 
 export class ImageExecutor
@@ -22,46 +23,39 @@ export class ImageExecutor
     input: ImageGenerationInput,
     options?: GenerationOptions,
   ): Promise<GenerationResult<ImageGenerationOutput>> {
+    const TAG = 'GenericImageExecutor';
+    const startTime = Date.now();
+    const sid = startGenerationLogSession();
+
     try {
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[ImageExecutor] Starting generation", {
-          model,
-          hasImages: !!input.imageUrls,
-          imageCount: input.imageUrls?.length || 0,
-          promptLength: input.prompt?.length || 0,
-        });
-      }
+      const totalImageSize = input.imageUrls?.reduce((sum, url) => sum + url.length, 0) ?? 0;
+      addGenerationLog(sid, TAG, 'Starting generation', 'info', {
+        model,
+        imageCount: input.imageUrls?.length || 0,
+        totalImageSizeKB: Math.round(totalImageSize / 1024),
+        promptLength: input.prompt?.length || 0,
+      });
 
       const provider = providerRegistry.getActiveProvider();
 
       if (!provider?.isInitialized()) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error("[ImageExecutor] Provider not initialized");
-        }
+        addGenerationLog(sid, TAG, 'Provider not initialized!', 'error');
         return { success: false, error: "AI provider not initialized" };
       }
 
       options?.onProgress?.(5);
-
       const modelInput = this.buildModelInput(input);
-
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[ImageExecutor] Model input prepared", {
-          imageCount: modelInput.image_urls?.length || 0,
-          aspectRatio: modelInput.aspect_ratio,
-          outputFormat: modelInput.output_format,
-        });
-      }
+      addGenerationLog(sid, TAG, 'Model input prepared', 'info', {
+        imageCount: modelInput.image_urls?.length || 0,
+        aspectRatio: modelInput.aspect_ratio,
+      });
 
       options?.onProgress?.(10);
+      addGenerationLog(sid, TAG, 'Calling provider.subscribe()...');
 
       const result = await provider.subscribe(model, modelInput, {
         timeoutMs: options?.timeoutMs ?? env.generationImageTimeoutMs,
         onQueueUpdate: (status) => {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[ImageExecutor] Queue status:", status.status);
-          }
-
           if (status.status === "IN_QUEUE") {
             options?.onProgress?.(20);
           } else if (status.status === "IN_PROGRESS") {
@@ -70,37 +64,34 @@ export class ImageExecutor
         },
       });
 
-      options?.onProgress?.(90);
+      // Collect provider logs — use providerSessionId for concurrent safety
+      const providerSessionId = (result as { __providerSessionId?: string })?.__providerSessionId;
+      const providerLogs = provider.endLogSession?.(providerSessionId) ?? provider.getSessionLogs?.(providerSessionId) ?? [];
+      addGenerationLogs(sid, providerLogs);
 
+      options?.onProgress?.(90);
       const imageUrl = this.extractImageUrl(result);
+      const elapsed = Date.now() - startTime;
 
       if (!imageUrl) {
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error("[ImageExecutor] No image URL in response");
-        }
+        addGenerationLog(sid, TAG, `No image URL in response after ${elapsed}ms`, 'error');
         return { success: false, error: "No image generated" };
       }
 
       options?.onProgress?.(100);
-
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[ImageExecutor] Generation successful", {
-          imageUrl: imageUrl.slice(0, 100),
-        });
-      }
-
+      addGenerationLog(sid, TAG, `Generation SUCCESS in ${elapsed}ms`, 'info', { imageUrl, elapsed });
       return { success: true, data: { imageUrl } };
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Generation failed";
-
-      if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.error("[ImageExecutor] Generation error:", {
-          message,
-          error,
-        });
+      // Collect provider logs even on failure — no providerSessionId available in catch
+      const provider = providerRegistry.getActiveProvider();
+      if (provider) {
+        const providerLogs = provider.endLogSession?.() ?? [];
+        addGenerationLogs(sid, providerLogs);
       }
 
+      const elapsed = Date.now() - startTime;
+      const message = error instanceof Error ? error.message : "Generation failed";
+      addGenerationLog(sid, TAG, `Generation FAILED after ${elapsed}ms: ${message}`, 'error', { elapsed });
       return { success: false, error: message };
     }
   }
