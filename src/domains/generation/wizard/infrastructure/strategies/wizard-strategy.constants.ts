@@ -5,8 +5,11 @@
 
 import { env } from "../../../../../infrastructure/config/env.config";
 
-/** Generation timeout in milliseconds */
+/** Generation timeout in milliseconds (image) */
 export const GENERATION_TIMEOUT_MS = env.generationImageTimeoutMs;
+
+/** Video generation timeout in milliseconds */
+export const VIDEO_GENERATION_TIMEOUT_MS = env.generationVideoTimeoutMs;
 
 /** Base64 image format prefix */
 export const BASE64_IMAGE_PREFIX = "data:image/jpeg;base64,";

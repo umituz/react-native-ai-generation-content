@@ -7,7 +7,7 @@
 
 import type { WizardVideoInput } from "./video-generation.types";
 import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
-import { GENERATION_TIMEOUT_MS, BASE64_IMAGE_PREFIX } from "./wizard-strategy.constants";
+import { VIDEO_GENERATION_TIMEOUT_MS, BASE64_IMAGE_PREFIX } from "./wizard-strategy.constants";
 import { createGenerationError, GenerationErrorType } from "../../../../../infrastructure/utils/error-factory";
 
 
@@ -91,7 +91,7 @@ export async function executeVideoGeneration(
 
     let lastStatus = "";
     const result = await provider.subscribe(model, modelInput, {
-      timeoutMs: GENERATION_TIMEOUT_MS,
+      timeoutMs: VIDEO_GENERATION_TIMEOUT_MS,
       onQueueUpdate: (status) => {
         if (status.status !== lastStatus) {
           lastStatus = status.status;
