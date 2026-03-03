@@ -6,7 +6,7 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { AtomicIcon, AtomicText } from "@umituz/react-native-design-system/atoms";
-import { useAppDesignTokens, withAlpha } from "@umituz/react-native-design-system/theme";
+import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import type { CreationStatus, CreationTypeId } from "../../domain/types";
 import { getStatusColorKey, getStatusText, getTypeIcon, getTypeText } from "../../domain/utils";
 
@@ -49,21 +49,21 @@ export function CreationBadges({
           right: 8,
           flexDirection: "row",
           alignItems: "center",
-          paddingHorizontal: 8,
-          paddingVertical: 4,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
           borderRadius: 12,
-          backgroundColor: withAlpha(statusColor, 0.2),
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
         },
         statusDot: {
           width: 6,
           height: 6,
           borderRadius: 3,
-          marginRight: 4,
+          marginRight: 5,
           backgroundColor: statusColor,
         },
         statusText: {
-          fontSize: 10,
-          fontWeight: "600",
+          fontSize: 11,
+          fontWeight: "700",
           textTransform: "capitalize",
           color: statusColor,
         },
@@ -73,17 +73,17 @@ export function CreationBadges({
           left: 8,
           flexDirection: "row",
           alignItems: "center",
-          paddingHorizontal: 8,
-          paddingVertical: 4,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
           borderRadius: 12,
-          backgroundColor: tokens.colors.modalOverlay,
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
           gap: 4,
+          maxWidth: "70%",
         },
         typeText: {
-          fontSize: 10,
-          fontWeight: "600",
-          color: tokens.colors.textInverse,
-          textTransform: "capitalize",
+          fontSize: 11,
+          fontWeight: "700",
+          color: "#FFFFFF",
         },
       }),
     [statusColor, tokens]
@@ -101,7 +101,7 @@ export function CreationBadges({
       {showType && type && (
         <View style={styles.typeBadge}>
           <AtomicIcon name={typeIcon} color="textInverse" size="xs" />
-          <AtomicText style={styles.typeText}>{displayTypeText}</AtomicText>
+          <AtomicText style={styles.typeText} numberOfLines={1}>{displayTypeText}</AtomicText>
         </View>
       )}
     </>
