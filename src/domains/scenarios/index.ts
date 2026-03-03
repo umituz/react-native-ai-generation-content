@@ -8,7 +8,6 @@
 export type {
   ScenarioOutputType,
   ScenarioInputType,
-  ScenarioPromptType,
   GeneratingMessages,
   Scenario,
 } from "./domain/Scenario";

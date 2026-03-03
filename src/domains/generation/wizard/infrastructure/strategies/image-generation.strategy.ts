@@ -6,7 +6,6 @@
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { DEFAULT_STYLE_VALUE, IMAGE_PROCESSING_PROMPTS } from "./wizard-strategy.constants";
-import type { InteractionStyle } from "../../../../prompts/infrastructure/builders/interaction-style-builder";
 import { extractPrompt, extractSelection } from "../utils";
 import { extractPhotosAsBase64 } from "./shared/photo-extraction.utils";
 import { executeImageGeneration } from "./image-generation.executor";
@@ -44,10 +43,8 @@ export async function buildImageInput(
   // Extract style for text-to-image
   const styleValue = extractSelection(wizardData.style);
   const style = typeof styleValue === "string" ? styleValue : undefined;
-  const interactionStyle = scenario.interactionStyle as InteractionStyle | undefined;
-  const promptType = scenario.promptType;
 
-  return { photos, prompt: finalPrompt, style, interactionStyle, promptType };
+  return { photos, prompt: finalPrompt, style };
 }
 
 /**

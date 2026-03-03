@@ -4,7 +4,7 @@
  */
 
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
-import type { ScenarioInputType, ScenarioPromptType } from "../../../../scenarios/domain/Scenario";
+import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
 import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 
 export type WizardOutputType = "image" | "video";
@@ -15,8 +15,6 @@ export interface WizardScenarioData {
   readonly outputType?: WizardOutputType;
   /** Input type - determines required photo count. Default: "single" */
   readonly inputType?: ScenarioInputType;
-  /** Prompt type - identity preservation or genetic blend */
-  readonly promptType?: ScenarioPromptType;
   readonly model?: string;
   readonly title?: string;
   readonly description?: string;

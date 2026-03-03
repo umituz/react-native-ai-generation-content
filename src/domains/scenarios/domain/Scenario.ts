@@ -8,13 +8,6 @@ export type ScenarioOutputType = "image" | "video";
 
 export type ScenarioInputType = "single" | "dual" | "text";
 
-/**
- * Prompt type determines how multi-person prompts are built
- * - identity: Preserve exact facial features from input photos (default)
- * - custom: Use aiPrompt as-is without adding identity preservation (for app-specific scenarios)
- */
-export type ScenarioPromptType = "identity" | "custom";
-
 export interface GeneratingMessages {
   title?: string;
   waitMessage?: string;
@@ -39,7 +32,6 @@ export interface Scenario {
   hidden?: boolean;
   outputType?: ScenarioOutputType;
   inputType?: ScenarioInputType;
-  promptType?: ScenarioPromptType;
   model?: string;
   enabled?: boolean;
   generatingMessages?: GeneratingMessages;

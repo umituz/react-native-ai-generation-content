@@ -3,16 +3,14 @@
  * Handles the actual image generation execution
  */
 
-import { buildUnifiedPrompt } from "./shared/unified-prompt-builder";
 import type { WizardImageInput } from "./image-generation.types";
 import {
   GENERATION_TIMEOUT_MS,
   BASE64_IMAGE_PREFIX,
-  DEFAULT_STYLE_VALUE,
   MODEL_INPUT_DEFAULTS,
 } from "./wizard-strategy.constants";
+import { createPhotorealisticPrompt } from "../../../../prompts/domain/base/creators";
 import { addGenerationLogs, addGenerationLog, startGenerationLogSession } from "../../../../../infrastructure/services/generation-log-store";
-
 
 interface ExecutionResult {
   success: boolean;
@@ -23,29 +21,6 @@ interface ExecutionResult {
 
 function formatBase64(base64: string): string {
   return base64.startsWith("data:") ? base64 : `${BASE64_IMAGE_PREFIX}${base64}`;
-}
-
-function buildFinalPrompt(input: WizardImageInput, imageUrls: string[]): string {
-  const hasPhotos = imageUrls.length > 0;
-
-  if (hasPhotos) {
-    // Custom prompt type means app provides complete prompt - skip identity preservation
-    const skipIdentityPreservation = input.promptType === "custom";
-
-    return buildUnifiedPrompt({
-      basePrompt: input.prompt,
-      photoCount: imageUrls.length,
-      interactionStyle: input.interactionStyle,
-      skipIdentityPreservation,
-    });
-  }
-
-  // Text-to-image with optional style
-  if (input.style && input.style !== DEFAULT_STYLE_VALUE) {
-    return `${input.prompt}. Style: ${input.style}`;
-  }
-
-  return input.prompt;
 }
 
 export async function executeImageGeneration(
@@ -66,7 +41,17 @@ export async function executeImageGeneration(
 
   try {
     const imageUrls = input.photos.map(formatBase64);
-    const finalPrompt = buildFinalPrompt(input, imageUrls);
+
+    // Photo-based: prompt is already complete (app builds it with Gemini analysis + scenario)
+    // Text-only: wrap with photorealistic style
+    const finalPrompt = imageUrls.length > 0
+      ? input.prompt
+      : createPhotorealisticPrompt(input.prompt, {
+          includeIdentityPreservation: false,
+          includePhotoRealism: true,
+          includePoseGuidelines: true,
+        });
+
     const mode = imageUrls.length > 0 ? "Photo-based" : "Text-to-image";
     const totalImageSize = imageUrls.reduce((sum, url) => sum + url.length, 0);
 

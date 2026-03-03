@@ -14,9 +14,3 @@ PROHIBITED: No anime, cartoons, illustrations, sketches, 3D renders, paintings, 
 
 export const NATURAL_POSE_GUIDELINES = `POSE: Natural, relaxed body language appropriate to the scenario context.
 AVOID: No absurd poses, unnatural contortions, or physically impossible positions.`;
-
-export const MASTER_BASE_PROMPT = `${IDENTITY_PRESERVATION_CORE}
-
-${PHOTOREALISTIC_RENDERING}
-
-${NATURAL_POSE_GUIDELINES}`;
