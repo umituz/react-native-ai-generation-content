@@ -6,7 +6,6 @@ let useVideoPlayer: (...args: any[]) => any = () => null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let VideoView: React.ComponentType<any> = () => null;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const expoVideo = require("expo-video");
   useVideoPlayer = expoVideo.useVideoPlayer;
   VideoView = expoVideo.VideoView;

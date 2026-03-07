@@ -57,5 +57,9 @@ export {
   getTranslatedTypes,
 } from "./presentation/utils/gallery-filters";
 
+// Stats
+export { useCreationsStats } from "./presentation/hooks/useCreationsStats";
+export type { CreationsStats } from "./presentation/hooks/useCreationsStats";
+
 // Screens
 export { CreationsGalleryScreen } from "./presentation/screens/CreationsGalleryScreen";

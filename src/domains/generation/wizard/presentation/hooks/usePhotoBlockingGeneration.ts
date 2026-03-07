@@ -48,7 +48,6 @@ export function usePhotoBlockingGeneration(
   } = props;
 
   const creationIdRef = useRef<string | null>(null);
-  const logSessionIdRef = useRef<string | undefined>(undefined);
 
   const handleSuccess = useCallback(
     async (result: unknown) => {

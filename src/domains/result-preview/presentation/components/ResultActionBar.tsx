@@ -23,6 +23,8 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
   iconOnly = false,
   showTryAgain = true,
   showRating = false,
+  onEdit,
+  onEditVideo,
 }) => {
   const tokens = useAppDesignTokens();
   const { minTouchTarget } = useResponsive();
@@ -112,6 +114,24 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
             activeOpacity={0.7}
           >
             <AtomicIcon name="star-outline" customSize={20} color="onPrimary" />
+          </TouchableOpacity>
+        )}
+        {onEdit && (
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={onEdit}
+            activeOpacity={0.7}
+          >
+            <AtomicIcon name="edit" customSize={20} color="onPrimary" />
+          </TouchableOpacity>
+        )}
+        {onEditVideo && (
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={onEditVideo}
+            activeOpacity={0.7}
+          >
+            <AtomicIcon name="video" customSize={20} color="onPrimary" />
           </TouchableOpacity>
         )}
       </View>

@@ -19,6 +19,8 @@ interface GalleryHeaderProps {
   readonly filterButtons?: FilterButtonConfig[];
   readonly showFilter?: boolean;
   readonly style?: ViewStyle;
+  readonly viewMode?: "list" | "grid";
+  readonly onViewModeChange?: (mode: "list" | "grid") => void;
 }
 
 const EMPTY_FILTER_BUTTONS: FilterButtonConfig[] = [];
@@ -29,13 +31,15 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   filterButtons = EMPTY_FILTER_BUTTONS,
   showFilter = true,
   style,
+  viewMode = "list",
+  onViewModeChange,
 }: GalleryHeaderProps) => {
   const tokens = useAppDesignTokens();
   const styles = useStyles(tokens);
 
   return (
     <View style={[styles.headerArea, style]}>
-      <View>
+      <View style={styles.leftSection}>
         {title ? (
           <View style={styles.titleRow}>
             <AtomicText style={styles.title}>{title}</AtomicText>
@@ -45,35 +49,59 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
           {countLabel}
         </AtomicText>
       </View>
-      {showFilter && filterButtons.length > 0 && (
-        <View style={styles.filterRow}>
-          {filterButtons.map((btn: FilterButtonConfig) => (
+
+      <View style={styles.rightSection}>
+        {showFilter && filterButtons.length > 0 && (
+          <View style={styles.filterRow}>
+            {filterButtons.map((btn: FilterButtonConfig) => (
+              <TouchableOpacity
+                key={btn.id}
+                onPress={btn.onPress}
+                style={[styles.filterButton, btn.isActive && styles.filterButtonActive]}
+                activeOpacity={0.7}
+              >
+                <AtomicIcon
+                  name={btn.icon}
+                  size="sm"
+                  color={btn.isActive ? "primary" : "secondary"}
+                />
+                <AtomicText
+                  style={[styles.filterText, { color: btn.isActive ? tokens.colors.primary : tokens.colors.textSecondary }]}
+                >
+                  {btn.label}
+                </AtomicText>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {onViewModeChange && (
+          <View style={styles.viewToggle}>
             <TouchableOpacity
-              key={btn.id}
-              onPress={() => {
-                if (__DEV__) {
-                   
-                  console.log(`[GalleryHeader] ${btn.id} filter pressed`);
-                }
-                btn.onPress();
-              }}
-              style={[styles.filterButton, btn.isActive && styles.filterButtonActive]}
+              onPress={() => onViewModeChange("list")}
+              style={[styles.toggleBtn, viewMode === "list" && styles.toggleBtnActive]}
               activeOpacity={0.7}
             >
               <AtomicIcon
-                name={btn.icon}
+                name="list-outline"
                 size="sm"
-                color={btn.isActive ? "primary" : "secondary"}
+                color={viewMode === "list" ? "primary" : "secondary"}
               />
-              <AtomicText
-                style={[styles.filterText, { color: btn.isActive ? tokens.colors.primary : tokens.colors.textSecondary }]}
-              >
-                {btn.label}
-              </AtomicText>
             </TouchableOpacity>
-          ))}
-        </View>
-      )}
+            <TouchableOpacity
+              onPress={() => onViewModeChange("grid")}
+              style={[styles.toggleBtn, viewMode === "grid" && styles.toggleBtnActive]}
+              activeOpacity={0.7}
+            >
+              <AtomicIcon
+                name="grid-outline"
+                size="sm"
+                color={viewMode === "grid" ? "primary" : "secondary"}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -87,6 +115,14 @@ const useStyles = (tokens: DesignTokens) =>
       paddingHorizontal: tokens.spacing.md,
       paddingVertical: tokens.spacing.sm,
       marginBottom: tokens.spacing.sm,
+    },
+    leftSection: {
+      flex: 1,
+    },
+    rightSection: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: tokens.spacing.sm,
     },
     titleRow: {
       flexDirection: "row",
@@ -126,5 +162,22 @@ const useStyles = (tokens: DesignTokens) =>
     filterText: {
       fontSize: 13,
       fontWeight: "500",
+    },
+    viewToggle: {
+      flexDirection: "row",
+      gap: 2,
+      backgroundColor: tokens.colors.surfaceVariant,
+      borderRadius: 8,
+      padding: 2,
+    },
+    toggleBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 6,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    toggleBtnActive: {
+      backgroundColor: tokens.colors.surface,
     },
   });

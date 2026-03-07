@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { View } from "react-native";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
 import { FilterSheet, useAppFocusEffect } from "@umituz/react-native-design-system/molecules";
@@ -9,7 +9,7 @@ import { useProcessingJobsPoller } from "../hooks/useProcessingJobsPoller";
 import { useGalleryFilters } from "../hooks/useGalleryFilters";
 import { useGalleryCallbacks } from "../hooks/useGalleryCallbacks";
 import { useGalleryState } from "../hooks/useGalleryState";
-import { GalleryHeader, CreationCard, GalleryEmptyStates } from "../components";
+import { GalleryHeader, CreationCard, CreationCardCompact, GalleryEmptyStates } from "../components";
 import { GalleryResultPreview } from "../components/GalleryResultPreview";
 import { GalleryScreenHeader } from "../components/GalleryScreenHeader";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
@@ -32,8 +32,11 @@ export function CreationsGalleryScreen({
   onTryAgain,
   getCreationTitle,
   onCreationPress,
+  onEdit,
+  onEditVideo,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
   const deleteMutation = useDeleteCreation({ userId, repository });
@@ -89,18 +92,43 @@ export function CreationsGalleryScreen({
     [config.types, t, getCreationTitle]
   );
 
+  const getItemCallbacks = useCallback((item: Creation) => ({
+    onPress: () => onCreationPress ? onCreationPress(item) : callbacks.handleCardPress(item),
+    onShare: async () => callbacks.handleShareCard(item),
+    onDelete: () => callbacks.handleDelete(item),
+    onFavorite: () => callbacks.handleFavorite(item),
+  }), [callbacks, onCreationPress]);
+
   const renderItem = useCallback(({ item }: { item: Creation }) => (
     <CreationCard
       creation={item}
       titleText={getItemTitle(item)}
-      callbacks={{
-        onPress: () => onCreationPress ? onCreationPress(item) : callbacks.handleCardPress(item),
-        onShare: async () => callbacks.handleShareCard(item),
-        onDelete: () => callbacks.handleDelete(item),
-        onFavorite: () => callbacks.handleFavorite(item),
-      }}
+      callbacks={getItemCallbacks(item)}
     />
-  ), [callbacks, getItemTitle, onCreationPress]);
+  ), [getItemTitle, getItemCallbacks]);
+
+  const renderGridItems = useCallback((items: Creation[]) => {
+    const rows: Array<{ left: Creation; right: Creation | null }> = [];
+    for (let i = 0; i < items.length; i += 2) {
+      rows.push({ left: items[i], right: items[i + 1] ?? null });
+    }
+    return rows.map((row, index) => (
+      <View key={`grid-row-${index}`} style={styles.gridRow}>
+        <CreationCardCompact
+          creation={row.left}
+          callbacks={{ onPress: getItemCallbacks(row.left).onPress }}
+        />
+        {row.right ? (
+          <CreationCardCompact
+            creation={row.right}
+            callbacks={{ onPress: getItemCallbacks(row.right).onPress }}
+          />
+        ) : (
+          <View style={styles.gridPlaceholder} />
+        )}
+      </View>
+    ));
+  }, [getItemCallbacks]);
 
   const hasScreenHeader = Boolean(onBack);
 
@@ -115,10 +143,12 @@ export function CreationsGalleryScreen({
           countLabel={`${filters.filtered.length} ${t(config.translations.photoCount)}`}
           showFilter={showFilter}
           filterButtons={filterButtons}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
       </View>
     );
-  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, tokens, hasScreenHeader]);
+  }, [creations, isLoading, filters.filtered.length, showFilter, filterButtons, t, config, tokens, hasScreenHeader, viewMode]);
 
   const renderEmpty = useMemo(() => (
     <GalleryEmptyStates
@@ -154,6 +184,8 @@ export function CreationsGalleryScreen({
         onRate={callbacks.handleOpenRatingPicker}
         onSubmitRating={callbacks.handleSubmitRating}
         onCloseRating={() => galleryState.setShowRatingPicker(false)}
+        onEdit={onEdit}
+        onEditVideo={onEditVideo}
       />
     );
   }
@@ -164,6 +196,10 @@ export function CreationsGalleryScreen({
       {filters.filtered.length === 0 ? (
         <View style={[styles.listContent, styles.emptyContent]}>
           {renderEmpty}
+        </View>
+      ) : viewMode === "grid" ? (
+        <View style={styles.gridContent}>
+          {renderGridItems(filters.filtered)}
         </View>
       ) : (
         <View style={styles.listContent}>

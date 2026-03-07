@@ -22,4 +22,8 @@ export interface CreationsGalleryScreenProps {
   readonly getCreationTitle?: (creation: { type: string; metadata?: Record<string, unknown> }) => string;
   /** Custom handler when a creation card is pressed. When provided, overrides the built-in preview. */
   readonly onCreationPress?: (creation: { id: string; uri: string; type: string; originalUri?: string; output?: { imageUrl?: string; videoUrl?: string }; metadata?: Record<string, unknown> }) => void;
+  /** Called when the user taps the Edit button in the creation detail view. Receives the image URL. Only shown for image creations. */
+  readonly onEdit?: (imageUrl: string) => void;
+  /** Called when the user taps the Edit button in the creation detail view. Receives the video URL. Only shown for video creations. */
+  readonly onEditVideo?: (videoUrl: string) => void;
 }

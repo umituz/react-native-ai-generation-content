@@ -22,6 +22,10 @@ export interface ResultPreviewScreenProps {
   onTryAgain: () => void;
   onNavigateBack: () => void;
   onRate?: () => void;
+  /** Edit callback — opens photo editor for the result image */
+  onEdit?: () => void;
+  /** Edit video callback — opens video editor for the result video */
+  onEditVideo?: () => void;
   /** Recent creations to display */
   recentCreations?: readonly RecentCreation[];
   /** Navigate to all creations */

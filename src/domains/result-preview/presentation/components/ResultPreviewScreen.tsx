@@ -21,6 +21,8 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   onTryAgain,
   onNavigateBack,
   onRate,
+  onEdit,
+  onEditVideo,
   recentCreations,
   onViewAll,
   onCreationPress,
@@ -71,6 +73,8 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
             onShare={onShare}
             onTryAgain={onTryAgain}
             onRate={onRate}
+            onEdit={onEdit}
+            onEditVideo={onEditVideo}
             saveButtonText={translations.saveButton}
             shareButtonText={translations.shareButton}
             tryAgainButtonText={translations.tryAnother}

@@ -44,4 +44,8 @@ export interface ResultActionBarProps {
   showTryAgain?: boolean;
   /** Show rating button */
   showRating?: boolean;
+  /** Edit button callback — only shown in iconOnly mode when provided */
+  onEdit?: () => void;
+  /** Edit video button callback — only shown in iconOnly mode when provided */
+  onEditVideo?: () => void;
 }

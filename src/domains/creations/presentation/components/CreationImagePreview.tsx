@@ -4,8 +4,8 @@
  * Uses expo-image for caching and performance
  */
 
-import React, { useMemo, useState, useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useMemo, useState, useCallback, useRef, useEffect } from "react";
+import { View, StyleSheet, Animated } from "react-native";
 import { AtomicIcon, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
 import { AtomicImage } from "@umituz/react-native-design-system/image";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
@@ -40,6 +40,19 @@ export function CreationImagePreview({
   const typeIcon = getTypeIcon(type);
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    if (!inProgress) return;
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1, duration: 1100, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 0.4, duration: 1100, useNativeDriver: true }),
+      ]),
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [inProgress, pulseAnim]);
 
   const hasPreview = !!uri && !inProgress && !imageError;
 
@@ -91,15 +104,15 @@ export function CreationImagePreview({
     [tokens, aspectRatio, height]
   );
 
-  // Show loading state during generation
+  // Show pulsing shimmer during generation
   if (inProgress && showLoadingIndicator) {
     return (
       <View style={styles.container}>
-        <View style={styles.loadingOverlay}>
+        <Animated.View style={[styles.loadingOverlay, { opacity: pulseAnim, backgroundColor: tokens.colors.backgroundSecondary }]}>
           <View style={styles.loadingIcon}>
             <AtomicSpinner size="lg" color="primary" />
           </View>
-        </View>
+        </Animated.View>
       </View>
     );
   }

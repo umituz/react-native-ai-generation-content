@@ -23,6 +23,10 @@ interface GalleryResultPreviewProps {
   readonly onRate: () => void;
   readonly onSubmitRating: (rating: number, description: string) => void;
   readonly onCloseRating: () => void;
+  /** Called when the user taps Edit on an image creation. */
+  readonly onEdit?: (imageUrl: string) => void;
+  /** Called when the user taps Edit on a video creation. */
+  readonly onEditVideo?: (videoUrl: string) => void;
 }
 
 export function GalleryResultPreview({
@@ -37,6 +41,8 @@ export function GalleryResultPreview({
   onRate,
   onSubmitRating,
   onCloseRating,
+  onEdit,
+  onEditVideo,
 }: GalleryResultPreviewProps) {
   const alert = useAlert();
 
@@ -61,6 +67,8 @@ export function GalleryResultPreview({
         onTryAgain={onTryAgain}
         onNavigateBack={onBack}
         onRate={onRate}
+        onEdit={!videoUrl && imageUrl && onEdit ? () => onEdit(imageUrl) : undefined}
+        onEditVideo={videoUrl && onEditVideo ? () => onEditVideo(videoUrl) : undefined}
         hideLabel
         iconOnly
         showTryAgain
