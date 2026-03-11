@@ -41,5 +41,27 @@ export const SOLO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
       required: false,
       maxFileSizeMB: 20,
     },
+    {
+      id: "quality_mode",
+      type: "selection",
+      titleKey: "soloVideo.qualityMode.title",
+      subtitleKey: "soloVideo.qualityMode.subtitle",
+      selectionType: "custom",
+      options: [
+        {
+          id: "normal",
+          label: "Normal Quality",
+          value: "normal",
+        },
+        {
+          id: "draft",
+          label: "Draft Mode (Faster, Cheaper)",
+          value: "draft",
+        },
+      ],
+      required: true,
+      defaultValue: "normal", // Default to normal mode (opt-in for draft)
+      layout: "list",
+    },
   ],
 };
