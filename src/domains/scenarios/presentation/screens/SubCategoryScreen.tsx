@@ -84,7 +84,6 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
         <AtomicCard
           image={item.image}
           leftIcon={item.icon}
-          badge={item.emoji}
           title={title}
           subtitle={description}
           imageAspectRatio={item.image ? 1.5 : undefined}
