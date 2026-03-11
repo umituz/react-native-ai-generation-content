@@ -25,6 +25,8 @@ export interface CategoryNavigationContainerProps {
   readonly headerTitle?: string;
   readonly headerDescription?: string;
   readonly isLoading?: boolean;
+  readonly initialMainCategoryId?: string;
+  readonly initialSubCategoryId?: string;
 }
 
 export const CategoryNavigationContainer: React.FC<
@@ -41,10 +43,14 @@ export const CategoryNavigationContainer: React.FC<
   headerTitle,
   headerDescription,
   isLoading = false,
+  initialMainCategoryId,
+  initialSubCategoryId,
 }) => {
-  const [currentStep, setCurrentStep] = useState<NavigationStep>("main_category");
-  const [selectedMainCategoryId, setSelectedMainCategoryId] = useState<string | null>(null);
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState<NavigationStep>(
+    initialSubCategoryId ? "scenario_list" : initialMainCategoryId ? "sub_category" : "main_category"
+  );
+  const [selectedMainCategoryId, setSelectedMainCategoryId] = useState<string | null>(initialMainCategoryId ?? null);
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string | null>(initialSubCategoryId ?? null);
 
   const handleSelectMainCategory = useCallback((categoryId: string) => {
     setSelectedMainCategoryId(categoryId);

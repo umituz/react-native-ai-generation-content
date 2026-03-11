@@ -23,6 +23,15 @@ export interface AIFeatureGateOptions {
    * Callback fired when feature access fails or execution errors
    */
   onError?: (error: Error) => void;
+
+  /**
+   * Custom paywall presentation.
+   * When provided, this is called instead of the default `openPaywall()` from
+   * `usePaywallVisibility`. Use this for apps that present the native
+   * RevenueCat paywall (e.g. `presentPaywall()`) instead of rendering a
+   * React-based PaywallContainer.
+   */
+  onShowPaywall?: () => void;
 }
 
 export interface AIFeatureGateReturn {

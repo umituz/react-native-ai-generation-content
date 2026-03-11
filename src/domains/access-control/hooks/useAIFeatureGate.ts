@@ -5,6 +5,10 @@
  * Uses `hasFirebaseUser` for auth check — anonymous users (autoAnonymousSignIn)
  * pass the gate and go straight to credit/subscription checks.
  * Auth modal is only shown if there is NO Firebase user at all.
+ *
+ * Paywall presentation:
+ * - Default: uses `openPaywall()` from `usePaywallVisibility` (React-based PaywallContainer)
+ * - Custom: accepts `onShowPaywall` option for native paywalls (e.g. RevenueCat `presentPaywall()`)
  */
 
 import { useCallback, useMemo } from "react";
@@ -38,7 +42,7 @@ const handlePromiseResult = (
 };
 
 export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateReturn {
-  const { creditCost, onNetworkError, onSuccess, onError } = options;
+  const { creditCost, onNetworkError, onSuccess, onError, onShowPaywall: customShowPaywall } = options;
 
   const { isOffline } = useOffline();
   const { hasFirebaseUser } = useAuth();
@@ -55,7 +59,7 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
     hasSubscription: isPremium,
     creditBalance,
     requiredCredits: creditCost,
-    onShowPaywall: () => openPaywall(),
+    onShowPaywall: customShowPaywall ?? (() => openPaywall()),
     isCreditsLoaded,
   });
 
