@@ -25,6 +25,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
   showRating = false,
   onEdit,
   onEditVideo,
+  onShareToFeed,
 }) => {
   const tokens = useAppDesignTokens();
   const { minTouchTarget } = useResponsive();
@@ -132,6 +133,15 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
             activeOpacity={0.7}
           >
             <AtomicIcon name="video" customSize={20} color="onPrimary" />
+          </TouchableOpacity>
+        )}
+        {onShareToFeed && (
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={onShareToFeed}
+            activeOpacity={0.7}
+          >
+            <AtomicIcon name="send" customSize={20} color="onPrimary" />
           </TouchableOpacity>
         )}
       </View>

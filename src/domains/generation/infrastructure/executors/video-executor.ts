@@ -10,8 +10,8 @@ import type {
   GenerationOptions,
 } from "../../domain/generation.types";
 import type { GenerationResult } from "../../../../domain/entities/generation.types";
-import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { env } from "../../../../infrastructure/config/env.config";
+import { resolveProvider } from "../../../../infrastructure/services/provider-resolver";
 
 
 export class VideoExecutor
@@ -32,9 +32,10 @@ export class VideoExecutor
         });
       }
 
-      const provider = providerRegistry.getActiveProvider();
-
-      if (!provider?.isInitialized()) {
+      let provider;
+      try {
+        provider = resolveProvider(options?.providerId);
+      } catch {
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.error("[VideoExecutor] Provider not initialized");
         }
@@ -121,7 +122,9 @@ export class VideoExecutor
     const data = (rawResult?.data ?? rawResult) as {
       video?: { url: string };
       video_url?: string;
+      url?: string;
     };
-    return data?.video?.url ?? data?.video_url;
+    // FAL returns { video: { url } }, Pruna returns { url }, some return { video_url }
+    return data?.video?.url ?? data?.video_url ?? data?.url;
   }
 }

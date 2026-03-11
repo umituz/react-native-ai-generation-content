@@ -20,6 +20,7 @@ const convertToFlowStep = (wizardStep: WizardStepConfig): StepDefinition => {
     text_input: StepType.TEXT_INPUT,
     selection: StepType.FEATURE_SELECTION,
     preview: StepType.SCENARIO_PREVIEW,
+    audio_picker: StepType.AUDIO_PICKER,
   };
 
   return {

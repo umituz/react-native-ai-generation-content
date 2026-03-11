@@ -8,9 +8,9 @@ import type {
   GenerationOptions,
 } from "../../domain/generation.types";
 import type { GenerationResult } from "../../../../domain/entities/generation.types";
-import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import type { TextToImageInput, TextToImageOutput } from "./text-to-image-executor.types";
 import { buildModelInput, extractResult } from "./text-to-image-executor.helpers";
+import { resolveProvider } from "../../../../infrastructure/services/provider-resolver";
 
 
 export class TextToImageExecutor
@@ -31,9 +31,10 @@ export class TextToImageExecutor
         });
       }
 
-      const provider = providerRegistry.getActiveProvider();
-
-      if (!provider?.isInitialized()) {
+      let provider;
+      try {
+        provider = resolveProvider(options?.providerId);
+      } catch {
         return { success: false, error: "AI provider not initialized" };
       }
 

@@ -34,6 +34,7 @@ export function CreationsGalleryScreen({
   onCreationPress,
   onEdit,
   onEditVideo,
+  onShareToFeed,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
@@ -97,15 +98,17 @@ export function CreationsGalleryScreen({
     onShare: async () => callbacks.handleShareCard(item),
     onDelete: () => callbacks.handleDelete(item),
     onFavorite: () => callbacks.handleFavorite(item),
-  }), [callbacks, onCreationPress]);
+    onPostToFeed: onShareToFeed ? () => onShareToFeed(item) : undefined,
+  }), [callbacks, onCreationPress, onShareToFeed]);
 
   const renderItem = useCallback(({ item }: { item: Creation }) => (
     <CreationCard
       creation={item}
       titleText={getItemTitle(item)}
       callbacks={getItemCallbacks(item)}
+      canPostToFeed={!!onShareToFeed && item.status === "completed"}
     />
-  ), [getItemTitle, getItemCallbacks]);
+  ), [getItemTitle, getItemCallbacks, onShareToFeed]);
 
   const renderGridItems = useCallback((items: Creation[]) => {
     const rows: Array<{ left: Creation; right: Creation | null }> = [];
@@ -186,6 +189,7 @@ export function CreationsGalleryScreen({
         onCloseRating={() => galleryState.setShowRatingPicker(false)}
         onEdit={onEdit}
         onEditVideo={onEditVideo}
+        onShareToFeed={onShareToFeed}
       />
     );
   }

@@ -19,6 +19,8 @@ export interface WizardVideoInput {
   readonly aspectRatio?: string;
   /** Video resolution (e.g., "720p", "1080p") */
   readonly resolution?: string;
+  /** Audio file as base64 or URL for background music / audio-driven video */
+  readonly audioUrl?: string;
 }
 
 export interface CreateVideoStrategyOptions {
@@ -54,6 +56,14 @@ export function validatePhotoCount(
       break;
     case "text":
       break;
+    default: {
+      // Exhaustive check: log unexpected input types in development
+      const _exhaustive: never = effectiveInputType;
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.warn(`[validatePhotoCount] Unknown inputType: ${_exhaustive}`);
+      }
+      break;
+    }
   }
 
   return { isValid: true };
@@ -96,6 +106,10 @@ function isWizardVideoInput(input: unknown): input is WizardVideoInput {
     return false;
   }
 
+  if (obj.audioUrl !== undefined && typeof obj.audioUrl !== "string") {
+    return false;
+  }
+
   return true;
 }
 
@@ -135,6 +149,10 @@ export function validateWizardVideoInput(input: unknown): WizardVideoInput {
 
     if (obj.resolution !== undefined && typeof obj.resolution !== "string") {
       errors.push("resolution (string, optional)");
+    }
+
+    if (obj.audioUrl !== undefined && typeof obj.audioUrl !== "string") {
+      errors.push("audioUrl (string, optional)");
     }
 
     throw new Error(`Invalid WizardVideoInput: ${errors.join(", ")}`);

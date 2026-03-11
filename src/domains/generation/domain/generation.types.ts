@@ -10,6 +10,8 @@
 export interface GenerationOptions {
   timeoutMs?: number;
   onProgress?: (progress: number) => void;
+  /** AI provider to use (e.g. "fal", "pruna"). Falls back to active provider. */
+  providerId?: string;
 }
 
 // ============================================================================

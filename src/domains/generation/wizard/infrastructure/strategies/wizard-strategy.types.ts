@@ -12,7 +12,7 @@ export interface QueueSubmissionResult {
 
 export interface WizardStrategy {
   /** Execute the generation - returns result with URLs (blocking) */
-  execute: (input: unknown) => Promise<{ imageUrl?: string; videoUrl?: string }>;
+  execute: (input: unknown) => Promise<{ imageUrl?: string; videoUrl?: string; audioUrl?: string; logSessionId?: string }>;
   /** Submit to queue for background processing - returns immediately with requestId */
   submitToQueue?: (input: unknown) => Promise<QueueSubmissionResult>;
 }

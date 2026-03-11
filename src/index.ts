@@ -29,8 +29,12 @@ export {
   TEXT_TO_IMAGE_WIZARD_CONFIG,
   TEXT_TO_VIDEO_WIZARD_CONFIG,
   IMAGE_TO_VIDEO_WIZARD_CONFIG,
+  SOLO_VIDEO_WIZARD_CONFIG,
 } from "./domains/generation/wizard";
-export type { WizardScenarioData } from "./domains/generation/wizard";
+export type { WizardScenarioData, WizardAudioInput } from "./domains/generation/wizard";
+
+// Audio Generation (TTS)
+export { executeAudioGeneration, buildAudioInput, createAudioStrategy } from "./domains/generation/wizard";
 
 // Wizard Validators and Credit Utilities
 export {

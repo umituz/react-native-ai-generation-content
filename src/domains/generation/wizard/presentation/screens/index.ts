@@ -5,3 +5,8 @@ export type {
   TextInputScreenConfig,
   TextInputScreenProps,
 } from "./TextInputScreen";
+export { AudioPickerScreen } from "./AudioPickerScreen";
+export type {
+  AudioPickerScreenTranslations,
+  AudioPickerScreenProps,
+} from "./AudioPickerScreen";

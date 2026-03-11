@@ -29,7 +29,7 @@ export interface ResultActionBarProps {
   /** Share callback */
   onShare: () => void;
   /** Try again callback */
-  onTryAgain: () => void;
+  onTryAgain?: () => void;
   /** Rate callback */
   onRate?: () => void;
   /** Save button text */
@@ -48,4 +48,6 @@ export interface ResultActionBarProps {
   onEdit?: () => void;
   /** Edit video button callback — only shown in iconOnly mode when provided */
   onEditVideo?: () => void;
+  /** Post to feed callback — when provided, shows a "send" button. Omit to hide (apps without a feed). */
+  onShareToFeed?: () => void;
 }

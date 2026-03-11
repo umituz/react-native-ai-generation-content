@@ -27,6 +27,8 @@ interface GalleryResultPreviewProps {
   readonly onEdit?: (imageUrl: string) => void;
   /** Called when the user taps Edit on a video creation. */
   readonly onEditVideo?: (videoUrl: string) => void;
+  /** Called when the user taps Post to Feed. Omit to hide (apps without a feed). */
+  readonly onShareToFeed?: (creation: Creation) => void;
 }
 
 export function GalleryResultPreview({
@@ -43,6 +45,7 @@ export function GalleryResultPreview({
   onCloseRating,
   onEdit,
   onEditVideo,
+  onShareToFeed,
 }: GalleryResultPreviewProps) {
   const alert = useAlert();
 
@@ -53,7 +56,7 @@ export function GalleryResultPreview({
     onSaveError: () => alert.show(AlertType.ERROR, AlertMode.TOAST, t("common.error"), t("result.saveError")),
   });
 
-  const hasRating = selectedCreation.rating !== undefined && selectedCreation.rating !== null;
+  const hasRating = selectedCreation.rating !== undefined;
 
   return (
     <>
@@ -69,6 +72,7 @@ export function GalleryResultPreview({
         onRate={onRate}
         onEdit={!videoUrl && imageUrl && onEdit ? () => onEdit(imageUrl) : undefined}
         onEditVideo={videoUrl && onEditVideo ? () => onEditVideo(videoUrl) : undefined}
+        onShareToFeed={onShareToFeed ? () => onShareToFeed(selectedCreation) : undefined}
         hideLabel
         iconOnly
         showTryAgain

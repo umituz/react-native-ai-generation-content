@@ -47,6 +47,24 @@ export type {
   UseImagePickerReturn,
 } from "./useImagePicker";
 
+// Standalone image generation executor (Template Method Pattern)
+export { useImageGenerationExecutor } from "./useImageGenerationExecutor";
+export type {
+  GenerationTarget,
+  GenerationInput,
+  AIImageResult,
+  ImageGenerationExecutorConfig,
+  ImageGenerationExecutorReturn,
+} from "./useImageGenerationExecutor";
+
+// Standalone audio generation executor (Template Method Pattern)
+export { useAudioGenerationExecutor } from "./useAudioGenerationExecutor";
+export type {
+  AudioGenerationInput,
+  AudioGenerationExecutorConfig,
+  AudioGenerationExecutorReturn,
+} from "./useAudioGenerationExecutor";
+
 // Error utilities
 export {
   createGenerationError,

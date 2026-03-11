@@ -9,7 +9,7 @@ export {
   useGenerationFlow, useAIFeatureCallbacks,
   useAIGenerateState, AIGenerateStep,
   useGenerationOrchestrator, useImageGeneration, useVideoGeneration, useDualImageGeneration,
-  useImagePicker,
+  useImagePicker, useImageGenerationExecutor, useAudioGenerationExecutor,
   createGenerationError, getAlertMessage, parseError,
 } from "../presentation/hooks";
 export type {
@@ -24,6 +24,9 @@ export type {
   DualImageGenerationConfig, DualImageGenerationReturn,
   ImagePickerState, UseImagePickerOptions, UseImagePickerReturn,
   UploadedImage,
+  GenerationTarget, GenerationInput, AIImageResult,
+  ImageGenerationExecutorConfig, ImageGenerationExecutorReturn,
+  AudioGenerationInput, AudioGenerationExecutorConfig, AudioGenerationExecutorReturn,
 } from "../presentation/hooks";
 
 // Components

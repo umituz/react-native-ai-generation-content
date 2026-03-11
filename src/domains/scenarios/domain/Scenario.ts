@@ -4,7 +4,7 @@
  * Note: ScenarioId and ScenarioCategory should be defined in the app, not here
  */
 
-export type ScenarioOutputType = "image" | "video";
+export type ScenarioOutputType = "image" | "video" | "audio";
 
 export type ScenarioInputType = "single" | "dual" | "text";
 
@@ -33,6 +33,8 @@ export interface Scenario {
   outputType?: ScenarioOutputType;
   inputType?: ScenarioInputType;
   model?: string;
+  /** AI provider to use for this scenario (e.g. "fal", "pruna"). Falls back to active provider. */
+  providerId?: string;
   enabled?: boolean;
   generatingMessages?: GeneratingMessages;
 }

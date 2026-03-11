@@ -19,13 +19,15 @@ export interface ResultPreviewScreenProps {
   /** Action callbacks */
   onDownload: () => void;
   onShare: () => void;
-  onTryAgain: () => void;
-  onNavigateBack: () => void;
+  onTryAgain?: () => void;
+  onNavigateBack?: () => void;
   onRate?: () => void;
   /** Edit callback — opens photo editor for the result image */
   onEdit?: () => void;
   /** Edit video callback — opens video editor for the result video */
   onEditVideo?: () => void;
+  /** Post to feed callback — when provided, shows a send button. Omit to hide (apps without a feed). */
+  onShareToFeed?: () => void;
   /** Recent creations to display */
   recentCreations?: readonly RecentCreation[];
   /** Navigate to all creations */

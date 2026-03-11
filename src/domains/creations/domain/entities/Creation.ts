@@ -88,7 +88,7 @@ export function mapDocumentToCreation(
 ): Creation {
   const creationDate = toDate(data.createdAt) ?? new Date();
 
-  const uri = data.output?.imageUrl || data.output?.videoUrl || data.uri || "";
+  const uri = data.output?.imageUrl || data.output?.videoUrl || data.output?.audioUrl || data.uri || "";
 
   return {
     id,

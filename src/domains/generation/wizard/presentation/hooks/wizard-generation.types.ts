@@ -7,7 +7,7 @@ import type { AlertMessages } from "../../../../../presentation/hooks/generation
 import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
 import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 
-export type WizardOutputType = "image" | "video";
+export type WizardOutputType = "image" | "video" | "audio";
 
 export interface WizardScenarioData {
   readonly id: string;
@@ -16,10 +16,14 @@ export interface WizardScenarioData {
   /** Input type - determines required photo count. Default: "single" */
   readonly inputType?: ScenarioInputType;
   readonly model?: string;
+  /** AI provider to use (e.g. "fal", "pruna"). Falls back to active provider. */
+  readonly providerId?: string;
   readonly title?: string;
   readonly description?: string;
   /** Video feature type - set by main app to control generation mode */
   readonly featureType?: "text-to-video" | "image-to-video";
+  /** Pre-generated image URL — when set, video generation uses this as source image instead of extracting from wizard data */
+  readonly preGeneratedImageUrl?: string;
   [key: string]: unknown;
 }
 

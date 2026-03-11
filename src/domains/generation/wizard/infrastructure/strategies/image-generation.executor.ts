@@ -27,14 +27,17 @@ export async function executeImageGeneration(
   input: WizardImageInput,
   model: string,
   onProgress?: (progress: number) => void,
+  providerId?: string,
 ): Promise<ExecutionResult> {
   const TAG = 'ImageExecutor';
   const startTime = Date.now();
   const sid = startGenerationLogSession();
-  const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
+  const { resolveProvider } = await import("../../../../../infrastructure/services/provider-resolver");
 
-  const provider = providerRegistry.getActiveProvider();
-  if (!provider?.isInitialized()) {
+  let provider;
+  try {
+    provider = resolveProvider(providerId);
+  } catch {
     addGenerationLog(sid, TAG, 'Provider not initialized!', 'error');
     return { success: false, error: "AI provider not initialized", logSessionId: sid };
   }
@@ -77,14 +80,11 @@ export async function executeImageGeneration(
       modelInput.image_urls = imageUrls;
     }
 
-    let lastStatus = "";
     addGenerationLog(sid, TAG, 'Calling provider.subscribe()...');
     const result = await provider.subscribe(model, modelInput, {
       timeoutMs: GENERATION_TIMEOUT_MS,
       onQueueUpdate: (status) => {
-        if (status.status !== lastStatus) {
-          lastStatus = status.status;
-        }
+        addGenerationLog(sid, TAG, `Queue: ${status.status}`);
       },
     });
 

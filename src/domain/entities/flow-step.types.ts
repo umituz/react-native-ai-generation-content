@@ -17,6 +17,7 @@ export enum StepType {
   PARTNER_UPLOAD = "partner_upload",
   TEXT_INPUT = "text_input",
   FEATURE_SELECTION = "feature_selection",
+  AUDIO_PICKER = "audio_picker",
   // Generation steps
   GENERATING = "generating",
   RESULT_PREVIEW = "result_preview",

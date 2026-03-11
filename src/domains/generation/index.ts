@@ -54,6 +54,7 @@ export type {
   UseWizardGenerationReturn,
   WizardScenarioData,
   WizardOutputType,
+  WizardAudioInput,
   GenericWizardFlowProps,
   TextInputScreenTranslations,
   TextInputScreenConfig,
@@ -75,6 +76,10 @@ export {
   TEXT_TO_IMAGE_WIZARD_CONFIG,
   TEXT_TO_VIDEO_WIZARD_CONFIG,
   IMAGE_TO_VIDEO_WIZARD_CONFIG,
+  // Audio generation
+  buildAudioInput,
+  createAudioStrategy,
+  executeAudioGeneration,
 } from "./wizard";
 
 // Flow Infrastructure

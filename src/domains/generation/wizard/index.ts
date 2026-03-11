@@ -13,6 +13,7 @@ export type {
   TextInputStepConfig,
   SelectionStepConfig,
   PreviewStepConfig,
+  AudioPickerStepConfig,
   WizardStepConfig,
 } from "./domain/entities/wizard-step.types";
 
@@ -70,16 +71,24 @@ export { GenericWizardFlow } from "./presentation/components";
 export type { GenericWizardFlowProps } from "./presentation/components";
 
 // Presentation - Screens
-export { GeneratingScreen, TextInputScreen } from "./presentation/screens";
+export { GeneratingScreen, TextInputScreen, AudioPickerScreen } from "./presentation/screens";
 export type {
   TextInputScreenTranslations,
   TextInputScreenConfig,
   TextInputScreenProps,
+  AudioPickerScreenTranslations,
+  AudioPickerScreenProps,
 } from "./presentation/screens";
+
+// Audio Generation Types
+export type { WizardAudioInput } from "./infrastructure/strategies/audio-generation.types";
+export { buildAudioInput, createAudioStrategy } from "./infrastructure/strategies/audio-generation.strategy";
+export { executeAudioGeneration } from "./infrastructure/strategies/audio-generation.executor";
 
 // Feature Configs
 export {
   TEXT_TO_IMAGE_WIZARD_CONFIG,
   TEXT_TO_VIDEO_WIZARD_CONFIG,
   IMAGE_TO_VIDEO_WIZARD_CONFIG,
+  SOLO_VIDEO_WIZARD_CONFIG,
 } from "./configs";

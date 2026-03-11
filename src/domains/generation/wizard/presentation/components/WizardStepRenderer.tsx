@@ -12,6 +12,7 @@ import { renderPreviewStep } from "./step-renderers/renderPreviewStep";
 import { renderPhotoUploadStep } from "./step-renderers/renderPhotoUploadStep";
 import { renderTextInputStep } from "./step-renderers/renderTextInputStep";
 import { renderSelectionStep } from "./step-renderers/renderSelectionStep";
+import { renderAudioPickerStep } from "./step-renderers/renderAudioPickerStep";
 import type { WizardStepRendererProps } from "./WizardStepRenderer.types";
 
 export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
@@ -60,7 +61,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
       const media = extractMediaUrl(generationResult);
       if (!media) return null;
       const isVideo = media.isVideo || getMediaTypeFromUrl(media.url) === "video";
-      const handleTryAgain = onTryAgain ?? onBack;
+      const handleTryAgain = onTryAgain ?? onBack ?? (() => {});
       return (
         <ResultPreviewScreen
           imageUrl={isVideo ? undefined : media.url}
@@ -96,6 +97,9 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
 
     case StepType.FEATURE_SELECTION:
       return renderSelectionStep({ key: step.id, step, customData, onBack, onPhotoContinue, calculateCreditForSelection, t, creditCost });
+
+    case StepType.AUDIO_PICKER:
+      return renderAudioPickerStep({ key: step.id, step, onBack, onPhotoContinue, t, creditCost });
 
     default:
       if (typeof __DEV__ !== "undefined" && __DEV__) {

@@ -15,7 +15,7 @@ export {
 
 // Services
 export {
-  providerRegistry, generationOrchestrator,
+  providerRegistry, resolveProvider, generationOrchestrator,
   executeImageFeature, hasImageFeatureSupport, executeVideoFeature, hasVideoFeatureSupport,
   submitVideoFeatureToQueue, executeMultiImageGeneration,
 } from "../infrastructure/services";
@@ -34,7 +34,8 @@ export {
   extractAudioUrl, extractImageUrls, cleanBase64, addBase64Prefix, preparePhoto, preparePhotos,
   isValidBase64, getBase64Size, getBase64SizeMB, prepareImage, createDevCallbacks, createFeatureUtils,
   showVideoGenerationSuccess, handleGenerationError, showContentModerationWarning,
-  mapJobStatusToGenerationStatus,
+  mapJobStatusToGenerationStatus, intensityToStrength,
+  resolveCoupleInput, prependContext,
 } from "../infrastructure/utils";
 export type {
   IntervalOptions, StatusCheckResult, ResultValidation, ValidateResultOptions,
@@ -76,4 +77,8 @@ export {
   type GenerationModels,
   type GenerationConfigValue,
   type GenerationConfigProviderProps,
+  GenerationServicesProvider,
+  useGenerationServices,
+  type GenerationServicesValue,
+  type GenerationServicesProviderProps,
 } from "../infrastructure/providers";

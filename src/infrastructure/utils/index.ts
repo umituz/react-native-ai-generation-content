@@ -20,3 +20,5 @@ export * from "./provider-validator.util";
 export * from "./base64.util";
 export * from "./video-result-extractor.util";
 export * from "./id-generator.util";
+export * from "./intensity.util";
+export * from "./couple-input.util";

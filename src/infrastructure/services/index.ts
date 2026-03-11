@@ -3,6 +3,7 @@
  */
 
 export { providerRegistry } from "./provider-registry.service";
+export { resolveProvider } from "./provider-resolver";
 export { generationOrchestrator } from "./generation-orchestrator.service";
 export type { OrchestratorConfig } from "./generation-orchestrator.service";
 export {

@@ -23,6 +23,7 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   onRate,
   onEdit,
   onEditVideo,
+  onShareToFeed,
   recentCreations,
   onViewAll,
   onCreationPress,
@@ -75,6 +76,7 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
             onRate={onRate}
             onEdit={onEdit}
             onEditVideo={onEditVideo}
+            onShareToFeed={onShareToFeed}
             saveButtonText={translations.saveButton}
             shareButtonText={translations.shareButton}
             tryAgainButtonText={translations.tryAnother}
@@ -83,13 +85,13 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
             showRating={showRating}
           />
         </View>
-        {showRecent && (
+        {showRecent && recentCreations && translations.recentCreations && translations.viewAll && (
           <RecentCreationsSection
-            recentCreations={recentCreations!}
+            recentCreations={recentCreations}
             onViewAll={onViewAll}
             onCreationPress={onCreationPress}
-            title={translations.recentCreations!}
-            viewAllLabel={translations.viewAll!}
+            title={translations.recentCreations}
+            viewAllLabel={translations.viewAll}
           />
         )}
       </View>

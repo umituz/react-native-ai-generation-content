@@ -50,6 +50,9 @@ function buildGenericInput(input: WizardVideoInput): Record<string, unknown> {
   if (input.resolution) {
     modelInput.resolution = input.resolution;
   }
+  if (input.audioUrl) {
+    modelInput.audio = input.audioUrl;
+  }
 
   return modelInput;
 }
@@ -62,11 +65,14 @@ export async function executeVideoGeneration(
   model: string,
   onProgress?: (status: string) => void,
   modelConfig?: VideoModelConfig,
+  providerId?: string,
 ): Promise<ExecutionResult> {
-  const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
+  const { resolveProvider } = await import("../../../../../infrastructure/services/provider-resolver");
 
-  const provider = providerRegistry.getActiveProvider();
-  if (!provider?.isInitialized()) {
+  let provider;
+  try {
+    provider = resolveProvider(providerId);
+  } catch {
     const error = createGenerationError(
       GenerationErrorType.VALIDATION,
       "AI provider is not initialized. Please check your configuration."
@@ -101,8 +107,9 @@ export async function executeVideoGeneration(
     });
 
     const rawResult = result as Record<string, unknown>;
-    const data = (rawResult?.data ?? rawResult) as { video?: { url: string }; video_url?: string };
-    const videoUrl = data?.video?.url ?? data?.video_url;
+    const data = (rawResult?.data ?? rawResult) as { video?: { url: string }; video_url?: string; url?: string };
+    // FAL returns { video: { url } }, Pruna returns { url }, some return { video_url }
+    const videoUrl = data?.video?.url ?? data?.video_url ?? data?.url;
 
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[VideoExecutor] Generation completed", { success: !!videoUrl });
@@ -124,11 +131,14 @@ export async function submitVideoGenerationToQueue(
   input: WizardVideoInput,
   model: string,
   modelConfig?: VideoModelConfig,
+  providerId?: string,
 ): Promise<SubmissionResult> {
-  const { providerRegistry } = await import("../../../../../infrastructure/services/provider-registry.service");
+  const { resolveProvider } = await import("../../../../../infrastructure/services/provider-resolver");
 
-  const provider = providerRegistry.getActiveProvider();
-  if (!provider?.isInitialized()) {
+  let provider;
+  try {
+    provider = resolveProvider(providerId);
+  } catch {
     const error = createGenerationError(
       GenerationErrorType.VALIDATION,
       "AI provider is not initialized. Please check your configuration."

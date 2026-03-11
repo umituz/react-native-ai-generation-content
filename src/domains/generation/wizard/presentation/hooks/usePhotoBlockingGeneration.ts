@@ -45,21 +45,24 @@ export function usePhotoBlockingGeneration(
     alertMessages,
     onSuccess,
     onError,
+    onCreditsExhausted,
   } = props;
 
   const creationIdRef = useRef<string | null>(null);
 
   const handleSuccess = useCallback(
     async (result: unknown) => {
-      const typedResult = result as { imageUrl?: string; videoUrl?: string; logSessionId?: string };
+      const typedResult = result as { imageUrl?: string; videoUrl?: string; audioUrl?: string; logSessionId?: string };
       const creationId = creationIdRef.current;
+      const resultUri = typedResult.imageUrl || typedResult.videoUrl || typedResult.audioUrl;
 
-      if (creationId && userId) {
+      if (creationId && userId && resultUri) {
         try {
           await persistence.updateToCompleted(userId, creationId, {
-            uri: typedResult.imageUrl || typedResult.videoUrl || "",
+            uri: resultUri,
             imageUrl: typedResult.imageUrl,
             videoUrl: typedResult.videoUrl,
+            audioUrl: typedResult.audioUrl,
             logSessionId: typedResult.logSessionId,
           });
         } catch (err) {
@@ -73,16 +76,21 @@ export function usePhotoBlockingGeneration(
 
       // Deduct credits after successful generation
       if (deductCredits && creditCost) {
-        await deductCredits(creditCost).catch((err) => {
+        try {
+          const deducted = await deductCredits(creditCost);
+          if (!deducted) {
+            onCreditsExhausted?.();
+          }
+        } catch (err) {
           if (typeof __DEV__ !== "undefined" && __DEV__) {
             console.error("[PhotoBlockingGeneration] deductCredits error:", err);
           }
-        });
+        }
       }
 
       onSuccess?.(result);
     },
-    [userId, persistence, deductCredits, creditCost, onSuccess],
+    [userId, persistence, deductCredits, creditCost, onSuccess, onCreditsExhausted],
   );
 
   const handleError = useCallback(
@@ -133,7 +141,7 @@ export function usePhotoBlockingGeneration(
             resolution,
             creditCost,
             aspectRatio,
-            provider: "fal",
+            provider: scenario.providerId ?? "fal",
             outputType: scenario.outputType,
           });
           creationIdRef.current = result.creationId;

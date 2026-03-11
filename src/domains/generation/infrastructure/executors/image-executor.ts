@@ -10,9 +10,9 @@ import type {
   GenerationOptions,
 } from "../../domain/generation.types";
 import type { GenerationResult } from "../../../../domain/entities/generation.types";
-import { providerRegistry } from "../../../../infrastructure/services/provider-registry.service";
 import { env } from "../../../../infrastructure/config/env.config";
 import { addGenerationLogs, addGenerationLog, startGenerationLogSession } from "../../../../infrastructure/services/generation-log-store";
+import { resolveProvider } from "../../../../infrastructure/services/provider-resolver";
 
 
 export class ImageExecutor
@@ -27,6 +27,8 @@ export class ImageExecutor
     const startTime = Date.now();
     const sid = startGenerationLogSession();
 
+    let provider: ReturnType<typeof resolveProvider> | undefined;
+
     try {
       const totalImageSize = input.imageUrls?.reduce((sum, url) => sum + url.length, 0) ?? 0;
       addGenerationLog(sid, TAG, 'Starting generation', 'info', {
@@ -36,9 +38,9 @@ export class ImageExecutor
         promptLength: input.prompt?.length || 0,
       });
 
-      const provider = providerRegistry.getActiveProvider();
-
-      if (!provider?.isInitialized()) {
+      try {
+        provider = resolveProvider(options?.providerId);
+      } catch {
         addGenerationLog(sid, TAG, 'Provider not initialized!', 'error');
         return { success: false, error: "AI provider not initialized" };
       }
@@ -83,7 +85,6 @@ export class ImageExecutor
       return { success: true, data: { imageUrl } };
     } catch (error) {
       // Collect provider logs even on failure — no providerSessionId available in catch
-      const provider = providerRegistry.getActiveProvider();
       if (provider) {
         const providerLogs = provider.endLogSession?.() ?? [];
         addGenerationLogs(sid, providerLogs);

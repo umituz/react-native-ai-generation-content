@@ -37,6 +37,7 @@ export interface VideoModelConfig {
     readonly duration?: number;
     readonly aspectRatio?: string;
     readonly resolution?: string;
+    readonly audioUrl?: string;
   }) => Record<string, unknown>;
 
   /** Pricing data for credit calculation (keys = resolution IDs) */

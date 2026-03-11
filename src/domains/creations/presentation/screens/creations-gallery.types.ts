@@ -2,6 +2,7 @@
  * Creations Gallery Screen Types
  */
 
+import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsConfig } from "../../domain/value-objects/CreationsConfig";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 
@@ -21,9 +22,11 @@ export interface CreationsGalleryScreenProps {
   /** Function to get dynamic title from creation metadata */
   readonly getCreationTitle?: (creation: { type: string; metadata?: Record<string, unknown> }) => string;
   /** Custom handler when a creation card is pressed. When provided, overrides the built-in preview. */
-  readonly onCreationPress?: (creation: { id: string; uri: string; type: string; originalUri?: string; output?: { imageUrl?: string; videoUrl?: string }; metadata?: Record<string, unknown> }) => void;
+  readonly onCreationPress?: (creation: { id: string; uri: string; type: string; originalUri?: string; output?: { imageUrl?: string; videoUrl?: string; audioUrl?: string }; metadata?: Record<string, unknown> }) => void;
   /** Called when the user taps the Edit button in the creation detail view. Receives the image URL. Only shown for image creations. */
   readonly onEdit?: (imageUrl: string) => void;
   /** Called when the user taps the Edit button in the creation detail view. Receives the video URL. Only shown for video creations. */
   readonly onEditVideo?: (videoUrl: string) => void;
+  /** Called when the user taps the "Post to Feed" button on a creation card. Shows a filled send icon. */
+  readonly onShareToFeed?: (creation: Creation) => void;
 }

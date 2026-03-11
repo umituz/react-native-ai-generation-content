@@ -18,5 +18,7 @@ export interface ScenarioData {
   readonly requiresPhoto?: boolean;
   readonly hidden?: boolean;
   readonly inputType?: ScenarioInputType;
+  /** AI provider to use for this scenario (e.g. "fal", "pruna"). Falls back to active provider. */
+  readonly providerId?: string;
   readonly [key: string]: unknown;
 }

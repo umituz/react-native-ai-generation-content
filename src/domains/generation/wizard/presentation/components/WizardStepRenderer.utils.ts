@@ -2,6 +2,7 @@ import type {
   WizardStepConfig,
   TextInputStepConfig,
   SelectionStepConfig,
+  AudioPickerStepConfig,
 } from "../../domain/entities/wizard-step.types";
 import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 
@@ -10,7 +11,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isWizardStepConfig(value: unknown): value is WizardStepConfig {
-  return isRecord(value);
+  if (!isRecord(value)) return false;
+  return typeof value.id === "string" && typeof value.type === "string";
 }
 
 function isUploadedImage(value: unknown): value is UploadedImage {
@@ -49,5 +51,11 @@ export function getSelectionValue(data: unknown): string | string[] | undefined 
 export function getTextInputValue(data: unknown): string | undefined {
   if (typeof data === "string") return data;
   if (isRecord(data) && "text" in data) return String(data.text);
+  return undefined;
+}
+
+export function getAudioPickerConfig(config: unknown): AudioPickerStepConfig | undefined {
+  if (!isRecord(config)) return undefined;
+  if (config.type === "audio_picker") return config as unknown as AudioPickerStepConfig;
   return undefined;
 }

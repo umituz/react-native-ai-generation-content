@@ -9,6 +9,7 @@ import type { WizardStrategy } from "./wizard-strategy.types";
 import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 import { createImageStrategy, buildImageInput } from "./image-generation.strategy";
 import { createVideoStrategy, buildVideoInput } from "./video-generation.strategy";
+import { createAudioStrategy, buildAudioInput } from "./audio-generation.strategy";
 
 // ============================================================================
 // Types
@@ -34,6 +35,10 @@ export function createWizardStrategy(options: CreateWizardStrategyOptions): Wiza
     return createImageStrategy({ scenario, collectionName, creditCost });
   }
 
+  if (scenario.outputType === "audio") {
+    return createAudioStrategy({ scenario, collectionName, creditCost });
+  }
+
   // Default to video strategy for video outputType or undefined
   return createVideoStrategy({ scenario, modelConfig, collectionName, creditCost });
 }
@@ -47,9 +52,21 @@ export async function buildWizardInput(
   scenario: WizardScenarioData,
 ): Promise<unknown> {
   if (scenario.outputType === "image") {
-    return buildImageInput(wizardData, scenario);
+    const input = await buildImageInput(wizardData, scenario);
+    if (!input) {
+      throw new Error("Failed to build image input");
+    }
+    return input;
+  }
+
+  if (scenario.outputType === "audio") {
+    return buildAudioInput(wizardData, scenario);
   }
 
   // Default to video input for video outputType or undefined
-  return buildVideoInput(wizardData, scenario);
+  const input = await buildVideoInput(wizardData, scenario);
+  if (!input) {
+    throw new Error("Failed to build video input");
+  }
+  return input;
 }

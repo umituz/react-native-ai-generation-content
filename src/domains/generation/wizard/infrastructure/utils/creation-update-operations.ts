@@ -53,19 +53,22 @@ export async function updateToCompleted(
   const output: CreationOutput = {
     ...(data.imageUrl && { imageUrl: data.imageUrl }),
     ...(data.videoUrl && { videoUrl: data.videoUrl }),
+    ...(data.audioUrl && { audioUrl: data.audioUrl }),
     ...(data.thumbnailUrl && { thumbnailUrl: data.thumbnailUrl }),
   };
 
   const completedAt = new Date();
-  const durationMs =
+  const rawDuration =
     data.generationStartedAt !== undefined
       ? completedAt.getTime() - data.generationStartedAt
       : undefined;
+  const durationMs = rawDuration !== undefined && rawDuration >= 0 ? rawDuration : undefined;
+  const hasOutput = Object.keys(output).length > 0;
 
   await repository.update(userId, creationId, {
     uri: data.uri,
     status: "completed" as const,
-    output,
+    ...(hasOutput && { output }),
     completedAt,
     ...(durationMs !== undefined && { durationMs }),
   } as Partial<Creation>);

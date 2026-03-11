@@ -9,6 +9,8 @@ export {
   useVideoGeneration,
   useDualImageGeneration,
   useImagePicker,
+  useImageGenerationExecutor,
+  useAudioGenerationExecutor,
   createGenerationError,
   getAlertMessage,
   parseError,
@@ -33,6 +35,14 @@ export type {
   ImagePickerState,
   UseImagePickerOptions,
   UseImagePickerReturn,
+  GenerationTarget,
+  GenerationInput,
+  AIImageResult,
+  ImageGenerationExecutorConfig,
+  ImageGenerationExecutorReturn,
+  AudioGenerationInput,
+  AudioGenerationExecutorConfig,
+  AudioGenerationExecutorReturn,
 } from "./generation";
 
 export { useGeneration } from "./use-generation";

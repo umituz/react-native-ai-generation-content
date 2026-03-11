@@ -21,6 +21,7 @@ export interface CompletedCreationData {
   readonly uri: string;
   readonly imageUrl?: string;
   readonly videoUrl?: string;
+  readonly audioUrl?: string;
   readonly thumbnailUrl?: string;
   /** Unix timestamp (ms) when generation was submitted; used to compute durationMs */
   readonly generationStartedAt?: number;

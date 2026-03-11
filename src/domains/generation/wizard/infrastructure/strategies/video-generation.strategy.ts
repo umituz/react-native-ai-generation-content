@@ -12,8 +12,30 @@ import { extractPhotosAsBase64 } from "./shared/photo-extraction.utils";
 import type { WizardVideoInput, CreateVideoStrategyOptions } from "./video-generation.types";
 import { validatePhotoCount, validateWizardVideoInput } from "./video-generation.types";
 import { executeVideoGeneration, submitVideoGenerationToQueue } from "./video-generation.executor";
+import { readFileAsBase64 } from "@umituz/react-native-design-system/filesystem";
 
 
+
+/**
+ * Extract audio from wizardData and read as base64.
+ * Audio step stores data as { uri: "file:///..." }.
+ */
+async function extractAudioAsBase64(wizardData: Record<string, unknown>): Promise<string | undefined> {
+  const audioData = wizardData.background_audio as { uri?: string } | undefined;
+  if (!audioData?.uri) return undefined;
+
+  try {
+    const base64 = await readFileAsBase64(audioData.uri);
+    if (!base64) return undefined;
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[VideoStrategy] Audio extracted as base64", { length: base64.length });
+    }
+    return base64;
+  } catch (error) {
+    console.warn("[VideoStrategy] Failed to read audio file:", error);
+    return undefined;
+  }
+}
 
 export async function buildVideoInput(
   wizardData: Record<string, unknown>,
@@ -21,6 +43,29 @@ export async function buildVideoInput(
 ): Promise<WizardVideoInput | null> {
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[VideoStrategy] Building input", { scenarioId: scenario.id });
+  }
+
+  // Extract audio (shared by all code paths)
+  const audioUrl = await extractAudioAsBase64(wizardData);
+
+  // If a pre-generated image URL exists (e.g., two-step solo video),
+  // use it directly instead of extracting photos from wizard data
+  if (scenario.preGeneratedImageUrl) {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[VideoStrategy] Using pre-generated image URL", {
+        url: scenario.preGeneratedImageUrl.slice(0, 80),
+        hasAudio: !!audioUrl,
+      });
+    }
+    const finalPrompt = extractPrompt(wizardData, scenario.aiPrompt) || scenario.aiPrompt || "";
+    return {
+      sourceImageBase64: scenario.preGeneratedImageUrl,
+      prompt: finalPrompt,
+      duration: extractDuration(wizardData),
+      aspectRatio: extractAspectRatio(wizardData),
+      resolution: extractResolution(wizardData),
+      audioUrl,
+    };
   }
 
   const photos = await extractPhotosAsBase64(wizardData, true);
@@ -45,12 +90,11 @@ export async function buildVideoInput(
     }
   }
 
-  // For video generation, use clean prompt directly
-  // Modern models handle context natively
   if (typeof __DEV__ !== "undefined" && __DEV__) {
     console.log("[VideoStrategy] Using clean prompt for video generation", {
       promptLength: finalPrompt.length,
       photoCount: photos.length,
+      hasAudio: !!audioUrl,
     });
   }
 
@@ -61,6 +105,7 @@ export async function buildVideoInput(
     duration: extractDuration(wizardData),
     aspectRatio: extractAspectRatio(wizardData),
     resolution: extractResolution(wizardData),
+    audioUrl,
   };
 }
 
@@ -73,12 +118,13 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
   }
 
   const model = scenario.model;
+  const providerId = scenario.providerId;
 
   return {
     execute: async (input: unknown) => {
       const videoInput = validateWizardVideoInput(input);
 
-      const result = await executeVideoGeneration(videoInput, model, undefined, modelConfig);
+      const result = await executeVideoGeneration(videoInput, model, undefined, modelConfig, providerId);
 
       if (!result.success || !result.videoUrl) {
         throw new Error(result.error || "Video generation failed");
@@ -90,7 +136,7 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
     submitToQueue: async (input: unknown) => {
       const videoInput = validateWizardVideoInput(input);
 
-      const result = await submitVideoGenerationToQueue(videoInput, model, modelConfig);
+      const result = await submitVideoGenerationToQueue(videoInput, model, modelConfig, providerId);
 
       return {
         success: result.success,

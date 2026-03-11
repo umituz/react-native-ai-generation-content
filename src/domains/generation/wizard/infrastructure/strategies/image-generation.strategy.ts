@@ -84,11 +84,15 @@ export function createImageStrategy(options: CreateImageStrategyOptions): Wizard
   }
 
   const model = scenario.model;
+  const providerId = scenario.providerId;
 
   return {
     execute: async (input: unknown) => {
+      if (!input || typeof input !== "object") {
+        throw new Error("Invalid input: expected WizardImageInput object");
+      }
       const imageInput = input as WizardImageInput;
-      const result = await executeImageGeneration(imageInput, model);
+      const result = await executeImageGeneration(imageInput, model, undefined, providerId);
 
       if (!result.success || !result.imageUrl) {
         const error = new Error(result.error || "Image generation failed");

@@ -85,6 +85,17 @@ export interface CreditGateStepConfig extends BaseStepConfig {
 }
 
 /**
+ * Audio Picker Step Configuration
+ */
+export interface AudioPickerStepConfig extends BaseStepConfig {
+  readonly type: "audio_picker";
+  /** Allowed MIME types (default: audio/mpeg, audio/mp4, audio/wav, audio/aac) */
+  readonly allowedTypes?: readonly string[];
+  /** Max file size in MB (default: 20) */
+  readonly maxFileSizeMB?: number;
+}
+
+/**
  * Union of all step config types
  */
 export type WizardStepConfig =
@@ -94,4 +105,5 @@ export type WizardStepConfig =
   | TextInputStepConfig
   | SelectionStepConfig
   | PreviewStepConfig
+  | AudioPickerStepConfig
   | BaseStepConfig;
