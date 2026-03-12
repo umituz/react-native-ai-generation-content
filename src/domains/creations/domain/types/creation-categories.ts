@@ -10,6 +10,9 @@ import type { CreationTypeId, CreationCategory } from "./creation-types";
  */
 export const IMAGE_CREATION_TYPES: CreationTypeId[] = [
   "text-to-image",
+  "imagine",
+  "wardrobe",
+  "historical-wardrobe",
   "upscale",
   "remove-background",
   "photo-restore",
@@ -22,6 +25,17 @@ export const IMAGE_CREATION_TYPES: CreationTypeId[] = [
   "ai-brush",
   "hd-touch-up",
   "anime-selfie",
+  "aging",
+  "headshot",
+  "retouch",
+  "magic-edit",
+  "color-grading",
+  "art-style",
+  "mood-filter",
+  "face-expression",
+  "scene-composer",
+  "ai-background",
+  "effects",
 ];
 
 /**

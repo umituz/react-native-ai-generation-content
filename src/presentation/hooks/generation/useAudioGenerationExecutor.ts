@@ -9,11 +9,12 @@
  *   - buildMetadata: creation metadata
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useGenerationServices } from "../../../infrastructure/providers/generation-services.provider";
 import { resolveProvider } from "../../../infrastructure/services/provider-resolver";
-import { createCreationsRepository } from "../../../domains/creations/infrastructure/adapters";
+import { getCreationsRepository } from "./repositorySingleton";
 import type { GenerationTarget } from "./useImageGenerationExecutor";
+import { handleCreditRefund, logGenerationError, generateCreationId } from "./generation-execution.utils";
 
 /** Domain-specific audio generation input returned by buildInput */
 export interface AudioGenerationInput {
@@ -59,10 +60,7 @@ export function useAudioGenerationExecutor<P>(
 ): AudioGenerationExecutorReturn<P> {
   const { userId, deductCredits, refundCredits, onGenerationSuccess } =
     useGenerationServices();
-  const repository = useMemo(
-    () => createCreationsRepository("creations"),
-    [],
-  );
+  const repository = getCreationsRepository();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -95,7 +93,7 @@ export function useAudioGenerationExecutor<P>(
         if (!audioUrl) throw new Error("No audio returned");
 
         await repository.create(userId, {
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+          id: generateCreationId(),
           type: config.type,
           uri: audioUrl,
           createdAt: new Date(),
@@ -117,18 +115,12 @@ export function useAudioGenerationExecutor<P>(
         const message =
           err instanceof Error ? err.message : "Generation failed";
         setError(message);
+
         if (deducted) {
-          try {
-            await refundCredits(cost);
-          } catch {
-            if (typeof __DEV__ !== "undefined" && __DEV__) {
-              console.error(`[${config.type}] Refund failed`);
-            }
-          }
+          await handleCreditRefund(refundCredits, cost, config.type);
         }
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error(`[${config.type}]`, err);
-        }
+
+        logGenerationError(config.type, err);
         return null;
       } finally {
         setIsLoading(false);

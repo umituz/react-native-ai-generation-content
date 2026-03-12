@@ -11,11 +11,12 @@
  * Auth and credit services come from GenerationServicesProvider context.
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useGenerationServices } from "../../../infrastructure/providers/generation-services.provider";
 import { resolveProvider } from "../../../infrastructure/services/provider-resolver";
-import { createCreationsRepository } from "../../../domains/creations/infrastructure/adapters";
+import { getCreationsRepository } from "./repositorySingleton";
 import { preprocessImageInputs } from "../../../infrastructure/utils/image-input-preprocessor.util";
+import { resolveType, handleCreditRefund, logGenerationError, generateCreationId } from "./generation-execution.utils";
 
 /** Target for generation: which model on which provider */
 export interface GenerationTarget {
@@ -42,8 +43,8 @@ export interface AIImageResult {
 const DEFAULT_IMAGE_CREDIT_COST = 2;
 
 export interface ImageGenerationExecutorConfig<P> {
-  /** Creation type stored in Firestore (e.g. "aging", "retouch") */
-  readonly type: string;
+  /** Creation type stored in Firestore (e.g. "aging", "retouch"). Can be a static string or a function that computes type from params. */
+  readonly type: string | ((params: P) => string);
   /** Credit cost per generation. Defaults to 2. */
   readonly creditCost?: number;
   /** Whether to call onGenerationSuccess after completion */
@@ -65,10 +66,7 @@ export function useImageGenerationExecutor<P>(
 ): ImageGenerationExecutorReturn<P> {
   const { userId, deductCredits, refundCredits, onGenerationSuccess } =
     useGenerationServices();
-  const repository = useMemo(
-    () => createCreationsRepository("creations"),
-    [],
-  );
+  const repository = getCreationsRepository();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -101,8 +99,8 @@ export function useImageGenerationExecutor<P>(
         if (!imageUrl) throw new Error("No image returned");
 
         await repository.create(userId, {
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-          type: config.type,
+          id: generateCreationId(),
+          type: resolveType(config.type, params),
           uri: imageUrl,
           createdAt: new Date(),
           isShared: false,
@@ -123,18 +121,13 @@ export function useImageGenerationExecutor<P>(
         const message =
           err instanceof Error ? err.message : "Generation failed";
         setError(message);
+        const typeLabel = resolveType(config.type, params);
+
         if (deducted) {
-          try {
-            await refundCredits(cost);
-          } catch {
-            if (typeof __DEV__ !== "undefined" && __DEV__) {
-              console.error(`[${config.type}] Refund failed`);
-            }
-          }
+          await handleCreditRefund(refundCredits, cost, typeLabel);
         }
-        if (typeof __DEV__ !== "undefined" && __DEV__) {
-          console.error(`[${config.type}]`, err);
-        }
+
+        logGenerationError(typeLabel, err);
         return null;
       } finally {
         setIsLoading(false);

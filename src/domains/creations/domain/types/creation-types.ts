@@ -8,6 +8,9 @@
  */
 export type CreationTypeId =
   | "text-to-image"
+  | "imagine"
+  | "wardrobe"
+  | "historical-wardrobe"
   | "text-to-video"
   | "image-to-video"
   | "upscale"
@@ -21,7 +24,18 @@ export type CreationTypeId =
   | "background-replacement"
   | "ai-brush"
   | "hd-touch-up"
-  | "anime-selfie";
+  | "anime-selfie"
+  | "aging"
+  | "headshot"
+  | "retouch"
+  | "magic-edit"
+  | "color-grading"
+  | "art-style"
+  | "mood-filter"
+  | "face-expression"
+  | "scene-composer"
+  | "ai-background"
+  | "effects";
 
 /**
  * Creation status values
