@@ -66,11 +66,10 @@ export function refinePromptForCouple(prompt: string, isCouple: boolean): string
   } else {
     // Solo mode: AGGRESSIVELY remove plural references to prevent "ghost" people
     return prompt
-      // Remove "men/women" duality if it exists (e.g., "X for women, Y for men")
-      .replace(/for women,?\s+and\s+.*?for men/gi, "") 
-      .replace(/for women,?\s+.*?for men/gi, "")
-      .replace(/for men,?\s+and\s+.*?for women/gi, "")
-      .replace(/for men,?\s+.*?for women/gi, "")
+      // Instead of removing the clothing descriptions, just remove the gender labels 
+      // so the AI can apply the relevant clothing to the single person it sees.
+      .replace(/\sfor women\b/gi, "")
+      .replace(/\sfor men\b/gi, "")
       // Remove collective adjectives
       .replace(/\bmatching\b/gi, "")
       .replace(/\bcoordinated\b/gi, "")
@@ -78,7 +77,7 @@ export function refinePromptForCouple(prompt: string, isCouple: boolean): string
       .replace(/\bcoordinating\b/gi, "")
       .replace(/\bcouple\b/gi, "person")
       .replace(/\bduo\b/gi, "person")
-      .replace(/\bpair\b/gi, "person balance") // Avoid "pair" of people
+      .replace(/\bpair\b/gi, "person") 
       .replace(/\bdoubles\b/gi, "")
       .replace(/\bboth\b/gi, "the person")
       .replace(/\bthey are\b/gi, "the person is")

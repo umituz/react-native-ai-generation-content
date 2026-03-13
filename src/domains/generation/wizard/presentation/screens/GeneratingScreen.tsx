@@ -52,16 +52,23 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
   const phase = useGenerationPhase();
   const pulseAnim = useRef(new Animated.Value(0.6)).current;
 
+  const scanAnim = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     const animation = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulseAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
-        Animated.timing(pulseAnim, { toValue: 0.6, duration: 900, useNativeDriver: true }),
+        Animated.timing(scanAnim, { toValue: 1, duration: 2500, useNativeDriver: true }),
+        Animated.timing(scanAnim, { toValue: 0, duration: 2500, useNativeDriver: true }),
       ]),
     );
     animation.start();
     return () => animation.stop();
-  }, [pulseAnim]);
+  }, [scanAnim]);
+
+  const scanTranslateY = scanAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-100, 100],
+  });
 
   const messages = useMemo(() => {
     const custom = scenario?.generatingMessages;
@@ -92,10 +99,26 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
     <ScreenLayout backgroundColor={tokens.colors.backgroundPrimary}>
       <View style={styles.container}>
         <View style={styles.content}>
-          {/* Pulsing spinner */}
-          <Animated.View style={[styles.spinnerContainer, { opacity: pulseAnim, backgroundColor: tokens.colors.primary + "15" }]}>
-            <ActivityIndicator size="large" color={tokens.colors.primary} />
-          </Animated.View>
+          {/* Scanning Animation Container */}
+          <View style={[styles.scanFrame, { borderColor: tokens.colors.primary + "30" }]}>
+            <View style={[styles.scanOverlay, { backgroundColor: tokens.colors.primary + "10" }]}>
+              <Animated.View 
+                style={[
+                  styles.scanLine, 
+                  { 
+                    backgroundColor: tokens.colors.primary,
+                    transform: [{ translateY: scanTranslateY }],
+                    shadowColor: tokens.colors.primary,
+                    shadowOpacity: 0.8,
+                    shadowRadius: 10,
+                  }
+                ]} 
+              />
+            </View>
+            <Animated.View style={[styles.spinnerOverlay, { opacity: pulseAnim }]}>
+              <ActivityIndicator size="large" color={tokens.colors.primary} />
+            </Animated.View>
+          </View>
 
           <AtomicText type="headlineMedium" style={styles.title}>
             {messages.title}
@@ -197,13 +220,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 16,
   },
-  spinnerContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+  scanFrame: {
+    width: 140,
+    height: 180,
+    borderRadius: 24,
+    borderWidth: 2,
+    overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,
+  },
+  scanOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scanLine: {
+    width: "120%",
+    height: 3,
+    position: "absolute",
+    left: "-10%",
+    elevation: 4,
+  },
+  spinnerOverlay: {
+    zIndex: 10,
   },
   title: {
     textAlign: "center",

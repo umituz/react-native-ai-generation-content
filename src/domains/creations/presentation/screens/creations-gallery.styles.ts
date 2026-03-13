@@ -17,6 +17,14 @@ export const creationsGalleryStyles = StyleSheet.create({
   gridPlaceholder: {
     flex: 1,
   },
+  gridItemWrapper: {
+    flex: 1 / 2,
+    padding: 4,
+  },
+  listItemWrapper: {
+    width: "100%",
+    marginBottom: 16,
+  },
   screenHeader: {
     flexDirection: "row",
     alignItems: "center",

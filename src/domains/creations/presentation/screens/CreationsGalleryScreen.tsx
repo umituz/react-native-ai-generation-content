@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useState } from "react";
-import { View } from "react-native";
+import { View, FlatList } from "react-native";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
 import { FilterSheet, useAppFocusEffect } from "@umituz/react-native-design-system/molecules";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
@@ -101,37 +101,42 @@ export function CreationsGalleryScreen({
     onPostToFeed: onShareToFeed ? () => onShareToFeed(item) : undefined,
   }), [callbacks, onCreationPress, onShareToFeed]);
 
-  const renderItem = useCallback(({ item }: { item: Creation }) => (
-    <CreationCard
-      creation={item}
-      titleText={getItemTitle(item)}
-      callbacks={getItemCallbacks(item)}
-      canPostToFeed={!!onShareToFeed && item.status === "completed"}
-    />
-  ), [getItemTitle, getItemCallbacks, onShareToFeed]);
+  const [pageLimit, setPageLimit] = useState(6);
 
-  const renderGridItems = useCallback((items: Creation[]) => {
-    const rows: Array<{ left: Creation; right: Creation | null }> = [];
-    for (let i = 0; i < items.length; i += 2) {
-      rows.push({ left: items[i], right: items[i + 1] ?? null });
+  const paginatedCreations = useMemo(() => {
+    return filters.filtered.slice(0, pageLimit);
+  }, [filters.filtered, pageLimit]);
+
+  const handleLoadMore = useCallback(() => {
+    if (pageLimit < filters.filtered.length) {
+      if (__DEV__) console.log("[CreationsGallery] Loading more...", { current: pageLimit, total: filters.filtered.length });
+      setPageLimit(prev => prev + 3);
     }
-    return rows.map((row, index) => (
-      <View key={`grid-row-${index}`} style={styles.gridRow}>
-        <CreationCardCompact
-          creation={row.left}
-          callbacks={{ onPress: getItemCallbacks(row.left).onPress }}
-        />
-        {row.right ? (
+  }, [pageLimit, filters.filtered.length]);
+
+  const renderItem = useCallback(({ item }: { item: Creation }) => {
+    if (viewMode === "grid") {
+      return (
+        <View style={styles.gridItemWrapper}>
           <CreationCardCompact
-            creation={row.right}
-            callbacks={{ onPress: getItemCallbacks(row.right).onPress }}
+            creation={item}
+            callbacks={{ onPress: getItemCallbacks(item).onPress }}
           />
-        ) : (
-          <View style={styles.gridPlaceholder} />
-        )}
+        </View>
+      );
+    }
+    
+    return (
+      <View style={styles.listItemWrapper}>
+        <CreationCard
+          creation={item}
+          titleText={getItemTitle(item)}
+          callbacks={getItemCallbacks(item)}
+          canPostToFeed={!!onShareToFeed && item.status === "completed"}
+        />
       </View>
-    ));
-  }, [getItemCallbacks]);
+    );
+  }, [viewMode, getItemTitle, getItemCallbacks, onShareToFeed]);
 
   const hasScreenHeader = Boolean(onBack);
 
@@ -147,7 +152,10 @@ export function CreationsGalleryScreen({
           showFilter={showFilter}
           filterButtons={filterButtons}
           viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          onViewModeChange={(mode) => {
+            setPageLimit(6); // Reset pagination on mode change
+            setViewMode(mode);
+          }}
         />
       </View>
     );
@@ -195,24 +203,28 @@ export function CreationsGalleryScreen({
   }
 
   return (
-    <ScreenLayout header={screenHeader}>
+    <ScreenLayout header={screenHeader} scrollable={false}>
       {renderHeader}
       {filters.filtered.length === 0 ? (
         <View style={[styles.listContent, styles.emptyContent]}>
           {renderEmpty}
         </View>
-      ) : viewMode === "grid" ? (
-        <View style={styles.gridContent}>
-          {renderGridItems(filters.filtered)}
-        </View>
       ) : (
-        <View style={styles.listContent}>
-          {filters.filtered.map((item) => (
-            <React.Fragment key={item.id}>
-              {renderItem({ item })}
-            </React.Fragment>
-          ))}
-        </View>
+        <FlatList
+          key={viewMode}
+          data={paginatedCreations}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          numColumns={viewMode === "grid" ? 2 : 1}
+          contentContainerStyle={viewMode === "grid" ? styles.gridContent : styles.listContent}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          initialNumToRender={3}
+          maxToRenderPerBatch={3}
+          windowSize={5}
+          removeClippedSubviews={true}
+          showsVerticalScrollIndicator={false}
+        />
       )}
       <FilterSheet visible={filters.statusFilterVisible} onClose={filters.closeStatusFilter} options={filters.statusFilter.filterOptions} selectedIds={[filters.statusFilter.selectedId]} onFilterPress={filters.statusFilter.selectFilter} onClearFilters={filters.statusFilter.clearFilter} title={t(config.translations.statusFilterTitle ?? "creations.filter.status")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
       <FilterSheet visible={filters.mediaFilterVisible} onClose={filters.closeMediaFilter} options={filters.mediaFilter.filterOptions} selectedIds={[filters.mediaFilter.selectedId]} onFilterPress={filters.mediaFilter.selectFilter} onClearFilters={filters.mediaFilter.clearFilter} title={t(config.translations.mediaFilterTitle ?? "creations.filter.media")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
