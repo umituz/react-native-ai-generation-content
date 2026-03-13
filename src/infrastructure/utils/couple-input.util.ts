@@ -43,19 +43,60 @@ export function prependContext(
 }
 
 /**
- * Refines a prompt for couple mode by replacing singular terms with plural ones.
- * Primarily used to fix "baked" prompts that were generated with singular defaults.
+ * Refines a prompt for couple or solo mode by adjusting plurals and keywords.
+ * Primarily used to fix "baked" prompts that were generated with a specific mode in mind.
  */
 export function refinePromptForCouple(prompt: string, isCouple: boolean): string {
-  if (!isCouple) return prompt;
+  if (isCouple) {
+    // Ensure couple context is present
+    let refined = prompt
+      .replace(/\bthe person must be\b/gi, "both people must be")
+      .replace(/\bthe person is\b/gi, "both people are")
+      .replace(/\bkeep every facial feature\b/gi, "keep every facial feature for both people")
+      .replace(/\bthe person\b/gi, "both people")
+      .replace(/\bfacial feature\b/gi, "facial features")
+      .replace(/\bidentical\b/gi, "identical for both individuals")
+      .replace(/\binstantly recognizable\b/gi, "instantly recognizable as themselves");
 
-  return prompt
-    .replace(/The person must be/g, "Both people must be")
-    .replace(/the person is/gi, "both people are")
-    .replace(/Keep every facial feature/g, "Keep every facial feature for both people")
-    .replace(/the person/gi, "both people")
-    .replace(/facial feature/gi, "facial features")
-    .replace(/identical/g, "identical for both individuals")
-    .replace(/instantly recognizable/g, "instantly recognizable as themselves");
+    // If it doesn't already have couple-hints, add them at the start
+    if (!/\b(couple|both|matching|dual|two people)\b/i.test(refined)) {
+      refined = `A photo of a couple, ${refined}`;
+    }
+    return refined;
+  } else {
+    // Solo mode: AGGRESSIVELY remove plural references to prevent "ghost" people
+    return prompt
+      // Remove "men/women" duality if it exists (e.g., "X for women, Y for men")
+      .replace(/for women,?\s+and\s+.*?for men/gi, "") 
+      .replace(/for women,?\s+.*?for men/gi, "")
+      .replace(/for men,?\s+and\s+.*?for women/gi, "")
+      .replace(/for men,?\s+.*?for women/gi, "")
+      // Remove collective adjectives
+      .replace(/\bmatching\b/gi, "")
+      .replace(/\bcoordinated\b/gi, "")
+      .replace(/\bcomplementary\b/gi, "")
+      .replace(/\bcoordinating\b/gi, "")
+      .replace(/\bcouple\b/gi, "person")
+      .replace(/\bduo\b/gi, "person")
+      .replace(/\bpair\b/gi, "person balance") // Avoid "pair" of people
+      .replace(/\bdoubles\b/gi, "")
+      .replace(/\bboth\b/gi, "the person")
+      .replace(/\bthey are\b/gi, "the person is")
+      .replace(/\btheir\b/gi, "the person's")
+      // Force singular clothing
+      .replace(/\bjackets\b/gi, "jacket")
+      .replace(/\boutfits\b/gi, "outfit")
+      .replace(/\bsuits\b/gi, "suit")
+      .replace(/\btuxedos\b/gi, "tuxedo")
+      .replace(/\bgowns\b/gi, "gown")
+      .replace(/\bdresses\b/gi, "dress")
+      .replace(/\bsweaters\b/gi, "sweater")
+      .replace(/\bhoodies\b/gi, "hoodie")
+      .replace(/\bcoats\b/gi, "coat")
+      .replace(/\bshirts\b/gi, "shirt")
+      .replace(/\bhats\b/gi, "hat")
+      .replace(/\baccessories\b/gi, "accessory")
+      .replace(/\s+/g, ' ').trim();
+  }
 }
 
