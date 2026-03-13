@@ -49,12 +49,16 @@ export async function handleModeration<TInput, TResult>(
       moderation.onShowWarning(
         moderationResult.warnings,
         () => {
+          // Cancel callback - reset state
           isGeneratingRef.current = false;
           if (isMountedRef.current) resetState();
         },
-        () => {
-          // Return the promise to allow proper error handling chain
-          return executeGeneration(input).catch(async (err) => {
+        async () => {
+          // Proceed callback - execute generation with full error handling
+          try {
+            const result = await executeGeneration(input);
+            return result;
+          } catch (err) {
             const error = parseError(err);
             if (isMountedRef.current) {
               setState({ status: "error", isGenerating: false, result: null, error });
@@ -63,9 +67,9 @@ export async function handleModeration<TInput, TResult>(
             await onError?.(error);
             handleLifecycleComplete("error", undefined, error);
             throw error; // Re-throw to allow caller to handle
-          }).finally(() => {
+          } finally {
             isGeneratingRef.current = false;
-          });
+          }
         },
       );
       return undefined;

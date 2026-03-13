@@ -7,8 +7,8 @@
 export { PromptInput as TextToImagePromptInput } from "../../../../presentation/components/PromptInput";
 export type { PromptInputProps as TextToImagePromptInputProps } from "../../../../presentation/components/PromptInput";
 
-export { ExamplePrompts as TextToImageExamplePrompts } from "../../../../presentation/components/prompts";
-export type { ExamplePromptsProps as TextToImageExamplePromptsProps } from "../../../../presentation/components/prompts";
+export { ExamplePrompts as TextToImageExamplePrompts } from "../../../../presentation/components/prompts/ExamplePrompts";
+export type { ExamplePromptsProps as TextToImageExamplePromptsProps } from "../../../../presentation/components/prompts/ExamplePrompts";
 
 // Selector Components
 export { StyleSelector as TextToImageStyleSelector } from "../../../../presentation/components/selectors";
@@ -22,8 +22,8 @@ export { GridSelector as TextToImageOutputFormatSelector } from "../../../../pre
 export { GridSelector as TextToImageNumImagesSelector } from "../../../../presentation/components/selectors";
 
 // Action Components
-export { GenerateButton as TextToImageGenerateButton } from "../../../../presentation/components/buttons";
-export type { GenerateButtonProps as TextToImageGenerateButtonProps } from "../../../../presentation/components/buttons";
+export { GenerateButton as TextToImageGenerateButton } from "../../../../presentation/components/buttons/GenerateButton";
+export type { GenerateButtonProps as TextToImageGenerateButtonProps } from "../../../../presentation/components/buttons/GenerateButton";
 
 // Sheet Components
 export { SettingsSheet as TextToImageSettingsSheet } from "../../../../presentation/components/modals/SettingsSheet";

@@ -43,7 +43,9 @@ export function useExecutionCallback<TRequest = unknown, TResult = unknown>(
         }
 
         if (result.success) {
-          return { success: true, imageUrls: result.imageUrls ?? [] };
+          // imageUrls is required when result.success is true
+          // executor must provide it
+          return { success: true, imageUrls: result.imageUrls! };
         }
         return { success: false, error: result.error ?? "Unknown error" };
       } catch (error) {

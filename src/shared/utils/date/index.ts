@@ -1,11 +1,7 @@
 /**
  * Date Utilities
- * Centralized date handling utilities
+ * Date normalization and timestamp operations
  */
 
-export {
-  normalizeDateToTimestamp,
-  normalizeToDate,
-  isValidDate,
-  compareDates,
-} from "./normalization";
+export * from "./normalization";
+export * from "./timestamp";

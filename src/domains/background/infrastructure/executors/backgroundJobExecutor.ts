@@ -89,6 +89,14 @@ export const executeQueuedJob = async <TInput, TResult>(
     if (completedJob) {
       await executor.onComplete?.(completedJob);
       onJobComplete?.(completedJob);
+    } else {
+      // Job reference lost - log for debugging
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.warn("[BackgroundJobExecutor] Completed job not found in cache:", {
+          jobId,
+          timestamp: new Date().toISOString(),
+        });
+      }
     }
 
     // Await removal to ensure cleanup happens before checking activeJobs
@@ -103,13 +111,28 @@ export const executeQueuedJob = async <TInput, TResult>(
     if (failedJob) {
       await executor.onError?.(failedJob, error instanceof Error ? error : new Error(errorMsg));
       onJobError?.(failedJob);
+    } else {
+      // Job reference lost - log for debugging
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.warn("[BackgroundJobExecutor] Failed job not found in cache:", {
+          jobId,
+          error: errorMsg,
+          timestamp: new Date().toISOString(),
+        });
+      }
     }
 
     // Remove failed job from cache to prevent accumulation
     try {
       await removeJobAsync(jobId);
-    } catch {
-      // Best effort cleanup
+    } catch (removeError) {
+      // Log cleanup failure but don't throw - state is already consistent
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[BackgroundJobExecutor] Failed to remove job after error:", {
+          jobId,
+          error: removeError instanceof Error ? removeError.message : String(removeError),
+        });
+      }
     }
   } finally {
     // Use atomic Set operation to prevent race conditions

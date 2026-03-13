@@ -41,8 +41,8 @@ export type {
 export { INITIAL_FORM_STATE, INITIAL_GENERATION_STATE } from "./domain";
 
 // Infrastructure Services
-export { executeTextToVideo, hasTextToVideoSupport } from "./infrastructure";
-export type { ExecuteTextToVideoOptions } from "./infrastructure";
+export { executeTextToVideo, hasTextToVideoSupport } from "./infrastructure/services";
+export type { ExecuteTextToVideoOptions } from "./infrastructure/services";
 
 // Presentation Hooks
 export {

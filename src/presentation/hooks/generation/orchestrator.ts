@@ -16,8 +16,12 @@ import type {
   UseGenerationOrchestratorReturn,
 } from "./types";
 
-
-const INITIAL_STATE = { status: "idle" as const, isGenerating: false, result: null, error: null };
+const getInitialState = <T>(): GenerationState<T> => ({
+  status: "idle",
+  isGenerating: false,
+  result: null,
+  error: null,
+});
 
 export const useGenerationOrchestrator = <TInput, TResult>(
   strategy: GenerationStrategy<TInput, TResult>,
@@ -25,7 +29,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
 ): UseGenerationOrchestratorReturn<TInput, TResult> => {
   const { userId, alertMessages, onSuccess, onError, moderation, lifecycle } = config;
 
-  const [state, setState] = useState<GenerationState<TResult>>(INITIAL_STATE);
+  const [state, setState] = useState<GenerationState<TResult>>(getInitialState<TResult>());
   const isGeneratingRef = useRef(false);
   const isMountedRef = useRef(true);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -83,17 +87,42 @@ export const useGenerationOrchestrator = <TInput, TResult>(
         console.log("[Orchestrator] executeGeneration() called");
       }
 
+      // Check abort signal before starting
+      if (abortControllerRef.current?.signal.aborted) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] Aborted before generation started");
+        }
+        throw new Error("Generation aborted");
+      }
+
       setState((prev) => ({ ...prev, status: "generating" }));
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] State: generating - calling strategy.execute()");
       }
 
       const result = await strategy.execute(input);
+
+      // Check abort signal after execution
+      if (abortControllerRef.current?.signal.aborted) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] Aborted after generation completed");
+        }
+        throw new Error("Generation aborted");
+      }
+
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] strategy.execute() completed");
       }
 
       if (strategy.save && userId) {
+        // Check abort signal before save
+        if (abortControllerRef.current?.signal.aborted) {
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log("[Orchestrator] Aborted before save");
+          }
+          throw new Error("Generation aborted");
+        }
+
         if (isMountedRef.current) setState((prev) => ({ ...prev, status: "saving" }));
         if (typeof __DEV__ !== "undefined" && __DEV__) {
           console.log("[Orchestrator] Saving result to Firestore");
@@ -107,8 +136,20 @@ export const useGenerationOrchestrator = <TInput, TResult>(
           if (typeof __DEV__ !== "undefined" && __DEV__) {
             console.log("[Orchestrator] ERROR: Save failed:", saveErr);
           }
+          // Update state to error on save failure
+          if (isMountedRef.current) {
+            setState((prev) => ({ ...prev, status: "error", isGenerating: false }));
+          }
           throw createGenerationError("save", alertMessages.saveFailed, saveErr instanceof Error ? saveErr : undefined);
         }
+      }
+
+      // Final abort check before success
+      if (abortControllerRef.current?.signal.aborted) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[Orchestrator] Aborted before success callback");
+        }
+        throw new Error("Generation aborted");
       }
 
       if (isMountedRef.current) setState({ status: "success", isGenerating: false, result, error: null });
@@ -126,7 +167,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   );
 
   const generate = useCallback(
-    async (input: TInput) => {
+    async (input: TInput): Promise<TResult | void> => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] ========================================");
         console.log("[Orchestrator] generate() called with input:", JSON.stringify(input).substring(0, 200));
@@ -145,7 +186,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
       abortControllerRef.current = new AbortController();
       isGeneratingRef.current = true;
       let moderationPending = false;
-      setState({ ...INITIAL_STATE, status: "checking", isGenerating: true });
+      setState({ ...getInitialState<TResult>(), status: "checking", isGenerating: true });
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] State set to 'checking', isGenerating: true");
@@ -183,7 +224,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
           isMountedRef,
           isGeneratingRef,
           setState: (s) => setState(s as GenerationState<TResult>),
-          resetState: () => setState(INITIAL_STATE),
+          resetState: () => setState(getInitialState<TResult>()),
           executeGeneration,
           showError,
           onError,
@@ -227,7 +268,7 @@ export const useGenerationOrchestrator = <TInput, TResult>(
   const reset = useCallback(() => {
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
-    setState(INITIAL_STATE);
+    setState(getInitialState<TResult>());
     isGeneratingRef.current = false;
   }, []);
 

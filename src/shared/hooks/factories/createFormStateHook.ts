@@ -113,7 +113,3 @@ export function createFormStateHook<
     return { state, actions };
   };
 }
-
-// Note: createFormStateHookWithIndividualState removed due to type complexity
-// and lack of usage. Use createFormStateHook instead which provides the same
-// functionality with better type safety.

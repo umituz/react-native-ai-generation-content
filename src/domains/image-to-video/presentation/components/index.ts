@@ -18,5 +18,5 @@ export type {
 } from "./ImageSelectionGrid";
 
 // Action Components
-export { GenerateButton as ImageToVideoGenerateButton } from "../../../../presentation/components/buttons";
-export type { GenerateButtonProps as ImageToVideoGenerateButtonProps } from "../../../../presentation/components/buttons";
+export { GenerateButton as ImageToVideoGenerateButton } from "../../../../presentation/components/buttons/GenerateButton";
+export type { GenerateButtonProps as ImageToVideoGenerateButtonProps } from "../../../../presentation/components/buttons/GenerateButton";

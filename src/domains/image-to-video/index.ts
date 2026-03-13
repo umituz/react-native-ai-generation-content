@@ -48,8 +48,8 @@ export type {
 // INFRASTRUCTURE LAYER
 // =============================================================================
 
-export { executeImageToVideo, hasImageToVideoSupport } from "./infrastructure";
-export type { ExecuteImageToVideoOptions } from "./infrastructure";
+export { executeImageToVideo, hasImageToVideoSupport } from "./infrastructure/services";
+export type { ExecuteImageToVideoOptions } from "./infrastructure/services";
 
 // =============================================================================
 // PRESENTATION LAYER - Hooks

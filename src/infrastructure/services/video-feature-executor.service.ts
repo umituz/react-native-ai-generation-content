@@ -18,7 +18,7 @@ import type { ExecuteVideoFeatureOptions, VideoFeatureResult, VideoFeatureReques
 export async function executeVideoFeature(
   featureType: VideoFeatureType,
   request: VideoFeatureRequest,
-  options?: ExecuteVideoFeatureOptions,
+  options: ExecuteVideoFeatureOptions = {},
 ): Promise<VideoFeatureResult> {
   const validation = validateProvider(`VideoExecutor:${featureType}`);
   if (!validation.success) {
@@ -26,7 +26,7 @@ export async function executeVideoFeature(
   }
 
   const { provider } = validation;
-  const { extractResult, onStatusChange } = options ?? {};
+  const { extractResult, onStatusChange } = options;
   const model = provider.getVideoFeatureModel(featureType);
 
   try {

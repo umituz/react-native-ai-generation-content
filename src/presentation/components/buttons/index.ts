@@ -1,1 +1,2 @@
-export { GenerateButton, type GenerateButtonProps } from "./GenerateButton";
+export { GenerateButton } from "./GenerateButton";
+export type { GenerateButtonProps } from "./GenerateButton";

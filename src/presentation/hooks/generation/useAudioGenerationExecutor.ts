@@ -103,7 +103,7 @@ export function useAudioGenerationExecutor<P>(
           output: { audioUrl },
           model: input.target.model,
           prompt: input.prompt,
-          metadata: config.buildMetadata?.(params) ?? {},
+          metadata: config.buildMetadata?.(params),
         });
 
         if (config.trackRating && onGenerationSuccess) {

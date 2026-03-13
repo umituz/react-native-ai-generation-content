@@ -35,7 +35,7 @@ export interface ImageFeatureRequest {
 export async function executeImageFeature(
   featureType: ImageFeatureType,
   request: ImageFeatureRequest,
-  options?: ExecuteImageFeatureOptions,
+  options: ExecuteImageFeatureOptions = {},
 ): Promise<ImageFeatureResult> {
   const validation = validateProvider(`Image:${featureType}`);
   if (!validation.success) {
@@ -43,7 +43,7 @@ export async function executeImageFeature(
   }
 
   const { provider } = validation;
-  const { extractResult, onProgress } = options ?? {};
+  const { extractResult, onProgress } = options;
   const model = provider.getImageFeatureModel(featureType);
 
   try {

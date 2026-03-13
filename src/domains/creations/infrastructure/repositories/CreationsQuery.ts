@@ -19,7 +19,15 @@ export class CreationsQuery {
 
     /**
      * Get all creations for a user
-     * Optimized query: Server-side filtering for non-deleted items
+     *
+     * NOTE: Client-side filtering for deletedAt is used here for simplicity.
+     * For better performance with large datasets, consider:
+     * 1. Adding a where clause: where(CREATION_FIELDS.DELETED_AT, "==", null)
+     * 2. Creating a composite index on (deletedAt, createdAt)
+     *
+     * Current implementation fetches all documents including soft-deleted ones,
+     * which is acceptable for small-to-medium datasets but may impact performance
+     * at scale.
      */
     async getAll(userId: string): Promise<Creation[]> {
         const userCollection = this.pathResolver.getUserCollection(userId);

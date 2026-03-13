@@ -31,7 +31,11 @@ function withAbortSignal<T>(
       return;
     }
 
+    let isResolved = false;
     const abortHandler = () => {
+      if (isResolved) return;
+      isResolved = true;
+      if (timeoutId) clearTimeout(timeoutId);
       reject(new Error("Operation aborted"));
     };
 
@@ -41,17 +45,24 @@ function withAbortSignal<T>(
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     if (timeoutMs) {
       timeoutId = setTimeout(() => {
+        if (isResolved) return;
+        isResolved = true;
+        signal?.removeEventListener("abort", abortHandler);
         reject(new Error(`Operation timeout after ${timeoutMs}ms`));
       }, timeoutMs);
     }
 
     promise
       .then((result) => {
+        if (isResolved) return;
+        isResolved = true;
         signal?.removeEventListener("abort", abortHandler);
         if (timeoutId) clearTimeout(timeoutId);
         resolve(result);
       })
       .catch((error) => {
+        if (isResolved) return;
+        isResolved = true;
         signal?.removeEventListener("abort", abortHandler);
         if (timeoutId) clearTimeout(timeoutId);
         reject(error);

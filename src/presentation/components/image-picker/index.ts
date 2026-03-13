@@ -1,1 +1,2 @@
-export { DualImagePicker, type DualImagePickerProps } from "./DualImagePicker";
+export { DualImagePicker } from "./DualImagePicker";
+export type { DualImagePickerProps } from "./DualImagePicker";

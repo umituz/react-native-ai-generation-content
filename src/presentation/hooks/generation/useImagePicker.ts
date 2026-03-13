@@ -26,7 +26,7 @@ export interface UseImagePickerReturn {
   reset(): void;
 }
 
-export const useImagePicker = (options: UseImagePickerOptions = {}): UseImagePickerReturn => {
+export const useImagePicker = (options: UseImagePickerOptions): UseImagePickerReturn => {
   const { aspect = [1, 1], onError } = options;
 
   const [uri, setUri] = useState<string | null>(null);

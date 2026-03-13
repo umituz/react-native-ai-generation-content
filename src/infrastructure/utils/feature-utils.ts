@@ -87,15 +87,20 @@ async function checkCreditGuard(cost: number, featureName: string): Promise<bool
 
   if (!authService.isAuthenticated()) {
     if (__DEV__) {
-       
       console.log(`[${featureName}] Auth required`);
     }
     try {
       authService.requireAuth();
+      // If requireAuth succeeds (e.g., user was already logged in), check auth status again
+      if (!authService.isAuthenticated()) {
+        // requireAuth succeeded but user is still not authenticated
+        // This can happen if requireAuth just navigated without throwing
+        return false;
+      }
     } catch {
+      // requireAuth threw an error (e.g., user cancelled login, navigation failed)
       return false;
     }
-    return false;
   }
 
   const hasCredits = await creditService.checkCredits(cost);
