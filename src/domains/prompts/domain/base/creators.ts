@@ -4,8 +4,10 @@
 
 import {
   IDENTITY_PRESERVATION_CORE,
+  IDENTITY_PRESERVATION_COUPLE,
   PHOTOREALISTIC_RENDERING,
   NATURAL_POSE_GUIDELINES,
+  NATURAL_POSE_GUIDELINES_COUPLE,
 } from "./constants";
 import type { CreatePromptOptions } from "./types";
 
@@ -17,13 +19,14 @@ export const createPhotorealisticPrompt = (
     includeIdentityPreservation = true,
     includePhotoRealism = true,
     includePoseGuidelines = true,
+    isCouple = false,
     customInstructions,
   } = options;
 
   const parts: string[] = [];
 
   if (includeIdentityPreservation) {
-    parts.push(IDENTITY_PRESERVATION_CORE);
+    parts.push(isCouple ? IDENTITY_PRESERVATION_COUPLE : IDENTITY_PRESERVATION_CORE);
   }
 
   if (includePhotoRealism) {
@@ -31,7 +34,7 @@ export const createPhotorealisticPrompt = (
   }
 
   if (includePoseGuidelines) {
-    parts.push(NATURAL_POSE_GUIDELINES);
+    parts.push(isCouple ? NATURAL_POSE_GUIDELINES_COUPLE : NATURAL_POSE_GUIDELINES);
   }
 
   if (customInstructions) {

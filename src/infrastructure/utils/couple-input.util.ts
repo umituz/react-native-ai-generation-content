@@ -41,3 +41,21 @@ export function prependContext(
 ): string {
   return context ? `${context}\n\n${basePrompt}` : basePrompt;
 }
+
+/**
+ * Refines a prompt for couple mode by replacing singular terms with plural ones.
+ * Primarily used to fix "baked" prompts that were generated with singular defaults.
+ */
+export function refinePromptForCouple(prompt: string, isCouple: boolean): string {
+  if (!isCouple) return prompt;
+
+  return prompt
+    .replace(/The person must be/g, "Both people must be")
+    .replace(/the person is/gi, "both people are")
+    .replace(/Keep every facial feature/g, "Keep every facial feature for both people")
+    .replace(/the person/gi, "both people")
+    .replace(/facial feature/gi, "facial features")
+    .replace(/identical/g, "identical for both individuals")
+    .replace(/instantly recognizable/g, "instantly recognizable as themselves");
+}
+

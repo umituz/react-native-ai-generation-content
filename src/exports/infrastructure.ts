@@ -35,7 +35,7 @@ export {
   isValidBase64, getBase64Size, getBase64SizeMB, prepareImage, createDevCallbacks, createFeatureUtils,
   showVideoGenerationSuccess, handleGenerationError, showContentModerationWarning,
   mapJobStatusToGenerationStatus, intensityToStrength,
-  resolveCoupleInput, prependContext,
+  resolveCoupleInput, prependContext, refinePromptForCouple,
 } from "../infrastructure/utils";
 export type {
   IntervalOptions, StatusCheckResult, ResultValidation, ValidateResultOptions,

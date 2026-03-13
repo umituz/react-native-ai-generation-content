@@ -2,6 +2,7 @@
  * Scenario Data Utils
  * Helper functions for scenario creation
  */
+import { createPhotorealisticPrompt as createUnifiedPrompt } from "../../../prompts";
 
 /**
  * Photorealistic prompt constants for high-quality AI image generation
@@ -38,15 +39,17 @@ export const CREATIVE_BASE = {
  * Creates a photorealistic AI prompt by combining scene description with quality modifiers
  * Used for realistic image/video generation (future us, video apps)
  * @param scene - The scene-specific description (what's happening, who, where)
- * @param options - Optional configuration (customInstructions for lighting override)
+ * @param options - Optional configuration
  * @returns Complete photorealistic prompt
  */
 export const createPhotorealisticPrompt = (
   scene: string,
-  options?: { customInstructions?: string },
+  options?: { customInstructions?: string; isCouple?: boolean },
 ): string => {
-  const lighting = options?.customInstructions ?? PHOTOREALISTIC_BASE.lighting;
-  return `${PHOTOREALISTIC_BASE.quality}, ${scene}, ${lighting}`;
+  return createUnifiedPrompt(scene, {
+    customInstructions: options?.customInstructions,
+    isCouple: options?.isCouple,
+  });
 };
 
 /**
