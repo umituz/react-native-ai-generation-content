@@ -25,9 +25,9 @@ export interface ResultActionBarProps {
   /** Currently sharing */
   isSharing: boolean;
   /** Download callback */
-  onDownload: () => void;
+  onDownload?: () => void;
   /** Share callback */
-  onShare: () => void;
+  onShare?: () => void;
   /** Try again callback */
   onTryAgain?: () => void;
   /** Rate callback */

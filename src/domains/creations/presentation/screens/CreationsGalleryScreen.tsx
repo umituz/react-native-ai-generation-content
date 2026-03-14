@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { View, FlatList } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
 import { FilterSheet, useAppFocusEffect } from "@umituz/react-native-design-system/molecules";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
@@ -37,6 +38,7 @@ export function CreationsGalleryScreen({
   onShareToFeed,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
+  const insets = useSafeAreaInsets();
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });
@@ -76,9 +78,10 @@ export function CreationsGalleryScreen({
     void refetch();
     // Reset selection on focus if no initial ID is being enforced
     if (!initialCreationId) {
-      galleryState.setSelectedCreation(null);
+    const { setSelectedCreation } = galleryState;
+    setSelectedCreation(null);
     }
-  }, [refetch, initialCreationId, galleryState]));
+  }, [refetch, initialCreationId, galleryState.setSelectedCreation]));
 
   const filterButtons = useMemo(() =>
     createFilterButtons({
@@ -157,7 +160,14 @@ export function CreationsGalleryScreen({
     if (!creations?.length && !isLoading) return null;
     if (isLoading) return null;
     return (
-      <View style={[styles.header, { backgroundColor: tokens.colors.surface, borderBottomColor: tokens.colors.border }]}>
+      <View style={[
+        styles.header, 
+        { 
+          backgroundColor: tokens.colors.surface, 
+          borderBottomColor: tokens.colors.border,
+          paddingTop: hasScreenHeader ? 0 : insets.top
+        }
+      ]}>
         <GalleryHeader
           title={hasScreenHeader ? "" : t(config.translations.title)}
           count={filters.filtered.length}
@@ -216,7 +226,7 @@ export function CreationsGalleryScreen({
   }
 
   return (
-    <ScreenLayout header={screenHeader} scrollable={false}>
+    <ScreenLayout header={screenHeader} scrollable={false} edges={["left", "right", "bottom"]}>
       {renderHeader}
       {filters.filtered.length === 0 ? (
         <View style={[styles.listContent, styles.emptyContent]}>

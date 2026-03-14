@@ -77,6 +77,7 @@ export function GalleryResultPreview({
         iconOnly
         showTryAgain
         showRating={!hasRating}
+        showActions={true}
         translations={{
           title: t(config.translations.title),
           saveButton: t("result.saveButton"),

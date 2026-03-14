@@ -3,7 +3,7 @@
  * Manages the state for the gallery screen including selection and media URL handling
  */
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { Creation } from "../../domain/entities/Creation";
 import { getPreviewUrl } from "../../domain/utils";
 
@@ -27,7 +27,6 @@ export function useGalleryState(options: GalleryStateOptions): GalleryStateRetur
   const { initialCreationId, creations } = options;
   const [selectedCreation, setSelectedCreation] = useState<Creation | null>(null);
   const [showRatingPicker, setShowRatingPicker] = useState(false);
-  const hasAutoSelectedRef = useRef(false);
 
   // Auto-select creation when initialCreationId is provided
   useEffect(() => {
@@ -60,7 +59,7 @@ export function useGalleryState(options: GalleryStateOptions): GalleryStateRetur
     [selectedCreation]
   );
 
-  return {
+  return useMemo(() => ({
     selectedCreation,
     showRatingPicker,
     selectedImageUrl,
@@ -69,5 +68,12 @@ export function useGalleryState(options: GalleryStateOptions): GalleryStateRetur
     showPreview,
     setSelectedCreation,
     setShowRatingPicker,
-  };
+  }), [
+    selectedCreation,
+    showRatingPicker,
+    selectedImageUrl,
+    selectedVideoUrl,
+    hasMediaToShow,
+    showPreview,
+  ]);
 }

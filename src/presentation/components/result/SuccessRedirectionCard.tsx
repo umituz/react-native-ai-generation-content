@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from "react-
 import {
   AtomicText,
   AtomicIcon,
+  IconName,
 } from "@umituz/react-native-design-system/atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 
@@ -46,7 +47,7 @@ export const SuccessRedirectionCard: React.FC<SuccessRedirectionCardProps> = ({
           { backgroundColor: tokens.colors.backgroundPrimary },
         ]}
       >
-        <AtomicIcon name={iconName as any} size="xl" color="primary" />
+        <AtomicIcon name={iconName as IconName} size="xl" color="primary" />
       </View>
 
       <AtomicText type="titleSmall" color="textPrimary" style={styles.title}>

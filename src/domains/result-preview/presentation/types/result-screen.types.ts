@@ -14,11 +14,11 @@ export interface ResultPreviewScreenProps {
   /** Video URL to display */
   videoUrl?: string;
   /** Result display state */
-  isSaving: boolean;
-  isSharing: boolean;
+  isSaving?: boolean;
+  isSharing?: boolean;
   /** Action callbacks */
-  onDownload: () => void;
-  onShare: () => void;
+  onDownload?: () => void;
+  onShare?: () => void;
   onTryAgain?: () => void;
   onNavigateBack?: () => void;
   onRate?: () => void;
@@ -47,6 +47,8 @@ export interface ResultPreviewScreenProps {
   showTryAgain?: boolean;
   /** Show rating button */
   showRating?: boolean;
+  /** Show action buttons (save, share, etc) */
+  showActions?: boolean;
 }
 
 /**

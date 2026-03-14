@@ -75,30 +75,34 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
   if (iconOnly) {
     return (
       <View style={styles.container}>
-        <TouchableOpacity
-          style={[styles.iconButton, isSaving && styles.disabledButton]}
-          onPress={onDownload}
-          disabled={isSaving}
-          activeOpacity={0.7}
-        >
-          {isSaving ? (
-            <ActivityIndicator color={tokens.colors.textInverse} size="small" />
-          ) : (
-            <AtomicIcon name="download-outline" customSize={20} color="onPrimary" />
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.iconButton, isSharing && styles.disabledButton]}
-          onPress={onShare}
-          disabled={isSharing}
-          activeOpacity={0.7}
-        >
-          {isSharing ? (
-            <ActivityIndicator color={tokens.colors.textInverse} size="small" />
-          ) : (
-            <AtomicIcon name="share-social-outline" customSize={20} color="onPrimary" />
-          )}
-        </TouchableOpacity>
+        {onDownload && (
+          <TouchableOpacity
+            style={[styles.iconButton, isSaving && styles.disabledButton]}
+            onPress={onDownload}
+            disabled={isSaving}
+            activeOpacity={0.7}
+          >
+            {isSaving ? (
+              <ActivityIndicator color={tokens.colors.textInverse} size="small" />
+            ) : (
+              <AtomicIcon name="download-outline" customSize={20} color="onPrimary" />
+            )}
+          </TouchableOpacity>
+        )}
+        {onShare && (
+          <TouchableOpacity
+            style={[styles.iconButton, isSharing && styles.disabledButton]}
+            onPress={onShare}
+            disabled={isSharing}
+            activeOpacity={0.7}
+          >
+            {isSharing ? (
+              <ActivityIndicator color={tokens.colors.textInverse} size="small" />
+            ) : (
+              <AtomicIcon name="share-social-outline" customSize={20} color="onPrimary" />
+            )}
+          </TouchableOpacity>
+        )}
         {showTryAgain && onTryAgain && (
           <TouchableOpacity
             style={styles.iconButton}
@@ -117,26 +121,6 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
             <AtomicIcon name="star-outline" customSize={20} color="onPrimary" />
           </TouchableOpacity>
         )}
-        {/* Photo & Video editing - Disabled for now
-        {onEdit && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onEdit}
-            activeOpacity={0.7}
-          >
-            <AtomicIcon name="edit" customSize={20} color="onPrimary" />
-          </TouchableOpacity>
-        )}
-        {onEditVideo && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onEditVideo}
-            activeOpacity={0.7}
-          >
-            <AtomicIcon name="video" customSize={20} color="onPrimary" />
-          </TouchableOpacity>
-        )}
-        */}
         {onShareToFeed && (
           <TouchableOpacity
             style={styles.iconButton}
@@ -152,33 +136,37 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={onDownload}
-        disabled={isSaving}
-        activeOpacity={0.7}
-      >
-        {isSaving ? (
-          <ActivityIndicator color={tokens.colors.textInverse} size="small" />
-        ) : (
-          <AtomicIcon name="download-outline" customSize={18} color="onPrimary" />
-        )}
-        <AtomicText style={styles.buttonText}>{saveButtonText}</AtomicText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={onShare}
-        disabled={isSharing}
-        activeOpacity={0.7}
-      >
-        {isSharing ? (
-          <ActivityIndicator color={tokens.colors.textInverse} size="small" />
-        ) : (
-          <AtomicIcon name="share-social-outline" customSize={18} color="onPrimary" />
-        )}
-        <AtomicText style={styles.buttonText}>{shareButtonText}</AtomicText>
-      </TouchableOpacity>
-      {showTryAgain && (
+      {onDownload && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={onDownload}
+          disabled={isSaving}
+          activeOpacity={0.7}
+        >
+          {isSaving ? (
+            <ActivityIndicator color={tokens.colors.textInverse} size="small" />
+          ) : (
+            <AtomicIcon name="download-outline" customSize={18} color="onPrimary" />
+          )}
+          <AtomicText style={styles.buttonText}>{saveButtonText}</AtomicText>
+        </TouchableOpacity>
+      )}
+      {onShare && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={onShare}
+          disabled={isSharing}
+          activeOpacity={0.7}
+        >
+          {isSharing ? (
+            <ActivityIndicator color={tokens.colors.textInverse} size="small" />
+          ) : (
+            <AtomicIcon name="share-social-outline" customSize={18} color="onPrimary" />
+          )}
+          <AtomicText style={styles.buttonText}>{shareButtonText}</AtomicText>
+        </TouchableOpacity>
+      )}
+      {showTryAgain && onTryAgain && (
         <TouchableOpacity style={styles.button} onPress={onTryAgain} activeOpacity={0.7}>
           <AtomicIcon name="refresh-outline" customSize={18} color="onPrimary" />
           <AtomicText style={styles.buttonText}>{tryAgainButtonText}</AtomicText>

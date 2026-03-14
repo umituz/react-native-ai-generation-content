@@ -15,16 +15,16 @@ import { formatMediaUrl, shouldShowRecentCreations } from "./ResultPreviewScreen
 export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   imageUrl,
   videoUrl,
-  isSaving: _isSaving,
-  isSharing: _isSharing,
-  onDownload: _onDownload,
-  onShare: _onShare,
-  onTryAgain: _onTryAgain,
+  isSaving = false,
+  isSharing = false,
+  onDownload,
+  onShare,
+  onTryAgain,
   onNavigateBack,
-  onRate: _onRate,
-  onEdit: _onEdit,
-  onEditVideo: _onEditVideo,
-  onShareToFeed: _onShareToFeed,
+  onRate,
+  onEdit,
+  onEditVideo,
+  onShareToFeed,
   recentCreations,
   onViewAll,
   onCreationPress,
@@ -32,9 +32,10 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   translations,
   style,
   hideLabel = false,
-  iconOnly: _iconOnly = false,
-  showTryAgain: _showTryAgain = true,
-  showRating: _showRating = false,
+  iconOnly = false,
+  showTryAgain = true,
+  showRating = false,
+  showActions = false,
 }) => {
   const tokens = useAppDesignTokens();
   const isVideo = Boolean(videoUrl);
@@ -63,32 +64,62 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   const showRecent = shouldShowRecentCreations(recentCreations, translations);
 
   return (
-    <ScreenLayout scrollable edges={["left", "right"]} backgroundColor={tokens.colors.backgroundPrimary}>
+    <View style={{ flex: 1, backgroundColor: tokens.colors.backgroundPrimary }}>
       <NavigationHeader title={translations.title} onBackPress={onNavigateBack} />
-      <View style={[styles.container, style]}>
-        <View style={styles.resultContainer}>
-          {!hideLabel && <AtomicText style={styles.title}>{translations.yourResult}</AtomicText>}
-          {isVideo ? <VideoResultPlayer uri={displayMediaUrl} /> : <ResultImageCard imageUrl={displayMediaUrl} />}
-          {onViewCreations && (
-            <SuccessRedirectionCard
-              onPress={onViewCreations}
-              title={translations.redirectTitle || "Your Creation is Ready!"}
-              description={translations.redirectDescription || "Head over to the My Creations screen to view full details."}
-              buttonText={translations.viewCreations || "View My Creations"}
-              style={{ marginTop: tokens.spacing.xl }}
+      <ScreenLayout
+        scrollable
+        edges={["left", "right", "bottom"]}
+        backgroundColor={tokens.colors.backgroundPrimary}
+      >
+        <View style={[styles.container, style]}>
+          <View style={styles.resultContainer}>
+            {!hideLabel && <AtomicText style={styles.title}>{translations.yourResult}</AtomicText>}
+            {isVideo ? <VideoResultPlayer uri={displayMediaUrl} /> : <ResultImageCard imageUrl={displayMediaUrl} />}
+
+            {showActions && (
+              <ResultActionBar
+                isSaving={isSaving}
+                isSharing={isSharing}
+                onDownload={onDownload}
+                onShare={onShare}
+                onTryAgain={onTryAgain}
+                onRate={onRate}
+                onEdit={onEdit}
+                onEditVideo={onEditVideo}
+                onShareToFeed={onShareToFeed}
+                saveButtonText={translations.saveButton}
+                shareButtonText={translations.shareButton}
+                tryAgainButtonText={translations.tryAnother}
+                iconOnly={iconOnly}
+                showTryAgain={showTryAgain}
+                showRating={showRating}
+              />
+            )}
+
+            {onViewCreations && (
+              <SuccessRedirectionCard
+                onPress={onViewCreations}
+                title={translations.redirectTitle || "Your Creation is Ready!"}
+                description={
+                  translations.redirectDescription ||
+                  "Head over to the My Creations screen to view full details."
+                }
+                buttonText={translations.viewCreations || "View My Creations"}
+                style={{ marginTop: tokens.spacing.xl }}
+              />
+            )}
+          </View>
+          {showRecent && recentCreations && translations.recentCreations && translations.viewAll && (
+            <RecentCreationsSection
+              recentCreations={recentCreations}
+              onViewAll={onViewAll}
+              onCreationPress={onCreationPress}
+              title={translations.recentCreations}
+              viewAllLabel={translations.viewAll}
             />
           )}
         </View>
-        {showRecent && recentCreations && translations.recentCreations && translations.viewAll && (
-          <RecentCreationsSection
-            recentCreations={recentCreations}
-            onViewAll={onViewAll}
-            onCreationPress={onCreationPress}
-            title={translations.recentCreations}
-            viewAllLabel={translations.viewAll}
-          />
-        )}
-      </View>
-    </ScreenLayout>
+      </ScreenLayout>
+    </View>
   );
 };

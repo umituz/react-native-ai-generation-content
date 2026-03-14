@@ -2,6 +2,7 @@ import { providerRegistry } from "../../../../../infrastructure/services/provide
 import { extractResultUrl, type GenerationUrls, type GenerationResult } from "./generation-result.utils";
 import { QUEUE_STATUS } from "../../../../../domain/constants/queue-status.constants";
 import { DEFAULT_MAX_CONSECUTIVE_ERRORS } from "../../../../../infrastructure/constants/polling.constants";
+import type { AILogEntry } from "../../../../../domain/interfaces/ai-provider-status.types";
 
 
 /**
@@ -96,7 +97,7 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
       } else {
         // Try to extract error from FAL job logs (error-level log takes priority)
         const logs = status.logs ?? [];
-        const errorLogs = logs.filter((l: any) => l.level === "error");
+        const errorLogs = logs.filter((l: AILogEntry) => l.level === "error");
         const errorLog = errorLogs.length > 0 ? errorLogs[errorLogs.length - 1] : logs[logs.length - 1];
         const failMessage =
           errorLog?.message && errorLog.message !== "[object Object]"

@@ -5,107 +5,45 @@
  */
 
 export const IDENTITY_PRESERVATION_CORE = `IDENTITY PRESERVATION (CRITICAL):
-Preserve EXACT facial features: bone structure, skin tone, eye/hair color. NO smoothing. Must be instantly recognizable.`;
+Preserve the EXACT facial appearance, structure, and unique characteristics from the uploaded photo.
+- Keep bone structure, eye shape/color, nose, and lip proportions 100% identical.
+- Maintain natural skin texture, pores, markings (freckles/moles), and authentic undertones.
+- DO NOT use beauty filters, skin smoothing, or alter facial geometry.
+- Person must be instantly recognizable as the original individual.`;
 
 export const IDENTITY_PRESERVATION_COUPLE = `IDENTITY PRESERVATION (CRITICAL):
-Preserve EXACT facial features for BOTH people. Same requirements as single. NO smoothing. Both must be instantly recognizable.`;
+Preserve the EXACT facial appearance of BOTH people from the uploaded photos with 100% accuracy.
+- Maintain bone structure, facial proportions, and unique features for both individuals.
+- Keep natural skin texture and authentic expressions for both.
+- Both people must be instantly recognizable as themselves.
+- Ensure natural relative heights and chemistry between the two people.
+- DO NOT alter ethnicity, age, or apply artificial skin smoothing.`;
 
 export const PHOTOREALISTIC_RENDERING = `STYLE - PHOTOREALISTIC QUALITY (CRITICAL):
-Real photograph quality - NOT digital art or CGI.
-
-REQUIREMENTS:
-- Professional camera: natural depth of field, realistic bokeh
-- Photographic lighting with soft shadows
-- Authentic skin tones, no over-saturation
-- Real textures: visible skin pores, hair strands
-- Subtle camera grain
-
-STRICTLY PROHIBITED:
-- NO digital art, 3D render, CGI
-- NO plastic, wax, doll-like skin
-- NO anime, cartoon, illustration
-- NO artificial glow or perfection
-
-RESULT: Must look like real photograph.`;
+Create an authentic photograph with professional camera characteristics.
+- Professional DSLR quality, natural depth of field, and realistic bokeh.
+- Natural lighting, realistic shadows, and authentic color grading.
+- Visible skin pores, hair strands, and fabric textures.
+- NO digital art, 3D render, CGI, or plastic/wax-like skin.
+- Must be indistinguishable from a real photograph taken with a camera.`;
 
 export const NATURAL_POSE_GUIDELINES = `POSE - NATURAL BODY LANGUAGE (CRITICAL):
-Authentic, relaxed candid poses.
-
-REQUIREMENTS:
-- Relaxed stance - no stiff posture
-- Natural body language for scenario
-- Natural hand positioning
-- Authentic weight distribution
-
-FACIAL EXPRESSION:
-- Relaxed expression - not forced
-- Natural eye contact
-- Realistic smile intensity
-
-STRICTLY PROHIBITED:
-- NO contorted or impossible poses
-- NO stiff or mannequin-like posture
-- NO exaggerated expressions
-- NO unnatural body angles
-
-RESULT: Real human in candid photo.`;
+Create authentic, relaxed, and candid poses.
+- Realistic posture and spontaneous-looking body language.
+- Natural head tilt, hand placement, and weight distribution.
+- Authentic micro-expressions and relaxed facial muscles.
+- NO stiff, rigid, or physically impossible positions.`;
 
 export const NATURAL_POSE_GUIDELINES_COUPLE = `POSE - NATURAL COUPLE INTERACTION (CRITICAL):
-Authentic, relaxed couple poses with genuine chemistry.
-
-REQUIREMENTS:
-- Relaxed stance for both
-- Natural body language and interaction
-- Realistic positioning relative to each other
-- Natural arm/hand placement
-- Authentic physical proximity
-
-FACIAL EXPRESSIONS:
-- Natural expressions for both
-- Authentic eye contact
-- Realistic chemistry
-
-STRICTLY PROHIBITED:
-- NO contorted poses
-- NO stiff posture
-- NO exaggerated expressions
-- NO fake interactions
-
-RESULT: Real couple naturally interacting.`;
+Create authentic, relaxed couple poses with genuine chemistry.
+- Natural physical proximity and authentic touch.
+- Spontaneous interaction appropriate to the scenario.
+- Realistic relative positioning and comfortable body language for both.
+- NO staged, stiff, or theatrical posing.`;
 
 export const ANTI_PLASTIC_DIRECTIVES = `ANTI-PLASTIC DIRECTIVES (CRITICAL):
-Real photograph look - NOT digital art.
-
-SKIN TEXTURE:
-- Visible pores required
-- Natural skin variation
-- NO poreless or porcelain skin
-- NO plastic smoothness
-
-FACIAL NATURALNESS:
-- Slight asymmetry required
-- Natural skin lines and variations
-- Realistic features
-
-LIGHTING & COLOR:
-- Natural lighting variation
-- Realistic shadows
-- Authentic skin tones
-
-MATERIAL REALISM:
-- Realistic fabric textures
-- Authentic hair texture
-- Real material properties
-
-TECHNICAL QUALITY:
-- Natural depth of field
-- Subtle camera grain
-
-STRICTLY PROHIBITED:
-- NO digital art or CGI
-- NO symmetry or perfection
-- NO over-smoothed look
-- NO plastic or doll appearance
-
-RESULT: Real photograph with natural imperfections.`;
-
+Ensure a real photographic look, NOT digital art or AI-generated appearance.
+- Preserve micro-textures, slight asymmetry, and natural skin variations.
+- Natural highlights and soft shadow falloff across faces.
+- Realistic fabric folds and individual hair movement.
+- NO poreless skin, artificial glow, or over-processed effects.`;
