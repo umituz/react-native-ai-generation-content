@@ -51,6 +51,7 @@ interface WizardFlowContentProps {
   readonly onBack?: () => void;
   readonly onTryAgain?: () => void;
   readonly onDismissGenerating?: () => void;
+  readonly onViewCreations?: () => void;
   readonly t: (key: string) => string;
   readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
   readonly renderGenerating?: (progress: number) => React.ReactElement | null;
@@ -79,6 +80,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     onBack,
     onTryAgain,
     onDismissGenerating,
+    onViewCreations,
     t,
     renderPreview,
     renderGenerating,
@@ -249,6 +251,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
         onRate={() => setShowRatingPicker(true)}
         onTryAgain={onTryAgain}
         onDismissGenerating={handlers.handleDismissGenerating}
+        onViewCreations={onViewCreations}
         t={t}
         alertMessages={alertMessages}
         renderPreview={renderPreview}

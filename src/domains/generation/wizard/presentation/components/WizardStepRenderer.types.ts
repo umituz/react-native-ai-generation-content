@@ -23,6 +23,8 @@ export interface WizardStepRendererProps {
   readonly onShare: () => void;
   readonly onRate?: () => void;
   readonly onTryAgain?: () => void;
+  /** Navigate to creations from result screen */
+  readonly onViewCreations?: () => void;
   /** Called when user dismisses generating screen - generation continues in background */
   readonly onDismissGenerating?: () => void;
   readonly t: (key: string) => string;

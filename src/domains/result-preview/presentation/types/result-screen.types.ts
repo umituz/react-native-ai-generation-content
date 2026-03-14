@@ -30,10 +30,11 @@ export interface ResultPreviewScreenProps {
   onShareToFeed?: () => void;
   /** Recent creations to display */
   recentCreations?: readonly RecentCreation[];
-  /** Navigate to all creations */
   onViewAll?: () => void;
   /** View a specific creation */
   onCreationPress?: (creation: RecentCreation) => void;
+  /** Navigate to creations gallery */
+  onViewCreations?: () => void;
   /** Translations */
   translations: ResultPreviewTranslations;
   /** Optional custom style */
@@ -72,4 +73,6 @@ export interface ResultPreviewTranslations {
   recentCreations?: string;
   /** View all button */
   viewAll?: string;
+  /** View creations button text */
+  viewCreations?: string;
 }

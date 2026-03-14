@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
-import { AtomicText } from "@umituz/react-native-design-system/atoms";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
 import { NavigationHeader } from "@umituz/react-native-design-system/molecules";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
@@ -27,6 +27,7 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
   recentCreations,
   onViewAll,
   onCreationPress,
+  onViewCreations,
   translations,
   style,
   hideLabel = false,
@@ -51,6 +52,22 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
           fontWeight: "700",
           color: tokens.colors.textPrimary,
           marginBottom: tokens.spacing.md,
+        },
+        galleryButton: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          backgroundColor: tokens.colors.surfaceSecondary,
+          padding: tokens.spacing.md,
+          borderRadius: tokens.radius.lg,
+          marginTop: tokens.spacing.xl,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: tokens.colors.borderLight,
+        },
+        galleryButtonText: {
+          fontSize: 15,
+          fontWeight: "700",
+          color: tokens.colors.textPrimary,
         },
       }),
     [tokens]
@@ -84,6 +101,18 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
             showTryAgain={showTryAgain}
             showRating={showRating}
           />
+          {onViewCreations && (
+            <TouchableOpacity
+              style={styles.galleryButton}
+              onPress={onViewCreations}
+              activeOpacity={0.7}
+            >
+              <AtomicText style={styles.galleryButtonText}>
+                {translations.viewCreations || "View My Creations"}
+              </AtomicText>
+              <AtomicIcon name="arrow-forward" size="sm" color="primary" />
+            </TouchableOpacity>
+          )}
         </View>
         {showRecent && recentCreations && translations.recentCreations && translations.viewAll && (
           <RecentCreationsSection

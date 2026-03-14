@@ -49,6 +49,8 @@ export interface GenericWizardFlowProps {
   readonly onBack?: () => void;
   readonly onTryAgain?: () => void;
   readonly onDismissGenerating?: () => void;
+  /** Called when user finishes the flow (e.g. "View All Creations") */
+  readonly onFinish?: () => void;
   readonly t: (key: string) => string;
   readonly translations?: Record<string, string>;
   readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
@@ -78,6 +80,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
     onBack,
     onTryAgain,
     onDismissGenerating,
+    onFinish,
     t,
     renderPreview,
     renderGenerating,
@@ -140,6 +143,7 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
       onBack={onBack}
       onTryAgain={onTryAgain}
       onDismissGenerating={onDismissGenerating}
+      onViewCreations={onFinish}
       t={t}
       renderPreview={renderPreview}
       renderGenerating={renderGenerating}

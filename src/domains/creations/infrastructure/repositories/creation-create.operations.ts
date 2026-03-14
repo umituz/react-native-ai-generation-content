@@ -18,18 +18,19 @@ export async function createCreation(
     type: creation.type,
     uri: creation.uri,
     createdAt: creation.createdAt,
-    deletedAt: undefined,
     metadata: creation.metadata ?? {},
     isShared: creation.isShared ?? false,
     isFavorite: creation.isFavorite ?? false,
-    status: creation.status ?? undefined,
-    output: creation.output ?? undefined,
-    prompt: creation.prompt ?? undefined,
-    provider: creation.provider ?? undefined,
-    requestId: creation.requestId ?? undefined,
-    model: creation.model ?? undefined,
-    startedAt: creation.startedAt ?? undefined,
   };
+
+  // Add optional fields only if they have values (Firestore rejects undefined)
+  if (creation.status) data.status = creation.status;
+  if (creation.output) data.output = creation.output;
+  if (creation.prompt) data.prompt = creation.prompt;
+  if (creation.provider) data.provider = creation.provider;
+  if (creation.requestId) data.requestId = creation.requestId;
+  if (creation.model) data.model = creation.model;
+  if (creation.startedAt) data.startedAt = creation.startedAt;
 
   try {
     await setDoc(docRef, data);

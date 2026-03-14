@@ -33,6 +33,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
   onShare,
   onRate,
   onTryAgain,
+  onViewCreations,
   onDismissGenerating,
   t,
   alertMessages,
@@ -82,6 +83,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
           onRate={onRate}
           onTryAgain={handleTryAgain}
           onNavigateBack={handleTryAgain}
+          onViewCreations={onViewCreations}
           hideLabel
           iconOnly
           showTryAgain
@@ -93,6 +95,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
             shareButton: t("generation.result.share"),
             sharing: t("generation.result.sharing"),
             tryAnother: t("generation.result.tryAnother"),
+            viewCreations: t("generation.result.viewCreations"),
           }}
         />
       );
