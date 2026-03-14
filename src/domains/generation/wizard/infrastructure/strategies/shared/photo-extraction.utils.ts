@@ -84,6 +84,11 @@ export async function extractPhotosAsBase64(
         // ✅ Direct base64 conversion - no resize or modification
         const base64 = await readFileAsBase64(uri);
 
+        // Check if base64 conversion succeeded
+        if (!base64) {
+          throw new Error(`Failed to convert photo to base64: ${uri}`);
+        }
+
         if (enableDebugLogs && typeof __DEV__ !== "undefined" && __DEV__) {
           console.log(`[PhotoExtraction] Photo ${index + 1} processed`, {
             sizeKB: (base64.length / 1024).toFixed(1),

@@ -3,7 +3,7 @@
  * Generic selection step for wizard flows (duration, style, etc.)
  */
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
 import { NavigationHeader } from "@umituz/react-native-design-system/molecules";
@@ -42,6 +42,19 @@ export const SelectionScreen: React.FC<SelectionScreenProps> = ({
   });
 
   const isMultiSelect = config?.multiSelect ?? false;
+
+  // Reset selection when initialValue, options, or config changes (e.g., when scenario changes)
+  useEffect(() => {
+    const optionIds = options.map((opt) => opt.id);
+
+    if (isMultiSelect) {
+      const initialArr = initialValue && Array.isArray(initialValue) ? initialValue : [];
+      setSelected(initialArr.filter((id) => optionIds.includes(id)));
+    } else {
+      const initialStr = typeof initialValue === "string" ? initialValue : "";
+      setSelected(optionIds.includes(initialStr) ? initialStr : "");
+    }
+  }, [initialValue, options, isMultiSelect]);
   const isRequired = config?.required ?? true;
   const canContinue = isRequired
     ? isMultiSelect ? (selected as string[]).length > 0 : selected !== ""

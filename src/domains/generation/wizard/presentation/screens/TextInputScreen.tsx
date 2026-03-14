@@ -4,7 +4,7 @@
  * Uses design system: NavigationHeader + ScreenLayout
  */
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { AtomicText, AtomicButton } from "@umituz/react-native-design-system/atoms";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
@@ -35,6 +35,11 @@ export const TextInputScreen: React.FC<TextInputScreenProps> = ({
   const tokens = useAppDesignTokens();
   const alert = useAlert();
   const [text, setText] = useState(initialValue);
+
+  // Reset text when initialValue changes (e.g., when scenario changes)
+  useEffect(() => {
+    setText(initialValue);
+  }, [initialValue]);
 
   // Validate config - REQUIRED, NO DEFAULTS
   if (!config) {

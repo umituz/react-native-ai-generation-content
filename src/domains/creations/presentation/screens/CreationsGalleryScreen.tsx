@@ -1,6 +1,5 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { View, FlatList } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
 import { FilterSheet, useAppFocusEffect } from "@umituz/react-native-design-system/molecules";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
@@ -38,7 +37,6 @@ export function CreationsGalleryScreen({
   onShareToFeed,
 }: CreationsGalleryScreenProps) {
   const tokens = useAppDesignTokens();
-  const insets = useSafeAreaInsets();
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   const { data: creations, isLoading, refetch } = useCreations({ userId, repository });

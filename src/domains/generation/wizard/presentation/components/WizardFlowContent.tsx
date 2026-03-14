@@ -112,7 +112,11 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     return steps;
   }, [featureConfig, skipResultStep]);
 
-  const flow = useFlow({ steps: flowSteps, initialStepIndex: 0 });
+  const flow = useFlow({
+    steps: flowSteps,
+    initialStepIndex: 0,
+    resetKey: scenario?.id,
+  });
   const {
     currentStep,
     currentStepIndex,
@@ -222,6 +226,13 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     },
     [customData, featureConfig.steps, calculateCredits, creditCost, validatedScenario.outputType, validatedScenario.inputType],
   );
+
+  // Reset local state when scenario changes
+  useEffect(() => {
+    setCurrentCreation(null);
+    setShowRatingPicker(false);
+    setHasRated(false);
+  }, [scenario?.id]);
 
   useEffect(() => {
     if (currentStep && onStepChange && prevStepIdRef.current !== currentStep.id) {

@@ -11,6 +11,8 @@ interface UseFlowConfig {
   steps: readonly StepDefinition[];
   initialStepId?: string;
   initialStepIndex?: number;
+  /** Optional key to force flow reset when changed (e.g., scenarioId) */
+  resetKey?: string;
 }
 
 interface UseFlowReturn extends FlowState, FlowActions {
@@ -27,14 +29,15 @@ interface UseFlowReturn extends FlowState, FlowActions {
 
 export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
   const storeRef = useRef<FlowStoreType | null>(null);
-  const prevConfigRef = useRef<{ initialStepIndex?: number; initialStepId?: string; steps: readonly StepDefinition[] } | undefined>(undefined);
+  const prevConfigRef = useRef<{ initialStepIndex?: number; initialStepId?: string; steps: readonly StepDefinition[]; resetKey?: string } | undefined>(undefined);
 
-  // Detect config changes (initialStepIndex, initialStepId, or steps changed)
+  // Detect config changes (initialStepIndex, initialStepId, steps, or resetKey changed)
   const configChanged =
     prevConfigRef.current !== undefined &&
     (prevConfigRef.current.initialStepIndex !== config.initialStepIndex ||
       prevConfigRef.current.initialStepId !== config.initialStepId ||
-      prevConfigRef.current.steps !== config.steps);
+      prevConfigRef.current.steps !== config.steps ||
+      prevConfigRef.current.resetKey !== config.resetKey);
 
   // If config changed, reset and recreate store (per-component instance)
   if (configChanged && storeRef.current) {
@@ -55,6 +58,7 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
     initialStepIndex: config.initialStepIndex,
     initialStepId: config.initialStepId,
     steps: config.steps,
+    resetKey: config.resetKey,
   };
 
   const store = storeRef.current;

@@ -7,7 +7,6 @@ import React, { useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { AtomicIcon, AtomicText } from "@umituz/react-native-design-system/atoms";
 import { useAppDesignTokens, type DesignTokens } from "@umituz/react-native-design-system/theme";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface GalleryScreenHeaderProps {
   readonly title: string;
@@ -16,7 +15,6 @@ interface GalleryScreenHeaderProps {
 
 export const GalleryScreenHeader: React.FC<GalleryScreenHeaderProps> = ({ title, onBack }) => {
   const tokens = useAppDesignTokens();
-  const insets = useSafeAreaInsets();
   const styles = useMemo(() => createStyles(tokens), [tokens]);
 
   return (
