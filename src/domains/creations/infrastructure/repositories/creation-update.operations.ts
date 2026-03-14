@@ -37,7 +37,7 @@ export async function updateCreation(
   }
 
   try {
-    await updateDoc(docRef, updateData);
+    await updateDoc(docRef, updateData as Record<string, unknown>);
     if (__DEV__) {
       console.log("[updateCreation] Updated", {
         id,

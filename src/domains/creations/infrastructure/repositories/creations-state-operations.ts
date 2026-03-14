@@ -69,7 +69,7 @@ export async function rateCreation(
       updates.ratingText = description;
     }
 
-    await updateDoc(docRef, updates);
+    await updateDoc(docRef, updates as Record<string, unknown>);
     return true;
   } catch {
     return false;

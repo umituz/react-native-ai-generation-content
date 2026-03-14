@@ -96,7 +96,8 @@ export const pollQueueStatus = async (params: PollParams): Promise<void> => {
       } else {
         // Try to extract error from FAL job logs (error-level log takes priority)
         const logs = status.logs ?? [];
-        const errorLog = logs.findLast?.((l) => l.level === "error") ?? logs[logs.length - 1];
+        const errorLogs = logs.filter((l: any) => l.level === "error");
+        const errorLog = errorLogs.length > 0 ? errorLogs[errorLogs.length - 1] : logs[logs.length - 1];
         const failMessage =
           errorLog?.message && errorLog.message !== "[object Object]"
             ? errorLog.message
