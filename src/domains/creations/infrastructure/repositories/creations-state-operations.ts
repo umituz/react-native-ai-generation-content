@@ -3,7 +3,7 @@
  * State-specific operations like sharing, favoriting, and rating
  */
 
-import { updateDoc } from "firebase/firestore";
+import { updateDoc, type FieldValue } from "firebase/firestore";
 import type { IPathResolver } from "./CreationsFetcher";
 
 /**
@@ -69,7 +69,7 @@ export async function rateCreation(
       updates.ratingText = description;
     }
 
-    await updateDoc(docRef, updates as Record<string, unknown>);
+    await updateDoc(docRef, updates as { [x: string]: FieldValue | Partial<unknown> | undefined });
     return true;
   } catch {
     return false;

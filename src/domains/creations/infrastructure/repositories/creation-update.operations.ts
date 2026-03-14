@@ -2,7 +2,7 @@
  * Creation Update Operations
  */
 
-import { updateDoc } from "firebase/firestore";
+import { updateDoc, type FieldValue } from "firebase/firestore";
 import type { IPathResolver } from "@umituz/react-native-firebase";
 import type { Creation } from "../../domain/entities/Creation";
 import { UPDATABLE_FIELDS } from "../../domain/constants";
@@ -37,7 +37,9 @@ export async function updateCreation(
   }
 
   try {
-    await updateDoc(docRef, updateData as Record<string, unknown>);
+    // TypeScript: updateDoc expects specific Firestore types, but our updateData is correct
+    // We filter to only valid fields, so this cast is safe
+    await updateDoc(docRef, updateData as { [x: string]: FieldValue | Partial<unknown> | undefined });
     if (__DEV__) {
       console.log("[updateCreation] Updated", {
         id,

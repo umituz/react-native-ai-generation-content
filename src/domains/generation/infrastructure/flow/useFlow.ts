@@ -27,14 +27,14 @@ interface UseFlowReturn extends FlowState, FlowActions {
 
 export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
   const storeRef = useRef<FlowStoreType | null>(null);
-  const prevConfigRef = useRef<{ initialStepIndex?: number; initialStepId?: string; stepsCount: number } | undefined>(undefined);
+  const prevConfigRef = useRef<{ initialStepIndex?: number; initialStepId?: string; steps: readonly StepDefinition[] } | undefined>(undefined);
 
   // Detect config changes (initialStepIndex, initialStepId, or steps changed)
   const configChanged =
     prevConfigRef.current !== undefined &&
     (prevConfigRef.current.initialStepIndex !== config.initialStepIndex ||
       prevConfigRef.current.initialStepId !== config.initialStepId ||
-      prevConfigRef.current.stepsCount !== config.steps.length);
+      prevConfigRef.current.steps !== config.steps);
 
   // If config changed, reset and recreate store (per-component instance)
   if (configChanged && storeRef.current) {
@@ -51,11 +51,10 @@ export const useFlow = (config: UseFlowConfig): UseFlowReturn => {
     });
   }
 
-  // Store current config for next render comparison
   prevConfigRef.current = {
     initialStepIndex: config.initialStepIndex,
     initialStepId: config.initialStepId,
-    stepsCount: config.steps.length,
+    steps: config.steps,
   };
 
   const store = storeRef.current;
