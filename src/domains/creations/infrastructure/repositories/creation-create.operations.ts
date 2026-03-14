@@ -14,6 +14,8 @@ export async function createCreation(
   const docRef = pathResolver.getDocRef(userId, creation.id);
   if (!docRef) throw new Error("Firestore not initialized");
 
+  // Build data object with only defined values (Firestore rejects undefined)
+  // Use type assertion to bypass readonly restriction for conditional fields
   const data: CreationDocument = {
     type: creation.type,
     uri: creation.uri,
@@ -21,16 +23,14 @@ export async function createCreation(
     metadata: creation.metadata ?? {},
     isShared: creation.isShared ?? false,
     isFavorite: creation.isFavorite ?? false,
-  };
-
-  // Add optional fields only if they have values (Firestore rejects undefined)
-  if (creation.status) data.status = creation.status;
-  if (creation.output) data.output = creation.output;
-  if (creation.prompt) data.prompt = creation.prompt;
-  if (creation.provider) data.provider = creation.provider;
-  if (creation.requestId) data.requestId = creation.requestId;
-  if (creation.model) data.model = creation.model;
-  if (creation.startedAt) data.startedAt = creation.startedAt;
+    ...(creation.status && { status: creation.status }),
+    ...(creation.output && { output: creation.output }),
+    ...(creation.prompt && { prompt: creation.prompt }),
+    ...(creation.provider && { provider: creation.provider }),
+    ...(creation.requestId && { requestId: creation.requestId }),
+    ...(creation.model && { model: creation.model }),
+    ...(creation.startedAt && { startedAt: creation.startedAt }),
+  } as CreationDocument;
 
   try {
     await setDoc(docRef, data);

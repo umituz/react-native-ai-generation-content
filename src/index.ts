@@ -84,3 +84,7 @@ export type {
   UseResultActionsOptions,
   UseResultActionsReturn,
 } from "./domains/result-preview/presentation/types/result-hooks.types";
+
+// Result Components
+export { SuccessRedirectionCard } from "./presentation/components/result";
+export type { SuccessRedirectionCardProps } from "./presentation/components/result";

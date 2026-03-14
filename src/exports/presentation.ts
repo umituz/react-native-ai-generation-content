@@ -38,7 +38,7 @@ export {
   GenerateButton, ResultDisplay, AIGenerationResult, ErrorDisplay, FeatureHeader,
   AIGenScreenHeader, CreditBadge, PhotoUploadCard, SettingsSheet, StyleSelector,
   AspectRatioSelector, DurationSelector, GridSelector, StylePresetsGrid, AIGenerationForm,
-  AIGenerationConfig, ModelSelector,
+  AIGenerationConfig, ModelSelector, SuccessRedirectionCard,
   createAspectRatioOptions, createDurationOptions, createStyleOptions, createStyleOptionsFromConfig,
   ASPECT_RATIO_IDS, COMMON_DURATIONS,
 } from "../presentation/components";
@@ -55,7 +55,7 @@ export type {
   AspectRatioSelectorProps, DurationSelectorProps, GridSelectorProps, GridSelectorOption,
   StyleOption, AspectRatioOption, DurationValue, AspectRatioTranslations, DurationOption,
   StyleTranslations, AIGenerationFormProps, AIGenerationFormTranslations,
-  AIGenerationConfigProps, ModelOption, ModelSelectorProps,
+  AIGenerationConfigProps, ModelOption, ModelSelectorProps, SuccessRedirectionCardProps,
 } from "../presentation/components";
 
 // Layouts
