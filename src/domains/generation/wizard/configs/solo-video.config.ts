@@ -1,10 +1,10 @@
 /**
  * Solo Video Wizard Config
- * Flow: Photo → Prompt (with info about two-step generation) → Audio (optional) → Generation
+ * Flow: Photo → Video Settings (resolution, aspect_ratio, quality_mode, duration) → Generation
  *
  * Two-step generation:
- * 1. Generate image from photo + prompt (nano-banana-2/edit)
- * 2. Generate video from that image (I2V model)
+ * 1. Generate image from photo + prompt (p-image-edit)
+ * 2. Generate video from that image (p-video)
  */
 
 import type { WizardFeatureConfig } from "../domain/entities/wizard-feature.types";
@@ -21,25 +21,6 @@ export const SOLO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
       showFaceDetection: false,
       showPhotoTips: true,
       required: true,
-    },
-    {
-      id: "video_prompt",
-      type: "text_input",
-      titleKey: "soloVideo.prompt",
-      subtitleKey: "soloVideo.promptInfo",
-      placeholderKey: "soloVideo.promptPlaceholder",
-      required: true,
-      minLength: 3,
-      maxLength: 500,
-      multiline: true,
-    },
-    {
-      id: "background_audio",
-      type: "audio_picker",
-      titleKey: "soloVideo.audioTitle",
-      subtitleKey: "soloVideo.audioSubtitle",
-      required: false,
-      maxFileSizeMB: 20,
     },
     {
       id: "quality_mode",
