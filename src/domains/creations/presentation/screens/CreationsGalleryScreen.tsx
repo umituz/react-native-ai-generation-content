@@ -72,7 +72,13 @@ export function CreationsGalleryScreen({
 
   const filters = useGalleryFilters({ creations, statusOptions, mediaOptions, t });
 
-  useAppFocusEffect(useCallback(() => { void refetch(); }, [refetch]));
+  useAppFocusEffect(useCallback(() => { 
+    void refetch();
+    // Reset selection on focus if no initial ID is being enforced
+    if (!initialCreationId) {
+      galleryState.setSelectedCreation(null);
+    }
+  }, [refetch, initialCreationId, galleryState]));
 
   const filterButtons = useMemo(() =>
     createFilterButtons({

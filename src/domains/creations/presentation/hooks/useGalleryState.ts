@@ -31,10 +31,9 @@ export function useGalleryState(options: GalleryStateOptions): GalleryStateRetur
 
   // Auto-select creation when initialCreationId is provided
   useEffect(() => {
-    if (initialCreationId && creations && creations.length > 0 && !hasAutoSelectedRef.current) {
+    if (initialCreationId && creations && creations.length > 0) {
       const creation = creations.find((c) => c.id === initialCreationId);
       if (creation) {
-        hasAutoSelectedRef.current = true;
         setSelectedCreation(creation);
       }
     }
