@@ -18,10 +18,11 @@ interface UseGenerationHandlersProps {
   readonly onGenerationComplete?: (result: unknown) => void;
   readonly onGenerationError?: (error: string, errorInfo?: GenerationErrorInfo) => void;
   readonly onBack?: () => void;
+  readonly onDismissGenerating?: () => void;
 }
 
 export function useGenerationHandlers(props: UseGenerationHandlersProps) {
-  const { skipResultStep, t, nextStep, setResult, setCurrentCreation, onGenerationComplete, onGenerationError, onBack } = props;
+  const { skipResultStep, t, nextStep, setResult, setCurrentCreation, onGenerationComplete, onGenerationError, onBack, onDismissGenerating } = props;
 
   const alert = useAlert();
 
@@ -65,8 +66,12 @@ export function useGenerationHandlers(props: UseGenerationHandlersProps) {
       console.log("[handleDismissGenerating] User dismissed generating screen");
     }
     alert.show(AlertType.INFO, AlertMode.TOAST, t("generator.backgroundTitle"), t("generator.backgroundMessage"));
-    onBack?.();
-  }, [alert, t, onBack]);
+    if (onDismissGenerating) {
+      onDismissGenerating();
+    } else {
+      onBack?.();
+    }
+  }, [alert, t, onBack, onDismissGenerating]);
 
   return { handleGenerationComplete, handleGenerationError, handleDismissGenerating };
 }

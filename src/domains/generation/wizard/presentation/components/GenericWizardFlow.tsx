@@ -48,11 +48,13 @@ export interface GenericWizardFlowProps {
   readonly onCreditsExhausted?: () => void;
   readonly onBack?: () => void;
   readonly onTryAgain?: () => void;
+  readonly onDismissGenerating?: () => void;
   readonly t: (key: string) => string;
   readonly translations?: Record<string, string>;
   readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
   readonly renderGenerating?: (progress: number) => React.ReactElement | null;
   readonly renderResult?: (result: unknown) => React.ReactElement | null;
+  readonly renderMascot?: () => React.ReactNode;
 }
 
 export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
@@ -75,10 +77,12 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
     onCreditsExhausted,
     onBack,
     onTryAgain,
+    onDismissGenerating,
     t,
     renderPreview,
     renderGenerating,
     renderResult,
+    renderMascot,
   } = props;
 
   // Resolve scenario from prop or registry
@@ -135,10 +139,12 @@ export const GenericWizardFlow: React.FC<GenericWizardFlowProps> = (props) => {
       onCreditsExhausted={onCreditsExhausted}
       onBack={onBack}
       onTryAgain={onTryAgain}
+      onDismissGenerating={onDismissGenerating}
       t={t}
       renderPreview={renderPreview}
       renderGenerating={renderGenerating}
       renderResult={renderResult}
+      renderMascot={renderMascot}
     />
   );
 };

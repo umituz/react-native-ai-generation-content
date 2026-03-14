@@ -50,10 +50,12 @@ interface WizardFlowContentProps {
   readonly onCreditsExhausted?: () => void;
   readonly onBack?: () => void;
   readonly onTryAgain?: () => void;
+  readonly onDismissGenerating?: () => void;
   readonly t: (key: string) => string;
   readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
   readonly renderGenerating?: (progress: number) => React.ReactElement | null;
   readonly renderResult?: (result: unknown) => React.ReactElement | null;
+  readonly renderMascot?: () => React.ReactNode;
 }
 
 export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
@@ -76,10 +78,12 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     onCreditsExhausted,
     onBack,
     onTryAgain,
+    onDismissGenerating,
     t,
     renderPreview,
     renderGenerating,
     renderResult,
+    renderMascot,
   } = props;
 
   const tokens = useAppDesignTokens();
@@ -184,6 +188,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
     onGenerationComplete,
     onGenerationError,
     onBack,
+    onDismissGenerating,
   });
 
   useWizardGeneration({
@@ -249,6 +254,7 @@ export const WizardFlowContent: React.FC<WizardFlowContentProps> = (props) => {
         renderPreview={renderPreview}
         renderGenerating={renderGenerating}
         renderResult={renderResult}
+        renderMascot={renderMascot}
       />
       <StarRatingPicker
         visible={showRatingPicker}

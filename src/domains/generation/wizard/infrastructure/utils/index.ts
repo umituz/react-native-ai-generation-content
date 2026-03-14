@@ -7,4 +7,5 @@ export {
   extractDuration,
   extractAspectRatio,
   extractResolution,
+  extractQualityMode,
 } from "./wizard-field-extractors";

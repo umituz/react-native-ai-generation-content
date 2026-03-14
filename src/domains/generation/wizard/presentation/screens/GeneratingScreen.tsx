@@ -28,6 +28,7 @@ interface GeneratingScreenProps {
   };
   readonly t: (key: string) => string;
   readonly onDismiss?: () => void;
+  readonly renderMascot?: () => React.ReactNode;
 }
 
 const PHASES = [
@@ -47,6 +48,7 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
   scenario,
   t,
   onDismiss,
+  renderMascot,
 }) => {
   const tokens = useAppDesignTokens();
   const phase = useGenerationPhase();
@@ -100,8 +102,8 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
       <View style={styles.container}>
         <View style={styles.content}>
           {/* Scanning Animation Container */}
-          <View style={[styles.scanFrame, { borderColor: tokens.colors.primary + "30" }]}>
-            <View style={[styles.scanOverlay, { backgroundColor: tokens.colors.primary + "10" }]}>
+          <View style={[styles.scanFrame, { borderColor: tokens.colors.primary + "20" }]}>
+            <View style={[styles.scanOverlay, { backgroundColor: tokens.colors.primary + "05" }]}>
               <Animated.View 
                 style={[
                   styles.scanLine, 
@@ -109,18 +111,24 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
                     backgroundColor: tokens.colors.primary,
                     transform: [{ translateY: scanTranslateY }],
                     shadowColor: tokens.colors.primary,
-                    shadowOpacity: 0.8,
+                    shadowOpacity: 0.6,
                     shadowRadius: 10,
                   }
                 ]} 
               />
             </View>
-            <Animated.View style={[styles.spinnerOverlay, { opacity: pulseAnim }]}>
-              <ActivityIndicator size="large" color={tokens.colors.primary} />
-            </Animated.View>
+            <View style={styles.mascotContainer}>
+              {renderMascot ? (
+                renderMascot()
+              ) : (
+                <Animated.View style={[styles.spinnerOverlay, { opacity: pulseAnim }]}>
+                  <ActivityIndicator size="large" color={tokens.colors.primary} />
+                </Animated.View>
+              )}
+            </View>
           </View>
 
-          <AtomicText type="headlineMedium" style={styles.title}>
+          <AtomicText type="headlineSmall" style={[styles.title, { color: tokens.colors.textPrimary }]}>
             {messages.title}
           </AtomicText>
 
@@ -181,16 +189,19 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
             {statusMessage}
           </AtomicText>
 
-          <View style={styles.progressContainer}>
-            <IndeterminateProgressBar
-              backgroundColor={tokens.colors.surfaceVariant}
-              fillColor={tokens.colors.primary}
-            />
+          {/* Combined Progress section */}
+          <View style={styles.progressSection}>
+            <View style={styles.progressWrapper}>
+              <IndeterminateProgressBar
+                backgroundColor={tokens.colors.surfaceVariant}
+                fillColor={tokens.colors.primary}
+                height={4}
+              />
+            </View>
+            <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary, opacity: 0.7 }]}>
+              {messages.hint}
+            </AtomicText>
           </View>
-
-          <AtomicText type="bodySmall" style={[styles.hint, { color: tokens.colors.textSecondary }]}>
-            {messages.hint}
-          </AtomicText>
 
           {onDismiss && (
             <TouchableOpacity
@@ -218,17 +229,16 @@ const styles = StyleSheet.create({
     width: "85%",
     maxWidth: 400,
     alignItems: "center",
-    gap: 16,
   },
   scanFrame: {
-    width: 140,
-    height: 180,
-    borderRadius: 24,
-    borderWidth: 2,
+    width: 160,
+    height: 160,
+    borderRadius: 80, // Circular for better look
+    borderWidth: 1,
     overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 24,
   },
   scanOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -236,70 +246,93 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   scanLine: {
-    width: "120%",
-    height: 3,
+    width: "140%",
+    height: 2,
     position: "absolute",
-    left: "-10%",
-    elevation: 4,
+    left: "-20%",
+  },
+  mascotContainer: {
+    zIndex: 5,
+    justifyContent: "center",
+    alignItems: "center",
   },
   spinnerOverlay: {
     zIndex: 10,
   },
   title: {
     textAlign: "center",
+    fontWeight: "900",
+    letterSpacing: -0.5,
+    marginBottom: 20,
   },
   stepsRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 8,
+    marginVertical: 12,
+    width: "100%",
   },
   stepItem: {
     alignItems: "center",
-    gap: 6,
+    width: 70,
   },
   stepBubble: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
+    borderWidth: 1,
+    marginBottom: 8,
   },
   stepNumber: {
-    fontSize: 12,
-    fontWeight: "700",
+    fontSize: 14,
+    fontWeight: "800",
   },
   stepLabel: {
-    fontSize: 11,
+    fontSize: 10,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   stepConnector: {
-    width: 40,
-    height: 2,
+    flex: 1,
+    height: 1,
+    maxWidth: 30,
     borderRadius: 1,
-    marginBottom: 18,
+    marginTop: -18, // Align with bubble center
     marginHorizontal: 4,
   },
   message: {
     textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
+    fontWeight: "600",
   },
-  progressContainer: {
+  progressSection: {
     width: "100%",
-    marginTop: 8,
+    alignItems: "center",
+    marginTop: 24,
+    gap: 12,
+  },
+  progressWrapper: {
+    width: "100%",
+    height: 4, // Slimmer progress bar
   },
   hint: {
     textAlign: "center",
-    marginTop: 4,
   },
   backgroundHintButton: {
-    marginTop: 32,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    marginTop: 40,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 30, // Pill shaped
+    backgroundColor: "rgba(255,255,255,0.03)",
   },
   backgroundHint: {
     textAlign: "center",
-    fontWeight: "700",
+    fontSize: 15,
+    fontWeight: "800",
+    letterSpacing: -0.2,
   },
 });

@@ -25,6 +25,8 @@ interface CreationPreviewProps {
   readonly height?: number;
   /** Show loading indicator when in progress */
   readonly showLoadingIndicator?: boolean;
+  /** Show loading when video is downloading but no thumbnail yet */
+  readonly showDownloadLoading?: boolean;
 }
 
 export function CreationPreview({
@@ -35,6 +37,7 @@ export function CreationPreview({
   aspectRatio = 16 / 9,
   height,
   showLoadingIndicator = true,
+  showDownloadLoading = false,
 }: CreationPreviewProps) {
   // Determine preview type based on URI content, not creation type
   // This handles scenario-based videos (solo_martial_artist, ski_resort, etc.)
@@ -51,6 +54,7 @@ export function CreationPreview({
         aspectRatio={aspectRatio}
         height={height}
         showLoadingIndicator={showLoadingIndicator}
+        showDownloadLoading={showDownloadLoading}
       />
     );
   }

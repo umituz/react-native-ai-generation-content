@@ -21,6 +21,8 @@ export interface WizardVideoInput {
   readonly resolution?: string;
   /** Audio file as base64 or URL for background music / audio-driven video */
   readonly audioUrl?: string;
+  /** Quality mode: "draft" (faster, cheaper) or "normal" (higher quality) */
+  readonly qualityMode?: "draft" | "normal";
 }
 
 export interface CreateVideoStrategyOptions {

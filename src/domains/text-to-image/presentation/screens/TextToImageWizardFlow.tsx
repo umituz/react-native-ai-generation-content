@@ -31,6 +31,7 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
     onBack,
     t,
     alertMessages,
+    renderMascot,
   } = props;
 
   const tokens = useAppDesignTokens();
@@ -83,6 +84,7 @@ export const TextToImageWizardFlow: React.FC<TextToImageWizardFlowProps> = (prop
         onBack={onBack}
         onTryAgain={onBack}
         t={t}
+        renderMascot={renderMascot}
         renderPreview={(onContinue) => <AutoSkipPreview onContinue={onContinue} />}
       />
     </View>

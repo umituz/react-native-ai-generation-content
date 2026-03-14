@@ -10,11 +10,13 @@ import { View, StyleSheet } from "react-native";
 interface IndeterminateProgressBarProps {
   readonly backgroundColor: string;
   readonly fillColor: string;
+  readonly height?: number;
 }
 
 export const IndeterminateProgressBar: React.FC<IndeterminateProgressBarProps> = ({
   backgroundColor,
   fillColor,
+  height = 8,
 }) => {
   const [position, setPosition] = useState(0);
   const directionRef = useRef(1);
@@ -39,7 +41,7 @@ export const IndeterminateProgressBar: React.FC<IndeterminateProgressBarProps> =
   }, []);
 
   return (
-    <View style={[styles.progressBar, { backgroundColor }]}>
+    <View style={[styles.progressBar, { backgroundColor, height }]}>
       <View
         style={[
           styles.progressFill,

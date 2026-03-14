@@ -29,7 +29,7 @@ export const env = {
 
   // Generation Timeouts
   generationImageTimeoutMs: getEnvValue("GENERATION_IMAGE_TIMEOUT_MS", 120000) as number,
-  generationVideoTimeoutMs: getEnvValue("GENERATION_VIDEO_TIMEOUT_MS", 300000) as number,
+  generationVideoTimeoutMs: getEnvValue("GENERATION_VIDEO_TIMEOUT_MS", 600000) as number, // 10 min for complex videos
   generationMultiImageTimeoutMs: getEnvValue("GENERATION_MULTI_IMAGE_TIMEOUT_MS", 120000) as number,
 
   // Polling Configuration

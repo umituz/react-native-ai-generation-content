@@ -26,6 +26,8 @@ interface CreationVideoPreviewProps {
   readonly height?: number;
   /** Show loading indicator when in progress */
   readonly showLoadingIndicator?: boolean;
+  /** Show loading when video is downloading but no thumbnail yet */
+  readonly showDownloadLoading?: boolean;
 }
 
 export function CreationVideoPreview({
@@ -35,10 +37,12 @@ export function CreationVideoPreview({
   aspectRatio = 16 / 9,
   height,
   showLoadingIndicator = true,
+  showDownloadLoading = false,
 }: CreationVideoPreviewProps) {
   const tokens = useAppDesignTokens();
   const inProgress = isInProgress(status);
   const hasThumbnail = shouldShowThumbnail(thumbnailUrl, inProgress);
+  const isDownloading = showDownloadLoading && !hasThumbnail && !inProgress && _videoUrl;
 
   // Debug logging
   if (__DEV__) {
@@ -47,9 +51,11 @@ export function CreationVideoPreview({
       status,
       inProgress,
       hasThumbnail,
-      willShowSpinner: inProgress && showLoadingIndicator,
+      isDownloading,
+      videoUrl: _videoUrl,
+      willShowSpinner: (inProgress && showLoadingIndicator) || isDownloading,
       willShowThumbnail: hasThumbnail,
-      willShowPlaceholder: !inProgress && !hasThumbnail,
+      willShowPlaceholder: !inProgress && !hasThumbnail && !isDownloading,
     });
   }
 
@@ -106,8 +112,8 @@ export function CreationVideoPreview({
     [tokens, aspectRatio, height]
   );
 
-  // Show loading state
-  if (inProgress && showLoadingIndicator) {
+  // Show loading state (progress or downloading)
+  if ((inProgress && showLoadingIndicator) || isDownloading) {
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>

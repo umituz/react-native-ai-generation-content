@@ -65,6 +65,23 @@ export function extractResolution(value: unknown): string | undefined {
 }
 
 /**
+ * Extract quality mode value from customData
+ * Handles "draft" and "normal" values
+ * Also handles selection format objects from wizard steps
+ *
+ * @param value - Raw value from customData
+ * @returns Normalized quality mode string, or undefined if invalid
+ */
+export function extractQualityMode(value: unknown): "draft" | "normal" | undefined {
+  const unwrapped = unwrapSelection(value);
+
+  if (unwrapped === "draft" || unwrapped === "normal") {
+    return unwrapped;
+  }
+  return undefined;
+}
+
+/**
  * Extract default duration from wizard feature config
  * Finds the duration selection step and resolves its default option value
  */

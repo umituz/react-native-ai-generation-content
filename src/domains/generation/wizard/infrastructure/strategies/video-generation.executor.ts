@@ -54,6 +54,11 @@ function buildGenericInput(input: WizardVideoInput): Record<string, unknown> {
     modelInput.audio = input.audioUrl;
   }
 
+  // Quality mode: "draft" → draft=true (faster, cheaper), "normal" → draft=false (higher quality)
+  if (input.qualityMode === "draft" || input.qualityMode === "normal") {
+    modelInput.draft = input.qualityMode === "draft";
+  }
+
   return modelInput;
 }
 

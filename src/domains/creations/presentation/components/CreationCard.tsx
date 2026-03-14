@@ -59,6 +59,11 @@ export function CreationCard({
     canPostToFeed,
   });
 
+  // Determine if video is downloading (has video URL but no thumbnail yet)
+  const hasVideoOutput = !!creation.output?.videoUrl;
+  const hasThumbnail = !!creation.output?.thumbnailUrl;
+  const isVideoDownloading = hasVideoOutput && !hasThumbnail && creation.status === 'completed';
+
   const handlePress = useCallback(() => {
     if (__DEV__) {
       console.log("[CreationCard] handlePress TRIGGERED", {
@@ -127,6 +132,7 @@ export function CreationCard({
           thumbnailUrl={creation.output?.thumbnailUrl}
           status={creation.status}
           type={creation.type as CreationTypeId}
+          showDownloadLoading={isVideoDownloading}
         />
         {showBadges && creation.status && (
           <CreationBadges

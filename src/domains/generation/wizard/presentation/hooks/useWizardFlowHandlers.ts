@@ -13,7 +13,7 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
   const {
     currentStepIndex, flowSteps, customData, userId, currentCreation,
     repository, t, nextStep, previousStep, setCustomData,
-    onGenerationStart, onBack,
+    onGenerationStart, onBack, onDismissGenerating,
   } = props;
 
   const alert = useAlert();
@@ -27,6 +27,7 @@ export function useWizardFlowHandlers(props: UseWizardFlowHandlersProps) {
     onGenerationComplete: props.onGenerationComplete,
     onGenerationError: props.onGenerationError,
     onBack,
+    onDismissGenerating,
   });
 
   const navigation = useNavigationHandlers({

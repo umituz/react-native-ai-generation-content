@@ -44,4 +44,6 @@ export interface BaseWizardFlowProps {
   readonly t: (key: string) => string;
   /** Alert messages for error handling */
   readonly alertMessages?: AlertMessages;
+  /** Optional mascot renderer */
+  readonly renderMascot?: () => React.ReactNode;
 }

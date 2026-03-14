@@ -60,7 +60,7 @@ export const SOLO_VIDEO_WIZARD_CONFIG: WizardFeatureConfig = {
         },
       ],
       required: true,
-      defaultValue: "normal", // Default to normal mode (opt-in for draft)
+      defaultValue: "draft", // Default to draft mode for faster generation and reduced timeouts
       layout: "list",
     },
   ],

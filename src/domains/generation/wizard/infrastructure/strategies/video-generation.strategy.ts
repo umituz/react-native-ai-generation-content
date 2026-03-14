@@ -7,7 +7,7 @@
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { VIDEO_PROCESSING_PROMPTS } from "./wizard-strategy.constants";
-import { extractPrompt, extractDuration, extractAspectRatio, extractResolution } from "../utils";
+import { extractPrompt, extractDuration, extractAspectRatio, extractResolution, extractQualityMode } from "../utils";
 import { extractPhotosAsBase64 } from "./shared/photo-extraction.utils";
 import type { WizardVideoInput, CreateVideoStrategyOptions } from "./video-generation.types";
 import { validatePhotoCount, validateWizardVideoInput } from "./video-generation.types";
@@ -58,6 +58,8 @@ export async function buildVideoInput(
       });
     }
     const finalPrompt = extractPrompt(wizardData, scenario.aiPrompt) || scenario.aiPrompt || "";
+    const qualityMode = extractQualityMode(wizardData);
+
     return {
       sourceImageBase64: scenario.preGeneratedImageUrl,
       prompt: finalPrompt,
@@ -65,6 +67,7 @@ export async function buildVideoInput(
       aspectRatio: extractAspectRatio(wizardData),
       resolution: extractResolution(wizardData),
       audioUrl,
+      qualityMode,
     };
   }
 
@@ -98,6 +101,8 @@ export async function buildVideoInput(
     });
   }
 
+  const qualityMode = extractQualityMode(wizardData);
+
   return {
     sourceImageBase64: photos[0] || undefined,
     targetImageBase64: photos[1] || photos[0] || undefined,
@@ -106,6 +111,7 @@ export async function buildVideoInput(
     aspectRatio: extractAspectRatio(wizardData),
     resolution: extractResolution(wizardData),
     audioUrl,
+    qualityMode,
   };
 }
 

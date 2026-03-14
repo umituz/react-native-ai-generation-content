@@ -30,4 +30,5 @@ export interface WizardStepRendererProps {
   readonly renderPreview?: (onContinue: () => void) => React.ReactElement | null;
   readonly renderGenerating?: (progress: number) => React.ReactElement | null;
   readonly renderResult?: (result: unknown) => React.ReactElement | null;
+  readonly renderMascot?: () => React.ReactNode;
 }

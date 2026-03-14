@@ -32,6 +32,7 @@ export const TextToVideoWizardFlow: React.FC<TextToVideoWizardFlowProps> = (prop
     onBack,
     t,
     alertMessages,
+    renderMascot,
   } = props;
 
   const tokens = useAppDesignTokens();
@@ -84,6 +85,7 @@ export const TextToVideoWizardFlow: React.FC<TextToVideoWizardFlowProps> = (prop
         onBack={onBack}
         onTryAgain={onBack}
         t={t}
+        renderMascot={renderMascot}
         renderPreview={(onContinue) => <AutoSkipPreview onContinue={onContinue} />}
       />
     </View>

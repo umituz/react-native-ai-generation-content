@@ -26,4 +26,5 @@ export interface UseWizardFlowHandlersProps {
   readonly onGenerationComplete?: (result: unknown) => void;
   readonly onGenerationError?: (error: string, errorInfo?: GenerationErrorInfo) => void;
   readonly onBack?: () => void;
+  readonly onDismissGenerating?: () => void;
 }

@@ -63,3 +63,18 @@ export function extractResolution(
   const resolutionData = wizardData.resolution;
   return extractTrimmedString(resolutionData);
 }
+
+/**
+ * Extracts quality mode from wizard data
+ * Values: "draft" (faster, cheaper), "normal" (higher quality)
+ */
+export function extractQualityMode(
+  wizardData: Record<string, unknown>,
+): "draft" | "normal" | undefined {
+  const qualityData = wizardData.quality_mode;
+  const extracted = extractTrimmedString(qualityData);
+  if (extracted === "draft" || extracted === "normal") {
+    return extracted;
+  }
+  return undefined;
+}

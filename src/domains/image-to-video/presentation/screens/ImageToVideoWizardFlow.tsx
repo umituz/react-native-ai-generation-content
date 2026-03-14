@@ -32,6 +32,7 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
     onBack,
     t,
     alertMessages,
+    renderMascot,
   } = props;
 
   const tokens = useAppDesignTokens();
@@ -82,6 +83,7 @@ export const ImageToVideoWizardFlow: React.FC<ImageToVideoWizardFlowProps> = (pr
         onBack={onBack}
         onTryAgain={onBack}
         t={t}
+        renderMascot={renderMascot}
         renderPreview={(onContinue) => <AutoSkipPreview onContinue={onContinue} />}
       />
     </View>

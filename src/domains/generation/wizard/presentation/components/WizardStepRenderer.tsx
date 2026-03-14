@@ -39,6 +39,7 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
   renderPreview,
   renderGenerating,
   renderResult,
+  renderMascot,
 }) => {
   if (!step) {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -53,7 +54,15 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
 
     case StepType.GENERATING: {
       if (renderGenerating) return renderGenerating(generationProgress);
-      return <GeneratingScreen progress={generationProgress} scenario={scenario} t={t} onDismiss={onDismissGenerating} />;
+      return (
+        <GeneratingScreen
+          progress={generationProgress}
+          scenario={scenario}
+          t={t}
+          onDismiss={onDismissGenerating}
+          renderMascot={renderMascot}
+        />
+      );
     }
 
     case StepType.RESULT_PREVIEW: {

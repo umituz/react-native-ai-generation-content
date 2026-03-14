@@ -23,8 +23,8 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
   iconOnly = false,
   showTryAgain = true,
   showRating = false,
-  onEdit,
-  onEditVideo,
+  onEdit: _onEdit,
+  onEditVideo: _onEditVideo,
   onShareToFeed,
 }) => {
   const tokens = useAppDesignTokens();
@@ -117,6 +117,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
             <AtomicIcon name="star-outline" customSize={20} color="onPrimary" />
           </TouchableOpacity>
         )}
+        {/* Photo & Video editing - Disabled for now
         {onEdit && (
           <TouchableOpacity
             style={styles.iconButton}
@@ -135,6 +136,7 @@ export const ResultActionBar: React.FC<ResultActionBarProps> = ({
             <AtomicIcon name="video" customSize={20} color="onPrimary" />
           </TouchableOpacity>
         )}
+        */}
         {onShareToFeed && (
           <TouchableOpacity
             style={styles.iconButton}
