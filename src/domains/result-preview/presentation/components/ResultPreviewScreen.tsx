@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
+import { StyleSheet, View } from "react-native";
+import { AtomicText } from "@umituz/react-native-design-system/atoms";
 import { NavigationHeader } from "@umituz/react-native-design-system/molecules";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { ResultImageCard } from "./ResultImageCard";
 import { ResultActionBar } from "./ResultActionBar";
+import { SuccessRedirectionCard } from "../../../../presentation/components/result/SuccessRedirectionCard";
 import { RecentCreationsSection } from "./RecentCreationsSection";
 import { VideoResultPlayer } from "../../../../presentation/components/display/VideoResultPlayer";
 import type { ResultPreviewScreenProps } from "../types/result-preview.types";
@@ -53,22 +54,6 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
           color: tokens.colors.textPrimary,
           marginBottom: tokens.spacing.md,
         },
-        galleryButton: {
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          backgroundColor: tokens.colors.surfaceSecondary,
-          padding: tokens.spacing.md,
-          borderRadius: tokens.radius.lg,
-          marginTop: tokens.spacing.xl,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: tokens.colors.borderLight,
-        },
-        galleryButtonText: {
-          fontSize: 15,
-          fontWeight: "700",
-          color: tokens.colors.textPrimary,
-        },
       }),
     [tokens]
   );
@@ -102,16 +87,13 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
             showRating={showRating}
           />
           {onViewCreations && (
-            <TouchableOpacity
-              style={styles.galleryButton}
+            <SuccessRedirectionCard
               onPress={onViewCreations}
-              activeOpacity={0.7}
-            >
-              <AtomicText style={styles.galleryButtonText}>
-                {translations.viewCreations || "View My Creations"}
-              </AtomicText>
-              <AtomicIcon name="arrow-forward" size="sm" color="primary" />
-            </TouchableOpacity>
+              title={translations.redirectTitle || "Your Creation is Ready!"}
+              description={translations.redirectDescription || "Head over to the My Creations screen to view full details."}
+              buttonText={translations.viewCreations || "View My Creations"}
+              style={{ marginTop: tokens.spacing.xl }}
+            />
           )}
         </View>
         {showRecent && recentCreations && translations.recentCreations && translations.viewAll && (

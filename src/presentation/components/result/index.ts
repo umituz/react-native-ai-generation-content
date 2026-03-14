@@ -20,6 +20,9 @@ export type { ResultStoryCardProps } from "./ResultStoryCard";
 export { ResultActions } from "./ResultActions";
 export type { ResultActionsProps } from "./ResultActions";
 
+export { SuccessRedirectionCard } from "./SuccessRedirectionCard";
+export type { SuccessRedirectionCardProps } from "./SuccessRedirectionCard";
+
 export {
   DEFAULT_RESULT_CONFIG,
 } from "../../types/result-config.types";

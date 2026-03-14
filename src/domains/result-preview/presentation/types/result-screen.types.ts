@@ -75,4 +75,8 @@ export interface ResultPreviewTranslations {
   viewAll?: string;
   /** View creations button text */
   viewCreations?: string;
+  /** Redirection title */
+  redirectTitle?: string;
+  /** Redirection description */
+  redirectDescription?: string;
 }

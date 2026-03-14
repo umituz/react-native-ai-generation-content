@@ -96,6 +96,8 @@ export const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
             sharing: t("generation.result.sharing"),
             tryAnother: t("generation.result.tryAnother"),
             viewCreations: t("generation.result.viewCreations"),
+            redirectTitle: t("generator.redirect.title"),
+            redirectDescription: t("generator.redirect.description"),
           }}
         />
       );
