@@ -69,14 +69,16 @@ export async function executeImageGeneration(
 
     const modelInput: Record<string, unknown> = {
       prompt: finalPrompt,
-      aspect_ratio: MODEL_INPUT_DEFAULTS.aspectRatio,
+      aspect_ratio: input.aspectRatio || MODEL_INPUT_DEFAULTS.aspectRatio,
       output_format: MODEL_INPUT_DEFAULTS.outputFormat,
       num_images: MODEL_INPUT_DEFAULTS.numImages,
       enable_safety_checker: MODEL_INPUT_DEFAULTS.enableSafetyChecker,
     };
 
-    // nano-banana/edit uses image_urls (array) for both single and multi-image
+    // p-image-edit (and typical multi-ref models) usually expect 'images' key
+    // supporting both 'images' and 'image_urls' for maximum compatibility
     if (imageUrls.length > 0) {
+      modelInput.images = imageUrls;
       modelInput.image_urls = imageUrls;
     }
 

@@ -7,5 +7,8 @@ export interface CreatePromptOptions {
   includePhotoRealism?: boolean;
   includePoseGuidelines?: boolean;
   isCouple?: boolean;
+  isArtistic?: boolean;
+  isWardrobe?: boolean;
+  isRetouch?: boolean;
   customInstructions?: string;
 }

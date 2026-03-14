@@ -44,11 +44,20 @@ export const CREATIVE_BASE = {
  */
 export const createPhotorealisticPrompt = (
   scene: string,
-  options?: { customInstructions?: string; isCouple?: boolean },
+  options?: { 
+    customInstructions?: string; 
+    isCouple?: boolean;
+    isArtistic?: boolean;
+    isWardrobe?: boolean;
+    isRetouch?: boolean;
+  },
 ): string => {
   return createUnifiedPrompt(scene, {
     customInstructions: options?.customInstructions,
     isCouple: options?.isCouple,
+    isArtistic: options?.isArtistic,
+    isWardrobe: options?.isWardrobe,
+    isRetouch: options?.isRetouch,
   });
 };
 

@@ -76,12 +76,7 @@ export function CreationsGalleryScreen({
 
   useAppFocusEffect(useCallback(() => { 
     void refetch();
-    // Reset selection on focus if no initial ID is being enforced
-    if (!initialCreationId) {
-    const { setSelectedCreation } = galleryState;
-    setSelectedCreation(null);
-    }
-  }, [refetch, initialCreationId, galleryState.setSelectedCreation]));
+  }, [refetch]));
 
   const filterButtons = useMemo(() =>
     createFilterButtons({
@@ -165,7 +160,6 @@ export function CreationsGalleryScreen({
         { 
           backgroundColor: tokens.colors.surface, 
           borderBottomColor: tokens.colors.border,
-          paddingTop: hasScreenHeader ? 0 : insets.top
         }
       ]}>
         <GalleryHeader
@@ -226,7 +220,7 @@ export function CreationsGalleryScreen({
   }
 
   return (
-    <ScreenLayout header={screenHeader} scrollable={false} edges={["left", "right", "bottom"]}>
+    <ScreenLayout header={screenHeader} scrollable={false} edges={["top", "left", "right", "bottom"]}>
       {renderHeader}
       {filters.filtered.length === 0 ? (
         <View style={[styles.listContent, styles.emptyContent]}>

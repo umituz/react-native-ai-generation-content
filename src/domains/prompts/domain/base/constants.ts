@@ -13,11 +13,12 @@ Preserve the EXACT facial appearance, structure, and unique characteristics from
 
 export const IDENTITY_PRESERVATION_COUPLE = `IDENTITY PRESERVATION (CRITICAL):
 Preserve the EXACT facial appearance of BOTH people from the uploaded photos with 100% accuracy.
-- Maintain bone structure, facial proportions, and unique features for both individuals.
-- Keep natural skin texture and authentic expressions for both.
-- Both people must be instantly recognizable as themselves.
-- Ensure natural relative heights and chemistry between the two people.
-- DO NOT alter ethnicity, age, or apply artificial skin smoothing.`;
+- MAPPING: Map the first person in the first photo to the first person in the scene, and the second person in the second photo to the second person in the scene.
+- Maintain unique bone structure, facial proportions, and specific features for both individuals independently.
+- Both people must be clearly distinct and instantly recognizable as their original selves.
+- Keep authentic skin textures, expressions, and gender-specific traits for both.
+- Ensure natural relative heights and genuine chemistry between the two.
+- DO NOT mix facial features between the two people or apply artificial smoothing.`;
 
 export const PHOTOREALISTIC_RENDERING = `STYLE - PHOTOREALISTIC QUALITY (CRITICAL):
 Create an authentic photograph with professional camera characteristics.
@@ -47,3 +48,31 @@ Ensure a real photographic look, NOT digital art or AI-generated appearance.
 - Natural highlights and soft shadow falloff across faces.
 - Realistic fabric folds and individual hair movement.
 - NO poreless skin, artificial glow, or over-processed effects.`;
+
+export const TECHNICAL_STANDARDS = `TECHNICAL QUALITY STANDARDS:
+- Professional DSLR photograph quality (Canon/Nikon/Sony).
+- Authentic 35mm film photography aesthetic, unfiltered raw capture.
+- Fujifilm or Kodak Portra film color science - natural, organic, slightly muted.
+- Natural uneven lighting with realistic deep shadows and highlights.
+- Sharp focus on clothing but preserve raw skin texture with visible tiny pores.
+- Result MUST NOT look AI-generated (Negative: plastic, render, CGI, 3d, airbrushed, doll, cartoon).`;
+
+export const ARTISTIC_STANDARDS = `ARTISTIC QUALITY STANDARDS:
+- High-fidelity digital art masterpiece.
+- Deep texture details and masterful light/shadow interplay.
+- Vibrant and harmonious color palette original to the selected theme.
+- Sharp focus on subject identity while background blends into the artistic theme.
+- NO blurred faces, NO distorted features.`;
+
+export const WARDROBE_TRANSFORMATION_RULES = `WARDROBE TRANSFORMATION RULES:
+- Change ONLY the clothing/outfits and apply accessories if requested.
+- Keep ALL identity features IDENTICAL to reference photos.
+- Core facial structure, hair color, and basic style must remain unchanged.`;
+
+export const ART_STYLE_TRANSFORMATION_RULES = `ART STYLE TRANSFORMATION RULES:
+- Apply the artistic style ONLY to the texture, lighting, and background.
+- DO NOT change faces into generic art faces. They MUST be recognizable as the original individuals.`;
+
+export const RETOUCH_TRANSFORMATION_RULES = `RETOUCH TRANSFORMATION RULES:
+- Subtle, natural improvement while keeping original bone structure.
+- NO extreme changes to identity. Keep facial markers (moles, freckles) if choice allows.`;

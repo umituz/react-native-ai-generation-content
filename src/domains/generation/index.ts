@@ -20,7 +20,6 @@ export type {
 export type {
   GenerationExecutor,
   GenerationOptions,
-  ImageGenerationInput,
   ImageGenerationOutput,
   VideoGenerationInput,
   VideoGenerationOutput,
@@ -34,22 +33,33 @@ export type { GenerationResult } from "../../domain/entities/generation.types";
 
 export { ExecutorFactory, type GenerationType as ExecutorGenerationType } from "./infrastructure/executors/executor-factory";
 
+// Couple Generation Utilities
+export {
+  buildCoupleGenerationInput,
+  buildScenarioGenerationInput,
+  type CoupleGenerationInputParams,
+  type CoupleGenerationInput,
+  type ScenarioGenerationInputParams,
+} from "./infrastructure/couple-generation-builder";
+
+export {
+  getAppearanceContext,
+  enhancePromptWithAnalysis,
+} from "./infrastructure/appearance-analysis";
+
 // Wizard Domain
 export type {
   BaseStepConfig,
   AuthGateStepConfig,
   CreditGateStepConfig,
   PhotoUploadStepConfig,
-  TextInputStepConfig,
   SelectionStepConfig,
-  PreviewStepConfig,
   WizardStepConfig,
   WizardFeatureConfig,
   ScenarioBasedConfig,
   UsePhotoUploadStateProps,
   UsePhotoUploadStateReturn,
   PhotoUploadConfig,
-  PhotoUploadTranslations,
   UseWizardGenerationProps,
   UseWizardGenerationReturn,
   WizardScenarioData,

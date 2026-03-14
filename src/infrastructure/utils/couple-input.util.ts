@@ -1,5 +1,5 @@
 /** Target for generation: which model on which provider */
-interface GenerationTargetLike {
+export interface GenerationTargetLike {
   readonly model: string;
   readonly providerId: string;
 }
@@ -58,8 +58,21 @@ export function refinePromptForCouple(prompt: string, isCouple: boolean): string
       .replace(/\bidentical\b/gi, "identical for both individuals")
       .replace(/\binstantly recognizable\b/gi, "instantly recognizable as themselves");
 
+    // Special mapping for common couple scenarios: map "dress/gown" to person 1 and "suit/tuxedo" to person 2
+    // this helps the AI map reference images correctly to the scene roles
+    if (/\b(dress|gown)\b/i.test(refined) && /\b(suit|tuxedo|linen trousers)\b/i.test(refined)) {
+      refined = refined
+        .replace(/\b(dress|gown)\b/gi, "$1 (worn by Person 1)")
+        .replace(/\b(suit|tuxedo|linen trousers)\b/gi, "$1 (worn by Person 2)");
+      
+      // Also add explicit mapping to the top if not already there
+      if (!refined.includes("DIRECTIVE: MAP PHOTO 1 TO PERSON 1")) {
+        refined = `DIRECTIVE: MAP PHOTO 1 TO PERSON 1, MAP PHOTO 2 TO PERSON 2\n\n${refined}`;
+      }
+    }
+
     // If it doesn't already have couple-hints, add them at the start
-    if (!/\b(couple|both|matching|dual|two people)\b/i.test(refined)) {
+    if (!/\b(couple|both|matching|dual|two people)\b/i.test(refined) && !refined.includes("DIRECTIVE:")) {
       refined = `A photo of a couple, ${refined}`;
     }
     return refined;

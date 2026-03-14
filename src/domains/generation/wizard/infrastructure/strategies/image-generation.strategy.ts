@@ -44,7 +44,10 @@ export async function buildImageInput(
   const styleValue = extractSelection(wizardData.style);
   const style = typeof styleValue === "string" ? styleValue : undefined;
 
-  return { photos, prompt: finalPrompt, style };
+  // Extract aspect ratio from wizard data
+  const aspectRatio = typeof wizardData.aspect_ratio === "string" ? wizardData.aspect_ratio : undefined;
+
+  return { photos, prompt: finalPrompt, style, aspectRatio };
 }
 
 /**

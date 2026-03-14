@@ -11,6 +11,8 @@ export interface WizardImageInput {
   readonly prompt: string;
   /** Optional style from wizard selection (text-to-image only) */
   readonly style?: string;
+  /** Optional aspect ratio (passed to model) */
+  readonly aspectRatio?: string;
 }
 
 export interface CreateImageStrategyOptions {

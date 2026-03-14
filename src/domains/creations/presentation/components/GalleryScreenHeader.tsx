@@ -20,7 +20,7 @@ export const GalleryScreenHeader: React.FC<GalleryScreenHeaderProps> = ({ title,
   const styles = useMemo(() => createStyles(tokens), [tokens]);
 
   return (
-    <View style={[styles.screenHeader, { paddingTop: insets.top }]}>
+    <View style={styles.screenHeader}>
       <TouchableOpacity
         onPress={onBack}
         style={styles.backButton}
