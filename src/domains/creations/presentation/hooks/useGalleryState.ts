@@ -56,8 +56,8 @@ export function useGalleryState(options: GalleryStateOptions): GalleryStateRetur
   );
 
   const showPreview = useMemo(
-    () => Boolean(selectedCreation && hasMediaToShow),
-    [selectedCreation, hasMediaToShow]
+    () => Boolean(selectedCreation), // More lenient - show preview if creation is selected
+    [selectedCreation]
   );
 
   return {

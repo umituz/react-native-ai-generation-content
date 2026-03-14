@@ -100,12 +100,19 @@ export function CreationsGalleryScreen({
   );
 
   const getItemCallbacks = useCallback((item: Creation) => ({
-    onPress: () => onCreationPress ? onCreationPress(item) : callbacks.handleCardPress(item),
+    onPress: () => {
+      // Always call custom handler if provided
+      if (onCreationPress) {
+        onCreationPress(item);
+      }
+      // Always show preview when card is pressed
+      galleryState.setSelectedCreation(item);
+    },
     onShare: async () => callbacks.handleShareCard(item),
     onDelete: () => callbacks.handleDelete(item),
     onFavorite: () => callbacks.handleFavorite(item),
     onPostToFeed: onShareToFeed ? () => onShareToFeed(item) : undefined,
-  }), [callbacks, onCreationPress, onShareToFeed]);
+  }), [callbacks, onCreationPress, onShareToFeed, galleryState]);
 
   const [pageLimit, setPageLimit] = useState(6);
 

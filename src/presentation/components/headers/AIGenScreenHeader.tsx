@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system/atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type NavigationButtonType = "back" | "close";
 
@@ -27,6 +28,7 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
   showDescription = !!description,
 }) => {
   const tokens = useAppDesignTokens();
+  const insets = useSafeAreaInsets();
 
   const isCloseButton = navigationType === "close";
   const buttonStyle = isCloseButton
@@ -44,7 +46,7 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
   const iconColor = isCloseButton ? "secondary" : "primary";
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: insets.top > 0 ? insets.top : 16 }]}>
       <View style={styles.headerTop}>
         {onNavigationPress && (
           <TouchableOpacity
@@ -89,7 +91,6 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
-    paddingTop: 16,
     width: "100%",
     marginBottom: 24,
   },

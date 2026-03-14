@@ -82,7 +82,7 @@ export const MainCategoryScreen: React.FC<MainCategoryScreenProps> = ({
   return (
     <ScreenLayout
       scrollable={false}
-      edges={["top", "left", "right"]}
+      edges={["left", "right"]}
       backgroundColor={tokens.colors.backgroundPrimary}
     >
       <AIGenScreenHeader
