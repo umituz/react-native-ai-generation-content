@@ -7,6 +7,7 @@ import React, { useMemo, useCallback, useEffect } from "react";
 import {
   FlatList,
   StyleSheet,
+  View,
   type ListRenderItemInfo,
 } from "react-native";
 import { AtomicCard } from "@umituz/react-native-design-system/atoms";
@@ -97,32 +98,34 @@ export const SubCategoryScreen: React.FC<SubCategoryScreenProps> = ({
   );
 
   return (
-    <ScreenLayout
-      scrollable={false}
-      edges={["left", "right"]}
-      backgroundColor={tokens.colors.backgroundPrimary}
-    >
+    <View style={{ flex: 1, backgroundColor: tokens.colors.backgroundPrimary }}>
       <AIGenScreenHeader
         title={headerTitleKey ? t(headerTitleKey) : t("scenario.sub_category.title")}
         description={headerDescriptionKey ? t(headerDescriptionKey) : t("scenario.sub_category.subtitle")}
         onNavigationPress={onBack}
       />
-      <FlatList
-        data={filteredSubCategories}
-        showsVerticalScrollIndicator={false}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={[
-          styles.listContent,
-          { paddingBottom: insets.bottom + 100 },
-        ]}
-        removeClippedSubviews
-        maxToRenderPerBatch={10}
-        updateCellsBatchingPeriod={50}
-        initialNumToRender={10}
-        windowSize={11}
-      />
-    </ScreenLayout>
+      <ScreenLayout
+        scrollable={false}
+        edges={["left", "right", "bottom"]}
+        backgroundColor={tokens.colors.backgroundPrimary}
+      >
+        <FlatList
+          data={filteredSubCategories}
+          showsVerticalScrollIndicator={false}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={[
+            styles.listContent,
+            { paddingBottom: insets.bottom + 40 },
+          ]}
+          removeClippedSubviews
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={50}
+          initialNumToRender={10}
+          windowSize={11}
+        />
+      </ScreenLayout>
+    </View>
   );
 };
 

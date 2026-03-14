@@ -46,7 +46,7 @@ export const AIGenScreenHeader: React.FC<AIGenScreenHeaderProps> = ({
   const iconColor = isCloseButton ? "secondary" : "primary";
 
   return (
-    <View style={[styles.header, { paddingTop: insets.top > 0 ? insets.top : 16 }]}>
+    <View style={[styles.header, { paddingTop: insets.top }]}>
       <View style={styles.headerTop}>
         {onNavigationPress && (
           <TouchableOpacity
