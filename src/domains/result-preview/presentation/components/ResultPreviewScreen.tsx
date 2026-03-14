@@ -69,23 +69,6 @@ export const ResultPreviewScreen: React.FC<ResultPreviewScreenProps> = ({
         <View style={styles.resultContainer}>
           {!hideLabel && <AtomicText style={styles.title}>{translations.yourResult}</AtomicText>}
           {isVideo ? <VideoResultPlayer uri={displayMediaUrl} /> : <ResultImageCard imageUrl={displayMediaUrl} />}
-          <ResultActionBar
-            isSaving={isSaving}
-            isSharing={isSharing}
-            onDownload={onDownload}
-            onShare={onShare}
-            onTryAgain={onTryAgain}
-            onRate={onRate}
-            onEdit={onEdit}
-            onEditVideo={onEditVideo}
-            onShareToFeed={onShareToFeed}
-            saveButtonText={translations.saveButton}
-            shareButtonText={translations.shareButton}
-            tryAgainButtonText={translations.tryAnother}
-            iconOnly={iconOnly}
-            showTryAgain={showTryAgain}
-            showRating={showRating}
-          />
           {onViewCreations && (
             <SuccessRedirectionCard
               onPress={onViewCreations}
