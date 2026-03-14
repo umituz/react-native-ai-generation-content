@@ -7,9 +7,10 @@ import type { WizardScenarioData } from "../../presentation/hooks/useWizardGener
 import type { WizardStrategy } from "./wizard-strategy.types";
 import { DEFAULT_STYLE_VALUE, IMAGE_PROCESSING_PROMPTS } from "./wizard-strategy.constants";
 import { extractPrompt, extractSelection } from "../utils";
-import { extractPhotosAsBase64 } from "./shared/photo-extraction.utils";
+import { extractPhotosAsBase64, extractPhotoUris } from "./shared/photo-extraction.utils";
 import { executeImageGeneration } from "./image-generation.executor";
 import type { WizardImageInput, CreateImageStrategyOptions } from "./image-generation.types";
+import { enhancePromptWithAnalysis } from "../../../infrastructure/appearance-analysis";
 
 
 // ============================================================================
@@ -20,6 +21,8 @@ export async function buildImageInput(
   wizardData: Record<string, unknown>,
   scenario: WizardScenarioData,
 ): Promise<WizardImageInput | null> {
+  // Extract photo URIs first (for couple refinement)
+  const photoUris = extractPhotoUris(wizardData);
   const photos = await extractPhotosAsBase64(wizardData);
 
   // Extract prompt with fallback to default
@@ -38,6 +41,20 @@ export async function buildImageInput(
   let finalPrompt = prompt;
   if (photos.length > 0) {
     finalPrompt = applyStyleEnhancements(prompt, wizardData);
+
+    // ✅ Apply couple refinement (same logic as Wardrobe)
+    // This ensures consistency across all couple generation scenarios
+    const isCoupleMode = photos.length >= 2;
+    finalPrompt = await enhancePromptWithAnalysis(finalPrompt, photoUris, isCoupleMode);
+
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[ImageStrategy] Prompt enhanced with couple refinement", {
+        photoCount: photos.length,
+        isCoupleMode,
+        originalPromptLength: prompt.length,
+        finalPromptLength: finalPrompt.length,
+      });
+    }
   }
 
   // Extract style for text-to-image
