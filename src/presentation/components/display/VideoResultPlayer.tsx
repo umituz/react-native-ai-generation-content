@@ -1,5 +1,5 @@
 import React from "react";
-import { VideoPlayer } from "@umituz/react-native-video-editor/player";
+import { VideoPlayer } from "@umituz/react-native-video-editor";
 
 interface VideoResultPlayerProps {
   uri: string;
