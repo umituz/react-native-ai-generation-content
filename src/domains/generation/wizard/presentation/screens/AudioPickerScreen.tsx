@@ -6,7 +6,6 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import * as DocumentPicker from "expo-document-picker";
 import { AtomicText, AtomicButton } from "@umituz/react-native-design-system/atoms";
 import { ScreenLayout } from "@umituz/react-native-design-system/layouts";
 import { NavigationHeader } from "@umituz/react-native-design-system/molecules";
@@ -53,6 +52,9 @@ export const AudioPickerScreen: React.FC<AudioPickerScreenProps> = ({
   const handlePick = useCallback(async () => {
     try {
       setError(null);
+
+      // Lazy load expo-document-picker only when needed
+      const DocumentPicker = await import("expo-document-picker");
       const result = await DocumentPicker.getDocumentAsync({
         type: mimeTypes as string[],
         copyToCacheDirectory: true,

@@ -16,9 +16,7 @@ const GENERATION_TIMEOUT_MS = env.generationMultiImageTimeoutMs;
 /** Default model input values */
 const MODEL_INPUT_DEFAULTS = {
   aspectRatio: "1:1",
-  outputFormat: "jpeg",
-  numImages: 1,
-  enableSafetyChecker: false,
+  disableSafetyChecker: false,
 } as const;
 
 export interface MultiImageGenerationInput {
@@ -30,8 +28,6 @@ export interface MultiImageGenerationInput {
   readonly model: string;
   /** Aspect ratio (default: "1:1") */
   readonly aspectRatio?: string;
-  /** Output format (default: "jpeg") */
-  readonly outputFormat?: string;
 }
 
 export interface MultiImageGenerationResult {
@@ -70,13 +66,16 @@ export async function executeMultiImageGeneration(
       timeout: GENERATION_TIMEOUT_MS,
     });
 
+    // Pruna AI p-image-edit model expects these parameters:
+    // - images (array): Base64 encoded images or URLs
+    // - prompt (string): Text description
+    // - aspect_ratio (optional): "1:1", "16:9", etc.
+    // - disable_safety_checker (optional): boolean
     const modelInput: Record<string, unknown> = {
+      images: imageUrls,
       prompt: input.prompt,
-      image_urls: imageUrls,
       aspect_ratio: input.aspectRatio ?? MODEL_INPUT_DEFAULTS.aspectRatio,
-      output_format: input.outputFormat ?? MODEL_INPUT_DEFAULTS.outputFormat,
-      num_images: MODEL_INPUT_DEFAULTS.numImages,
-      enable_safety_checker: MODEL_INPUT_DEFAULTS.enableSafetyChecker,
+      disable_safety_checker: MODEL_INPUT_DEFAULTS.disableSafetyChecker,
     };
 
     addGenerationLog(sid, TAG, 'Calling provider.subscribe()...');
