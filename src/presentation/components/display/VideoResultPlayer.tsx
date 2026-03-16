@@ -11,6 +11,7 @@ export const VideoResultPlayer: React.FC<VideoResultPlayerProps> = ({ uri }) => 
 
   React.useEffect(() => {
     // Lazy load video player only when needed
+    // @ts-ignore - Optional peer dependency
     import("@umituz/react-native-video-editor").then((module) => {
       setVideoPlayer(() => module.VideoPlayer);
     }).catch(() => {
