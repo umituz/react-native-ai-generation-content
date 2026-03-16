@@ -54,6 +54,7 @@ export const AudioPickerScreen: React.FC<AudioPickerScreenProps> = ({
       setError(null);
 
       // Lazy load expo-document-picker only when needed
+      // @ts-ignore - Optional peer dependency
       const DocumentPicker = await import("expo-document-picker");
       const result = await DocumentPicker.getDocumentAsync({
         type: mimeTypes as string[],
