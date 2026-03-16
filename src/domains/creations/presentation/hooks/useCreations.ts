@@ -4,7 +4,7 @@
  * Auto-updates UI when Firestore data changes
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 import type { Creation } from "../../domain/entities/Creation";
 
