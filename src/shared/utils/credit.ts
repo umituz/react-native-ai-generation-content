@@ -3,6 +3,8 @@
  * Provides consistent credit calculation operations
  */
 
+import { calculateCredits as calculateCreditsFromDuration } from "./calculations.util";
+
 /**
  * Validates if a value is a valid credit amount
  * @param credits - Credit value to validate
@@ -44,6 +46,21 @@ export function calculateCostPerUnit(totalCost: number, units: number): number {
 export function calculateTotalCost(costPerUnit: number, units: number): number {
   if (units <= 0) return 0;
   return costPerUnit * units;
+}
+
+/**
+ * Calculates credits based on duration and resolution
+ * @param durationSeconds - Duration in seconds
+ * @param resolutionMultiplier - Resolution multiplier (default: 1)
+ * @param baseCost - Base cost per minute (default: 1)
+ * @returns Required credits
+ */
+export function calculateCredits(
+  durationSeconds: number,
+  resolutionMultiplier: number = 1,
+  baseCost: number = 1
+): number {
+  return calculateCreditsFromDuration(durationSeconds, resolutionMultiplier, baseCost);
 }
 
 /**

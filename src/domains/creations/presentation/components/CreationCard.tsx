@@ -19,7 +19,7 @@ import { getPreviewUrl, getCreationTitle } from "../../domain/utils";
 
 const EMPTY_CALLBACKS: CreationCardCallbacks = {};
 
-export function CreationCard({
+export const CreationCard = React.memo<CreationCardProps>(function CreationCard({
   creation,
   callbacks = EMPTY_CALLBACKS,
   showBadges = true,
@@ -161,4 +161,4 @@ export function CreationCard({
       </View>
     </TouchableOpacity>
   );
-}
+});

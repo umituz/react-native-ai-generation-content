@@ -3,3 +3,4 @@
  */
 
 export * from "./factories";
+export * from "./useStableCallback";

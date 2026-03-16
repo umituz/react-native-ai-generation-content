@@ -37,22 +37,26 @@ export function useCreations({
     }
   }, []);
 
-  const onDataCallback = useCallback((creations: Creation[]) => {
+  // Use refs for callbacks to maintain stable function references
+  const onDataCallbackRef = useRef<(creations: Creation[]) => void>();
+  const onErrorCallbackRef = useRef<(err: Error) => void>();
+
+  onDataCallbackRef.current = (creations: Creation[]) => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.log("[useCreations] Realtime update:", creations.length);
     }
     setData(creations);
     setIsLoading(false);
     setError(null);
-  }, []);
+  };
 
-  const onErrorCallback = useCallback((err: Error) => {
+  onErrorCallbackRef.current = (err: Error) => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
       console.error("[useCreations] Realtime listener error:", err);
     }
     setError(err);
     setIsLoading(false);
-  }, []);
+  };
 
   useEffect(() => {
     if (!userId || !enabled) {
@@ -69,21 +73,21 @@ export function useCreations({
     setIsLoading(true);
     setError(null);
 
-    let timeoutId: ReturnType<typeof setTimeout>;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     const handleData = (creations: Creation[]) => {
-      clearTimeout(timeoutId);
-      onDataCallback(creations);
+      if (timeoutId) clearTimeout(timeoutId);
+      onDataCallbackRef.current?.(creations);
     };
 
     const handleError = (err: Error) => {
-      clearTimeout(timeoutId);
-      onErrorCallback(err);
+      if (timeoutId) clearTimeout(timeoutId);
+      onErrorCallbackRef.current?.(err);
     };
 
     const unsubscribe = repository.subscribeToAll(userId, handleData, handleError);
 
-    // Fallback timeout: if Firestore doesn't respond in 10s, stop loading
+    // Fallback timeout: if Firestore doesn't respond in 8s, stop loading
     timeoutId = setTimeout(() => {
       if (!isMounted) return;
       if (typeof __DEV__ !== "undefined" && __DEV__) {
@@ -91,17 +95,17 @@ export function useCreations({
       }
       setData((currentData) => currentData ?? []);
       setIsLoading(false);
-    }, 10000);
+    }, 8000);
 
     return () => {
       isMounted = false;
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[useCreations] Cleaning up realtime listener");
       }
       unsubscribe();
     };
-  }, [userId, repository, enabled]); // onDataCallback/onErrorCallback intentionally omitted - stable memoized refs
+  }, [userId, repository, enabled]);
 
   return { data, isLoading, error, refetch };
 }

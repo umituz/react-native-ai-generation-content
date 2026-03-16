@@ -40,7 +40,7 @@ export function usePendingJobs<TInput = unknown, TResult = unknown>(
     queryKey,
     queryFn: () => [],
     staleTime: Infinity,
-    gcTime: 30 * 60 * 1000,
+    gcTime: 5 * 60 * 1000, // 5 minutes - reduced from 30min to prevent memory bloat
     enabled: options.enabled !== false,
   });
 

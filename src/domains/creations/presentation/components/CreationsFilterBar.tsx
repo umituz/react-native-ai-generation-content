@@ -10,7 +10,7 @@ import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
 import { createFilterButtons } from "../../../../shared/utils/filters";
 import type { CreationsFilterBarProps, MediaFilterLabels, StatusFilterLabels, FilterButton } from "./CreationsFilterBar.types";
 
-export function CreationsFilterBar({
+export const CreationsFilterBar = React.memo<CreationsFilterBarProps>(function CreationsFilterBar({
   filters,
   showClearButton = true,
   clearLabel = "Clear",
@@ -128,7 +128,7 @@ export function CreationsFilterBar({
       </ScrollView>
     </View>
   );
-}
+});
 
 
 /**

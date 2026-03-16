@@ -13,10 +13,10 @@ export interface PollingConfig {
 }
 
 export const DEFAULT_POLLING_CONFIG: PollingConfig = {
-  maxAttempts: 60,
-  initialIntervalMs: 1000,
-  maxIntervalMs: 3000,
-  backoffMultiplier: 1.2,
+  maxAttempts: 40, // Reduced from 60 - 40 attempts with backoff = ~5 minutes total
+  initialIntervalMs: 1500, // Increased from 1000ms - less aggressive initial polling
+  maxIntervalMs: 5000, // Increased from 3000ms - longer intervals between retries
+  backoffMultiplier: 1.3, // Increased from 1.2 - faster exponential backoff
 };
 
 export interface PollingState {

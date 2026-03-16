@@ -17,6 +17,7 @@ import { imageModerator } from "./moderators/image.moderator";
 import { videoModerator } from "./moderators/video.moderator";
 import { voiceModerator } from "./moderators/voice.moderator";
 import { rulesRegistry } from "../rules/rules-registry";
+import { calculateConfidenceScore } from "../../../../shared/utils/calculations.util";
 
 
 interface ServiceConfig {
@@ -95,16 +96,7 @@ class ContentModerationService {
   }
 
   private calculateConfidence(violations: Violation[]): number {
-    if (violations.length === 0) return 1.0;
-
-    const weights = { critical: 1.0, high: 0.75, medium: 0.5, low: 0.25 };
-    const score = violations.reduce(
-      (sum, v) => sum + (weights[v.severity] || 0.25),
-      0
-    );
-
-    // Only divide by 2 if we have violations, otherwise return 1.0
-    return violations.length > 0 ? Math.min(1.0, score / Math.max(1, violations.length)) : 1.0;
+    return calculateConfidenceScore(violations);
   }
 
   private determineAction(

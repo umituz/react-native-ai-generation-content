@@ -4,6 +4,11 @@
  * Utilities for preparing photos for AI generation.
  */
 
+import {
+  calculateBase64Size,
+  calculateBase64SizeMB,
+} from "../../../../shared/utils/calculations.util";
+
 export interface PhotoInput {
   base64: string;
   mimeType?: string;
@@ -70,15 +75,16 @@ export const isValidBase64 = (base64: string): boolean => {
 
 /**
  * Get image size estimate in bytes from base64
+ * Uses centralized calculation utility
  */
 export const getBase64Size = (base64: string): number => {
-  const cleaned = cleanBase64(base64);
-  return (cleaned.length * 3) / 4;
+  return calculateBase64Size(base64);
 };
 
 /**
  * Get image size estimate in MB from base64
+ * Uses centralized calculation utility
  */
 export const getBase64SizeMB = (base64: string): number => {
-  return getBase64Size(base64) / (1024 * 1024);
+  return calculateBase64SizeMB(base64);
 };

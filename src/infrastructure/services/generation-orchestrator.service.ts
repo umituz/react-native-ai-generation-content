@@ -12,6 +12,7 @@ import type {
 import { classifyError } from "../utils/error-classification";
 import { pollJob } from "../../domains/background/infrastructure/services/job-poller.service";
 import { ProviderValidator } from "./provider-validator";
+import { calculateDurationMs } from "../../shared/utils/calculations.util";
 
 
 export interface OrchestratorConfig {
@@ -91,7 +92,7 @@ class GenerationOrchestratorService {
       }
 
       const result = pollResult.data as T;
-      const duration = Date.now() - startTime;
+      const duration = calculateDurationMs(startTime);
 
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[Orchestrator] Generate completed:", {
@@ -111,7 +112,7 @@ class GenerationOrchestratorService {
           capability: request.capability,
           startTime,
           endTime: Date.now(),
-          duration,
+          duration: calculateDurationMs(startTime),
         },
       };
     } catch (error) {

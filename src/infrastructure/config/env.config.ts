@@ -33,14 +33,14 @@ export const env = {
   generationMultiImageTimeoutMs: getEnvValue("GENERATION_MULTI_IMAGE_TIMEOUT_MS", 120000) as number,
 
   // Polling Configuration
-  pollDefaultIntervalMs: getEnvValue("POLL_DEFAULT_INTERVAL_MS", 3000) as number,
-  pollGalleryIntervalMs: getEnvValue("POLL_GALLERY_INTERVAL_MS", 5000) as number,
+  pollDefaultIntervalMs: getEnvValue("POLL_DEFAULT_INTERVAL_MS", 4000) as number, // Increased from 3000ms - less aggressive polling
+  pollGalleryIntervalMs: getEnvValue("POLL_GALLERY_INTERVAL_MS", 6000) as number, // Increased from 5000ms - gallery doesn't need frequent updates
   pollMaxTimeMs: getEnvValue("POLL_MAX_TIME_MS", 300000) as number,
-  pollMaxAttempts: getEnvValue("POLL_MAX_ATTEMPTS", 100) as number,
+  pollMaxAttempts: getEnvValue("POLL_MAX_ATTEMPTS", 75) as number, // Reduced from 100 - fewer attempts
   pollMaxConsecutiveErrors: getEnvValue("POLL_MAX_CONSECUTIVE_ERRORS", 5) as number,
-  pollMinBackoffDelayMs: getEnvValue("POLL_MIN_BACKOFF_DELAY_MS", 1000) as number,
+  pollMinBackoffDelayMs: getEnvValue("POLL_MIN_BACKOFF_DELAY_MS", 1500) as number, // Increased from 1000ms
   pollMaxBackoffDelayMs: getEnvValue("POLL_MAX_BACKOFF_DELAY_MS", 30000) as number,
-  pollBackoffMultiplier: getEnvValue("POLL_BACKOFF_MULTIPLIER", 1.5) as number,
+  pollBackoffMultiplier: getEnvValue("POLL_BACKOFF_MULTIPLIER", 1.6) as number, // Increased from 1.5 - faster backoff
 
   // Validation Limits
   validationMaxPromptLength: getEnvValue("VALIDATION_MAX_PROMPT_LENGTH", 10000) as number,

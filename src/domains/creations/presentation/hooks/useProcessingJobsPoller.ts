@@ -15,6 +15,7 @@ import {
 } from "../../../generation/wizard/presentation/hooks/generation-result.utils";
 import type { Creation } from "../../domain/entities/Creation";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
+import { isOlderThan, calculateAgeMs } from "../../../../shared/utils/calculations.util";
 
 
 export interface UseProcessingJobsPollerConfig {
@@ -84,10 +85,11 @@ export function useProcessingJobsPoller(
     pollingRef.current.add(creation.id);
 
     // Stale detection: if creation is older than max poll time, mark as failed
-    const ageMs = Date.now() - creation.createdAt.getTime();
-    if (ageMs > DEFAULT_MAX_POLL_TIME_MS) {
+    if (isOlderThan(creation.createdAt, DEFAULT_MAX_POLL_TIME_MS)) {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
-        console.log("[ProcessingJobsPoller] Stale job detected, marking as failed:", creation.id, { ageMs });
+        console.log("[ProcessingJobsPoller] Stale job detected, marking as failed:", creation.id, {
+          ageMs: calculateAgeMs(creation.createdAt),
+        });
       }
       try {
         await repository.update(userId, creation.id, {
@@ -179,10 +181,9 @@ export function useProcessingJobsPoller(
     if (!enabled || !userId || orphanJobs.length === 0) return;
 
     const cleanupOrphans = async () => {
-      const staleOrphans = orphanJobs.filter((creation) => {
-        const ageMs = Date.now() - creation.createdAt.getTime();
-        return ageMs >= DEFAULT_MAX_POLL_TIME_MS;
-      });
+      const staleOrphans = orphanJobs.filter((creation) =>
+        isOlderThan(creation.createdAt, DEFAULT_MAX_POLL_TIME_MS)
+      );
 
       if (staleOrphans.length === 0) return;
 

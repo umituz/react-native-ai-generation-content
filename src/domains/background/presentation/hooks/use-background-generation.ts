@@ -2,6 +2,7 @@ import { useCallback, useRef, useState, useMemo } from "react";
 import { usePendingJobs } from "./use-pending-jobs";
 import { executeDirectGeneration, executeQueuedJob } from "../../infrastructure/executors/backgroundJobExecutor";
 import { DEFAULT_QUEUE_CONFIG } from "../../domain/entities/job.types";
+import { calculateFilteredCount } from "../../../../shared/utils/calculations.util";
 import type {
   UseBackgroundGenerationOptions,
   UseBackgroundGenerationReturn,
@@ -90,14 +91,12 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
     [removeJob, onAllComplete],
   );
 
-  // Calculate active jobs from TanStack Query state (not ref) for reactivity
-  // Active jobs are those currently processing or queued
-  const activeJobs = useMemo(
-    () => jobs.filter((job) => job.status === "processing" || job.status === "queued"),
+  // Calculate active jobs more efficiently - use centralized utility
+  const activeJobCount = useMemo(
+    () => calculateFilteredCount(jobs, (job) => job.status === "processing" || job.status === "queued"),
     [jobs]
   );
 
-  const activeJobCount = activeJobs.length;
   const hasActiveJobs = activeJobCount > 0;
 
   return {

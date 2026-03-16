@@ -14,6 +14,7 @@ import { GalleryResultPreview } from "../components/GalleryResultPreview";
 import { GalleryScreenHeader } from "../components/GalleryScreenHeader";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import { createFilterButtons, createItemTitle } from "../utils/filter-buttons.util";
+import { calculatePaginationSlice, calculateHasMore } from "../../../../shared/utils/calculations.util";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsGalleryScreenProps } from "./creations-gallery.types";
 import { creationsGalleryStyles as styles } from "./creations-gallery.styles";
@@ -111,17 +112,20 @@ export function CreationsGalleryScreen({
   }), [callbacks, onCreationPress, onShareToFeed, galleryState]);
 
   const [pageLimit, setPageLimit] = useState(6);
+  const currentPage = Math.ceil(pageLimit / 6);
 
   const paginatedCreations = useMemo(() => {
-    return filters.filtered.slice(0, pageLimit);
-  }, [filters.filtered, pageLimit]);
+    const { end } = calculatePaginationSlice(filters.filtered.length, currentPage, pageLimit);
+    return filters.filtered.slice(0, end);
+  }, [filters.filtered, currentPage, pageLimit]);
 
   const handleLoadMore = useCallback(() => {
-    if (pageLimit < filters.filtered.length) {
+    const hasMore = calculateHasMore(filters.filtered.length, currentPage, 6);
+    if (hasMore) {
       if (__DEV__) console.log("[CreationsGallery] Loading more...", { current: pageLimit, total: filters.filtered.length });
       setPageLimit(prev => prev + 3);
     }
-  }, [pageLimit, filters.filtered.length]);
+  }, [pageLimit, filters.filtered.length, currentPage]);
 
   const renderItem = useCallback(({ item }: { item: Creation }) => {
     if (viewMode === "grid") {
@@ -233,12 +237,15 @@ export function CreationsGalleryScreen({
           numColumns={viewMode === "grid" ? 2 : 1}
           contentContainerStyle={viewMode === "grid" ? styles.gridContent : styles.listContent}
           onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          initialNumToRender={3}
-          maxToRenderPerBatch={3}
-          windowSize={5}
-          removeClippedSubviews={true}
+          onEndReachedThreshold={0.3}
+          initialNumToRender={6} // Increased from 3 - reduces blank space during scroll
+          maxToRenderPerBatch={8} // Increased from 3 - smoother scrolling
+          windowSize={7} // Increased from 5 - better off-screen rendering buffer
+          removeClippedSubviews={false} // Changed to false - prevents Android rendering issues
           showsVerticalScrollIndicator={false}
+          scrollEventThrottle={32} // Throttle scroll events for better performance
+          updateCellsBatchingPeriod={50} // Batch updates more frequently
+          legacyImplementation={false} // Use new FlatList implementation
         />
       )}
       <FilterSheet visible={filters.statusFilterVisible} onClose={filters.closeStatusFilter} options={filters.statusFilter.filterOptions} selectedIds={[filters.statusFilter.selectedId]} onFilterPress={filters.statusFilter.selectFilter} onClearFilters={filters.statusFilter.clearFilter} title={t(config.translations.statusFilterTitle ?? "creations.filter.status")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />

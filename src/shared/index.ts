@@ -12,3 +12,5 @@ export * from "./hooks";
 // Utils
 export * from "./utils/date";
 export * from "./utils/filters";
+export * from "./utils/debounce.util";
+export * from "./utils/calculations.util";
