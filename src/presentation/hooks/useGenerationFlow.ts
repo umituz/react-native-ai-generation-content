@@ -65,7 +65,7 @@ export const useGenerationFlow = ({
   const reset = useCallback(() => setState(createInitialFlowState(config)), [config]);
   const complete = useCallback(createCompleteHandler(state, setState, onComplete), [state, onComplete]);
 
-  return {
+  return useMemo(() => ({
     state,
     currentStepConfig,
     currentStepData,
@@ -79,5 +79,19 @@ export const useGenerationFlow = ({
     updateTextInput,
     reset,
     complete,
-  };
+  }), [
+    state,
+    currentStepConfig,
+    currentStepData,
+    canGoNext,
+    canGoBack,
+    goNext,
+    goBack,
+    updatePhoto,
+    updateName,
+    updateValidation,
+    updateTextInput,
+    reset,
+    complete,
+  ]);
 };
