@@ -38,8 +38,8 @@ export function useCreations({
   }, []);
 
   // Use refs for callbacks to maintain stable function references
-  const onDataCallbackRef = useRef<(creations: Creation[]) => void>();
-  const onErrorCallbackRef = useRef<(err: Error) => void>();
+  const onDataCallbackRef = useRef<(creations: Creation[]) => void>(undefined);
+  const onErrorCallbackRef = useRef<(err: Error) => void>(undefined);
 
   onDataCallbackRef.current = (creations: Creation[]) => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
