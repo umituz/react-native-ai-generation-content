@@ -55,6 +55,8 @@
     "@umituz/react-native-subscription": "*",
     "@umituz/react-native-video-editor": "*",
     "expo": ">=54.0.0",
+    "expo-document-picker": "*",
+    "expo-video": "*",
     "firebase": ">=10.0.0",
     "react": ">=19.0.0",
     "react-native": "*",
