@@ -54,8 +54,21 @@ export const AudioPickerScreen: React.FC<AudioPickerScreenProps> = ({
       setError(null);
 
       // Lazy load expo-document-picker only when needed
-      // @ts-ignore - Optional peer dependency
-      const DocumentPicker = await import("expo-document-picker");
+      // Use require() to avoid Metro bundler parsing the package
+      const DocumentPickerModule = require("expo-document-picker");
+      const DocumentPicker = DocumentPickerModule as {
+        getDocumentAsync: (options: {
+          type: string[];
+          copyToCacheDirectory: boolean;
+        }) => Promise<{
+          canceled: boolean;
+          assets?: Array<{
+            uri: string;
+            name: string;
+            size?: number;
+          }>;
+        }>;
+      };
       const result = await DocumentPicker.getDocumentAsync({
         type: mimeTypes as string[],
         copyToCacheDirectory: true,
