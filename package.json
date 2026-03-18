@@ -19,7 +19,8 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "src"
+    "src",
+    ".agents"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit --skipLibCheck",
