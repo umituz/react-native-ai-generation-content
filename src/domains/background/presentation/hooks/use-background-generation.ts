@@ -2,7 +2,7 @@ import { useCallback, useRef, useState, useMemo } from "react";
 import { usePendingJobs } from "./use-pending-jobs";
 import { executeDirectGeneration, executeQueuedJob } from "../../infrastructure/executors/backgroundJobExecutor";
 import { DEFAULT_QUEUE_CONFIG } from "../../domain/entities/job.types";
-import { calculateFilteredCount } from "../../../../shared/utils/calculations.util";
+import { calculateFilteredCount } from "../../../../shared/utils/calculations";
 import type {
   UseBackgroundGenerationOptions,
   UseBackgroundGenerationReturn,

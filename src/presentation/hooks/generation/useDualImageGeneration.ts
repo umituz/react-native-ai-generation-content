@@ -6,7 +6,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { saveImageToGallery } from "@umituz/react-native-design-system/media";
 import { useAlert } from "@umituz/react-native-design-system/molecules";
-import { useGenerationOrchestrator } from "./orchestrator";
+import { useGenerationOrchestrator } from "./orchestrator-index";
 import { useImagePicker } from "./useImagePicker";
 import { executeMultiImageGeneration } from "../../../infrastructure/services/multi-image-generation.executor";
 import type { GenerationStrategy } from "./types";

@@ -3,7 +3,7 @@
  * Provides consistent credit calculation operations
  */
 
-import { calculateCredits as calculateCreditsFromDuration } from "./calculations.util";
+import { calculateCredits as calculateCreditsFromDuration } from "./calculations";
 
 /**
  * Validates if a value is a valid credit amount

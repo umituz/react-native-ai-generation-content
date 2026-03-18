@@ -10,9 +10,9 @@ import type {
   PollingConfig,
 } from "../../domain/entities";
 import { classifyError } from "../utils/error-classification";
-import { pollJob } from "../../domains/background/infrastructure/services/job-poller.service";
+import { pollJob } from "../../domains/background/infrastructure/services/job-poller-index";
 import { ProviderValidator } from "./provider-validator";
-import { calculateDurationMs } from "../../shared/utils/calculations.util";
+import { calculateDurationMs } from "../../shared/utils/calculations";
 
 
 export interface OrchestratorConfig {

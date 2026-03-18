@@ -1,6 +1,6 @@
 /**
  * Text Content Moderator
- * Validates and moderates text content
+ * Validates and moderates text content using shared validation utilities
  */
 
 import type { Violation } from "../../../domain/entities/moderation.types";
@@ -10,6 +10,7 @@ import { BaseModerator, type ModerationResult } from "./base.moderator";
 import { DEFAULT_MAX_TEXT_LENGTH } from "../../constants/moderation.constants";
 import { containsMaliciousPatterns } from "../../utils/content-security.util";
 import { containsPromptInjection } from "../../utils/prompt-injection.util";
+import { validateString, validateRequiredFields } from "../../../../shared-kernel/infrastructure/validation";
 
 
 class TextModerator extends BaseModerator {
@@ -50,12 +51,22 @@ class TextModerator extends BaseModerator {
   }
 
   private validate(content: string): Violation | null {
-    if (!content || typeof content !== "string") {
+    // Use shared validation utilities
+    const requiredValidation = validateRequiredFields({ content }, ['content']);
+    if (!requiredValidation.isValid) {
       return this.createViolation("empty-content", "Validation", "empty");
     }
 
-    if (content.length > this.maxLength) {
-      return this.createViolation("too-long", "Validation", "length exceeded");
+    const stringValidation = validateString(content, {
+      required: true,
+      maxLength: this.maxLength,
+    });
+
+    if (!stringValidation.isValid) {
+      if (stringValidation.errors.maxLength) {
+        return this.createViolation("too-long", "Validation", "length exceeded");
+      }
+      return this.createViolation("empty-content", "Validation", "empty");
     }
 
     if (this.containsMaliciousCode(content)) {

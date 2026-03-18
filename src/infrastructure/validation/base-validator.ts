@@ -3,33 +3,7 @@
  * Core validation functions for strings, numbers, URLs, emails, and base64
  */
 
-/**
- * Validation result type
- */
-export interface ValidationResult {
-  readonly isValid: boolean;
-  readonly errors: readonly string[];
-}
-
-/**
- * String validation options
- */
-export interface StringValidationOptions {
-  readonly minLength?: number;
-  readonly maxLength?: number;
-  readonly pattern?: RegExp;
-  readonly allowedCharacters?: RegExp;
-  readonly trim?: boolean;
-}
-
-/**
- * Numeric validation options
- */
-export interface NumericValidationOptions {
-  readonly min?: number;
-  readonly max?: number;
-  readonly integer?: boolean;
-}
+import type { ValidationResult, StringValidationOptions, NumericValidationOptions } from "./base-validator.types";
 
 /**
  * Validates a string input against provided rules

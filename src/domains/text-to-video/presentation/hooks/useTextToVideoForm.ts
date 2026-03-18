@@ -9,31 +9,8 @@ import type {
   FrameData,
 } from "../../domain/types";
 import { INITIAL_FORM_STATE } from "../../domain/types";
-
-
-export interface UseTextToVideoFormProps {
-  initialValues?: Partial<TextToVideoFormState>;
-  onPromptChange?: (prompt: string) => void;
-  onStyleChange?: (style: string) => void;
-  onTabChange?: (tab: string) => void;
-}
-
-export interface UseTextToVideoFormReturn {
-  state: TextToVideoFormState;
-  frames: FrameData[];
-  setPrompt: (prompt: string) => void;
-  setStyle: (style: string) => void;
-  setAspectRatio: (ratio: string) => void;
-  setDuration: (duration: number) => void;
-  setActiveTab: (tab: string) => void;
-  setSoundEnabled: (enabled: boolean) => void;
-  setProfessionalMode: (enabled: boolean) => void;
-  setFrames: (frames: FrameData[]) => void;
-  handleFrameChange: (fromIndex: number, toIndex: number) => void;
-  handleFrameDelete: (index: number) => void;
-  selectExamplePrompt: (prompt: string) => void;
-  reset: () => void;
-}
+import type { UseTextToVideoFormProps, UseTextToVideoFormReturn } from "./useTextToVideoForm.types";
+import { createFrameChangeHandler, createFrameDeleteHandler } from "./useTextToVideoForm.handlers";
 
 export function useTextToVideoForm(
   props: UseTextToVideoFormProps = {},
@@ -88,36 +65,12 @@ export function useTextToVideoForm(
   }, []);
 
   const handleFrameChange = useCallback(
-    (fromIndex: number, toIndex: number) => {
-      if (fromIndex < 0 || fromIndex >= frames.length || toIndex < 0 || toIndex >= frames.length) {
-        if (__DEV__) {
-          console.warn("[TextToVideoForm] Invalid frame indices:", { fromIndex, toIndex, length: frames.length });
-        }
-        return;
-      }
-
-      if (fromIndex === toIndex) return;
-
-      setFrames((prevFrames) => {
-        const newFrames = [...prevFrames];
-        const [movedFrame] = newFrames.splice(fromIndex, 1);
-        newFrames.splice(toIndex, 0, movedFrame);
-        return newFrames;
-      });
-    },
+    createFrameChangeHandler(setFrames, frames.length),
     [frames.length],
   );
 
   const handleFrameDelete = useCallback(
-    (index: number) => {
-      if (index < 0 || index >= frames.length) {
-        if (__DEV__) {
-          console.warn("[TextToVideoForm] Invalid frame index:", index);
-        }
-        return;
-      }
-      setFrames((prevFrames) => prevFrames.filter((_, i) => i !== index));
-    },
+    createFrameDeleteHandler(setFrames, frames.length),
     [frames.length],
   );
 
@@ -150,3 +103,4 @@ export function useTextToVideoForm(
     reset,
   };
 }
+

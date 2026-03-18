@@ -1,17 +1,24 @@
 /**
  * Image-to-Video State Types
+ * Refactored to use shared kernel types
  */
 
-export interface ImageToVideoFeatureState {
+import type { BaseFeatureState } from '../../../../shared-kernel/base-types';
+
+/**
+ * Image-to-video feature state
+ * Extends base feature state with image-specific fields
+ */
+export interface ImageToVideoFeatureState extends BaseFeatureState {
   imageUri: string | null;
   motionPrompt: string;
   videoUrl: string | null;
   thumbnailUrl: string | null;
-  isProcessing: boolean;
-  progress: number;
-  error: string | null;
 }
 
+/**
+ * Image-to-video translations
+ */
 export interface ImageToVideoTranslations {
   uploadTitle: string;
   uploadSubtitle: string;

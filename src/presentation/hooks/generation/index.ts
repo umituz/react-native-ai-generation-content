@@ -4,7 +4,7 @@
  */
 
 // Core orchestrator
-export { useGenerationOrchestrator } from "./orchestrator";
+export { useGenerationOrchestrator } from "./orchestrator-index";
 
 // Generic feature hooks
 export { useImageGeneration } from "./useImageGeneration";

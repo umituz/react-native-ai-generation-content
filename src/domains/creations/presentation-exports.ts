@@ -14,11 +14,11 @@ export type {
   BaseProcessingStartData,
   BaseProcessingResult,
 } from "./presentation/hooks/useCreationPersistence";
-export { useProcessingJobsPoller } from "./presentation/hooks/useProcessingJobsPoller";
+export { useProcessingJobsPoller } from "./presentation/hooks/job-poller-index";
 export type {
   UseProcessingJobsPollerConfig,
   UseProcessingJobsPollerReturn,
-} from "./presentation/hooks/useProcessingJobsPoller";
+} from "./presentation/hooks/job-poller-index";
 
 // Core Components
 export { CreationPreview } from "./presentation/components/CreationPreview";

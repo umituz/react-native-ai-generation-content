@@ -18,4 +18,4 @@ export {
   type GenerationCallbacks,
   type GenerationHookConfig,
   type GenerationHookReturn,
-} from "./createGenerationHook";
+} from "./generation-hook-index";

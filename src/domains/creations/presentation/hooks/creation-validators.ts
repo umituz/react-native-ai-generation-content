@@ -1,7 +1,7 @@
 /**
  * Creation Validation Utilities
  *
- * Centralized validation logic for creation persistence.
+ * Centralized validation logic for creation persistence using shared kernel.
  * Keeps validation rules separate from hook logic.
  *
  * @module CreationValidators
@@ -13,12 +13,7 @@ import {
   CREATION_FIELDS,
 } from "../../domain/constants";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
-
-
-interface ValidationResult {
-  isValid: boolean;
-  error?: string;
-}
+import { validateUrl, validateString, combineValidationResults, type ValidationResult } from "../../../../shared-kernel/infrastructure/validation";
 
 /**
  * Validates that at least one URL is present
@@ -30,10 +25,10 @@ function validateHasUrl(
   if (!imageUrl && !videoUrl) {
     return {
       isValid: false,
-      error: "No output URL provided",
+      errors: { urls: "No output URL provided" },
     };
   }
-  return { isValid: true };
+  return { isValid: true, errors: {} };
 }
 
 /**
@@ -47,42 +42,49 @@ function validateUriProtocol(uri: string): ValidationResult {
   if (!hasValidProtocol) {
     return {
       isValid: false,
-      error: `Invalid URI protocol. Expected one of: ${CREATION_VALIDATION.VALID_URI_PROTOCOLS.join(", ")}`,
+      errors: {
+        protocol: `Invalid URI protocol. Expected one of: ${CREATION_VALIDATION.VALID_URI_PROTOCOLS.join(", ")}`
+      },
     };
   }
 
-  return { isValid: true };
+  return { isValid: true, errors: {} };
 }
 
 /**
- * Validates URI length
- */
-function validateUriLength(uri: string): ValidationResult {
-  if (uri.length > CREATION_VALIDATION.MAX_URI_LENGTH) {
-    return {
-      isValid: false,
-      error: `URI length (${uri.length}) exceeds maximum (${CREATION_VALIDATION.MAX_URI_LENGTH})`,
-    };
-  }
-
-  return { isValid: true };
-}
-
-/**
- * Runs all validations and returns first error
+ * Runs all validations using shared kernel utilities
  */
 export function runAllValidations(
   imageUrl?: string,
   videoUrl?: string
 ): ValidationResult {
-  const urlCheck = validateHasUrl(imageUrl, videoUrl);
-  if (!urlCheck.isValid) return urlCheck;
+  // Check that at least one URL is present
+  const hasUrlCheck = validateHasUrl(imageUrl, videoUrl);
+  if (!hasUrlCheck.isValid) return hasUrlCheck;
 
   const uri = imageUrl || videoUrl || "";
+
+  // Use shared URL validation
+  const urlValidation = validateUrl(uri);
+  if (!urlValidation.isValid) return urlValidation;
+
+  // Use shared string validation for length
+  const lengthValidation = validateString(uri, {
+    maxLength: CREATION_VALIDATION.MAX_URI_LENGTH,
+  });
+  if (!lengthValidation.isValid) return lengthValidation;
+
+  // Validate protocol
   const protocolCheck = validateUriProtocol(uri);
   if (!protocolCheck.isValid) return protocolCheck;
 
-  return validateUriLength(uri);
+  // Combine all results
+  return combineValidationResults(
+    hasUrlCheck,
+    urlValidation,
+    lengthValidation,
+    protocolCheck
+  );
 }
 
 /**

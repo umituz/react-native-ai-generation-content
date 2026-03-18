@@ -4,7 +4,7 @@
  */
 
 import { useMemo, useCallback, useRef } from "react";
-import { useGenerationOrchestrator } from "./orchestrator";
+import { useGenerationOrchestrator } from "./orchestrator-index";
 import type { GenerationStrategy } from "./types";
 import { executeImageFeature } from "../../../infrastructure/services";
 import { createCreationsRepository } from "../../../domains/creations/infrastructure/adapters";

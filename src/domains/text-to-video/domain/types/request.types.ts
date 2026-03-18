@@ -1,36 +1,60 @@
 /**
  * Text-to-Video Request/Response Types
- * Single Responsibility: Define API request and response structures
+ * Refactored to use shared kernel types
  */
 
-export interface TextToVideoOptions {
+import type {
+  AspectRatio,
+  BaseGenerationOptions,
+  BaseGenerationResult,
+  BaseRequestMeta,
+} from '../../../../shared-kernel/base-types';
+
+/**
+ * Text-to-video specific options
+ * Extends base options with video-specific fields
+ */
+export interface TextToVideoOptions extends BaseGenerationOptions {
+  /** Video duration in seconds */
   duration?: number;
+  /** Frames per second */
   fps?: number;
-  guidanceScale?: number;
-  aspectRatio?: "16:9" | "9:16" | "1:1";
+  /** Video style preset */
   style?: string;
+  /** Negative prompt for content avoidance */
   negativePrompt?: string;
 }
 
+/**
+ * Text-to-video request
+ * Uses base metadata from shared kernel
+ */
 export interface TextToVideoRequest {
   prompt: string;
-  userId: string;
   options?: TextToVideoOptions;
+  meta: BaseRequestMeta;
 }
 
-export interface TextToVideoResult {
-  success: boolean;
+/**
+ * Text-to-video result
+ * Extends base result with video-specific output
+ */
+export interface TextToVideoResult extends BaseGenerationResult {
   videoUrl?: string;
   thumbnailUrl?: string;
-  error?: string;
-  requestId?: string;
 }
 
+/**
+ * Input builder type
+ */
 export type TextToVideoInputBuilder = (
   prompt: string,
   options?: TextToVideoOptions,
 ) => Record<string, unknown>;
 
+/**
+ * Result extractor type
+ */
 export type TextToVideoResultExtractor = (
   result: unknown,
 ) => { videoUrl?: string; thumbnailUrl?: string } | undefined;

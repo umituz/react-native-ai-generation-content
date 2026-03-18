@@ -3,89 +3,8 @@
  * Maps creation types to categories for filtering and organization
  */
 
-import type { CreationTypeId, CreationCategory } from "./creation-types";
-
-/**
- * Image-related creation types
- */
-export const IMAGE_CREATION_TYPES: CreationTypeId[] = [
-  "text-to-image",
-  "imagine",
-  "wardrobe",
-  "historical-wardrobe",
-  "upscale",
-  "remove-background",
-  "photo-restore",
-  "inpainting",
-  "style-transfer",
-  "colorization",
-  "face-swap",
-  "object-removal",
-  "background-replacement",
-  "ai-brush",
-  "hd-touch-up",
-  "anime-selfie",
-  "aging",
-  "headshot",
-  "retouch",
-  "magic-edit",
-  "color-grading",
-  "art-style",
-  "mood-filter",
-  "face-expression",
-  "scene-composer",
-  "ai-background",
-  "effects",
-];
-
-/**
- * Video-related creation types (core types only)
- * NOTE: All other video types (scenarios, etc.)
- * are dynamically determined by output content via isVideoUrl()
- */
-export const VIDEO_CREATION_TYPES: CreationTypeId[] = [
-  "text-to-video",
-  "image-to-video",
-];
-
-/**
- * All creation types
- */
-export const ALL_CREATION_TYPES: CreationTypeId[] = [
-  ...IMAGE_CREATION_TYPES,
-  ...VIDEO_CREATION_TYPES,
-];
-
-/**
- * Get creation types for a category
- */
-export function getTypesForCategory(
-  category: CreationCategory
-): CreationTypeId[] {
-  switch (category) {
-    case "image":
-      return IMAGE_CREATION_TYPES;
-    case "video":
-      return VIDEO_CREATION_TYPES;
-    case "all":
-      return ALL_CREATION_TYPES;
-    default:
-      return ALL_CREATION_TYPES;
-  }
-}
-
-/**
- * Get category for a creation type (type-based fallback only)
- */
-export function getCategoryForType(type: CreationTypeId): CreationCategory {
-  if (IMAGE_CREATION_TYPES.includes(type)) {
-    return "image";
-  }
-  if (VIDEO_CREATION_TYPES.includes(type)) {
-    return "video";
-  }
-  return "image"; // Default fallback
-}
+import type { CreationCategory } from "./creation-types";
+import { getCategoryForType } from "./creation-categories.helpers";
 
 /**
  * Get category for a creation based on its output content
@@ -117,38 +36,13 @@ export function getCategoryForCreation(creation: {
 
   // PRIORITY 2: Fallback to type-based (for known types)
   if (creation.type) {
-    return getCategoryForType(creation.type as CreationTypeId);
+    return getCategoryForType(creation.type as import("./creation-types").CreationTypeId);
   }
 
   // Final fallback
   return "image";
 }
 
-/**
- * Check if a type belongs to a category
- */
-export function isTypeInCategory(
-  type: CreationTypeId,
-  category: CreationCategory
-): boolean {
-  if (category === "all") {
-    return true;
-  }
-  return getTypesForCategory(category).includes(type);
-}
+export { IMAGE_CREATION_TYPES, VIDEO_CREATION_TYPES, ALL_CREATION_TYPES } from "./creation-categories.constants";
+export { getTypesForCategory, getCategoryForType, isTypeInCategory, isVideoCreationType, isImageCreationType } from "./creation-categories.helpers";
 
-/**
- * Check if creation type is video
- */
-export function isVideoCreationType(type?: string): boolean {
-  if (!type) return false;
-  return VIDEO_CREATION_TYPES.includes(type as CreationTypeId);
-}
-
-/**
- * Check if creation type is image
- */
-export function isImageCreationType(type?: string): boolean {
-  if (!type) return false;
-  return IMAGE_CREATION_TYPES.includes(type as CreationTypeId);
-}

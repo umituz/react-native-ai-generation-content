@@ -4,24 +4,14 @@
  */
 
 import type { WizardImageInput } from "./image-generation.types";
+import type { ExecutionResult } from "./image-generation.executor.types";
 import {
   GENERATION_TIMEOUT_MS,
-  BASE64_IMAGE_PREFIX,
   MODEL_INPUT_DEFAULTS,
 } from "./wizard-strategy.constants";
 import { createPhotorealisticPrompt } from "../../../../prompts/domain/base/creators";
 import { addGenerationLogs, addGenerationLog, startGenerationLogSession } from "../../../../../infrastructure/services/generation-log-store";
-
-interface ExecutionResult {
-  success: boolean;
-  imageUrl?: string;
-  error?: string;
-  logSessionId?: string;
-}
-
-function formatBase64(base64: string): string {
-  return base64.startsWith("data:") ? base64 : `${BASE64_IMAGE_PREFIX}${base64}`;
-}
+import { formatBase64 } from "./image-generation.executor.utils";
 
 export async function executeImageGeneration(
   input: WizardImageInput,

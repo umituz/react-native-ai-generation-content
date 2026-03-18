@@ -5,7 +5,7 @@
  */
 
 import { useMemo, useCallback, useRef } from "react";
-import { useGenerationOrchestrator } from "./orchestrator";
+import { useGenerationOrchestrator } from "./orchestrator-index";
 import type { GenerationStrategy, AlertMessages } from "./types";
 import { executeVideoFeature } from "../../../infrastructure/services";
 import type { VideoFeatureType } from "../../../domain/interfaces";

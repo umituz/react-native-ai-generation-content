@@ -12,6 +12,8 @@ import type { CreationPersistence } from "../../infrastructure/utils/creation-pe
 import type { WizardStrategy } from "../../infrastructure/strategies/wizard-strategy.types";
 import type { WizardScenarioData } from "./wizard-generation.types";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
+import { createSuccessHandler, createErrorHandler } from "./usePhotoBlockingGeneration.handlers";
+import { saveCreationToProcessing } from "./usePhotoBlockingGeneration.saver";
 
 
 interface UsePhotoBlockingGenerationProps {
@@ -51,66 +53,25 @@ export function usePhotoBlockingGeneration(
   const creationIdRef = useRef<string | null>(null);
 
   const handleSuccess = useCallback(
-    async (result: unknown) => {
-      const typedResult = result as { imageUrl?: string; videoUrl?: string; audioUrl?: string; logSessionId?: string };
-      const creationId = creationIdRef.current;
-      const resultUri = typedResult.imageUrl || typedResult.videoUrl || typedResult.audioUrl;
-
-      if (creationId && userId && resultUri) {
-        try {
-          await persistence.updateToCompleted(userId, creationId, {
-            uri: resultUri,
-            imageUrl: typedResult.imageUrl,
-            videoUrl: typedResult.videoUrl,
-            audioUrl: typedResult.audioUrl,
-            logSessionId: typedResult.logSessionId,
-          });
-        } catch (err) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[PhotoBlockingGeneration] updateToCompleted error:", err);
-          }
-        }
-      }
-
-      creationIdRef.current = null;
-
-      // Deduct credits after successful generation
-      if (deductCredits && creditCost) {
-        try {
-          const deducted = await deductCredits(creditCost);
-          if (!deducted) {
-            onCreditsExhausted?.();
-          }
-        } catch (err) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[PhotoBlockingGeneration] deductCredits error:", err);
-          }
-        }
-      }
-
-      onSuccess?.(result);
-    },
+    createSuccessHandler({
+      creationIdRef,
+      userId,
+      persistence,
+      deductCredits,
+      creditCost,
+      onSuccess,
+      onCreditsExhausted,
+    }),
     [userId, persistence, deductCredits, creditCost, onSuccess, onCreditsExhausted],
   );
 
   const handleError = useCallback(
-    async (err: { message: string; originalError?: Error & { logSessionId?: string } }) => {
-      const creationId = creationIdRef.current;
-      const logSessionId = err.originalError?.logSessionId;
-
-      if (creationId && userId) {
-        try {
-          await persistence.updateToFailed(userId, creationId, err.message, logSessionId);
-        } catch (updateErr) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[PhotoBlockingGeneration] updateToFailed error:", updateErr);
-          }
-        }
-      }
-
-      creationIdRef.current = null;
-      onError?.(err.message);
-    },
+    createErrorHandler({
+      creationIdRef,
+      userId,
+      persistence,
+      onError,
+    }),
     [userId, persistence, onError],
   );
 
@@ -124,37 +85,11 @@ export function usePhotoBlockingGeneration(
   const startGeneration = useCallback(
     async (input: unknown, prompt: string) => {
       // Save to Firestore first
-      if (userId && prompt) {
-        try {
-          // Extract generation parameters from input (for image generation, no duration/resolution)
-          const inputData = input as Record<string, unknown>;
-          const duration = typeof inputData?.duration === "number" ? inputData.duration : undefined;
-          const resolution = typeof inputData?.resolution === "string" ? inputData.resolution : undefined;
-
-          const aspectRatio = typeof inputData?.aspectRatio === "string" ? inputData.aspectRatio : undefined;
-
-          const result = await persistence.saveAsProcessing(userId, {
-            scenarioId: scenario.id,
-            scenarioTitle: scenario.title || scenario.id,
-            prompt,
-            duration,
-            resolution,
-            creditCost,
-            aspectRatio,
-            provider: scenario.providerId ?? "fal",
-            outputType: scenario.outputType,
-          });
-          creationIdRef.current = result.creationId;
-
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.log("[PhotoBlockingGeneration] Saved as processing:", result.creationId);
-          }
-        } catch (err) {
-          if (typeof __DEV__ !== "undefined" && __DEV__) {
-            console.error("[PhotoBlockingGeneration] saveAsProcessing error:", err);
-          }
-        }
-      }
+      await saveCreationToProcessing(
+        { userId, scenario, persistence, creditCost, creationIdRef },
+        input,
+        prompt,
+      );
 
       // Start blocking generation
       await generate(input);

@@ -6,7 +6,7 @@
 import { useEffect, useReducer, useMemo, useRef } from "react";
 import { createWizardStrategy } from "../../infrastructure/strategies";
 import { createCreationPersistence } from "../../infrastructure/utils/creation-persistence.util";
-import { useVideoQueueGeneration } from "./useVideoQueueGeneration";
+import { useVideoQueueGeneration } from "./video-queue-index";
 import { usePhotoBlockingGeneration } from "./usePhotoBlockingGeneration";
 import { generationReducer, INITIAL_STATE } from "./generationStateMachine";
 import { executeWizardGeneration } from "./generationExecutor";

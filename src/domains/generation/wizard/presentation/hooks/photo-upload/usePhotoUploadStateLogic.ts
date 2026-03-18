@@ -1,0 +1,142 @@
+/**
+ * Generic Photo Upload State Hook - Core Logic
+ */
+
+import { useCallback, useRef, useEffect } from "react";
+import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system/media";
+import type { UploadedImage } from "../../../../presentation/hooks/generation/useAIGenerateState";
+import type { PhotoUploadConfig, PhotoUploadError, PhotoUploadTranslations } from "./types";
+
+export function usePhotoUploadStateLogic(
+  config: PhotoUploadConfig | undefined,
+  translations: PhotoUploadTranslations,
+  initialImage: UploadedImage | undefined,
+  stepId: string | undefined,
+  onError: ((error: PhotoUploadError) => void) | undefined,
+  setImage: (image: UploadedImage | null) => void,
+) {
+  const { pickImage, isLoading } = useMedia();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // Use refs to avoid effect re-runs on callback changes
+  const onErrorRef = useRef(onError);
+  const translationsRef = useRef(translations);
+
+  useEffect(() => {
+    onErrorRef.current = onError;
+    translationsRef.current = translations;
+  }, [onError, translations]);
+
+  const maxFileSizeMB = config?.maxFileSizeMB ?? MEDIA_CONSTANTS.MAX_IMAGE_SIZE_MB;
+
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.log("[usePhotoUploadState] Step changed, resetting image", { stepId, hasInitialImage: !!initialImage });
+    }
+    setImage(initialImage || null);
+  }, [stepId, initialImage, setImage]);
+
+  useEffect(() => {
+    // Clear any existing timeout first
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = undefined;
+    }
+
+    if (isLoading) {
+      timeoutRef.current = setTimeout(() => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.warn("[usePhotoUploadState] Image picker timeout - possible stuck state (DEV warning only)");
+        }
+        // NOTE: Do NOT call onError here — the picker may still complete successfully.
+        // Showing a modal alert while the picker is open blocks the UI.
+      }, 30000);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = undefined;
+      }
+    };
+  }, [isLoading]);
+
+  const clearImage = useCallback(() => {
+    setImage(null);
+  }, [setImage]);
+
+  const handlePickImage = useCallback(async () => {
+    try {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.log("[usePhotoUploadState] Starting image pick");
+      }
+
+      const result = await pickImage({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: MediaQuality.MEDIUM,
+        maxFileSizeMB,
+      });
+
+      if (result.error) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[usePhotoUploadState] Validation error", result.error);
+        }
+
+        if (result.error === MediaValidationError.FILE_TOO_LARGE) {
+          onErrorRef.current?.({
+            title: translationsRef.current.fileTooLarge,
+            message: translationsRef.current.maxFileSize.replace("{size}", maxFileSizeMB.toString()),
+          });
+        } else if (result.error === MediaValidationError.PERMISSION_DENIED) {
+          onErrorRef.current?.({
+            title: translationsRef.current.error,
+            message: translationsRef.current.permissionDenied ?? "Permission to access media library is required",
+          });
+        }
+        return;
+      }
+
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[usePhotoUploadState] Image pick canceled");
+        }
+        return;
+      }
+
+      const selectedAsset = result.assets[0];
+      if (!selectedAsset) {
+        return;
+      }
+
+      const uploadedImage: UploadedImage = {
+        uri: selectedAsset.uri,
+        previewUrl: selectedAsset.uri,
+        width: selectedAsset.width,
+        height: selectedAsset.height,
+        fileSize: selectedAsset.fileSize,
+      };
+
+      setImage(uploadedImage);
+
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        const fileSizeMB = (selectedAsset.fileSize ?? 0) / (1024 * 1024);
+        console.log("[usePhotoUploadState] Image selected", {
+          width: uploadedImage.width,
+          height: uploadedImage.height,
+          fileSizeMB: fileSizeMB.toFixed(2),
+        });
+      }
+    } catch (error) {
+      if (typeof __DEV__ !== "undefined" && __DEV__) {
+        console.error("[usePhotoUploadState] Error picking image", error);
+      }
+      onErrorRef.current?.({
+        title: translationsRef.current.error,
+        message: translationsRef.current.uploadFailed,
+      });
+    }
+  }, [pickImage, maxFileSizeMB, setImage]);
+
+  return { handlePickImage, clearImage, isLoading };
+}

@@ -17,7 +17,7 @@ import { imageModerator } from "./moderators/image.moderator";
 import { videoModerator } from "./moderators/video.moderator";
 import { voiceModerator } from "./moderators/voice.moderator";
 import { rulesRegistry } from "../rules/rules-registry";
-import { calculateConfidenceScore } from "../../../../shared/utils/calculations.util";
+import { calculateConfidenceScore } from "../../../../shared/utils/calculations";
 
 
 interface ServiceConfig {

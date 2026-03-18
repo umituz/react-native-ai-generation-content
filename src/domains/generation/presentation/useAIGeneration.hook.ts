@@ -4,7 +4,7 @@
  * Replaces all feature-specific hooks with a single unified API
  */
 
-import { useGenerationOrchestrator } from "../../../presentation/hooks/generation/orchestrator";
+import { useGenerationOrchestrator } from "../../../presentation/hooks/generation/orchestrator-index";
 import type { AlertMessages } from "../../../presentation/hooks/generation/types";
 import { DEFAULT_ALERT_MESSAGES } from "../../../presentation/constants/alert-messages";
 import { createGenerationStrategy } from "../application/generation-strategy.factory";
