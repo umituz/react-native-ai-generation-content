@@ -52,7 +52,7 @@ export abstract class BaseExecutor<TRequest, TResult, TOutput> {
     onProgress?: (progress: number) => void,
   ): Promise<unknown>;
   protected abstract validateExtractedResult(extracted: TOutput | undefined): string | undefined;
-  protected abstract transformResult(extracted: TOutput): TResult;
+  protected abstract transformResult(extracted: TOutput, request: TRequest): TResult;
   protected abstract getDefaultExtractor(): (result: unknown) => TOutput | undefined;
 
   private getProvider(): { provider: IAIProvider; error: null } | { provider: null; error: string } {
@@ -84,7 +84,7 @@ export abstract class BaseExecutor<TRequest, TResult, TOutput> {
       return failure(error);
     }
 
-    return success(this.transformResult(extracted as TOutput));
+    return success(this.transformResult(extracted as TOutput, request));
   }
 
   protected log(level: "info" | "error", message: string): void {

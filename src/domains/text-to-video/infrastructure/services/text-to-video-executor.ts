@@ -82,9 +82,11 @@ class TextToVideoExecutor extends BaseExecutor<
 
   protected transformResult(
     extracted: ExtractedVideoResult,
+    request: TextToVideoRequest,
   ): TextToVideoResult {
     return {
       success: true,
+      requestId: request.meta.requestId,
       videoUrl: extracted.videoUrl,
       thumbnailUrl: extracted.thumbnailUrl,
     };
@@ -122,7 +124,11 @@ export async function executeTextToVideo(
   if (isSuccess(result)) {
     return result.value;
   }
-  return { success: false, error: result.error };
+  return {
+    success: false,
+    error: result.error,
+    requestId: request.meta.requestId,
+  };
 }
 
 /**

@@ -3,7 +3,7 @@
  * Singleton for storing app-provided service implementations
  */
 
-import type { IAppServices, PartialAppServices } from "../../domain/interfaces/app-services.interface";
+import type { IAppServices, PartialAppServices } from "../../domain/interfaces/app-services-composite.interface";
 
 
 let appServices: IAppServices | null = null;

@@ -39,6 +39,23 @@ export interface FrameData {
 }
 
 /**
+ * Text-to-video generation state
+ * Tracks the progress of video generation
+ */
+export interface TextToVideoGenerationState {
+  isGenerating: boolean;
+  error: string | null;
+}
+
+/**
+ * Initial generation state
+ */
+export const INITIAL_GENERATION_STATE: TextToVideoGenerationState = {
+  isGenerating: false,
+  error: null,
+};
+
+/**
  * Initial form state
  */
 export const INITIAL_FORM_STATE: TextToVideoFormState = {

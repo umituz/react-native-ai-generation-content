@@ -15,7 +15,6 @@ import { useCallback, useMemo } from "react";
 import { useOffline } from "@umituz/react-native-design-system/offline";
 import { useAuth, useAuthModalStore } from "@umituz/react-native-auth";
 import {
-  usePremiumStatus,
   useCredits,
   usePaywallVisibility,
   useFeatureGate,
@@ -47,11 +46,12 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
   const { isOffline } = useOffline();
   const { hasFirebaseUser } = useAuth();
   const { showAuthModal } = useAuthModalStore();
-  const { isPremium } = usePremiumStatus();
   const { credits, isCreditsLoaded, isLoading: isCreditsLoading } = useCredits();
   const { openPaywall } = usePaywallVisibility();
   const creditBalance = credits?.credits ?? 0;
   const hasCredits = creditBalance >= creditCost;
+  // TODO: Replace with actual premium status check from subscription package
+  const isPremium = false;
 
   const { requireFeature: requireFeatureFromPackage } = useFeatureGate({
     isAuthenticated: hasFirebaseUser,

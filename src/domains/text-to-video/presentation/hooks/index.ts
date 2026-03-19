@@ -14,4 +14,4 @@ export { useTextToVideoForm } from "./useTextToVideoForm";
 export type {
   UseTextToVideoFormProps,
   UseTextToVideoFormReturn,
-} from "./useTextToVideoForm";
+} from "./useTextToVideoForm.types";

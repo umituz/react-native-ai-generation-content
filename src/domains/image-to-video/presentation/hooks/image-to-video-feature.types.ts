@@ -17,6 +17,7 @@ export const INITIAL_STATE: ImageToVideoFeatureState = {
   motionPrompt: "",
   videoUrl: null,
   thumbnailUrl: null,
+  output: null,
   isProcessing: false,
   progress: 0,
   error: null,

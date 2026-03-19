@@ -60,9 +60,11 @@ class TextToImageExecutor extends BaseExecutor<
 
   protected transformResult(
     extracted: ExtractedImageResult,
+    request: TextToImageRequest,
   ): TextToImageResult {
     return {
       success: true,
+      requestId: request.meta.requestId,
       imageUrl: extracted.imageUrl,
       imageUrls: extracted.imageUrls,
     };
@@ -100,7 +102,11 @@ export async function executeTextToImage(
   if (isSuccess(result)) {
     return result.value;
   }
-  return { success: false, error: result.error };
+  return {
+    success: false,
+    error: result.error,
+    requestId: request.meta.requestId,
+  };
 }
 
 /**

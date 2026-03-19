@@ -5,10 +5,12 @@ import type {
   TextToVideoConfig,
   TextToVideoCallbacks,
   TextToVideoResult,
+  TextToVideoRequest,
   TextToVideoOptions,
   TextToVideoInputBuilder,
   TextToVideoResultExtractor,
 } from "../../domain/types";
+import type { BaseRequestMeta } from "../../../../shared-kernel/base-types";
 
 interface VideoGenerationInput {
   prompt: string;
@@ -36,6 +38,19 @@ export const createTextToVideoStrategy = (
     execute: async (input) => {
       creationIdRef.current = input.creationId;
 
+      const meta: BaseRequestMeta = {
+        requestId: input.creationId,
+        userId,
+        timestamp: Date.now(),
+        priority: "normal",
+      };
+
+      const request: TextToVideoRequest = {
+        prompt: input.prompt,
+        options: input.options,
+        meta,
+      };
+
       callbacks.onGenerationStart?.({
         creationId: input.creationId,
         type: "text-to-video",
@@ -48,7 +63,7 @@ export const createTextToVideoStrategy = (
       });
 
       const result = await executeTextToVideo(
-        { prompt: input.prompt, userId, options: input.options },
+        request,
         { model: config.model, buildInput, extractResult },
       );
 
@@ -60,6 +75,7 @@ export const createTextToVideoStrategy = (
 
       return {
         success: true,
+        requestId: result.requestId,
         videoUrl: result.videoUrl,
         thumbnailUrl: result.thumbnailUrl,
       };

@@ -2,12 +2,18 @@
  * Shared Validation Utilities
  */
 
-// Export types from base-validator.types
-export type {
+import type {
   ValidationResult,
   StringValidationOptions,
   NumericValidationOptions,
 } from "../../../infrastructure/validation/base-validator.types";
+
+// Re-export types
+export type {
+  ValidationResult,
+  StringValidationOptions,
+  NumericValidationOptions,
+};
 
 // Export functions from advanced-validator
 export { combineValidationResults } from "../../../infrastructure/validation/advanced-validator";

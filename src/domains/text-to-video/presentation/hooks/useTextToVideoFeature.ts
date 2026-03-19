@@ -38,6 +38,7 @@ const INITIAL_STATE: TextToVideoFeatureState = {
   prompt: "",
   videoUrl: null,
   thumbnailUrl: null,
+  output: null,
   isProcessing: false,
   progress: 0,
   error: null,
@@ -84,23 +85,29 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
       if (!prompt.trim()) {
         const error = "Prompt is required";
         setState((prev) => ({ ...prev, error }));
-        return { success: false, error };
+        return { success: false, error, requestId: generateCreationId("text-to-video") };
       }
 
       setState((prev) => ({ ...prev, isProcessing: true, error: null, progress: 0 }));
+      const requestId = generateCreationId("text-to-video");
 
       try {
         const result = await orchestrator.generate({
           prompt: prompt.trim(),
           options: params,
-          creationId: generateCreationId("text-to-video"),
+          creationId: requestId,
         });
         setState((prev) => ({ ...prev, isProcessing: false }));
-        return { success: true, videoUrl: (result as TextToVideoResult)?.videoUrl };
+        return {
+          success: true,
+          requestId,
+          videoUrl: (result as TextToVideoResult)?.videoUrl || null,
+          thumbnailUrl: (result as TextToVideoResult)?.thumbnailUrl || null,
+        };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Generation failed";
         setState((prev) => ({ ...prev, isProcessing: false, error: message }));
-        return { success: false, error: message };
+        return { success: false, error: message, requestId };
       }
     },
     [state.prompt, orchestrator],
