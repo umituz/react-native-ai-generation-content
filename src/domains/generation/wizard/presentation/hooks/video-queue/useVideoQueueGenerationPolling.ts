@@ -56,7 +56,7 @@ export function usePollStatus(
  * Hook to sync callback refs
  */
 export function useCallbackRefs(
-  handleComplete: (urls: import("../../generation-result.utils").GenerationUrls) => Promise<void>,
+  handleComplete: (urls: import("../generation-result.utils").GenerationUrls) => Promise<void>,
   handleError: (errorMsg: string) => Promise<void>,
   pollStatus: () => Promise<void>,
   refs: VideoQueueRefs,

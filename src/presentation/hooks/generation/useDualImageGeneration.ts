@@ -71,8 +71,8 @@ export const useDualImageGeneration = (
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages,
-    onSuccess: (result) => onSuccess?.(result as string),
-    onError: (error) => onError?.(error.message),
+    onSuccess: async (result) => onSuccess?.(result as string),
+    onError: async (error) => onError?.(error.message),
   });
 
   // Process handler

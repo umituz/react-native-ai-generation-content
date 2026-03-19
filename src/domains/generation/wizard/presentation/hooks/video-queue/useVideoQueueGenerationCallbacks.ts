@@ -3,7 +3,7 @@
  */
 
 import { useCallback } from "react";
-import type { GenerationUrls } from "../../generation-result.utils";
+import type { GenerationUrls } from "../generation-result.utils";
 import type {
   UseVideoQueueGenerationProps,
 } from "../use-video-queue-generation.types";

@@ -9,7 +9,7 @@ import {
   refinePromptForCouple,
   prependContext,
 } from "../../../../infrastructure/utils/couple-input.util";
-import { getAppearanceContext } from "../../appearance-analysis";
+import { getAppearanceContext } from "../appearance-analysis";
 import type {
   ScenarioGenerationInputParams,
   CoupleGenerationInput,

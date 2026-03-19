@@ -88,7 +88,7 @@ export const useImageGeneration = <TInput extends ImageGenerationInput, TResult>
   return useGenerationOrchestrator(strategy, {
     userId,
     alertMessages,
-    onSuccess: onSuccess as (result: unknown) => void,
-    onError: handleError,
+    onSuccess: onSuccess ? async (result) => onSuccess(result) : undefined,
+    onError: async (error) => handleError(error),
   });
 };

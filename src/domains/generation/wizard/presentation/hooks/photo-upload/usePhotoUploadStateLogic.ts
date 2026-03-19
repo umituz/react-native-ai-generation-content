@@ -4,7 +4,7 @@
 
 import { useCallback, useRef, useEffect } from "react";
 import { useMedia, MediaQuality, MediaValidationError, MEDIA_CONSTANTS } from "@umituz/react-native-design-system/media";
-import type { UploadedImage } from "../../../../presentation/hooks/generation/useAIGenerateState";
+import type { UploadedImage } from "../../../../../presentation/hooks/generation/useAIGenerateState";
 import type { PhotoUploadConfig, PhotoUploadError, PhotoUploadTranslations } from "./types";
 
 export function usePhotoUploadStateLogic(

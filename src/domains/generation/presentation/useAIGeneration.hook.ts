@@ -82,8 +82,8 @@ export function useAIGeneration(
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages: alertMessages || DEFAULT_ALERT_MESSAGES,
-    onSuccess,
-    onError: onError ? (error) => onError(error.message) : undefined,
+    onSuccess: async (result) => onSuccess?.(result),
+    onError: onError ? async (error) => onError(error.message) : undefined,
   });
 
   return {
