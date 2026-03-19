@@ -10,7 +10,7 @@ import { BaseModerator, type ModerationResult } from "./base.moderator";
 import { DEFAULT_MAX_TEXT_LENGTH } from "../../constants/moderation.constants";
 import { containsMaliciousPatterns } from "../../utils/content-security.util";
 import { containsPromptInjection } from "../../utils/prompt-injection.util";
-import { validateString, validateRequiredFields } from "../../../../shared-kernel/infrastructure/validation";
+import { validateString, validateRequiredFields } from "../../../../../shared-kernel/infrastructure/validation";
 
 
 class TextModerator extends BaseModerator {

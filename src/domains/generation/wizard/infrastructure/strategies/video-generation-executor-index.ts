@@ -2,7 +2,6 @@
  * Video Generation Executor
  * Handles the actual video generation execution.
  * Model-agnostic: uses VideoModelConfig.buildInput() for model-specific parameters.
- * Fallback: generic input builder when no modelConfig is provided.
  */
 
 export { executeVideoGeneration } from "./video-generation-executor";

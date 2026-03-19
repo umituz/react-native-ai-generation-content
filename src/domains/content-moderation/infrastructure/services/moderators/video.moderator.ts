@@ -6,7 +6,7 @@
 import type { Violation } from "../../../domain/entities/moderation.types";
 import { BaseModerator, type ModerationResult } from "./base.moderator";
 import { VIDEO_PROTOCOLS, DEFAULT_MAX_URI_LENGTH } from "../../constants/moderation.constants";
-import { validateUrl, validateString, validateRequiredFields } from "../../../../shared-kernel/infrastructure/validation";
+import { validateUrl, validateString, validateRequiredFields } from "../../../../../shared-kernel/infrastructure/validation";
 
 class VideoModerator extends BaseModerator {
   private allowedProtocols: readonly string[] = VIDEO_PROTOCOLS;

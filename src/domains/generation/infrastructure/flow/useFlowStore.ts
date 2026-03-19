@@ -4,7 +4,7 @@
 
 import { createStore } from "@umituz/react-native-design-system/storage";
 
-import type { FlowState, FlowActions } from "../../../../domain/entities/flow-config.types";
+import type { FlowActions } from "../../../../domain/entities/flow-config.types";
 import type { FlowStoreState, FlowStoreConfig } from "./use-flow-store.types";
 import { createInitialState } from "./flow-store-initial-state";
 import { createFlowActions } from "./flow-store-actions";

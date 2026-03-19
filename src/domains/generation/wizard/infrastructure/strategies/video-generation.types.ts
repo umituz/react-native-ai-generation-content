@@ -4,7 +4,6 @@
  */
 
 import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
-import type { ScenarioInputType } from "../../../../scenarios/domain/Scenario";
 import type { VideoModelConfig } from "../../../../../domain/interfaces/video-model-config.types";
 
 export interface WizardVideoInput {

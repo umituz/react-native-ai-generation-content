@@ -8,7 +8,4 @@ export interface GenerationTargetLike {
   readonly providerId: string;
 }
 
-interface CoupleInputResult {
-  readonly target: GenerationTargetLike;
-  readonly imageUrls: string[];
-}
+// CoupleInputResult is now defined inline where needed

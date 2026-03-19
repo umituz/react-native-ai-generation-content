@@ -2,7 +2,7 @@
  * Generic Photo Upload State Hook - Type Definitions
  */
 
-import type { UploadedImage } from "../../../../presentation/hooks/generation/useAIGenerateState";
+import type { UploadedImage } from "../../../../../../../presentation/hooks/generation/useAIGenerateState";
 
 export interface PhotoUploadConfig {
   readonly maxFileSizeMB?: number;

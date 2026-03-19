@@ -4,5 +4,5 @@
  * Logging and helper functions for the couple generation builder
  */
 
-export { logBuilderStart, logBuilderStep, logBuilderEnd } from "./utils";
-export type { BuilderStartParams, BuilderStepParams } from "./utils";
+export { logBuilderStart, logBuilderStep, logBuilderEnd } from "./utils/index";
+export type { BuilderStartParams, BuilderStepParams } from "./utils/types";

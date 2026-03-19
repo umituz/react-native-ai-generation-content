@@ -2,7 +2,6 @@
  * Image Generation Strategy - Strategy Factory
  */
 
-import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import type { WizardStrategy } from "./wizard-strategy.types";
 import type { CreateImageStrategyOptions } from "./image-generation.types";
 import { executeImageGeneration } from "./image-generation.executor";

@@ -24,8 +24,7 @@ export function useCompletionHandler(
   clearPolling: () => void,
   resetRefs: () => void,
 ) {
-  const { userId, persistence, strategy, creditCost, deductCredits, onSuccess, onError } = props;
-  const { setIsGenerating } = state;
+  const { userId, persistence, creditCost, deductCredits, onSuccess, onError } = props;
 
   return useCallback(
     async (urls: GenerationUrls) => {

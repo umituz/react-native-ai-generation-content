@@ -5,6 +5,9 @@
 
 import type { ValidationResult, StringValidationOptions, NumericValidationOptions } from "./base-validator.types";
 
+// Re-export types for convenience
+export type { ValidationResult, StringValidationOptions, NumericValidationOptions };
+
 /**
  * Validates a string input against provided rules
  */

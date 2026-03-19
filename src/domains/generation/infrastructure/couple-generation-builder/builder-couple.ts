@@ -44,7 +44,7 @@ export async function buildCoupleGenerationInput(
   });
 
   // Phase 1: Prepare photo URIs and analyze appearance
-  const { photoUris, appearanceContext } = await prepareCoupleGeneration(params, prefix);
+  const { appearanceContext } = await prepareCoupleGeneration(params, prefix);
 
   // Phase 2: Process and refine prompt
   const { prompt } = processCouplePrompt(params, appearanceContext, prefix);

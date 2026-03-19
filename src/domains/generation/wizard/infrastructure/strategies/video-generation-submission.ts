@@ -32,7 +32,6 @@ export async function submitVideoGenerationToQueue(
   }
 
   try {
-    // Use modelConfig.buildInput() if available, otherwise generic fallback
     const modelInput = modelConfig
       ? modelConfig.buildInput(input)
       : buildGenericInput(input);

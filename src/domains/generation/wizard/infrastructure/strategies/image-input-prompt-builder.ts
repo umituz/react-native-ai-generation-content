@@ -22,7 +22,6 @@ export async function buildImagePrompt(
   context: PromptBuildContext,
 ): Promise<string> {
   const { photos, photoUris, prompt, wizardData } = context;
-  const DEV = typeof __DEV__ !== "undefined" && __DEV__;
 
   // Apply style enhancements for photo-based generation
   if (photos.length === 0) {

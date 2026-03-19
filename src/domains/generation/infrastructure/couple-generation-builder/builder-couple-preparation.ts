@@ -4,7 +4,7 @@
  * Handles photo URI extraction and appearance analysis
  */
 
-import { getAppearanceContext } from "./appearance-analysis";
+import { getAppearanceContext } from "../../appearance-analysis";
 import { logBuilderStep } from "./utils";
 import type { CoupleGenerationInputParams } from "./types";
 

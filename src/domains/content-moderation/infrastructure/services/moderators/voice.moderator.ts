@@ -8,7 +8,7 @@ import { patternMatcherService } from "../pattern-matcher.service";
 import { rulesRegistry } from "../../rules/rules-registry";
 import { BaseModerator, type ModerationResult } from "./base.moderator";
 import { env } from "../../../../../infrastructure/config/env.config";
-import { validateString, validateRequiredFields } from "../../../../shared-kernel/infrastructure/validation";
+import { validateString, validateRequiredFields } from "../../../../../shared-kernel/infrastructure/validation";
 
 class VoiceModerator extends BaseModerator {
   private maxLength = env.moderationVoiceMaxLength;

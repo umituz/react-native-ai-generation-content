@@ -113,8 +113,7 @@ class PatternMatcherService {
       const regex = new RegExp(escaped, "gi");
       return regex.test(content);
     } catch {
-      // Fallback to simple includes if regex fails
-      return content.toLowerCase().includes(searchTerm.toLowerCase());
+      return false;
     }
   }
 

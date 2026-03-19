@@ -12,7 +12,7 @@ import type {
 import { analyzeImageForFace, type AIAnalyzerFunction } from "../../infrastructure/analyzers/faceAnalyzer";
 import { isValidFace } from "../../infrastructure/validators/faceValidator";
 import { useFeatureState } from "../../../../shared-kernel/application/hooks";
-import { handleError, ErrorType } from "../../../../shared-kernel/infrastructure/validation";
+import { handleError } from "../../../../shared-kernel/infrastructure/validation";
 
 interface UseFaceDetectionProps {
   aiAnalyzer: AIAnalyzerFunction;

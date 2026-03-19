@@ -55,7 +55,7 @@ export async function extractImageData(
     console.log("[ImageStrategy] Base64 photos count:", photos.length);
   }
 
-  // Extract prompt with fallback to default
+  // Extract prompt
   let prompt = extractPrompt(wizardData, scenario.aiPrompt);
 
   if (DEV) {

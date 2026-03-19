@@ -5,9 +5,8 @@
 import { useCallback, useEffect } from "react";
 import { pollQueueStatus } from "../videoQueuePoller";
 import {
-  DEFAULT_POLL_INTERVAL_MS,
   DEFAULT_MAX_POLL_TIME_MS,
-} from "../../../../../infrastructure/constants/polling.constants";
+} from "../../../../../../infrastructure/constants/polling.constants";
 import type { VideoQueueRefs } from "./useVideoQueueGenerationRefs";
 
 /**

@@ -5,7 +5,7 @@
 import { useCallback } from "react";
 import {
   DEFAULT_POLL_INTERVAL_MS,
-} from "../../../../../infrastructure/constants/polling.constants";
+} from "../../../../../../infrastructure/constants/polling.constants";
 import { extractInputMetadata } from "./use-video-queue-utils";
 import type {
   UseVideoQueueGenerationProps,
@@ -19,7 +19,7 @@ export function useStartGeneration(
   props: UseVideoQueueGenerationProps,
   refs: VideoQueueRefs,
   state: VideoQueueState,
-  clearPolling: () => void,
+  _clearPolling: () => void,
 ): (input: unknown, prompt: string) => Promise<void> {
   const { userId, scenario, persistence, strategy, creditCost, onError } = props;
   const { setIsGenerating } = state;

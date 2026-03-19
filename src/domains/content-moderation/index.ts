@@ -38,19 +38,13 @@ export type {
 // INFRASTRUCTURE LAYER - Services
 // =============================================================================
 
-export {
-  contentModerationService,
-  patternMatcherService,
-  textModerator,
-  imageModerator,
-  videoModerator,
-  voiceModerator,
-  BaseModerator,
-} from "./infrastructure/services";
-
-export type {
-  PatternMatch,
-} from "./infrastructure/services";
+export { contentModerationService } from "./infrastructure/services/content-moderation.service";
+export { patternMatcherService, type PatternMatch } from "./infrastructure/services/pattern-matcher.service";
+export { textModerator } from "./infrastructure/services/moderators/text.moderator";
+export { imageModerator } from "./infrastructure/services/moderators/image.moderator";
+export { videoModerator } from "./infrastructure/services/moderators/video.moderator";
+export { voiceModerator } from "./infrastructure/services/moderators/voice.moderator";
+export { BaseModerator } from "./infrastructure/services/moderators/base.moderator";
 
 // =============================================================================
 // INFRASTRUCTURE LAYER - Rules

@@ -30,17 +30,6 @@ export interface TextToVideoFormState {
 }
 
 /**
- * Text-to-video generation state
- * Legacy state for backward compatibility
- */
-export interface TextToVideoGenerationState {
-  isGenerating: boolean;
-  progress: number;
-  contentWarnings: string[];
-  error: string | null;
-}
-
-/**
  * Frame data structure
  */
 export interface FrameData {
@@ -62,12 +51,3 @@ export const INITIAL_FORM_STATE: TextToVideoFormState = {
   professionalMode: false,
 };
 
-/**
- * Initial generation state
- */
-export const INITIAL_GENERATION_STATE: TextToVideoGenerationState = {
-  isGenerating: false,
-  progress: 0,
-  contentWarnings: [],
-  error: null,
-};

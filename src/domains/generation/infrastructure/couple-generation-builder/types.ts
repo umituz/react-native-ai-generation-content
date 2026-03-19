@@ -5,7 +5,7 @@
  * Bu utility'yi tüm çift görüntü oluşturma işlemleri kullanır.
  */
 
-import type { GenerationTargetLike } from "../../../infrastructure/utils/couple-input.util";
+import type { GenerationTargetLike } from "../../../../infrastructure/utils/couple-input.util";
 
 /**
  * Couple generation input parameters

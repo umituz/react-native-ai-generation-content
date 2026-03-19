@@ -3,15 +3,10 @@
  */
 
 import { useEffect } from "react";
-import type { GenerationUrls } from "../generation-result.utils";
 import type {
   UseVideoQueueGenerationProps,
   UseVideoQueueGenerationReturn,
 } from "../use-video-queue-generation.types";
-import {
-  createClearPolling,
-  createResetRefs,
-} from "./use-video-queue-utils";
 import { useVideoQueueGenerationRefs, useVideoQueueGenerationState } from "./useVideoQueueGenerationRefs";
 import { useCompletionHandler, useErrorHandler } from "./useVideoQueueGenerationCallbacks";
 import { usePollStatus, useCallbackRefs } from "./useVideoQueueGenerationPolling";

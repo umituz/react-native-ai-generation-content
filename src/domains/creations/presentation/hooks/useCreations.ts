@@ -87,7 +87,7 @@ export function useCreations({
 
     const unsubscribe = repository.subscribeToAll(userId, handleData, handleError);
 
-    // Fallback timeout: if Firestore doesn't respond in 8s, stop loading
+    // Loading timeout: if Firestore doesn't respond in 8s, stop loading
     timeoutId = setTimeout(() => {
       if (!isMounted) return;
       if (typeof __DEV__ !== "undefined" && __DEV__) {

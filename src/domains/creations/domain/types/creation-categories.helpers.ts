@@ -25,7 +25,7 @@ export function getTypesForCategory(
 }
 
 /**
- * Get category for a creation type (type-based fallback only)
+ * Get category for a creation type
  */
 export function getCategoryForType(type: CreationTypeId): CreationCategory {
   if (IMAGE_CREATION_TYPES.includes(type)) {
@@ -34,7 +34,7 @@ export function getCategoryForType(type: CreationTypeId): CreationCategory {
   if (VIDEO_CREATION_TYPES.includes(type)) {
     return "video";
   }
-  return "image"; // Default fallback
+  return "image";
 }
 
 /**

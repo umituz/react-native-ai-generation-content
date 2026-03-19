@@ -2,9 +2,6 @@
  * Job Poller Service - Utility Functions
  */
 
-import { checkStatusForErrors, isJobComplete } from "../utils/status-checker.util";
-import { validateResult } from "../utils/result-validator.util";
-
 /**
  * Wrap a promise with abort signal support
  * Rejects if signal is aborted before promise resolves

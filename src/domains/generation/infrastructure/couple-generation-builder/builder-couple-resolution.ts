@@ -6,8 +6,8 @@
 
 import {
   resolveCoupleInput,
-} from "../../../infrastructure/utils/couple-input.util";
-import { logBuilderStep, logBuilderEnd, logBuilderStart } from "./utils";
+} from "../../../../infrastructure/utils/couple-input.util";
+import { logBuilderStep, logBuilderEnd } from "./utils";
 import type {
   CoupleGenerationInputParams,
   CoupleGenerationInput,

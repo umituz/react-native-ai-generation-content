@@ -4,6 +4,7 @@
  * Uses design system's useMedia hook for media picking with built-in validation
  */
 
+import type { UploadedImage } from "./types";
 import { useState } from "react";
 import type { UsePhotoUploadStateProps, UsePhotoUploadStateReturn } from "./types";
 import { usePhotoUploadStateLogic } from "./usePhotoUploadStateLogic";

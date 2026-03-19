@@ -7,7 +7,6 @@ import { useState, useCallback, useReducer } from 'react';
 import type {
   BaseFeatureState,
   FeatureStateAction,
-  createInitialFeatureState,
 } from '../../base-types';
 
 /**

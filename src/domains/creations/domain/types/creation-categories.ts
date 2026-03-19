@@ -25,7 +25,7 @@ export function getCategoryForCreation(creation: {
   };
   uri?: string;
 }): CreationCategory {
-  // PRIORITY 1: Check output field names (most reliable)
+  // Check output field names
   if (creation.output?.videoUrl) {
     return "video";
   }
@@ -34,12 +34,11 @@ export function getCategoryForCreation(creation: {
     return "image";
   }
 
-  // PRIORITY 2: Fallback to type-based (for known types)
+  // Use type-based categorization
   if (creation.type) {
     return getCategoryForType(creation.type as import("./creation-types").CreationTypeId);
   }
 
-  // Final fallback
   return "image";
 }
 

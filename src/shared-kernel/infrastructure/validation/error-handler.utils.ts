@@ -3,7 +3,7 @@
  * Utility functions for error handling
  */
 
-import type { AppError, ErrorHandlerOptions } from "./error-handler.types";
+import type { AppError } from "./error-handler.types";
 import { ErrorType } from "./error-handler.types";
 
 /**

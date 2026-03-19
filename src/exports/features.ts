@@ -47,7 +47,7 @@ export type {
   UseTextToVideoFormProps, UseTextToVideoFormReturn, ExecuteTextToVideoOptions,
 } from "../domains/text-to-video";
 export {
-  INITIAL_FORM_STATE, INITIAL_GENERATION_STATE,
+  INITIAL_FORM_STATE,
   executeTextToVideo, hasTextToVideoSupport,
   useTextToVideoFeature, useTextToVideoForm,
   GenerationTabs, FrameSelector, OptionsPanel, HeroSection, HintCarousel,

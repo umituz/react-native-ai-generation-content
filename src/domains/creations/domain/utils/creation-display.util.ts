@@ -37,7 +37,7 @@ export function getTypeTextKey(type: CreationTypeId): string {
 }
 
 /**
- * Get formatted type text (fallback)
+ * Get formatted type text
  */
 export function getTypeText(type: CreationTypeId): string {
   return type.split("-").map(word =>

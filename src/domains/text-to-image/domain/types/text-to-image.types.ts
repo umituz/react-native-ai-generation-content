@@ -4,7 +4,6 @@
  */
 
 import type {
-  AspectRatio,
   BaseGenerationOptions,
   BaseGenerationResult,
   BaseRequestMeta,

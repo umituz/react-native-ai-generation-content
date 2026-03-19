@@ -49,7 +49,7 @@ export function getStatusTextKey(status: CreationStatus): string {
 }
 
 /**
- * Get default status text (fallback)
+ * Get default status text
  */
 export function getStatusText(status: CreationStatus): string {
   switch (status) {

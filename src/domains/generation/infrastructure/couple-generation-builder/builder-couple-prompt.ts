@@ -7,8 +7,8 @@
 import {
   prependContext,
   refinePromptForCouple,
-} from "../../../infrastructure/utils/couple-input.util";
-import { createPhotorealisticPrompt } from "../../prompts";
+  createPhotorealisticPrompt,
+} from "../../../../infrastructure/utils/couple-input.util";
 import { logBuilderStep } from "./utils";
 import type { CoupleGenerationInputParams } from "./types";
 

@@ -8,8 +8,8 @@ import {
   resolveCoupleInput,
   refinePromptForCouple,
   prependContext,
-} from "../../../infrastructure/utils/couple-input.util";
-import { getAppearanceContext } from "./appearance-analysis";
+} from "../../../../infrastructure/utils/couple-input.util";
+import { getAppearanceContext } from "../../appearance-analysis";
 import type {
   ScenarioGenerationInputParams,
   CoupleGenerationInput,
@@ -25,7 +25,6 @@ import { logBuilderStart, logBuilderStep, logBuilderEnd } from "./utils";
 export async function buildScenarioGenerationInput(
   params: ScenarioGenerationInputParams,
 ): Promise<CoupleGenerationInput> {
-  const DEV = typeof __DEV__ !== "undefined" && __DEV__;
 
   const {
     partner1PhotoUri,

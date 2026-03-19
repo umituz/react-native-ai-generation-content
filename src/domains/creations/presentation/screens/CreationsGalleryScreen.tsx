@@ -245,7 +245,6 @@ export function CreationsGalleryScreen({
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={32} // Throttle scroll events for better performance
           updateCellsBatchingPeriod={50} // Batch updates more frequently
-          legacyImplementation={false} // Use new FlatList implementation
         />
       )}
       <FilterSheet visible={filters.statusFilterVisible} onClose={filters.closeStatusFilter} options={filters.statusFilter.filterOptions} selectedIds={[filters.statusFilter.selectedId]} onFilterPress={filters.statusFilter.selectFilter} onClearFilters={filters.statusFilter.clearFilter} title={t(config.translations.statusFilterTitle ?? "creations.filter.status")} clearLabel={t(config.translations.clearFilter ?? "common.clear")} />
