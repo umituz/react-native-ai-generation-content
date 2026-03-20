@@ -56,7 +56,7 @@ export async function buildVideoInput(
   wizardData: Record<string, unknown>,
   scenario: WizardScenarioData
 ): Promise<WizardVideoInput> {
-  const prompt = (wizardData.prompt as string | undefined) || scenario.prompt || "";
+  const prompt = (wizardData.prompt as string | undefined) || (scenario.prompt as string | undefined) || "";
   const input: WizardVideoInput = {
     prompt,
     sourceImageBase64: typeof wizardData.sourceImageBase64 === 'string' ? wizardData.sourceImageBase64 : undefined,
