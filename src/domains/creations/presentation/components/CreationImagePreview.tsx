@@ -126,8 +126,6 @@ export function CreationImagePreview({
           style={styles.image}
           contentFit="cover"
           cachePolicy="disk"
-          onError={handleImageError}
-          onLoadEnd={handleLoadEnd}
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
           placeholderContentFit="cover"
         />
