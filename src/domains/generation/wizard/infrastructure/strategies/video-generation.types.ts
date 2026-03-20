@@ -32,3 +32,17 @@ export interface CreateVideoStrategyOptions {
   /** Credit cost for this generation - REQUIRED, determined by the app */
   readonly creditCost: number;
 }
+
+export interface ExecutionResult {
+  success: boolean;
+  videoUrl?: string;
+  requestId?: string;
+  error?: string;
+}
+
+export interface SubmissionResult {
+  success: boolean;
+  requestId?: string;
+  model?: string;
+  error?: string;
+}

@@ -63,7 +63,7 @@ class TextModerator extends BaseModerator {
     });
 
     if (!stringValidation.isValid) {
-      if (stringValidation.errors.maxLength) {
+      if ('maxLength' in stringValidation.errors) {
         return this.createViolation("too-long", "Validation", "length exceeded");
       }
       return this.createViolation("empty-content", "Validation", "empty");

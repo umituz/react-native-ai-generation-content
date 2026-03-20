@@ -14,7 +14,7 @@ export function validateUserId(input: unknown): ValidationResult {
     maxLength: 100,
     pattern: /^[a-zA-Z0-9_-]+$/,
   };
-  return validateString(input, options);
+  return validateString(typeof input === "string" ? input : String(input), options);
 }
 
 /**
@@ -25,6 +25,6 @@ export function validateCreationId(input: unknown): ValidationResult {
     minLength: 1,
     maxLength: 100,
   };
-  return validateString(input, options);
+  return validateString(typeof input === "string" ? input : String(input), options);
 }
 

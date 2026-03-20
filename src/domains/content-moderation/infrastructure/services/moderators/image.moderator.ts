@@ -39,10 +39,10 @@ class ImageModerator extends BaseModerator {
     // Use shared URL validation
     const urlValidation = validateUrl(uri);
     if (!urlValidation.isValid) {
-      if (urlValidation.errors.required) {
+      if ('required' in urlValidation.errors) {
         return this.createViolation("empty-uri", "Image Validation", "empty URI");
       }
-      if (urlValidation.errors.pattern) {
+      if ('pattern' in urlValidation.errors) {
         return this.createViolation(
           "invalid-protocol",
           "Image Validation",
@@ -57,7 +57,7 @@ class ImageModerator extends BaseModerator {
     });
 
     if (!lengthValidation.isValid) {
-      if (lengthValidation.errors.maxLength) {
+      if ('maxLength' in lengthValidation.errors) {
         return this.createViolation(
           "uri-too-long",
           "Image Validation",

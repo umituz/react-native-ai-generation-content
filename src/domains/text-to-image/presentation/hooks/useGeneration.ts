@@ -72,7 +72,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
   const { generate, isGenerating, error } = useGenerationOrchestrator(strategy, {
     userId: userId ?? undefined,
     alertMessages: DEFAULT_ALERT_MESSAGES,
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       const imageUrls = result as string[];
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[TextToImage] Success! Generated", imageUrls.length, "image(s)");
@@ -80,7 +80,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
       callbacks.onSuccess?.(imageUrls);
       onPromptCleared?.();
     },
-    onError: (err) => {
+    onError: async (err) => {
       if (typeof __DEV__ !== "undefined" && __DEV__) {
         console.log("[TextToImage] Error:", err.message);
       }

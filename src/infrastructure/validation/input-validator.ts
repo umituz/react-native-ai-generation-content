@@ -12,7 +12,7 @@ export {
   validateBase64,
   type ValidationResult,
   type StringValidationOptions,
-  type NumericValidationOptions,
+  type NumberValidationOptions,
 } from "./base-validator";
 
 // Sanitizers

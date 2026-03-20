@@ -5,7 +5,8 @@
  */
 
 import type { WizardStrategy } from "./wizard-strategy.types";
-import type { CreateVideoStrategyOptions } from "./video-generation.types";
+import type { CreateVideoStrategyOptions, WizardVideoInput } from "./video-generation.types";
+import type { WizardScenarioData } from "../../presentation/hooks/useWizardGeneration";
 import { validateWizardVideoInput } from "./video-generation.validation";
 import { executeVideoGeneration, submitVideoGenerationToQueue } from "./video-generation.executor";
 
@@ -46,5 +47,27 @@ export function createVideoStrategy(options: CreateVideoStrategyOptions): Wizard
       };
     },
   };
+}
+
+/**
+ * Build video input from wizard data and scenario
+ */
+export async function buildVideoInput(
+  wizardData: Record<string, unknown>,
+  scenario: WizardScenarioData
+): Promise<WizardVideoInput> {
+  const prompt = (wizardData.prompt as string | undefined) || scenario.prompt || "";
+  const input: WizardVideoInput = {
+    prompt,
+    sourceImageBase64: wizardData.sourceImageBase64 as string | undefined,
+    targetImageBase64: wizardData.targetImageBase64 as string | undefined,
+    duration: wizardData.duration as number | undefined,
+    aspectRatio: wizardData.aspectRatio as string | undefined,
+    resolution: wizardData.resolution as string | undefined,
+    audioUrl: wizardData.audioUrl as string | undefined,
+    qualityMode: wizardData.qualityMode as "draft" | "normal" | undefined,
+  };
+
+  return input;
 }
 

@@ -109,15 +109,24 @@ export function extractInputMetadata(params: {
   readonly model: string;
   readonly prompt: string;
   readonly imageUrls?: string[];
+  readonly duration?: number;
+  readonly resolution?: string;
+  readonly aspectRatio?: string;
 }): {
   readonly model: string;
   readonly prompt: string;
   readonly imageUrls: string[];
+  readonly duration?: number;
+  readonly resolution?: string;
+  readonly aspectRatio?: string;
 } {
   return {
     model: params.model,
     prompt: params.prompt,
     imageUrls: params.imageUrls || [],
+    duration: params.duration,
+    resolution: params.resolution,
+    aspectRatio: params.aspectRatio,
   };
 }
 

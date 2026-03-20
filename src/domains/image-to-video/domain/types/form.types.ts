@@ -11,6 +11,7 @@ export interface ImageToVideoFormState {
   animationStyle: AnimationStyleId;
   duration: VideoDuration;
   motionPrompt: string;
+  onError?: (error: string) => void;
 }
 
 export interface ImageToVideoFormActions {

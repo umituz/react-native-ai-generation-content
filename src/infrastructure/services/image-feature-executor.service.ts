@@ -68,7 +68,7 @@ export async function executeImageFeature(
     if (!urlValidation.isValid) {
       return {
         success: false,
-        error: `Invalid image URL received: ${urlValidation.errors.join(", ")}`
+        error: `Invalid image URL received: ${Object.values(urlValidation.errors).join(", ")}`
       };
     }
 

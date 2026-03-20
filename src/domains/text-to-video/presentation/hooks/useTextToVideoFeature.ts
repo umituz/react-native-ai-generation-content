@@ -71,8 +71,8 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages: DEFAULT_ALERT_MESSAGES,
-    onSuccess: (result) => callbacks.onGenerate?.(result as TextToVideoResult),
-    onError: (err) => callbacks.onError?.(err.message),
+    onSuccess: async (result) => callbacks.onGenerate?.(result as TextToVideoResult),
+    onError: async (err) => callbacks.onError?.(err.message),
   });
 
   const setPrompt = useCallback((prompt: string) => {

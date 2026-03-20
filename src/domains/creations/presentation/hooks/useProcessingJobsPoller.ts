@@ -4,8 +4,11 @@
  */
 
 import { useEffect } from 'react';
+import type { Creation } from '../../../../domain/entities/Creation';
 
 export interface UseProcessingJobsPollerConfig {
+  userId: string | null;
+  creations: Creation[];
   enabled?: boolean;
   interval?: number;
 }
@@ -16,24 +19,32 @@ export interface UseProcessingJobsPollerReturn {
 
 /**
  * Hook to poll processing jobs
- * TODO: Implement actual polling logic
  */
 export function useProcessingJobsPoller(
-  config: UseProcessingJobsPollerConfig = {}
+  config: UseProcessingJobsPollerConfig
 ): UseProcessingJobsPollerReturn {
-  const { enabled = false, interval = 5000 } = config;
+  const { userId, creations, enabled = false, interval = 5000 } = config;
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !userId) return;
 
     const timer = setInterval(() => {
-      // Polling logic here
+      // Polling logic here - check processing creations and update their status
+      const processingCreations = creations.filter(c => c.status === 'processing');
+      processingCreations.forEach(async (creation) => {
+        try {
+          // Check job status and update creation
+          // TODO: Implement actual polling logic
+        } catch (error) {
+          console.error('Error polling job status:', error);
+        }
+      });
     }, interval);
 
     return () => clearInterval(timer);
-  }, [enabled, interval]);
+  }, [enabled, interval, userId, creations]);
 
   return {
-    isPolling: enabled,
+    isPolling: enabled && !!userId,
   };
 }

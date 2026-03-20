@@ -3,9 +3,8 @@
  * Complex validators for objects, arrays, and combined validations
  */
 
-import type { ValidationResult } from "./base-validator";
-import { validateString } from "./base-validator";
-import type { StringValidationOptions } from "./base-validator";
+import type { ValidationResult, StringValidationOptions } from "../../shared-kernel/infrastructure/validation";
+import { validateString } from "../../shared-kernel/infrastructure/validation";
 
 /**
  * Validates object structure
@@ -14,19 +13,19 @@ export function validateObject(
   input: unknown,
   requiredFields: readonly string[] = []
 ): ValidationResult {
-  const errors: string[] = [];
+  const errors: Record<string, string> = {};
 
   if (typeof input !== "object" || input === null) {
-    return { isValid: false, errors: ["Input must be an object"] };
+    return { isValid: false, errors: { input: "Input must be an object" } };
   }
 
   for (const field of requiredFields) {
     if (!(field in input)) {
-      errors.push(`Missing required field: ${field}`);
+      errors[field] = `Missing required field: ${field}`;
     }
   }
 
-  return { isValid: errors.length === 0, errors };
+  return { isValid: Object.keys(errors).length === 0, errors };
 }
 
 /**
@@ -40,18 +39,18 @@ export function validateArray(
     readonly itemType?: "string" | "number" | "object";
   } = {}
 ): ValidationResult {
-  const errors: string[] = [];
+  const errors: Record<string, string> = {};
 
   if (!Array.isArray(input)) {
-    return { isValid: false, errors: ["Input must be an array"] };
+    return { isValid: false, errors: { input: "Input must be an array" } };
   }
 
   if (options.minLength !== undefined && input.length < options.minLength) {
-    errors.push(`Array must have at least ${options.minLength} items`);
+    errors.minLength = `Array must have at least ${options.minLength} items`;
   }
 
   if (options.maxLength !== undefined && input.length > options.maxLength) {
-    errors.push(`Array must have at most ${options.maxLength} items`);
+    errors.maxLength = `Array must have at most ${options.maxLength} items`;
   }
 
   if (options.itemType) {
@@ -65,22 +64,28 @@ export function validateArray(
           : typeof item === "object" && item !== null;
 
       if (!isValidType) {
-        errors.push(`Item at index ${i} is not a ${options.itemType}`);
+        errors[`item_${i}`] = `Item at index ${i} is not a ${options.itemType}`;
       }
     }
   }
 
-  return { isValid: errors.length === 0, errors };
+  return { isValid: Object.keys(errors).length === 0, errors };
 }
 
 /**
  * Combines multiple validation results
  */
 export function combineValidationResults(
-  results: readonly ValidationResult[]
+  ...results: ValidationResult[]
 ): ValidationResult {
-  const allErrors = results.flatMap((r) => r.errors);
-  return { isValid: allErrors.length === 0, errors: allErrors };
+  const allErrors = results.reduce((acc, result) => {
+    return { ...acc, ...result.errors };
+  }, {} as Record<string, string>);
+
+  return {
+    isValid: Object.keys(allErrors).length === 0,
+    errors: allErrors,
+  };
 }
 
 /**

@@ -53,7 +53,7 @@ export const CREATION_FIELDS = {
 } as const;
 
 /** Union type of all field names */
-type CreationFieldName =
+export type CreationFieldName =
   typeof CREATION_FIELDS[keyof typeof CREATION_FIELDS];
 
 /**

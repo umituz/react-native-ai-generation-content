@@ -39,7 +39,15 @@ export function useStartGeneration(
       let creationId: string | null = null;
       if (userId && prompt) {
         try {
-          const { duration, resolution, aspectRatio } = extractInputMetadata(input);
+          const inputRecord = input as Record<string, unknown>;
+          const { duration, resolution, aspectRatio } = extractInputMetadata({
+            model: scenario.model || "",
+            prompt,
+            imageUrls: (inputRecord.imageUrls || inputRecord.image_url) as string[] | undefined,
+            duration: inputRecord.duration as number | undefined,
+            resolution: inputRecord.resolution as string | undefined,
+            aspectRatio: inputRecord.aspectRatio as string | undefined,
+          });
 
           const result = await persistence.saveAsProcessing(userId, {
             scenarioId: scenario.id,

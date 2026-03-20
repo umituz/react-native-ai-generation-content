@@ -81,13 +81,13 @@ export async function pollJob<T = unknown>(
     try {
       // Check job status
       const statusResult = await withAbortSignal(
-        provider.checkStatus(requestId, model),
+        provider.getJobStatus(model, requestId),
         signal,
         config.maxTotalTimeMs ? config.maxTotalTimeMs - (Date.now() - startTime) : undefined
       );
 
       // Notify status change
-      if (onStatusChange && typeof statusResult === 'object' && 'status' in statusResult) {
+      if (onStatusChange && statusResult && typeof statusResult === 'object' && 'status' in statusResult) {
         onStatusChange(statusResult as JobStatus);
       }
 
@@ -96,7 +96,7 @@ export async function pollJob<T = unknown>(
       if (statusError) {
         return {
           success: false,
-          error: statusError,
+          error: statusError instanceof Error ? statusError : new Error(String(statusError)),
           attempts: attempt + 1,
           elapsedMs: Date.now() - startTime,
         };
@@ -106,7 +106,7 @@ export async function pollJob<T = unknown>(
       consecutiveErrors = 0;
 
       // Check if job is complete
-      if (isJobComplete(statusResult as JobStatus | Record<string, unknown>)) {
+      if (isJobComplete(statusResult as JobStatus | string)) {
         // Validate result
         const validationResult = validateResult(statusResult);
         if (!validationResult.isValid) {

@@ -53,7 +53,8 @@ export function useCreationPersistence(
 
       const validation = runAllValidations(result.imageUrl, result.videoUrl);
       if (!validation.isValid) {
-        await markCreationAsFailed(repository, userId, result.creationId, validation.error!);
+        const firstError = Object.values(validation.errors)[0];
+        await markCreationAsFailed(repository, userId, result.creationId, firstError || "Validation failed");
         return;
       }
 

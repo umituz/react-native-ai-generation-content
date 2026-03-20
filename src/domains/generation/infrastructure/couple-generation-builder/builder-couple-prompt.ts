@@ -49,7 +49,7 @@ export function processCouplePrompt(
 
   // 4. CREATE FINAL PROMPT - Photorealistic
   logBuilderStep(prefix, "STEP 4: CREATE PHOTOREALISTIC PROMPT", {
-    isCouple: isCoupleMode,
+    isCoupleMode,
     hasCustomInstructions: !!customInstructions
   });
 

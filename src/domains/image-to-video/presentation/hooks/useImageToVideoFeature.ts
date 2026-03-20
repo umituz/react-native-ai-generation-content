@@ -41,14 +41,14 @@ export function useImageToVideoFeature(props: UseImageToVideoFeatureProps): UseI
   const orchestrator = useGenerationOrchestrator(strategy, {
     userId,
     alertMessages: DEFAULT_ALERT_MESSAGES,
-    onSuccess: (result: unknown) => {
+    onSuccess: async (result: unknown) => {
       const typedResult = result as { success: boolean; videoUrl?: string; thumbnailUrl?: string };
       if (typedResult.success && typedResult.videoUrl) {
         config.onProcessingComplete?.(typedResult);
         callbacks?.onGenerate?.(typedResult);
       }
     },
-    onError: (err) => {
+    onError: async (err) => {
       config.onError?.(err.message);
       callbacks?.onError?.(err.message);
     },

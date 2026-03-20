@@ -40,7 +40,7 @@ class VoiceModerator extends BaseModerator {
     });
 
     if (!stringValidation.isValid) {
-      if (stringValidation.errors.maxLength) {
+      if ('maxLength' in stringValidation.errors) {
         return this.createViolation(
           "too-long",
           "Voice Validation",

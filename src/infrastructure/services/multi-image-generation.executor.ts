@@ -100,10 +100,11 @@ export async function executeMultiImageGeneration(
           if (typeof imageUrl === "string" && imageUrl.length > 0) {
             const urlValidation = validateURL(imageUrl);
             if (!urlValidation.isValid) {
-              addGenerationLog(sid, TAG, `Invalid URL in response: ${urlValidation.errors.join(", ")}`, 'error');
+              const errorMsg = Object.values(urlValidation.errors).join(", ");
+              addGenerationLog(sid, TAG, `Invalid URL in response: ${errorMsg}`, 'error');
               return {
                 success: false,
-                error: `Invalid image URL received: ${urlValidation.errors.join(", ")}`,
+                error: `Invalid image URL received: ${errorMsg}`,
                 logSessionId: sid,
               };
             }

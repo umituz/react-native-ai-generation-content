@@ -2,18 +2,9 @@
  * Shared Validation Utilities
  */
 
-import type {
-  ValidationResult,
-  StringValidationOptions,
-  NumericValidationOptions,
-} from "../../../infrastructure/validation/base-validator.types";
-
-// Re-export types
-export type {
-  ValidationResult,
-  StringValidationOptions,
-  NumericValidationOptions,
-};
+// Export all from common-validators
+export * from "./common-validators";
+export * from "./common-validators.types";
 
 // Export functions from advanced-validator
 export { combineValidationResults } from "../../../infrastructure/validation/advanced-validator";
@@ -21,37 +12,6 @@ export { combineValidationResults } from "../../../infrastructure/validation/adv
 // Export error handling utilities
 export { handleError } from "./error-handler";
 export { ErrorType } from "./error-handler.types";
-
-/**
- * Validate a string is not empty
- */
-export function validateString(value: string): ValidationResult {
-  if (typeof value !== 'string') {
-    return { isValid: false, errors: ['Value must be a string'] };
-  }
-
-  if (value.trim().length === 0) {
-    return { isValid: false, errors: ['String cannot be empty'] };
-  }
-
-  return { isValid: true, errors: [] };
-}
-
-/**
- * Validate URL format
- */
-export function validateUrl(url: string): ValidationResult {
-  if (typeof url !== 'string') {
-    return { isValid: false, errors: ['URL must be a string'] };
-  }
-
-  try {
-    new URL(url);
-    return { isValid: true, errors: [] };
-  } catch {
-    return { isValid: false, errors: ['Invalid URL format'] };
-  }
-}
 
 /**
  * Validate required fields in an object

@@ -13,6 +13,7 @@ export interface FaceDetectionResult {
 
 export interface FaceValidationState extends BaseFeatureState<FaceDetectionResult> {
   isValidating: boolean;
+  result?: FaceDetectionResult;
 }
 
 export interface FaceDetectionConfig {

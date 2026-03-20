@@ -26,7 +26,7 @@ export function validateAIPrompt(input: unknown): ValidationResult {
  */
 export function validateImageData(input: unknown): ValidationResult {
   if (typeof input !== "string") {
-    return { isValid: false, errors: ["Image data must be a string"] };
+    return { isValid: false, errors: { type: "Image data must be a string" } };
   }
 
   const trimmed = input.trim();
@@ -40,11 +40,11 @@ export function validateImageData(input: unknown): ValidationResult {
   if (trimmed.startsWith("data:image/")) {
     const parts = trimmed.split(",");
     if (parts.length !== 2) {
-      return { isValid: false, errors: ["Invalid data URI format"] };
+      return { isValid: false, errors: { format: "Invalid data URI format" } };
     }
     const base64Part = parts[1];
     if (!base64Part || base64Part.length === 0) {
-      return { isValid: false, errors: ["Invalid data URI: missing base64 data"] };
+      return { isValid: false, errors: { data: "Invalid data URI: missing base64 data" } };
     }
     return validateBase64(base64Part);
   }
@@ -57,7 +57,7 @@ export function validateImageData(input: unknown): ValidationResult {
 
   return {
     isValid: false,
-    errors: ["Image data must be a URL, base64 data URI, or valid base64 string"],
+    errors: { format: "Image data must be a URL, base64 data URI, or valid base64 string" },
   };
 }
 

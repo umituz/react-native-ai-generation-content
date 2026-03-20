@@ -54,7 +54,7 @@ export async function executeVideoFeature(
     if (!urlValidation.isValid) {
       return {
         success: false,
-        error: `Invalid video URL received: ${urlValidation.errors.join(", ")}`
+        error: `Invalid video URL received: ${Object.values(urlValidation.errors).join(", ")}`
       };
     }
 
