@@ -76,7 +76,7 @@ export function usePhotoBlockingGeneration(
   );
 
   const { generate, isGenerating } = useGenerationOrchestrator(strategy, {
-    userId,
+    userId: userId || null,
     alertMessages,
     onSuccess: handleSuccess,
     onError: handleError,

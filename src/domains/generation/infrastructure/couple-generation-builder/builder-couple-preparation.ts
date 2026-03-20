@@ -29,8 +29,8 @@ export async function prepareCoupleGeneration(
   // 1. GET PHOTO URIs - Couple mode kontrolü
   const photoUris =
     isCoupleMode && partner2PhotoUri
-      ? [partner1PhotoUri, partner2PhotoUri]
-      : [partner1PhotoUri];
+      ? [partner1PhotoUri || "", partner2PhotoUri]
+      : [partner1PhotoUri || ""];
 
   logBuilderStep(prefix, "STEP 1: PHOTO URIs", {
     photoUrisCount: photoUris.length,

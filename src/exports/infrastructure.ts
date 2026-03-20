@@ -62,7 +62,7 @@ export {
 export type {
   ValidationResult,
   StringValidationOptions,
-  NumericValidationOptions,
+  NumberValidationOptions,
 } from "../infrastructure/validation/input-validator";
 
 // Orchestration

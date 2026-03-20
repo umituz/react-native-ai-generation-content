@@ -125,7 +125,6 @@ export function CreationImagePreview({
           source={{ uri }}
           style={styles.image}
           contentFit="cover"
-          transition={0}
           cachePolicy="disk"
           onError={handleImageError}
           onLoadEnd={handleLoadEnd}

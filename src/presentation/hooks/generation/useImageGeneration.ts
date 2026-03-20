@@ -86,7 +86,7 @@ export const useImageGeneration = <TInput extends ImageGenerationInput, TResult>
   const handleError = useCallback((error: { message: string }) => onError?.(error.message), [onError]);
 
   return useGenerationOrchestrator(strategy, {
-    userId,
+    userId: userId || null,
     alertMessages,
     onSuccess: onSuccess ? async (result) => onSuccess(result as TResult) : undefined,
     onError: async (error) => handleError(error),

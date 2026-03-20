@@ -44,8 +44,8 @@ export async function buildScenarioGenerationInput(
   // 1. GET PHOTO URIs
   const photoUris =
     isCoupleMode && partner2PhotoUri
-      ? [partner1PhotoUri, partner2PhotoUri]
-      : [partner1PhotoUri];
+      ? [partner1PhotoUri || "", partner2PhotoUri]
+      : [partner1PhotoUri || ""];
 
   logBuilderStep("[ScenarioBuilder]", "STEP 1: PHOTO URIs", {
     photoUrisCount: photoUris.length,
@@ -80,7 +80,7 @@ export async function buildScenarioGenerationInput(
   logBuilderStep("[ScenarioBuilder]", "STEP 4: RESOLVE COUPLE INPUT");
 
   const { target, imageUrls } = resolveCoupleInput(
-    partner1PhotoUri,
+    partner1PhotoUri || "",
     partner2PhotoUri,
     isCoupleMode,
     { model: "p-image-edit", providerId: "pruna" }, // Single target

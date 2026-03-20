@@ -101,8 +101,8 @@ export function useTextToVideoFeature(props: UseTextToVideoFeatureProps): UseTex
         return {
           success: true,
           requestId,
-          videoUrl: (result as TextToVideoResult)?.videoUrl || null,
-          thumbnailUrl: (result as TextToVideoResult)?.thumbnailUrl || null,
+          videoUrl: (result as TextToVideoResult)?.videoUrl || undefined,
+          thumbnailUrl: (result as TextToVideoResult)?.thumbnailUrl || undefined,
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Generation failed";

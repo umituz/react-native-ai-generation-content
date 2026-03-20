@@ -101,7 +101,7 @@ export const useVideoGeneration = <TResult>(
   );
 
   return useGenerationOrchestrator(strategy, {
-    userId,
+    userId: userId || null,
     alertMessages,
     onSuccess: onSuccess ? async (result) => onSuccess(result as TResult) : undefined,
     onError: async (error) => handleError(error),

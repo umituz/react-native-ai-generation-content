@@ -46,7 +46,6 @@ export function CreationsGalleryScreen({
   useProcessingJobsPoller({
     userId,
     creations: creations ?? [],
-    repository,
     enabled: !!userId && (creations?.length ?? 0) > 0,
   });
 

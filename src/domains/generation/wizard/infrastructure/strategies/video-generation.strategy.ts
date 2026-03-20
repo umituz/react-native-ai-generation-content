@@ -59,13 +59,13 @@ export async function buildVideoInput(
   const prompt = (wizardData.prompt as string | undefined) || scenario.prompt || "";
   const input: WizardVideoInput = {
     prompt,
-    sourceImageBase64: wizardData.sourceImageBase64 as string | undefined,
-    targetImageBase64: wizardData.targetImageBase64 as string | undefined,
-    duration: wizardData.duration as number | undefined,
-    aspectRatio: wizardData.aspectRatio as string | undefined,
-    resolution: wizardData.resolution as string | undefined,
-    audioUrl: wizardData.audioUrl as string | undefined,
-    qualityMode: wizardData.qualityMode as "draft" | "normal" | undefined,
+    sourceImageBase64: typeof wizardData.sourceImageBase64 === 'string' ? wizardData.sourceImageBase64 : undefined,
+    targetImageBase64: typeof wizardData.targetImageBase64 === 'string' ? wizardData.targetImageBase64 : undefined,
+    duration: typeof wizardData.duration === 'number' ? wizardData.duration : undefined,
+    aspectRatio: typeof wizardData.aspectRatio === 'string' ? wizardData.aspectRatio : undefined,
+    resolution: typeof wizardData.resolution === 'string' ? wizardData.resolution : undefined,
+    audioUrl: typeof wizardData.audioUrl === 'string' ? wizardData.audioUrl : undefined,
+    qualityMode: wizardData.qualityMode === "draft" || wizardData.qualityMode === "normal" ? wizardData.qualityMode : undefined,
   };
 
   return input;

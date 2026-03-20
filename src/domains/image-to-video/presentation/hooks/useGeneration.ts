@@ -58,6 +58,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
     setProgress,
     setError,
   } = useImageToVideoGenerationInternal({
+    ...formState,
     onError: callbacks.onError,
   });
 

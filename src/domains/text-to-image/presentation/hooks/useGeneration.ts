@@ -70,7 +70,7 @@ export function useGeneration(options: UseGenerationOptions): UseGenerationRetur
 
   // Use orchestrator
   const { generate, isGenerating, error } = useGenerationOrchestrator(strategy, {
-    userId: userId ?? undefined,
+    userId: userId ?? null,
     alertMessages: DEFAULT_ALERT_MESSAGES,
     onSuccess: async (result) => {
       const imageUrls = result as string[];

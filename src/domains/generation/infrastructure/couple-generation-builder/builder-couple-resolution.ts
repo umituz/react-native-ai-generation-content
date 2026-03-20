@@ -39,7 +39,7 @@ export function buildCoupleGenerationResult(
   });
 
   const { target, imageUrls } = resolveCoupleInput(
-    partner1PhotoUri,
+    partner1PhotoUri || "",
     partner2PhotoUri,
     isCoupleMode,
     { model: "p-image-edit", providerId: "pruna" }, // Single target

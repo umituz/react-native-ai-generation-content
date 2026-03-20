@@ -13,6 +13,10 @@ import { validateString, validateURL, validateBase64, type ValidationResult, typ
  * Validates prompt/input text for AI generation
  */
 export function validateAIPrompt(input: unknown): ValidationResult {
+  if (typeof input !== "string") {
+    return { isValid: false, errors: { type: "Prompt must be a string" } };
+  }
+
   const options: StringValidationOptions = {
     minLength: MIN_PROMPT_LENGTH,
     maxLength: MAX_PROMPT_LENGTH,

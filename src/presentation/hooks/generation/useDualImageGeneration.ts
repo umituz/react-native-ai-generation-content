@@ -69,7 +69,7 @@ export const useDualImageGeneration = (
 
   // Use orchestrator for credit/error handling
   const orchestrator = useGenerationOrchestrator(strategy, {
-    userId,
+    userId: userId || null,
     alertMessages,
     onSuccess: async (result) => onSuccess?.(result as string),
     onError: async (error) => onError?.(error.message),
