@@ -31,8 +31,8 @@ export function buildCoupleGenerationResult(
 
   // 5. RESOLVE COUPLE INPUT - Doğru target ve image'lar
   logBuilderStep(prefix, "STEP 5: RESOLVE COUPLE INPUT", {
-    partner1Uri: partner1PhotoUri,
-    partner2Uri: partner2PhotoUri,
+    partner1Uri: partner1PhotoUri || "",
+    partner2Uri: partner2PhotoUri || "",
     isCoupleMode,
     singleTarget: "p-image-edit/pruna",
     coupleTarget: "p-image-edit/pruna"

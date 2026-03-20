@@ -37,8 +37,8 @@ export async function buildScenarioGenerationInput(
     isCoupleMode,
     scenarioPromptLength: scenarioPrompt.length,
     scenarioPromptPreview: scenarioPrompt.substring(0, 200),
-    partner1Uri: partner1PhotoUri,
-    partner2Uri: partner2PhotoUri,
+    partner1Uri: partner1PhotoUri || "",
+    partner2Uri: partner2PhotoUri || "",
   });
 
   // 1. GET PHOTO URIs

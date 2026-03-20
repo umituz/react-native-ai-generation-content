@@ -80,7 +80,7 @@ export function useAIGeneration(
 
   // Use orchestrator for lifecycle management
   const orchestrator = useGenerationOrchestrator(strategy, {
-    userId,
+    userId: userId || null,
     alertMessages: (alertMessages || DEFAULT_ALERT_MESSAGES) as typeof DEFAULT_ALERT_MESSAGES,
     onSuccess: async (result) => onSuccess?.(result),
     onError: onError ? async (error) => onError(error.message) : undefined,

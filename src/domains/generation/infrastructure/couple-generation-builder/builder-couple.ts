@@ -39,8 +39,8 @@ export async function buildCoupleGenerationInput(
     hasCustomInstructions: !!params.customInstructions,
     hasStrength: params.strength !== undefined,
     strength: params.strength,
-    partner1Uri: params.partner1PhotoUri,
-    partner2Uri: params.partner2PhotoUri,
+    partner1Uri: params.partner1PhotoUri || "",
+    partner2Uri: params.partner2PhotoUri || "",
   });
 
   // Phase 1: Prepare photo URIs and analyze appearance

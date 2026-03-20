@@ -4,7 +4,7 @@
  */
 
 import { useEffect } from 'react';
-import type { Creation } from '../../../domain/entities/Creation';
+import type { Creation } from '../../domain/entities/Creation';
 
 export interface UseProcessingJobsPollerConfig {
   userId: string | null;
