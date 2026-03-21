@@ -9,20 +9,18 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Dimensions,
   type ViewStyle,
   type StyleProp,
   type DimensionValue,
 } from "react-native";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
+import { useResponsive } from "@umituz/react-native-design-system/responsive";
 import { ResultHeader } from "./ResultHeader";
 import { ResultImageCard } from "./ResultImageCard";
 import { ResultStoryCard } from "./ResultStoryCard";
 import { ResultActions } from "./ResultActions";
 import type { ResultConfig } from "../../types/result-config.types";
 import { DEFAULT_RESULT_CONFIG } from "../../types/result-config.types";
-
-const { width } = Dimensions.get("window");
 
 export interface GenerationResultData {
   imageUrl: string;
@@ -63,10 +61,11 @@ export const GenerationResultContent: React.FC<
   config = DEFAULT_RESULT_CONFIG,
 }) => {
   const tokens = useAppDesignTokens();
+  const responsive = useResponsive();
   const cfg = { ...DEFAULT_RESULT_CONFIG, ...config };
 
   const styles = useMemo(() => {
-    const containerWidth = cfg.layout?.maxWidth ?? width - 40;
+    const containerWidth = cfg.layout?.maxWidth ?? responsive.width - 40;
     const maxHeight: DimensionValue = (cfg.layout?.maxHeight ??
       "90%") as DimensionValue;
 
@@ -88,7 +87,7 @@ export const GenerationResultContent: React.FC<
         paddingHorizontal: cfg.layout?.contentPadding?.horizontal ?? 0,
       },
     });
-  }, [tokens, cfg, width]);
+  }, [tokens, cfg, responsive.width]);
 
   return (
     <View style={[styles.container, modalStyle]}>

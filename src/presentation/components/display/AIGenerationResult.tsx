@@ -1,7 +1,8 @@
 import React, { PropsWithChildren } from "react";
-import { View, StyleSheet, Dimensions, type ViewStyle } from "react-native";
+import { View, StyleSheet, type ViewStyle } from "react-native";
 import { AtomicText, AtomicButton } from "@umituz/react-native-design-system/atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system/theme";
+import { useResponsive } from "@umituz/react-native-design-system/responsive";
 
 export interface AIGenerationResultAction {
   label: string;
@@ -45,8 +46,8 @@ export const AIGenerationResult: React.FC<AIGenerationResultProps> = ({
   children,
 }) => {
   const tokens = useAppDesignTokens();
-  const screenWidth = Dimensions.get("window").width;
-  const contentSize = screenWidth - 48;
+  const responsive = useResponsive();
+  const contentSize = responsive.width - 48;
 
   const displaySuccessText = successText || translations?.successText;
 
