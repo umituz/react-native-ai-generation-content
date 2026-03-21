@@ -12,7 +12,7 @@ import type {
 import { classifyError } from "../utils/error-classification";
 import { pollJob } from "../../domains/background/infrastructure/services/job-poller-index";
 import { ProviderValidator } from "./provider-validator";
-import { calculateDurationMs } from "../../shared/utils/calculations";
+import { calculateDurationMs } from "../../shared/utils/calculations/time-calculations";
 
 
 export interface OrchestratorConfig {

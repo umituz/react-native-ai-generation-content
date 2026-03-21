@@ -36,9 +36,9 @@ export type {
   HintItem,
   ExamplePromptsProps,
   ExamplePrompt,
-} from "./domain";
+} from "./domain/index";
 
-export { INITIAL_FORM_STATE, INITIAL_GENERATION_STATE } from "./domain";
+export { INITIAL_FORM_STATE, INITIAL_GENERATION_STATE } from "./domain/index";
 
 // Infrastructure Services
 export { executeTextToVideo, hasTextToVideoSupport } from "./infrastructure/services";
@@ -48,7 +48,7 @@ export type { ExecuteTextToVideoOptions } from "./infrastructure/services";
 export {
   useTextToVideoFeature,
   useTextToVideoForm,
-} from "./presentation";
+} from "./presentation/index";
 
 export type {
   UseTextToVideoFeatureProps,
@@ -56,7 +56,7 @@ export type {
   TextToVideoGenerateParams,
   UseTextToVideoFormProps,
   UseTextToVideoFormReturn,
-} from "./presentation";
+} from "./presentation/index";
 
 // Presentation Components
 export {
@@ -65,4 +65,4 @@ export {
   OptionsPanel,
   HeroSection,
   HintCarousel,
-} from "./presentation";
+} from "./presentation/index";

@@ -41,7 +41,7 @@ export {
   AIGenerationConfig, ModelSelector, SuccessRedirectionCard,
   createAspectRatioOptions, createDurationOptions, createStyleOptions, createStyleOptionsFromConfig,
   ASPECT_RATIO_IDS, COMMON_DURATIONS,
-} from "../presentation/components";
+} from "../presentation/components/index";
 export type {
   GenerationProgressContentProps, PendingJobCardProps, StatusLabels,
   PendingJobCardActionsProps, GenerationResultData, GenerationResultContentProps,
@@ -56,7 +56,7 @@ export type {
   StyleOption, AspectRatioOption, DurationValue, AspectRatioTranslations, DurationOption,
   StyleTranslations, AIGenerationFormProps, AIGenerationFormTranslations,
   AIGenerationConfigProps, ModelOption, ModelSelectorProps, SuccessRedirectionCardProps,
-} from "../presentation/components";
+} from "../presentation/components/index";
 
 // Layouts
 export {

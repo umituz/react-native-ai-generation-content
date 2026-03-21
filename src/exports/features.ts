@@ -18,7 +18,7 @@ export type {
   UseTextToImageFormOptions, UseTextToImageFormReturn,
   TextToImagePromptInputProps, TextToImageExamplePromptsProps, TextToImageStyleSelectorProps,
   TextToImageAspectRatioSelectorProps, TextToImageGenerateButtonProps, TextToImageSettingsSheetProps,
-} from "../domains/text-to-image";
+} from "../domains/text-to-image/index";
 export {
   DEFAULT_IMAGE_STYLES, DEFAULT_NUM_IMAGES_OPTIONS, ASPECT_RATIO_VALUES, IMAGE_SIZE_VALUES,
   OUTPUT_FORMAT_VALUES, DEFAULT_FORM_VALUES, DEFAULT_TEXT_TO_IMAGE_PROMPTS, DEFAULT_TEXT_TO_VOICE_PROMPTS,
@@ -29,7 +29,7 @@ export {
   TextToImagePromptInput, TextToImageExamplePrompts, TextToImageNumImagesSelector,
   TextToImageStyleSelector, TextToImageAspectRatioSelector, TextToImageSizeSelector,
   TextToImageOutputFormatSelector, TextToImageGenerateButton, TextToImageSettingsSheet,
-} from "../domains/text-to-image";
+} from "../domains/text-to-image/index";
 
 // Text-to-Video Feature
 export type {

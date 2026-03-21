@@ -8,24 +8,24 @@
 // =============================================================================
 
 // Animation Types
-export type { AnimationStyle, AnimationStyleId } from "./domain";
+export type { AnimationStyle, AnimationStyleId } from "./domain/index";
 
 // Duration Types
-export type { VideoDuration, DurationOption } from "./domain";
+export type { VideoDuration, DurationOption } from "./domain/index";
 
 // Form Types
 export type {
   ImageToVideoFormState,
   ImageToVideoFormActions,
   ImageToVideoFormDefaults,
-} from "./domain";
+} from "./domain/index";
 
 // Config Types
 export type {
   ImageToVideoCallbacks,
   ImageToVideoFormConfig,
   ImageToVideoTranslationsExtended,
-} from "./domain";
+} from "./domain/index";
 
 // Core Feature Types
 export type {
@@ -42,7 +42,7 @@ export type {
   ImageToVideoGenerationStartData,
   ImageToVideoCreationData,
   ImageToVideoFeatureConfig,
-} from "./domain";
+} from "./domain/index";
 
 // =============================================================================
 // INFRASTRUCTURE LAYER
@@ -59,7 +59,7 @@ export {
   useImageToVideoFormState,
   useImageToVideoGeneration,
   useImageToVideoForm,
-} from "./presentation";
+} from "./presentation/index";
 export type {
   UseImageToVideoFormStateOptions,
   UseImageToVideoFormStateReturn,
@@ -67,14 +67,14 @@ export type {
   UseImageToVideoGenerationReturn,
   UseImageToVideoFormOptions,
   UseImageToVideoFormReturn,
-} from "./presentation";
+} from "./presentation/index";
 
 // Provider-based Feature Hook
-export { useImageToVideoFeature } from "./presentation";
+export { useImageToVideoFeature } from "./presentation/index";
 export type {
   UseImageToVideoFeatureProps,
   UseImageToVideoFeatureReturn,
-} from "./presentation";
+} from "./presentation/index";
 
 // =============================================================================
 // PRESENTATION LAYER - Components
@@ -85,7 +85,7 @@ export {
   ImageToVideoDurationSelector,
   ImageToVideoSelectionGrid,
   ImageToVideoGenerateButton,
-} from "./presentation";
+} from "./presentation/index";
 
 export type {
   ImageToVideoAnimationStyleSelectorProps,
@@ -93,4 +93,4 @@ export type {
   ImageToVideoSelectionGridProps,
   ImageToVideoSelectionGridTranslations,
   ImageToVideoGenerateButtonProps,
-} from "./presentation";
+} from "./presentation/index";

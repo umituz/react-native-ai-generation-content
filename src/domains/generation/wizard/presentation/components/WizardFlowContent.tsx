@@ -12,8 +12,8 @@ import type { WizardFeatureConfig } from "../../domain/entities/wizard-feature.t
 import { buildFlowStepsFromWizard } from "../../infrastructure/builders/dynamic-step-builder";
 import { useWizardGeneration, type WizardScenarioData } from "../hooks/useWizardGeneration";
 import type { AlertMessages } from "../../../../../presentation/hooks/generation/types";
-import type { Creation } from "../../../../creations/domain/entities/Creation";
-import { createCreationsRepository } from "../../../../creations";
+import type { Creation } from "../../../../creations/domain/entities/index";
+import { createCreationsRepository } from "../../../../creations/index";
 import { useResultActions } from "../../../../result-preview/presentation/hooks/useResultActions";
 import { useWizardFlowHandlers } from "../hooks/useWizardFlowHandlers";
 import { extractDuration, extractResolution, getConfigDefaultDuration, getConfigDefaultResolution } from "../../infrastructure/utils/credit-value-extractors";

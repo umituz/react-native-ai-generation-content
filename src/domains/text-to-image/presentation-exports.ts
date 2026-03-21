@@ -7,7 +7,7 @@ export {
   useFormState,
   useGeneration,
   useTextToImageForm,
-} from "./presentation";
+} from "./presentation/index";
 export type {
   UseFormStateOptions,
   UseFormStateReturn,
@@ -16,7 +16,7 @@ export type {
   UseGenerationReturn,
   UseTextToImageFormOptions,
   UseTextToImageFormReturn,
-} from "./presentation";
+} from "./presentation/index";
 
 // Components
 export {
@@ -29,7 +29,7 @@ export {
   TextToImageOutputFormatSelector,
   TextToImageGenerateButton,
   TextToImageSettingsSheet,
-} from "./presentation";
+} from "./presentation/index";
 
 export type {
   TextToImagePromptInputProps,
@@ -38,4 +38,4 @@ export type {
   TextToImageAspectRatioSelectorProps,
   TextToImageGenerateButtonProps,
   TextToImageSettingsSheetProps,
-} from "./presentation";
+} from "./presentation/index";

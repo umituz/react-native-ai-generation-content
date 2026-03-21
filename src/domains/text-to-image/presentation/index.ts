@@ -1,5 +1,5 @@
 /**
- * Image to Video Presentation
+ * Text to Image Presentation
  */
 
 export * from "./components";

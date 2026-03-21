@@ -1,33 +1,7 @@
 /**
- * Text-to-Video Presentation Index
- * Exports all presentation layer items (hooks and components)
+ * Text to Video Presentation
  */
 
-// =============================================================================
-// HOOKS
-// =============================================================================
-
-export { useTextToVideoFeature } from "./hooks";
-export type {
-  UseTextToVideoFeatureProps,
-  UseTextToVideoFeatureReturn,
-  TextToVideoGenerateParams,
-} from "./hooks";
-
-export { useTextToVideoForm } from "./hooks";
-export type {
-  UseTextToVideoFormProps,
-  UseTextToVideoFormReturn,
-} from "./hooks";
-
-// =============================================================================
-// COMPONENTS
-// =============================================================================
-
-export {
-  GenerationTabs,
-  FrameSelector,
-  OptionsPanel,
-  HeroSection,
-  HintCarousel,
-} from "./components";
+export * from "./components";
+export * from "./hooks";
+export * from "./screens";

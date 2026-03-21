@@ -12,7 +12,7 @@ export type {
   TextToImageFormState,
   TextToImageFormActions,
   TextToImageFormDefaults,
-} from "./domain";
+} from "./domain/index";
 
 // Config Types
 export type {
@@ -23,7 +23,7 @@ export type {
   TextToImageCallbacks,
   TextToImageFormConfig,
   TextToImageTranslations,
-} from "./domain";
+} from "./domain/index";
 
 // Provider Types
 export type {
@@ -34,7 +34,7 @@ export type {
   TextToImageInputBuilder,
   TextToImageResultExtractor,
   TextToImageFeatureConfig,
-} from "./domain";
+} from "./domain/index";
 
 // Constants
 export {
@@ -47,4 +47,4 @@ export {
   DEFAULT_TEXT_TO_IMAGE_PROMPTS,
   DEFAULT_TEXT_TO_VOICE_PROMPTS,
   type PromptSuggestion,
-} from "./domain";
+} from "./domain/index";

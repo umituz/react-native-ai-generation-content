@@ -12,7 +12,7 @@ export * from "./exports/features";
 export * from "./shared";
 
 // Creations Domain
-export * from "./domains/creations";
+export * from "./domains/creations/index";
 
 // Scenarios Domain
 export * from "./domains/scenarios";
