@@ -3,7 +3,7 @@
  */
 
 import { useMemo } from "react";
-import { normalizeToDate } from "../../../../shared/utils/date";
+import { normalizeToDate } from "../../../../shared/utils/date/normalization";
 
 /**
  * Format creation date for display

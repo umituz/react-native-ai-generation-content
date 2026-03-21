@@ -31,7 +31,7 @@ export function useProcessingJobsPoller(
     const timer = setInterval(() => {
       // Stub: Polling logic to be implemented when job status API is available
       const processingCreations = creations.filter(c => c.status === 'processing');
-      processingCreations.forEach(async (creation) => {
+      processingCreations.forEach(async (_creation) => {
         try {
           // Check job status and update creation
           // Note: Actual polling implementation requires job status API

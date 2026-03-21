@@ -6,7 +6,6 @@
 import { useCallback, useState, useRef } from "react";
 import type {
   GenerationStatus,
-  GenerationState,
   GenerationError,
   GenerationStrategy,
   GenerationConfig,

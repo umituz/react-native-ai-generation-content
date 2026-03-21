@@ -7,7 +7,7 @@
 import {
   calculateBase64Size,
   calculateBase64SizeMB,
-} from "../../../shared/utils/calculations";
+} from "../../../shared/utils/calculations/cost-calculations";
 
 export interface PhotoInput {
   base64: string;

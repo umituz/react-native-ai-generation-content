@@ -18,7 +18,7 @@ import {
   useCredits,
   usePaywallVisibility,
   useFeatureGate,
-  usePremiumStatus,
+  usePremium,
 } from "@umituz/react-native-subscription";
 import type {
   AIFeatureGateOptions,
@@ -49,7 +49,7 @@ export function useAIFeatureGate(options: AIFeatureGateOptions): AIFeatureGateRe
   const { showAuthModal } = useAuthModalStore();
   const { credits, isCreditsLoaded, isLoading: isCreditsLoading } = useCredits();
   const { openPaywall } = usePaywallVisibility();
-  const { isPremium } = usePremiumStatus();
+  const { isPremium } = usePremium();
   const creditBalance = credits?.credits ?? 0;
   const hasCredits = creditBalance >= creditCost;
 

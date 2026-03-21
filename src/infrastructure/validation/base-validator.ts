@@ -3,11 +3,12 @@
  * Core validation functions for strings, numbers, URLs, emails, and base64
  */
 
-import type { ValidationResult, StringValidationOptions, NumberValidationOptions } from "../../shared-kernel/infrastructure/validation";
+import type { ValidationResult } from "../../shared-kernel/infrastructure/validation";
 import { validateString, validateNumber } from "../../shared-kernel/infrastructure/validation";
 
 // Re-export types for convenience
-export type { ValidationResult, StringValidationOptions, NumberValidationOptions } from "../../shared-kernel/infrastructure/validation";
+export type { ValidationResult } from "../../shared-kernel/infrastructure/validation";
+export type { StringValidationOptions, NumberValidationOptions } from "../../shared-kernel/infrastructure/validation";
 
 // Re-export validation functions for convenience
 export { validateString, validateNumber };

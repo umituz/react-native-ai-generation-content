@@ -7,7 +7,7 @@ import type { CreationFilter } from "../../domain/types";
 import { isTypeInCategory } from "../../domain/types";
 import type { CreationCategory, CreationTypeId } from "../../domain/types";
 import type { FilterableCreation } from "./advancedFilter.types";
-import { normalizeDateToTimestamp, compareDates } from "../../../../shared/utils/date";
+import { normalizeDateToTimestamp, compareDates } from "../../../../shared/utils/date/normalization";
 
 function filterByType<T extends FilterableCreation>(
   creations: T[],

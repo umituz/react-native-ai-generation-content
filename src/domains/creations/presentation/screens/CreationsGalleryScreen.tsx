@@ -14,7 +14,7 @@ import { GalleryResultPreview } from "../components/GalleryResultPreview";
 import { GalleryScreenHeader } from "../components/GalleryScreenHeader";
 import { MEDIA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "../../domain/types/creation-filter";
 import { createFilterButtons, createItemTitle } from "../utils/filter-buttons.util";
-import { calculatePaginationSlice, calculateHasMore } from "../../../../shared/utils/calculations";
+import { calculatePaginationSlice, calculateHasMore } from "../../../../shared/utils/calculations/cost-calculations";
 import type { Creation } from "../../domain/entities/Creation";
 import type { CreationsGalleryScreenProps } from "./creations-gallery.types";
 import { creationsGalleryStyles as styles } from "./creations-gallery.styles";

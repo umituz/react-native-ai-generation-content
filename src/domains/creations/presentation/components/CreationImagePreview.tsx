@@ -4,7 +4,7 @@
  * Uses expo-image for caching and performance
  */
 
-import React, { useMemo, useState, useCallback, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { AtomicIcon, AtomicSpinner } from "@umituz/react-native-design-system/atoms";
 import { AtomicImage } from "@umituz/react-native-design-system/image";
@@ -38,8 +38,6 @@ export function CreationImagePreview({
   const tokens = useAppDesignTokens();
   const inProgress = isInProgress(status);
   const typeIcon = getTypeIcon(type);
-  const [imageError, setImageError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
@@ -54,16 +52,7 @@ export function CreationImagePreview({
     return () => animation.stop();
   }, [inProgress, pulseAnim]);
 
-  const hasPreview = !!uri && !inProgress && !imageError;
-
-  const handleImageError = useCallback(() => {
-    setImageError(true);
-    setIsLoading(false);
-  }, []);
-
-  const handleLoadEnd = useCallback(() => {
-    setIsLoading(false);
-  }, []);
+  const hasPreview = !!uri && !inProgress;
 
   const styles = useMemo(
     () =>
@@ -127,11 +116,6 @@ export function CreationImagePreview({
           contentFit="cover"
           cachePolicy="disk"
         />
-        {isLoading && (
-          <View style={styles.loadingOverlay}>
-            <AtomicSpinner size="md" color="primary" />
-          </View>
-        )}
       </View>
     );
   }

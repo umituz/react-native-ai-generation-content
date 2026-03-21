@@ -7,7 +7,7 @@ import type { Creation } from "../../domain/entities/Creation";
 import type { ICreationsRepository } from "../../domain/repositories/ICreationsRepository";
 import { CREATION_STATUS } from "../../../../domain/constants/queue-status.constants";
 import { DEFAULT_MAX_POLL_TIME_MS } from "../../../../infrastructure/constants/polling.constants";
-import { isOlderThan, calculateAgeMs } from "../../../../shared/utils/calculations";
+import { isOlderThan, calculateAgeMs } from "../../../../shared/utils/calculations/time-calculations";
 
 /**
  * Check if job is stale (older than max poll time)

@@ -4,7 +4,7 @@
  */
 
 import type { PollingConfig } from "../../../../domain/entities/polling.types";
-import { calculatePollingInterval as calculateInterval } from "../../../../shared/utils/calculations";
+import { calculatePollingInterval as calculateInterval } from "../../../../shared/utils/calculations/time-calculations";
 
 export interface IntervalOptions {
   attempt: number;
