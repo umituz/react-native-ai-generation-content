@@ -131,7 +131,7 @@ class GenerationOrchestratorService {
           capability: request.capability,
           startTime,
           endTime: Date.now(),
-          duration: Date.now() - startTime,
+          duration: calculateDurationMs(startTime),
         },
       };
     }

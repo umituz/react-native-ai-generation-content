@@ -72,7 +72,9 @@ export function useGenerationOrchestrator<TInput, TResult>(
         // Show success alert if provided
         if (config.alertMessages?.success) {
           // Alert would be shown here in a real implementation
-          console.log(config.alertMessages.success);
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.log(config.alertMessages.success);
+          }
         }
 
         return generationResult;

@@ -59,20 +59,38 @@ export function useBackgroundGeneration<TInput = unknown, TResult = unknown>(
     async (input: TInput, type: string): Promise<string> => {
       const jobId = `job-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-      jobInputsRef.current.set(jobId, { input, type });
+      try {
+        await addJobAsync({
+          id: jobId,
+          input,
+          type,
+          status: "queued",
+          progress: 0,
+        });
 
-      await addJobAsync({
-        id: jobId,
-        input,
-        type,
-        status: "queued",
-        progress: 0,
-      });
+        // Only update refs after job is successfully added
+        jobInputsRef.current.set(jobId, { input, type });
+        activeJobsRef.current.add(jobId);
 
-      activeJobsRef.current.add(jobId);
-      void executeJob(jobId, input);
+        // Execute job with proper error handling
+        executeJob(jobId, input).catch((error) => {
+          // Clean up refs if execution fails
+          activeJobsRef.current.delete(jobId);
+          jobInputsRef.current.delete(jobId);
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            console.error("[useBackgroundGeneration] Job execution failed:", error);
+          }
+        });
 
-      return jobId;
+        return jobId;
+      } catch (error) {
+        // Clean up refs if adding job fails
+        jobInputsRef.current.delete(jobId);
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.error("[useBackgroundGeneration] Failed to add job:", error);
+        }
+        throw error;
+      }
     },
     [addJobAsync, executeJob],
   );

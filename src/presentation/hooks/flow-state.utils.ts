@@ -50,7 +50,9 @@ export function updatePhotoStep(
 ): GenerationFlowState {
   // Validate bounds to prevent sparse arrays and undefined access
   if (stepIndex < 0 || stepIndex >= state.photoSteps.length) {
-    console.warn(`[FlowState] Invalid stepIndex ${stepIndex}, ignoring update`);
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      console.warn(`[FlowState] Invalid stepIndex ${stepIndex}, ignoring update`);
+    }
     return state;
   }
 
